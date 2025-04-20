@@ -1,36 +1,26 @@
-NLP-PII-V2/
-├── src/
-│   ├── __pycache__/
-│   ├── main.py
-│   ├── config.py
-│   ├── models/
-│   │   ├── __pycache__/
-│   │   ├── __init__.py
-│   │   ├── model_factory.py
-│   │   ├── model_config.py
-│   │   ├── model_interface.py
-│   │   ├── pii_shield_model.py
-│   │   ├── camel_bert_model.py
-│   │   ├── entity_processor.py
-│   │   ├── entity_config.py
-│   │   └── label_mapping.py
-│   ├── static/
-│   │   ├── css/
-│   │   │   └── styles.css
-│   │   └── js/
-│   │       └── app.js
-│   └── templates/
-│       ├── base.html
-│       ├── index.html
-│       └── welcome.html
-├── checkpoints/
-│   └── pii_shield_002v.pt         # v2 model
-├── pii_shield_v001/
-│   └── model.pt                   # v1 model
-├── .env
-├── .env.example
-├── .gitignore
-├── LICENSE
-├── project_structure.txt
-├── requirements.txt
-└── README.md
+pii-shield-api/
+│
+├── main.py                  # FastAPI application entry point
+├── config.py                # Configuration settings
+├── requirements.txt         # Dependencies
+│
+├── models/                  # Model implementations
+│   ├── __init__.py
+│   ├── model_factory.py     # Factory pattern for model creation
+│   ├── model_config.py      # Model configuration
+│   ├── model_interface.py   # Interface for PII extraction models
+│   ├── pii_shield_model.py  # PII Shield model implementation
+│   ├── camel_bert_model.py  # CamelBert model implementation
+│   ├── entity_processor.py  # Process entities for display
+│   ├── entity_config.py     # Entity configuration and styling
+│   └── label_mapping.py     # Label processor from original code
+│
+├── static/                  # Static files (CSS, JS)
+│   ├── css/
+│   │   └── styles.css       # Application styles
+│   └── js/
+│       └── app.js           # Client-side JavaScript
+│
+└── templates/               # Jinja2 templates
+    ├── base.html            # Base template with common structure
+    └── index.html           # Main application page

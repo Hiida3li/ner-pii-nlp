@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main-header">
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
+</div>
+
+<div class="model-selection">
+    <label for="model-selector">Model Version:</label>
+    <select id="model-selector" class="form-select">
+        <option value="v1">PII-Shield-v1</option>
+        <option value="v2">PII-Shield-v2</option>
+        <option value="v3">PII-Shield (Base-Version)</option>
+    </select>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Input Text</h5>
+            </div>
+            <div class="card-body">
+                <textarea id="input-text" class="form-control" rows="10" placeholder="Type your text here..."></textarea>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                    <button id="extract-btn" class="btn btn-primary">Extract Entities</button>
+                    <button id="clear-btn" class="btn btn-outline-secondary">Clear</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Results</h5>
+            </div>
+            <div class="card-body">
+                <div id="result-text" class="result-box"></div>
+                <div id="entity-stats" class="mt-3">
+                    <div class="row" id="entity-badges"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const extractBtn = document.getElementById('extract-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const inputText = document.getElementById('input-text');
+        const resultText = document.getElementById('result-text');
+        const modelSelector = document.getElementById('model-selector');
+        const entityBadges = document.getElementById('entity-badges');
+        
+        // Extract entities
+        extractBtn.addEventListener('click', async function() {
+            const text = inputText.value.trim();
+            if (!text) return;
+            
+            // Show loading state
+            extractBtn.disabled = true;
+            extractBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+            
+            try {
+                const response = await fetch('/api/extract', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        model_version: modelSelector.value
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+                
+                const data = await response.json();
+                
+                // Update result text
+                resultText.innerHTML = data.highlighted_text;
+                
+                // Update entity stats
+                updateEntityStats(data.entity_counts);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultText.innerHTML = '<div class="alert alert-danger">An error occurred during processing.</div>';
+            } finally {
+                // Reset button state
+                extractBtn.disabled = false;
+                extractBtn.innerHTML = 'Extract Entities';
+            }
+        });
+        
+        // Clear button
+        clearBtn.addEventListener('click', function() {
+            inputText.value = '';
+            resultText.innerHTML = '';
+            entityBadges.innerHTML = '';
+        });
+        
+        // Function to update entity statistics
+        function updateEntityStats(counts) {
+            entityBadges.innerHTML = '';
+            
+            if (!counts || Object.keys(counts).length === 0) {
+                return;
+            }
+            
+            // Get entity information
+            fetch('/api/models')
+                .then(res => res.json())
+                .then(data => {
+                    const ENTITY_INFO = {
+                        'PER': {'color': '#FF5252', 'emoji': '👤', 'name': 'Person'},
+                        'LOC': {'color': '#2196F3', 'emoji': '📍', 'name': 'Location'},
+                        'ORG': {'color': '#4CAF50', 'emoji': '🏢', 'name': 'Organization'},
+                        'URL': {'color': '#FF9800', 'emoji': '🔗', 'name': 'URL'},
+                        'EMAIL': {'color': '#9C27B0', 'emoji': '📧', 'name': 'Email'},
+                        'PHONE': {'color': '#FFC107', 'emoji': '📱', 'name': 'Phone'},
+                        'CIVIL-ID': {'color': '#009688', 'emoji': '🪪', 'name': 'Civil ID'},
+                        'PASSPORT-ID': {'color': '#E91E63', 'emoji': '🛂', 'name': 'Passport'},
+                        'CREDIT-CARD': {'color': '#673AB7', 'emoji': '💳', 'name': 'Credit Card'}
+                    };
+                    
+                    for (const [entityType, count] of Object.entries(counts)) {
+                        const info = ENTITY_INFO[entityType] || {'color': '#adb5bd', 'emoji': '🔍', 'name': entityType};
+                        
+                        const badge = document.createElement('div');
+                        badge.className = 'col-md-4 mb-2';
+                        badge.innerHTML = `
+                            <div style="
+                                background-color: ${info.color}; 
+                                color: white; 
+                                padding: 8px 12px; 
+                                border-radius: 20px; 
+                                display: flex; 
+                                align-items: center;
+                                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                                font-size: 14px;
+                            ">
+                                <span style="font-size: 16px; margin-right: 8px;">${info.emoji}</span>
+                                <span style="font-weight: 500;">${info.name}</span>
+                                <span style="
+                                    background: rgba(255,255,255,0.2); 
+                                    padding: 2px 8px; 
+                                    border-radius: 10px; 
+                                    margin-left: 8px; 
+                                    font-size: 12px;
+                                ">${count}</span>
+                            </div>
+                        `;
+                        
+                        entityBadges.appendChild(badge);
+                    }
+                });
+        }
+    });
+</script>
+{% endblock %}
