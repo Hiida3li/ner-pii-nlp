@@ -1,0 +1,26 @@
+pii-shield-api/
+│
+├── main.py                  # FastAPI application entry point
+├── config.py                # Configuration settings
+├── requirements.txt         # Dependencies
+│
+├── models/                  # Model implementations
+│   ├── __init__.py
+│   ├── model_factory.py     # Factory pattern for model creation
+│   ├── model_config.py      # Model configuration
+│   ├── model_interface.py   # Interface for PII extraction models
+│   ├── pii_shield_model.py  # PII Shield model implementation
+│   ├── camel_bert_model.py  # CamelBert model implementation
+│   ├── entity_processor.py  # Process entities for display
+│   ├── entity_config.py     # Entity configuration and styling
+│   └── label_mapping.py     # Label processor from original code
+│
+├── static/                  # Static files (CSS, JS)
+│   ├── css/
+│   │   └── styles.css       # Application styles
+│   └── js/
+│       └── app.js           # Client-side JavaScript
+│
+└── templates/               # Jinja2 templates
+    ├── base.html            # Base template with common structure
+    └── index.html           # Main application page
