@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PII-Shield Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .welcome-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100%;
+            background: linear-gradient(-45deg, #5e35b1, #3a1f91, #673ab7, #4527a0);
+            background-size: 400% 400%;
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            animation: gradientMove 10s ease infinite;
+        }
+        
+        .content-wrapper {
+            background: rgba(35, 20, 80, 0.4);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            max-width: 700px;
+            text-align: center;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+        
+        .welcome-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ffffff, #e0e0e0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .welcome-subtitle {
+            font-size: 20px;
+            line-height: 1.6;
+            max-width: 90%;
+            font-weight: 500;
+            margin: 0 auto 50px;
+            text-align: center
+        }
+        
+        .get-started-btn {
+            background: linear-gradient(45deg, #FFD166, #F8B500);
+            color: #2E294E;
+            padding: 18px 45px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 20px;
+            cursor: pointer;
+            display: inline-block;
+            border: none;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            text-decoration: none;
+        }
+        
+        .get-started-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="content-wrapper">
+            <svg class="piishield-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+                <path fill="white" d="M50,5 L87,17 C87,40 81,65 50,95 C19,65 13,40 13,17 L50,5 Z" />
+                <circle fill="#1976d2" cx="50" cy="52" r="20" />
+                <circle fill="white" cx="50" cy="52" r="5" />
+                <circle fill="none" stroke="white" stroke-width="8" cx="50" cy="52" r="30" />
+            </svg>
+
+            <h1 class="welcome-title">PII-Shield</h1>
+            <p class="welcome-subtitle">
+                Safeguard Your Business Data with Our AI-Powered Security
+            </p>
+
+            <a href="/set-welcome-complete" class="get-started-btn">
+                🚀 Get Started
+            </a>
+        </div>
+    </div>
+</body>
+</html>
