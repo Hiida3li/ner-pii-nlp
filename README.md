@@ -93,12 +93,12 @@ python main.py
 Or with uvicorn directly:
 
 ```bash
-uvicorn main:app --host 0.0.0.0 --port 8001 --reload
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### Web Interface
 
-Access the web interface at [http://localhost:8001](http://localhost:8001)
+Access the web interface at [http://localhost:8000](http://localhost:8000)
 
 ### API Endpoints
 
