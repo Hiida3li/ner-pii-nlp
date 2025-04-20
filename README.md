@@ -7,7 +7,7 @@ A FastAPI application for identifying and extracting personally identifiable inf
 - **Multiple PII Detection Models**:
   - PII-Shield-v1: Base model trained on custom PII dataset
   - PII-Shield-v2: Enhanced model with improved accuracy
-  - CamelBert: Arabic-language PII detection
+  - CamelBert: Arabic-language NER detection
 
 - **REST API**:
   - JSON-based API for PII extraction
@@ -32,40 +32,51 @@ A FastAPI application for identifying and extracting personally identifiable inf
 ## Project Structure
 
 ```
-src/
-│
-├── main.py                  # FastAPI application entry point
-├── config.py                # Configuration settings
-├── requirements.txt         # Dependencies
-│
-├── models/                  # Model implementations
-│   ├── __init__.py
-│   ├── model_factory.py     # Factory pattern for model creation
-│   ├── model_config.py      # Model configuration
-│   ├── model_interface.py   # Interface for PII extraction models
-│   ├── pii_shield_model.py  # PII Shield model implementation
-│   ├── camel_bert_model.py  # CamelBert model implementation
-│   ├── entity_processor.py  # Process entities for display
-│   ├── entity_config.py     # Entity configuration and styling
-│   └── label_mapping.py     # Label processor
-│
-├── static/                  # Static files (CSS, JS)
-│   ├── css/
-│   │   └── styles.css
-│   └── js/
-│       └── app.js
-│
-└── templates/               # Jinja2 templates
-    ├── base.html
-    └── index.html
+NLP-PII-NLP/
+├── src/
+│   ├── __pycache__/
+│   ├── main.py
+│   ├── config.py
+│   ├── models/
+│   │   ├── __pycache__/
+│   │   ├── __init__.py
+│   │   ├── model_factory.py
+│   │   ├── model_config.py
+│   │   ├── model_interface.py
+│   │   ├── pii_shield_model.py
+│   │   ├── camel_bert_model.py
+│   │   ├── entity_processor.py
+│   │   ├── entity_config.py
+│   │   └── label_mapping.py
+│   ├── static/
+│   │   ├── css/
+│   │   │   └── styles.css
+│   │   └── js/
+│   │       └── app.js
+│   └── templates/
+│       ├── base.html
+│       ├── index.html
+│       └── welcome.html
+├── checkpoints/
+│   └── pii_shield_002v.pt         # v2 model
+├── pii_shield_v001/
+│   └── model.pt                   # v1 model
+├── .env
+├── .env.example
+├── .gitignore
+├── LICENSE
+├── project_structure.txt
+├── requirements.txt
+└── README.md
+
 ```
 
 ## Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/pii-shield-api.git
-   cd pii-shield-api
+   git clone https://github.com/Hiida3li/pii-shield-api.git
+   cd ner-pii-ner
    ```
 
 2. Create a virtual environment:
@@ -93,12 +104,12 @@ python main.py
 Or with uvicorn directly:
 
 ```bash
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn main:app --host 0.0.0.0 --port 8001 --reload
 ```
 
 ### Web Interface
 
-Access the web interface at [http://localhost:8000](http://localhost:8000)
+Access the web interface at [http://localhost:8001](http://localhost:8001)
 
 ### API Endpoints
 
@@ -115,8 +126,8 @@ Access the web interface at [http://localhost:8000](http://localhost:8000)
 ### API Documentation
 
 Interactive API documentation is available at:
-- Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
-- ReDoc: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+- Swagger UI: [http://localhost:8001/docs](http://localhost:8001/docs)
+- ReDoc: [http://localhost:8001/redoc](http://localhost:8001/redoc)
 
 ## Architecture
 
@@ -128,7 +139,7 @@ This application follows SOLID principles and utilizes several design patterns:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the Apache License - see the LICENSE file for details.
 
 ## Acknowledgements
 
