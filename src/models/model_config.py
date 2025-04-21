@@ -8,12 +8,12 @@ class ModelConfig:
     MODELS = {
         "v1": {
             "name": "PII-Shield-v1",
-            "checkpoint": "pii_shield_v001/model.pt",  # Relative to src
+            "checkpoint": "trained_models/model.pt",  # Relative to src
             "type": "pii_shield"
         },
         "v2": {
             "name": "PII-Shield-v2",
-            "checkpoint": "checkpoints/pii_shield_002v.pt",  # Relative to src
+            "checkpoint": "trained_models/pii_shield_002v.pt",  # Relative to src
             "type": "pii_shield"
         },
         "v3": {
