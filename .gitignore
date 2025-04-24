@@ -176,3 +176,4 @@ src/trained_models/model.pt
 src/trained_models/pii_shield_002v.pt
 src/trained_models/*.pt
 src/checkpoints/
+*.pt
