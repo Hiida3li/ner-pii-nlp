@@ -103,16 +103,40 @@
             to { transform: rotate(360deg); }
         }
         
-        .welcome-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #3b82f6, #10b981, #8b5cf6);
+        .welcome-branding {
+            margin-bottom: 4rem;
+        }
+        
+        .brand-title {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin: 0 0 1rem 0;
+            letter-spacing: -0.03em;
+            font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .brand-highlight {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-            letter-spacing: -0.02em;
+            font-weight: 900;
+        }
+        
+        .brand-main {
+            color: #f1f5f9;
+            font-weight: 300;
+            margin-left: 0.5rem;
+        }
+        
+        .brand-tagline {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-family: 'Inter', sans-serif;
         }
         
         .welcome-subtitle {
@@ -206,22 +230,21 @@
                 min-height: 100vh;
             }
             
-            .welcome-title {
-                font-size: 2.5rem;
+            .brand-title {
+                font-size: 3rem;
+            }
+            
+            .brand-tagline {
+                font-size: 1rem;
             }
             
             .welcome-subtitle {
-                font-size: 1.2rem;
+                font-size: 1.5rem;
             }
             
             .welcome-description {
                 font-size: 1.1rem;
                 margin-bottom: 2rem;
-            }
-            
-            .welcome-logo {
-                width: 160px;
-                height: 160px;
             }
             
             .welcome-content {
@@ -235,63 +258,20 @@
     <!-- Hero Section -->
     <section class="welcome-hero">
         <div class="welcome-content">
-            <div class="welcome-logo animate-slide-up">
-                <div class="logo-ring"></div>
-                <div class="logo-ring"></div>
-                <div class="logo-ring"></div>
-                <!-- Creative Neural Scanner Logo -->
-                <div style="width: 130px; height: 130px; position: relative; display: flex; align-items: center; justify-content: center;">
-                    <!-- Outer scanning rings -->
-                    <div style="position: absolute; width: 120px; height: 120px; border: 2px solid #3b82f6; border-radius: 50%; opacity: 0.3; animation: pulse 3s ease-in-out infinite;"></div>
-                    <div style="position: absolute; width: 100px; height: 100px; border: 2px solid #06b6d4; border-radius: 50%; opacity: 0.5; animation: pulse 3s ease-in-out infinite 0.5s;"></div>
-                    <div style="position: absolute; width: 80px; height: 80px; border: 2px solid #10b981; border-radius: 50%; opacity: 0.7; animation: pulse 3s ease-in-out infinite 1s;"></div>
-                    
-                    <!-- Central hexagonal core -->
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #4f46e5, #06b6d4); clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%); position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);">
-                        <!-- Inner scanning dot -->
-                        <div style="width: 12px; height: 12px; background: #ffffff; border-radius: 50%; position: relative;">
-                            <div style="position: absolute; width: 6px; height: 6px; background: #4f46e5; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: scan 2s linear infinite;"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Data stream lines -->
-                    <div style="position: absolute; width: 2px; height: 20px; background: linear-gradient(to bottom, #10b981, transparent); top: 10px; left: 50%; transform: translateX(-50%); opacity: 0.8; animation: dataFlow 1.5s ease-in-out infinite;"></div>
-                    <div style="position: absolute; width: 2px; height: 20px; background: linear-gradient(to top, #10b981, transparent); bottom: 10px; left: 50%; transform: translateX(-50%); opacity: 0.8; animation: dataFlow 1.5s ease-in-out infinite 0.3s;"></div>
-                    <div style="position: absolute; width: 20px; height: 2px; background: linear-gradient(to right, #10b981, transparent); left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.8; animation: dataFlow 1.5s ease-in-out infinite 0.6s;"></div>
-                    <div style="position: absolute; width: 20px; height: 2px; background: linear-gradient(to left, #10b981, transparent); right: 10px; top: 50%; transform: translateY(-50%); opacity: 0.8; animation: dataFlow 1.5s ease-in-out infinite 0.9s;"></div>
-                </div>
-                
-                <style>
-                    @keyframes pulse {
-                        0%, 100% { transform: scale(1); opacity: 0.3; }
-                        50% { transform: scale(1.1); opacity: 0.8; }
-                    }
-                    @keyframes scan {
-                        0% { transform: translate(-50%, -50%) scale(1); }
-                        50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.5; }
-                        100% { transform: translate(-50%, -50%) scale(1); }
-                    }
-                    @keyframes dataFlow {
-                        0% { opacity: 0; transform: scale(0.8); }
-                        50% { opacity: 1; transform: scale(1.2); }
-                        100% { opacity: 0; transform: scale(0.8); }
-                    }
-                </style>
+            <div class="welcome-branding animate-slide-up">
+                <h1 class="brand-title">
+                    <span class="brand-highlight">PII</span>
+                    <span class="brand-main">Detector</span>
+                </h1>
+                <div class="brand-tagline">Protect Your Data</div>
             </div>
             
-            <h1 class="welcome-title animate-slide-up">PII Detector</h1>
-            <h2 class="welcome-subtitle animate-slide-up">كاشف البيانات الشخصية</h2>
-            <p class="welcome-description animate-slide-up">
-                منصة ذكية متطورة لحماية البيانات الشخصية والمعلومات الحساسة في النصوص العربية والإنجليزية
-                <br>
-                <em style="opacity: 0.7; font-size: 0.9em;">Advanced AI platform for protecting personal data in Arabic and English content</em>
-            </p>
             
             <a href="/set-welcome-complete" class="welcome-cta animate-slide-up">
-                <span>ابدأ الآن</span>
+                <span>Get Started</span>
                 <svg class="cta-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="7" y1="17" x2="17" y2="7"/>
-                    <polyline points="7,7 17,7 17,17"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12,5 19,12 12,19"/>
                 </svg>
             </a>
         </div>
