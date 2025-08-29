@@ -49,10 +49,22 @@
         <div class="grid grid-cols-1 md:grid-cols-2">
           <div class="form-group">
             <label for="model-selector" class="form-label">Select AI Model</label>
-            <select id="model-selector" class="form-select">
-              <option value="v2">PII-Shield v2 - Enhanced Protection</option>
-              <option value="v3" selected>CamelBert - Arabic Language Support</option>
-            </select>
+            <div class="custom-select-wrapper">
+              <div id="model-selector-display" class="form-select custom-select-display" tabindex="0">
+                <span class="custom-select-text">CamelBert - Arabic Language Support</span>
+                <svg class="custom-select-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
+                  <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="custom-select-dropdown" style="display: none;">
+                <div class="custom-select-option" data-value="v2">PII-Shield v2 - Enhanced Protection</div>
+                <div class="custom-select-option custom-select-option-selected" data-value="v3">CamelBert - Arabic Language Support</div>
+              </div>
+              <select id="model-selector" class="form-select-hidden" style="display: none;">
+                <option value="v2">PII-Shield v2 - Enhanced Protection</option>
+                <option value="v3" selected>CamelBert - Arabic Language Support</option>
+              </select>
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label">Privacy Mode</label>
@@ -179,6 +191,9 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateThemeToggle(theme) {
     slider.textContent = theme === 'dark' ? '🌙' : '☀️';
   }
+  
+  // Initialize custom select dropdown
+  initializeCustomSelect();
   
   // Initialize main app
   initializeApp();
@@ -448,6 +463,61 @@ function initializeApp() {
       timeout = setTimeout(later, wait);
     };
   }
+}
+
+function initializeCustomSelect() {
+  const display = document.getElementById('model-selector-display');
+  const dropdown = document.querySelector('.custom-select-dropdown');
+  const options = document.querySelectorAll('.custom-select-option');
+  const hiddenSelect = document.getElementById('model-selector');
+  const selectText = document.querySelector('.custom-select-text');
+  const arrow = document.querySelector('.custom-select-arrow');
+  
+  // Toggle dropdown
+  display.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const isOpen = dropdown.style.display === 'block';
+    dropdown.style.display = isOpen ? 'none' : 'block';
+    arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+  });
+  
+  // Handle option selection
+  options.forEach(option => {
+    option.addEventListener('click', function() {
+      // Update selected state
+      document.querySelector('.custom-select-option-selected')?.classList.remove('custom-select-option-selected');
+      this.classList.add('custom-select-option-selected');
+      
+      // Update display text
+      selectText.textContent = this.textContent;
+      
+      // Update hidden select value
+      hiddenSelect.value = this.getAttribute('data-value');
+      
+      // Close dropdown
+      dropdown.style.display = 'none';
+      arrow.style.transform = 'rotate(0deg)';
+      
+      // Trigger change event on hidden select
+      hiddenSelect.dispatchEvent(new Event('change'));
+    });
+  });
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!display.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.style.display = 'none';
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  });
+  
+  // Handle keyboard navigation
+  display.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      display.click();
+    }
+  });
 }
 </script>
 {% endblock %}

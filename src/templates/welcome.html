@@ -12,35 +12,7 @@
             cursor: none;
         }
         
-        .custom-cursor {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #3b82f6;
-            background: rgba(59, 130, 246, 0.3);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.15s ease, background 0.15s ease;
-            transform: translate(-50%, -50%);
-        }
-        
-        .custom-cursor.active {
-            transform: translate(-50%, -50%) scale(0.8);
-            background: rgba(59, 130, 246, 0.6);
-        }
-        
-        a, button, .welcome-cta {
-            cursor: none;
-        }
-        
-        a:hover ~ .custom-cursor,
-        button:hover ~ .custom-cursor,
-        .welcome-cta:hover ~ .custom-cursor {
-            border-color: #10b981;
-            background: rgba(16, 185, 129, 0.3);
-            transform: translate(-50%, -50%) scale(1.5);
-        }
+        /* Cursor styles inherited from base.html */
         
         body::before {
             content: '';
@@ -256,7 +228,7 @@
             border-radius: 20px;
             border: 2px solid transparent;
             transition: all 0.4s ease;
-            cursor: pointer;
+            cursor: none !important;
         }
         
         .flow-step:hover {
@@ -343,32 +315,104 @@
             margin-bottom: 0.5rem;
         }
         
+        .trust-badges {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .trust-badge {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #94a3b8;
+            font-family: 'Inter', sans-serif;
+            opacity: 0.8;
+            transition: opacity 0.3s ease, color 0.3s ease;
+        }
+        
+        .trust-badge:hover {
+            opacity: 1;
+            color: #cbd5e1;
+        }
+        
         .welcome-cta-enhanced {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 1.2rem 3rem;
+            gap: 0.75rem;
+            padding: 1.25rem 2.5rem;
             background: linear-gradient(135deg, #3b82f6, #1e40af);
             color: white;
             text-decoration: none;
             border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.25rem;
+            font-weight: 600;
+            font-size: 1.2rem;
             font-family: 'Inter', sans-serif;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 15px 50px rgba(59, 130, 246, 0.4),
                         0 0 0 0 rgba(59, 130, 246, 0);
             position: relative;
             overflow: hidden;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            min-width: 200px;
+            text-transform: none;
+            letter-spacing: 0.02em;
+            min-width: 250px;
+            cursor: none;
+            animation: subtlePulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes subtlePulse {
+            0%, 100% {
+                box-shadow: 0 15px 50px rgba(59, 130, 246, 0.4);
+            }
+            50% {
+                box-shadow: 0 15px 60px rgba(59, 130, 246, 0.5);
+            }
+        }
+        
+        .welcome-cta-enhanced::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .welcome-cta-enhanced:hover::before {
+            width: 350px;
+            height: 350px;
         }
         
         .welcome-cta-enhanced:hover {
             transform: translateY(-6px) scale(1.05);
-            box-shadow: 0 25px 80px rgba(59, 130, 246, 0.5),
+            box-shadow: 0 25px 80px rgba(59, 130, 246, 0.6),
                         0 0 0 15px rgba(59, 130, 246, 0.1);
+        }
+        
+        .cta-icon-left {
+            transition: transform 0.3s ease;
+        }
+        
+        .welcome-cta-enhanced:hover .cta-icon-left {
+            transform: rotate(360deg);
+        }
+        
+        .cta-arrow {
+            font-size: 1.3rem;
+            font-weight: 400;
+            transition: transform 0.3s ease;
+            margin-left: 0.25rem;
+        }
+        
+        .welcome-cta-enhanced:hover .cta-arrow {
+            transform: translateX(5px);
         }
         
         .cta-pulse {
@@ -410,7 +454,7 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             transition: all 0.4s ease;
-            cursor: pointer;
+            cursor: none !important;
         }
         
         .feature-badge:hover {
@@ -655,8 +699,6 @@
 
 {% block content %}
     <!-- Hero Section -->
-    <div class="custom-cursor"></div>
-    
     <section class="welcome-hero">
         <div class="welcome-content">
             <div class="welcome-branding animate-slide-up">
@@ -690,58 +732,7 @@
             
             // Add floating particles effect
             createFloatingParticles();
-            
-            // Initialize custom cursor
-            initCustomCursor();
         });
-        
-        function initCustomCursor() {
-            const cursor = document.querySelector('.custom-cursor');
-            let mouseX = 0;
-            let mouseY = 0;
-            
-            // Track mouse movement
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-                cursor.style.left = mouseX + 'px';
-                cursor.style.top = mouseY + 'px';
-            });
-            
-            // Add click effect
-            document.addEventListener('mousedown', () => {
-                cursor.classList.add('active');
-            });
-            
-            document.addEventListener('mouseup', () => {
-                cursor.classList.remove('active');
-            });
-            
-            // Change cursor on hover
-            const hoverElements = document.querySelectorAll('a, button, .welcome-cta');
-            hoverElements.forEach(elem => {
-                elem.addEventListener('mouseenter', () => {
-                    cursor.style.borderColor = '#10b981';
-                    cursor.style.background = 'rgba(16, 185, 129, 0.3)';
-                    cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
-                });
-                
-                elem.addEventListener('mouseleave', () => {
-                    cursor.style.borderColor = '#3b82f6';
-                    cursor.style.background = 'rgba(59, 130, 246, 0.3)';
-                    cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-                });
-            });
-            
-            // Hide cursor when leaving window
-            document.addEventListener('mouseleave', () => {
-                cursor.style.opacity = '0';
-            });
-            
-            document.addEventListener('mouseenter', () => {
-                cursor.style.opacity = '1';
-            });
-        }
         
         function createFloatingParticles() {
             const hero = document.querySelector('.welcome-hero');

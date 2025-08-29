@@ -23,12 +23,224 @@
         })();
     </script>
     
+    <!-- Custom Cursor Styles -->
+    <style>
+        /* Force cursor to be none on ALL elements */
+        *, *::before, *::after {
+            cursor: none !important;
+        }
+        
+        html, body {
+            cursor: none !important;
+        }
+        
+        /* Override any inline styles */
+        *[style*="cursor"] {
+            cursor: none !important;
+        }
+        
+        .custom-cursor {
+            width: 24px;
+            height: 24px;
+            border: 2px solid transparent;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.2));
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            opacity: 1;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                        background 0.2s ease,
+                        border-color 0.2s ease,
+                        box-shadow 0.2s ease;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5),
+                        0 0 40px rgba(59, 130, 246, 0.3),
+                        inset 0 0 8px rgba(255, 255, 255, 0.3);
+            animation: cursorPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes cursorPulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.5),
+                            0 0 40px rgba(59, 130, 246, 0.3),
+                            inset 0 0 8px rgba(255, 255, 255, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(59, 130, 246, 0.7),
+                            0 0 60px rgba(59, 130, 246, 0.4),
+                            inset 0 0 12px rgba(255, 255, 255, 0.5);
+            }
+        }
+        
+        .custom-cursor.active {
+            transform: translate(-50%, -50%) scale(0.7);
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.9), rgba(16, 185, 129, 0.3));
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.7),
+                        0 0 60px rgba(16, 185, 129, 0.4);
+        }
+        
+        /* Ensure cursor:none on all interactive elements */
+        a, button, input, textarea, select, option, 
+        .btn, .form-select, .form-textarea, .form-input, 
+        .theme-toggle, .welcome-cta, 
+        select:focus, select:hover, select:active,
+        option:hover, option:focus,
+        input[type="checkbox"], input[type="radio"],
+        label, [role="button"], [onclick] {
+            cursor: none !important;
+        }
+        
+        /* Specific select dropdown styling */
+        select::-ms-expand {
+            cursor: none !important;
+        }
+        
+        select option {
+            cursor: none !important;
+        }
+        
+        .custom-cursor.hover {
+            border-color: #10b981;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.8), rgba(16, 185, 129, 0.2));
+            transform: translate(-50%, -50%) scale(1.5);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.6),
+                        0 0 50px rgba(16, 185, 129, 0.4);
+        }
+    </style>
+    
     {% block head %}{% endblock %}
 </head>
 <body>
+    <!-- Custom Cursor Element -->
+    <div class="custom-cursor"></div>
+    
     {% block content %}{% endblock %}
     
     <!-- Scripts -->
+    <script>
+        // Initialize custom cursor for all pages
+        document.addEventListener('DOMContentLoaded', function() {
+            const cursor = document.querySelector('.custom-cursor');
+            if (!cursor) {
+                console.error('Custom cursor element not found');
+                return;
+            }
+            
+            let mouseX = 0;
+            let mouseY = 0;
+            let currentX = 0;
+            let currentY = 0;
+            let isMoving = false;
+            
+            // Track mouse movement
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                if (!isMoving) {
+                    isMoving = true;
+                    requestAnimationFrame(updateCursor);
+                }
+            });
+            
+            // Smooth cursor animation
+            function updateCursor() {
+                // Smooth interpolation for cursor movement
+                currentX += (mouseX - currentX) * 0.9;
+                currentY += (mouseY - currentY) * 0.9;
+                
+                if (cursor) {
+                    cursor.style.left = currentX + 'px';
+                    cursor.style.top = currentY + 'px';
+                }
+                
+                // Continue animation if mouse is still moving
+                if (Math.abs(mouseX - currentX) > 0.1 || Math.abs(mouseY - currentY) > 0.1) {
+                    requestAnimationFrame(updateCursor);
+                } else {
+                    isMoving = false;
+                }
+            }
+            
+            // Add click effect
+            document.addEventListener('mousedown', () => {
+                cursor.classList.add('active');
+            });
+            
+            document.addEventListener('mouseup', () => {
+                cursor.classList.remove('active');
+            });
+            
+            // Change cursor on hover for interactive elements
+            const updateHoverElements = () => {
+                const hoverElements = document.querySelectorAll('a, button, input, textarea, select, .btn, .form-select, .form-textarea, .form-input, .theme-toggle, .form-checkbox, label, .card, .model-option, .entity-tag, [role="button"], [onclick]');
+                
+                hoverElements.forEach(elem => {
+                    // Remove any existing listeners first to avoid duplicates
+                    elem.removeEventListener('mouseenter', handleMouseEnter);
+                    elem.removeEventListener('mouseleave', handleMouseLeave);
+                    
+                    elem.addEventListener('mouseenter', handleMouseEnter);
+                    elem.addEventListener('mouseleave', handleMouseLeave);
+                });
+            };
+            
+            function handleMouseEnter() {
+                cursor.classList.add('hover');
+            }
+            
+            function handleMouseLeave() {
+                cursor.classList.remove('hover');
+            }
+            
+            // Force cursor:none on all elements
+            function forceCursorNone() {
+                const allElements = document.querySelectorAll('*');
+                allElements.forEach(elem => {
+                    elem.style.cursor = 'none';
+                });
+                
+                // Override any inline styles
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    * { cursor: none !important; }
+                    *:hover { cursor: none !important; }
+                    *:focus { cursor: none !important; }
+                    *:active { cursor: none !important; }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            // Initial setup
+            updateHoverElements();
+            forceCursorNone();
+            
+            // Re-setup on DOM changes (for dynamically added elements)
+            const observer = new MutationObserver(() => {
+                updateHoverElements();
+                forceCursorNone();
+            });
+            
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['style']
+            });
+            
+            // Hide cursor when leaving window
+            document.addEventListener('mouseleave', () => {
+                cursor.style.opacity = '0';
+            });
+            
+            document.addEventListener('mouseenter', () => {
+                cursor.style.opacity = '1';
+            });
+        });
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
