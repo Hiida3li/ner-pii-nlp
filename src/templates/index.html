@@ -1,168 +1,492 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="main-header">
-    <h1>{{ title }}</h1>
-    <p>{{ description }}</p>
-</div>
-
-<div class="model-selection">
-    <label for="model-selector">Model Version:</label>
-    <select id="model-selector" class="form-select">
-        <option value="v1">PII-Shield-v1</option>
-        <option value="v2">PII-Shield-v2</option>
-        <option value="v3">PII-Shield (Base-Version)</option>
-    </select>
-</div>
-
-<div class="row mt-4">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Input Text</h5>
-            </div>
-            <div class="card-body">
-                <textarea id="input-text" class="form-control" rows="10" placeholder="Type your text here..."></textarea>
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                    <button id="extract-btn" class="btn btn-primary">Extract Entities</button>
-                    <button id="clear-btn" class="btn btn-outline-secondary">Clear</button>
-                </div>
-            </div>
+<div class="container">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-brand">
+          <svg class="header-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <path fill="url(#logoGradient)" d="M50,10 L80,22 C80,42 76,67 50,90 C24,67 20,42 20,22 L50,10 Z" />
+            <circle fill="white" cx="50" cy="48" r="12" />
+            <path stroke="#2563eb" stroke-width="3" fill="none" stroke-linecap="round" d="M42,48 L48,54 L58,44" />
+          </svg>
+          <div>
+            <h1 class="header-title">{{ title or 'PII-Shield' }}</h1>
+            <p class="header-subtitle">{{ description or 'Advanced Data Protection Platform' }}</p>
+          </div>
         </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Results</h5>
-            </div>
-            <div class="card-body">
-                <div id="result-text" class="result-box"></div>
-                <div id="entity-stats" class="mt-3">
-                    <div class="row" id="entity-badges"></div>
-                </div>
-            </div>
+        <div class="header-controls">
+          <button class="theme-toggle" aria-label="Toggle dark mode">
+            <div class="theme-toggle-slider">☀️</div>
+          </button>
         </div>
+      </div>
     </div>
-</div>
+  </header>
 
+  <!-- Main Content -->
+  <main class="section">
+    <!-- Model Selection -->
+    <div class="card mb-8">
+      <div class="card-header">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+          </svg>
+          AI Model Configuration
+        </h3>
+      </div>
+      <div class="card-body">
+        <div class="grid grid-cols-1 md:grid-cols-2">
+          <div class="form-group">
+            <label for="model-selector" class="form-label">Select AI Model</label>
+            <select id="model-selector" class="form-select">
+              <option value="v1">PII-Shield v1 - Base Protection</option>
+              <option value="v2">PII-Shield v2 - Enhanced Accuracy</option>
+              <option value="v3" selected>CamelBert - Arabic Language Support</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Privacy Mode</label>
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" id="privacy-mode" class="form-checkbox" checked>
+              <span class="text-sm">Replace entities with generic labels for privacy</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Entity Counter -->
+    <div id="total-counter" class="total-counter animate-fade-in" style="display: none;">
+      <div class="total-counter-content">
+        <p class="total-counter-label">Total Entities Detected</p>
+        <h2 class="total-counter-value" id="total-count">0</h2>
+      </div>
+    </div>
+
+    <!-- Main Analysis Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2">
+      <!-- Input Section -->
+      <div class="card">
+        <div class="card-header">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14,2 14,8 20,8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10,9 9,9 8,9"/>
+            </svg>
+            Text Input
+          </h3>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label for="input-text" class="form-label">Enter text to analyze</label>
+            <textarea 
+              id="input-text" 
+              class="form-textarea" 
+              placeholder="Paste or type your text here. Our AI will identify and highlight sensitive information like names, locations, organizations, emails, phone numbers, and other personally identifiable information..."
+              rows="8"
+            ></textarea>
+          </div>
+          <div class="flex gap-4">
+            <button id="extract-btn" class="btn btn-primary flex-1">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20,6 9,17 4,12"/>
+              </svg>
+              Analyze Text
+            </button>
+            <button id="clear-btn" class="btn btn-secondary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3,6 5,6 21,6"/>
+                <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6"/>
+                <path d="M8,6V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
+              </svg>
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="card">
+        <div class="card-header">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            Analysis Results
+          </h3>
+        </div>
+        <div class="card-body">
+          <div id="result-text" class="results-container">
+            <div class="results-empty">
+              <div class="results-empty-icon">🔍</div>
+              <p><strong>Ready to analyze</strong></p>
+              <small>Enter text above to detect personally identifiable information</small>
+            </div>
+          </div>
+
+          <!-- Statistics Section -->
+          <div id="entity-stats" class="mt-6" style="display: none;">
+            <h4 class="text-lg font-semibold text-primary mb-4">Entity Statistics</h4>
+            <div class="stats-grid" id="entity-badges"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Help Section -->
+    <div class="card mt-8">
+      <div class="card-header">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9,9a3,3,0,0,1,6,0c0,2-3,3-3,3"/>
+            <path d="M12,17h.01"/>
+          </svg>
+          How It Works
+        </h3>
+      </div>
+      <div class="card-body">
+        <div class="grid grid-cols-1 md:grid-cols-3">
+          <div class="text-center p-4">
+            <div class="stat-icon mb-4" style="background: rgba(37, 99, 235, 0.1); color: #2563eb;">
+              📝
+            </div>
+            <h4 class="font-semibold mb-2">1. Input Text</h4>
+            <p class="text-sm text-secondary">Paste or type any text content you want to analyze for sensitive information</p>
+          </div>
+          <div class="text-center p-4">
+            <div class="stat-icon mb-4" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+              🤖
+            </div>
+            <h4 class="font-semibold mb-2">2. AI Analysis</h4>
+            <p class="text-sm text-secondary">Our advanced AI models scan and identify various types of personally identifiable information</p>
+          </div>
+          <div class="text-center p-4">
+            <div class="stat-icon mb-4" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+              📊
+            </div>
+            <h4 class="font-semibold mb-2">3. Get Results</h4>
+            <p class="text-sm text-secondary">View highlighted entities and detailed statistics about the detected sensitive data</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const extractBtn = document.getElementById('extract-btn');
-        const clearBtn = document.getElementById('clear-btn');
-        const inputText = document.getElementById('input-text');
-        const resultText = document.getElementById('result-text');
-        const modelSelector = document.getElementById('model-selector');
-        const entityBadges = document.getElementById('entity-badges');
-        
-        // Extract entities
-        extractBtn.addEventListener('click', async function() {
-            const text = inputText.value.trim();
-            if (!text) return;
-            
-            // Show loading state
-            extractBtn.disabled = true;
-            extractBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
-            
-            try {
-                const response = await fetch('/api/extract', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        text: text,
-                        model_version: modelSelector.value
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error('API request failed');
-                }
-                
-                const data = await response.json();
-                
-                // Update result text
-                resultText.innerHTML = data.highlighted_text;
-                
-                // Update entity stats
-                updateEntityStats(data.entity_counts);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                resultText.innerHTML = '<div class="alert alert-danger">An error occurred during processing.</div>';
-            } finally {
-                // Reset button state
-                extractBtn.disabled = false;
-                extractBtn.innerHTML = 'Extract Entities';
-            }
-        });
-        
-        // Clear button
-        clearBtn.addEventListener('click', function() {
-            inputText.value = '';
-            resultText.innerHTML = '';
-            entityBadges.innerHTML = '';
-        });
-        
-        // Function to update entity statistics
-        function updateEntityStats(counts) {
-            entityBadges.innerHTML = '';
-            
-            if (!counts || Object.keys(counts).length === 0) {
-                return;
-            }
-            
-            // Get entity information
-            fetch('/api/models')
-                .then(res => res.json())
-                .then(data => {
-                    const ENTITY_INFO = {
-                        'PER': {'color': '#FF5252', 'emoji': '👤', 'name': 'Person'},
-                        'LOC': {'color': '#2196F3', 'emoji': '📍', 'name': 'Location'},
-                        'ORG': {'color': '#4CAF50', 'emoji': '🏢', 'name': 'Organization'},
-                        'URL': {'color': '#FF9800', 'emoji': '🔗', 'name': 'URL'},
-                        'EMAIL': {'color': '#9C27B0', 'emoji': '📧', 'name': 'Email'},
-                        'PHONE': {'color': '#FFC107', 'emoji': '📱', 'name': 'Phone'},
-                        'CIVIL-ID': {'color': '#009688', 'emoji': '🪪', 'name': 'Civil ID'},
-                        'PASSPORT-ID': {'color': '#E91E63', 'emoji': '🛂', 'name': 'Passport'},
-                        'CREDIT-CARD': {'color': '#673AB7', 'emoji': '💳', 'name': 'Credit Card'}
-                    };
-                    
-                    for (const [entityType, count] of Object.entries(counts)) {
-                        const info = ENTITY_INFO[entityType] || {'color': '#adb5bd', 'emoji': '🔍', 'name': entityType};
-                        
-                        const badge = document.createElement('div');
-                        badge.className = 'col-md-4 mb-2';
-                        badge.innerHTML = `
-                            <div style="
-                                background-color: ${info.color}; 
-                                color: white; 
-                                padding: 8px 12px; 
-                                border-radius: 20px; 
-                                display: flex; 
-                                align-items: center;
-                                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                                font-size: 14px;
-                            ">
-                                <span style="font-size: 16px; margin-right: 8px;">${info.emoji}</span>
-                                <span style="font-weight: 500;">${info.name}</span>
-                                <span style="
-                                    background: rgba(255,255,255,0.2); 
-                                    padding: 2px 8px; 
-                                    border-radius: 10px; 
-                                    margin-left: 8px; 
-                                    font-size: 12px;
-                                ">${count}</span>
-                            </div>
-                        `;
-                        
-                        entityBadges.appendChild(badge);
-                    }
-                });
-        }
+// Theme toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const themeToggle = document.querySelector('.theme-toggle');
+  const slider = document.querySelector('.theme-toggle-slider');
+  
+  // Initialize theme
+  const savedTheme = localStorage.getItem('pii-shield-theme');
+  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const currentTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+  
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  updateThemeToggle(currentTheme);
+  
+  // Theme toggle event
+  themeToggle.addEventListener('click', function() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('pii-shield-theme', newTheme);
+    updateThemeToggle(newTheme);
+  });
+  
+  function updateThemeToggle(theme) {
+    slider.textContent = theme === 'dark' ? '🌙' : '☀️';
+  }
+  
+  // Initialize main app
+  initializeApp();
+});
+
+function initializeApp() {
+  const extractBtn = document.getElementById('extract-btn');
+  const clearBtn = document.getElementById('clear-btn');
+  const inputText = document.getElementById('input-text');
+  const resultText = document.getElementById('result-text');
+  const modelSelector = document.getElementById('model-selector');
+  const privacyMode = document.getElementById('privacy-mode');
+  const entityBadges = document.getElementById('entity-badges');
+  const entityStats = document.getElementById('entity-stats');
+  const totalCounter = document.getElementById('total-counter');
+  const totalCount = document.getElementById('total-count');
+  
+  // Entity configuration
+  const ENTITY_CONFIG = {
+    'PER': { color: '#2563eb', emoji: '👤', name: 'Person' },
+    'LOC': { color: '#10b981', emoji: '📍', name: 'Location' },
+    'ORG': { color: '#f59e0b', emoji: '🏢', name: 'Organization' },
+    'URL': { color: '#ef4444', emoji: '🔗', name: 'URL' },
+    'EMAIL': { color: '#8b5cf6', emoji: '📧', name: 'Email' },
+    'PHONE': { color: '#06b6d4', emoji: '📱', name: 'Phone' },
+    'CIVIL-ID': { color: '#22c55e', emoji: '🆔', name: 'Civil ID' },
+    'PASSPORT-ID': { color: '#a855f7', emoji: '🛂', name: 'Passport' },
+    'CREDIT-CARD': { color: '#ec4899', emoji: '💳', name: 'Credit Card' }
+  };
+  
+  // Extract button click handler
+  extractBtn.addEventListener('click', async function() {
+    const text = inputText.value.trim();
+    if (!text) {
+      showValidationError('Please enter some text to analyze');
+      return;
+    }
+    
+    setLoadingState(true);
+    
+    try {
+      const response = await fetch('/api/extract', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: text,
+          model_version: modelSelector.value
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Analysis failed: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      updateResults(data);
+      updateEntityStats(data.entity_counts);
+      updateTotalCounter(data.entity_counts);
+      showSuccessFeedback();
+      
+    } catch (error) {
+      console.error('Analysis error:', error);
+      showError(error.message);
+    } finally {
+      setLoadingState(false);
+    }
+  });
+  
+  // Clear button click handler
+  clearBtn.addEventListener('click', function() {
+    clearAll();
+  });
+  
+  // Auto-save input
+  inputText.addEventListener('input', debounce(function() {
+    if (this.value.trim()) {
+      localStorage.setItem('pii-shield-input', this.value);
+    } else {
+      localStorage.removeItem('pii-shield-input');
+    }
+  }, 500));
+  
+  // Restore saved input
+  const savedInput = localStorage.getItem('pii-shield-input');
+  if (savedInput) {
+    inputText.value = savedInput;
+  }
+  
+  // Helper functions
+  function setLoadingState(isLoading) {
+    if (isLoading) {
+      extractBtn.disabled = true;
+      extractBtn.innerHTML = `
+        <div class="loading-spinner"></div>
+        Analyzing...
+      `;
+    } else {
+      extractBtn.disabled = false;
+      extractBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20,6 9,17 4,12"/>
+        </svg>
+        Analyze Text
+      `;
+    }
+  }
+  
+  function updateResults(data) {
+    if (data.highlighted_text) {
+      let displayText = data.highlighted_text;
+      
+      // Apply privacy mode if enabled
+      if (privacyMode && privacyMode.checked) {
+        displayText = applyPrivacyReplacement(displayText, data.entities);
+      }
+      
+      resultText.innerHTML = `<div class="results-text">${displayText}</div>`;
+    } else {
+      resultText.innerHTML = `
+        <div class="results-empty">
+          <div class="results-empty-icon">✅</div>
+          <p><strong>No sensitive information detected</strong></p>
+          <small>Your text appears to be clean of personally identifiable information</small>
+        </div>
+      `;
+    }
+    resultText.classList.add('animate-fade-in');
+  }
+  
+  function applyPrivacyReplacement(highlightedText, entities) {
+    if (!entities || entities.length === 0) return highlightedText;
+    
+    // Generic replacement labels
+    const PRIVACY_LABELS = {
+      'PER': '[PERSON]',
+      'LOC': '[LOCATION]',
+      'ORG': '[ORGANIZATION]',
+      'URL': '[URL]',
+      'EMAIL': '[EMAIL]',
+      'PHONE': '[PHONE_NUMBER]',
+      'CIVIL-ID': '[CIVIL_ID]',
+      'PASSPORT-ID': '[PASSPORT_ID]',
+      'CREDIT-CARD': '[CREDIT_CARD]'
+    };
+    
+    // Sort entities by start position (descending) to avoid position shifting during replacement
+    const sortedEntities = [...entities].sort((a, b) => b.start - a.start);
+    
+    let result = highlightedText;
+    
+    // Replace entities with generic labels
+    sortedEntities.forEach(entity => {
+      const text = entity.text;
+      const entityType = entity.entity_type;
+      const replacement = PRIVACY_LABELS[entityType] || `[${entityType}]`;
+      
+      // Escape special regex characters in the entity text
+      const escapedText = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      
+      // Create regex to find and replace the entity text within HTML spans
+      const entityRegex = new RegExp(
+        `<span[^>]*class="[^"]*entity-highlight[^"]*"[^>]*>([^<]*${escapedText}[^<]*)</span>`,
+        'gi'
+      );
+      
+      result = result.replace(entityRegex, (match, entityContent) => {
+        // Replace the entity text with the privacy label while keeping the span structure
+        const newContent = entityContent.replace(new RegExp(escapedText, 'gi'), replacement);
+        return match.replace(entityContent, newContent);
+      });
     });
+    
+    return result;
+  }
+  
+  function updateEntityStats(counts) {
+    if (!counts || Object.keys(counts).length === 0) {
+      entityStats.style.display = 'none';
+      return;
+    }
+    
+    entityStats.style.display = 'block';
+    entityBadges.innerHTML = '';
+    
+    Object.entries(counts).forEach(([entityType, count]) => {
+      const config = ENTITY_CONFIG[entityType] || {
+        color: '#64748b',
+        emoji: '🔍',
+        name: entityType
+      };
+      
+      const badge = document.createElement('div');
+      badge.className = 'stat-card animate-slide-up';
+      badge.innerHTML = `
+        <div class="stat-icon" style="background: ${config.color}20; color: ${config.color};">
+          ${config.emoji}
+        </div>
+        <p class="stat-label">${config.name}</p>
+        <p class="stat-value">${count}</p>
+      `;
+      
+      entityBadges.appendChild(badge);
+    });
+  }
+  
+  function updateTotalCounter(counts) {
+    const total = Object.values(counts || {}).reduce((sum, count) => sum + count, 0);
+    
+    if (total > 0) {
+      totalCounter.style.display = 'block';
+      totalCount.textContent = total;
+      totalCounter.classList.add('animate-pulse');
+      setTimeout(() => totalCounter.classList.remove('animate-pulse'), 600);
+    } else {
+      totalCounter.style.display = 'none';
+    }
+  }
+  
+  function clearAll() {
+    inputText.value = '';
+    resultText.innerHTML = `
+      <div class="results-empty">
+        <div class="results-empty-icon">🔍</div>
+        <p><strong>Ready to analyze</strong></p>
+        <small>Enter text above to detect personally identifiable information</small>
+      </div>
+    `;
+    entityBadges.innerHTML = '';
+    entityStats.style.display = 'none';
+    totalCounter.style.display = 'none';
+    localStorage.removeItem('pii-shield-input');
+    
+    // Focus input
+    inputText.focus();
+  }
+  
+  function showValidationError(message) {
+    resultText.innerHTML = `
+      <div class="alert alert-warning">
+        ⚠️ ${message}
+      </div>
+    `;
+    inputText.focus();
+  }
+  
+  function showError(message) {
+    resultText.innerHTML = `
+      <div class="alert alert-error">
+        ❌ ${message}
+      </div>
+    `;
+  }
+  
+  function showSuccessFeedback() {
+    extractBtn.classList.add('animate-pulse');
+    setTimeout(() => extractBtn.classList.remove('animate-pulse'), 600);
+  }
+  
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+}
 </script>
 {% endblock %}
