@@ -51,7 +51,11 @@
             top: 0;
             left: 0;
             opacity: 1;
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            /* Only transition visual properties, not position */
+            transition: background 0.2s ease, 
+                        border-color 0.2s ease,
+                        box-shadow 0.2s ease,
+                        transform 0.1s ease;
             transform: translate(-50%, -50%);
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.5),
                         0 0 40px rgba(59, 130, 246, 0.3),
@@ -189,41 +193,40 @@
                 return;
             }
             
-            let mouseX = 0;
-            let mouseY = 0;
-            let currentX = 0;
-            let currentY = 0;
-            let isMoving = false;
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+            let currentX = mouseX;
+            let currentY = mouseY;
+            let rafId = null;
             
-            // Track mouse movement
+            // Initialize cursor position
+            if (cursor) {
+                cursor.style.left = currentX + 'px';
+                cursor.style.top = currentY + 'px';
+            }
+            
+            // Subtle smooth cursor movement with very fast response
             document.addEventListener('mousemove', (e) => {
                 mouseX = e.clientX;
                 mouseY = e.clientY;
-                
-                if (!isMoving) {
-                    isMoving = true;
-                    requestAnimationFrame(updateCursor);
-                }
             });
             
-            // Smooth cursor animation
-            function updateCursor() {
-                // Smooth interpolation for cursor movement
-                currentX += (mouseX - currentX) * 0.9;
-                currentY += (mouseY - currentY) * 0.9;
+            function animate() {
+                // Very fast interpolation (0.8 = 80% immediate movement)
+                const speed = 0.8;
+                currentX += (mouseX - currentX) * speed;
+                currentY += (mouseY - currentY) * speed;
                 
                 if (cursor) {
                     cursor.style.left = currentX + 'px';
                     cursor.style.top = currentY + 'px';
                 }
                 
-                // Continue animation if mouse is still moving
-                if (Math.abs(mouseX - currentX) > 0.1 || Math.abs(mouseY - currentY) > 0.1) {
-                    requestAnimationFrame(updateCursor);
-                } else {
-                    isMoving = false;
-                }
+                rafId = requestAnimationFrame(animate);
             }
+            
+            // Start animation loop
+            animate();
             
             // Add click effect
             document.addEventListener('mousedown', () => {
