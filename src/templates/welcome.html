@@ -1,21 +1,45 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to PII-Shield</title>
-    <meta name="description" content="Advanced AI-powered data protection platform for detecting and protecting personally identifiable information.">
+    <title>مرحباً بك في درع الخصوصية - PII Shield</title>
+    <meta name="description" content="منصة متطورة لحماية البيانات الشخصية في المنطقة العربية">
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/styles.css">
     
     <style>
+        * {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 30%, #16213e  100%);
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        
         .welcome-hero {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
+            background: linear-gradient(135deg, 
+                rgba(15, 15, 35, 0.95) 0%, 
+                rgba(26, 26, 46, 0.9) 30%, 
+                rgba(22, 33, 62, 0.95) 60%,
+                rgba(13, 19, 33, 0.98) 100%),
+                radial-gradient(circle at 20% 80%, rgba(120, 200, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 200, 120, 0.08) 0%, transparent 50%);
+            color: #ffffff;
             text-align: center;
-            padding: var(--space-20) 0;
+            padding: 5rem 0 8rem 0;
             position: relative;
             overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .welcome-hero::before {
@@ -25,141 +49,239 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.08)"/><circle cx="40" cy="60" r="1" fill="rgba(255,255,255,0.12)"/><circle cx="70" cy="80" r="2.5" fill="rgba(255,255,255,0.06)"/><circle cx="10" cy="80" r="1.8" fill="rgba(255,255,255,0.1)"/></svg>');
-            opacity: 0.3;
-            animation: float 20s linear infinite;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(216, 180, 254, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(34, 197, 94, 0.04) 0%, transparent 25%),
+                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 30%);
+            animation: cosmicFloat 25s ease-in-out infinite;
+        }
+        
+        .welcome-hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.15), transparent),
+                radial-gradient(2px 2px at 40% 70%, rgba(255, 255, 255, 0.1), transparent),
+                radial-gradient(1px 1px at 90% 40%, rgba(255, 255, 255, 0.2), transparent),
+                radial-gradient(1px 1px at 60% 10%, rgba(255, 255, 255, 0.08), transparent);
+            background-size: 400px 400px, 300px 300px, 200px 200px, 150px 150px;
+            animation: starfield 30s linear infinite;
         }
         
         .welcome-content {
             position: relative;
-            z-index: 1;
-            max-width: 800px;
+            z-index: 2;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 0 var(--space-6);
+            padding: 0 2rem;
+            text-align: center;
         }
         
         .welcome-logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto var(--space-6);
-            animation: pulse 2s ease-in-out infinite;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+            position: relative;
+            animation: logoFloat 4s ease-in-out infinite, logoGlow 2s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.4));
+        }
+        
+        .logo-ring {
+            position: absolute;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+        
+        .logo-ring:nth-child(1) {
+            width: 140px;
+            height: 140px;
+            top: -10px;
+            left: -10px;
+            border-top-color: rgba(34, 197, 94, 0.5);
+        }
+        
+        .logo-ring:nth-child(2) {
+            width: 160px;
+            height: 160px;
+            top: -20px;
+            left: -20px;
+            border-right-color: rgba(168, 85, 247, 0.4);
+            animation: rotate 15s linear infinite reverse;
         }
         
         .welcome-title {
-            font-size: var(--text-4xl);
-            font-weight: var(--weight-bold);
-            margin-bottom: var(--space-4);
-            line-height: var(--leading-tight);
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 50%, #c7d2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+        
+        .welcome-subtitle {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #60a5fa;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
         }
         
         .welcome-description {
-            font-size: var(--text-xl);
-            opacity: 0.95;
-            margin-bottom: var(--space-8);
-            line-height: var(--leading-relaxed);
+            font-size: 1.25rem;
+            opacity: 0.85;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .welcome-cta {
             display: inline-flex;
             align-items: center;
-            gap: var(--space-2);
-            background: white;
-            color: var(--primary);
-            padding: var(--space-4) var(--space-8);
-            border-radius: var(--radius-full);
-            font-weight: var(--weight-semibold);
-            font-size: var(--text-lg);
+            gap: 0.75rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
             text-decoration: none;
-            transition: all var(--transition-normal);
-            box-shadow: var(--shadow-xl);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 
+                0 10px 30px rgba(59, 130, 246, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
         }
         
         .welcome-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-xl), 0 0 20px rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 20px 40px rgba(59, 130, 246, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
         
-        .features-section {
-            padding: var(--space-20) 0;
-            background: var(--surface);
+        .welcome-cta:hover::before {
+            left: 100%;
         }
         
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-8);
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 var(--space-6);
+        .cta-icon {
+            transition: transform 0.3s ease;
         }
         
-        .feature-card {
-            background: white;
-            padding: var(--space-8);
-            border-radius: var(--radius-2xl);
-            box-shadow: var(--shadow-md);
-            text-align: center;
-            transition: all var(--transition-normal);
+        .welcome-cta:hover .cta-icon {
+            transform: translateX(5px) rotate(45deg);
         }
         
-        .feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
+        
+        @keyframes cosmicFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            25% { transform: translateY(-10px) rotate(90deg) scale(1.05); }
+            50% { transform: translateY(-15px) rotate(180deg) scale(1.1); }
+            75% { transform: translateY(-8px) rotate(270deg) scale(1.03); }
         }
         
-        .feature-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: var(--radius-full);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: var(--text-3xl);
-            margin: 0 auto var(--space-4);
+        @keyframes starfield {
+            from { transform: translateY(0); }
+            to { transform: translateY(-200px); }
         }
         
-        .feature-title {
-            font-size: var(--text-xl);
-            font-weight: var(--weight-semibold);
-            color: var(--text-primary);
-            margin-bottom: var(--space-3);
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
         }
         
-        .feature-description {
-            color: var(--text-secondary);
-            line-height: var(--leading-relaxed);
+        @keyframes logoGlow {
+            0% { filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3)); }
+            100% { filter: drop-shadow(0 0 40px rgba(59, 130, 246, 0.6)); }
         }
         
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
-            100% { transform: translateY(0px) rotate(360deg); }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes textGlow {
+            0% { text-shadow: 0 4px 20px rgba(59, 130, 246, 0.2); }
+            100% { text-shadow: 0 4px 30px rgba(59, 130, 246, 0.5); }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-slide-up {
+            animation: slideInUp 0.8s ease-out forwards;
+            opacity: 0;
         }
         
         @media (max-width: 768px) {
             .welcome-hero {
-                padding: var(--space-16) 0;
+                padding: 3rem 0 5rem 0;
+                min-height: 100vh;
             }
             
             .welcome-title {
-                font-size: var(--text-3xl);
+                font-size: 2.5rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 1.2rem;
             }
             
             .welcome-description {
-                font-size: var(--text-lg);
+                font-size: 1.1rem;
+                margin-bottom: 2rem;
             }
             
-            .features-section {
-                padding: var(--space-16) 0;
+            .welcome-logo {
+                width: 100px;
+                height: 100px;
             }
             
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: var(--space-6);
+            .logo-ring:nth-child(1) {
+                width: 120px;
+                height: 120px;
             }
             
-            .feature-card {
-                padding: var(--space-6);
+            .logo-ring:nth-child(2) {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .welcome-content {
+                padding: 0 1rem;
             }
         }
     </style>
@@ -168,27 +290,39 @@
     <!-- Hero Section -->
     <section class="welcome-hero">
         <div class="welcome-content">
-            <svg class="welcome-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="heroLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#f8fafc;stop-opacity:0.8" />
-                    </linearGradient>
-                </defs>
-                <path fill="url(#heroLogoGradient)" d="M50,5 L85,20 C85,45 80,75 50,95 C20,75 15,45 15,20 L50,5 Z" />
-                <circle fill="rgba(37, 99, 235, 0.8)" cx="50" cy="50" r="18" />
-                <circle fill="white" cx="50" cy="50" r="12" />
-                <path stroke="rgba(37, 99, 235, 0.8)" stroke-width="3" fill="none" stroke-linecap="round" d="M40,50 L48,58 L60,46" />
-            </svg>
+            <div class="welcome-logo animate-slide-up">
+                <div class="logo-ring"></div>
+                <div class="logo-ring"></div>
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="heroLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="shieldGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+                            <stop offset="100%" style="stop-color:#e0e7ff;stop-opacity:0.7" />
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#heroLogoGradient)" d="M50,5 L85,20 C85,45 80,75 50,95 C20,75 15,45 15,20 L50,5 Z" />
+                    <circle fill="url(#shieldGlow)" cx="50" cy="50" r="18" />
+                    <circle fill="rgba(59, 130, 246, 0.9)" cx="50" cy="50" r="12" />
+                    <path stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" d="M40,50 L48,58 L60,46" />
+                </svg>
+            </div>
             
-            <h1 class="welcome-title">Welcome to PII-Shield</h1>
-            <p class="welcome-description">
-                Advanced AI-powered platform for detecting and protecting personally identifiable information in your text content.
+            <h1 class="welcome-title animate-slide-up">درع الخصوصية</h1>
+            <h2 class="welcome-subtitle animate-slide-up">PII Shield</h2>
+            <p class="welcome-description animate-slide-up">
+                منصة ذكية متطورة لحماية البيانات الشخصية والمعلومات الحساسة في النصوص العربية والإنجليزية
+                <br>
+                <em style="opacity: 0.7; font-size: 0.9em;">Advanced AI platform for protecting personal data in Arabic and English content</em>
             </p>
             
-            <a href="/set-welcome-complete" class="welcome-cta">
-                <span>Get Started</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <a href="/set-welcome-complete" class="welcome-cta animate-slide-up">
+                <span>ابدأ الآن</span>
+                <svg class="cta-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="7" y1="17" x2="17" y2="7"/>
                     <polyline points="7,7 17,7 17,17"/>
                 </svg>
@@ -196,79 +330,50 @@
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features-section">
-        <div class="features-grid">
-            <div class="feature-card animate-fade-in">
-                <div class="feature-icon" style="background: rgba(37, 99, 235, 0.1); color: #2563eb;">
-                    🤖
-                </div>
-                <h3 class="feature-title">AI-Powered Detection</h3>
-                <p class="feature-description">
-                    Advanced machine learning models trained to identify various types of personally identifiable information with high accuracy and minimal false positives.
-                </p>
-            </div>
-
-            <div class="feature-card animate-fade-in">
-                <div class="feature-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
-                    ⚡
-                </div>
-                <h3 class="feature-title">Real-Time Analysis</h3>
-                <p class="feature-description">
-                    Get instant results as you type. Our optimized processing pipeline delivers fast, accurate analysis of your text content in real-time.
-                </p>
-            </div>
-
-            <div class="feature-card animate-fade-in">
-                <div class="feature-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
-                    🛡️
-                </div>
-                <h3 class="feature-title">Privacy-First Design</h3>
-                <p class="feature-description">
-                    Your data stays secure. All processing happens locally with no data storage or transmission to external servers, ensuring complete privacy.
-                </p>
-            </div>
-
-            <div class="feature-card animate-fade-in">
-                <div class="feature-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
-                    📊
-                </div>
-                <h3 class="feature-title">Detailed Analytics</h3>
-                <p class="feature-description">
-                    Comprehensive statistics and visualizations help you understand the types and frequency of sensitive data in your content.
-                </p>
-            </div>
-
-            <div class="feature-card animate-fade-in">
-                <div class="feature-icon" style="background: rgba(6, 182, 212, 0.1); color: #06b6d4;">
-                    🌍
-                </div>
-                <h3 class="feature-title">Multi-Language Support</h3>
-                <p class="feature-description">
-                    Support for multiple languages including English and Arabic, with specialized models optimized for different linguistic patterns.
-                </p>
-            </div>
-
-            <div class="feature-card animate-fade-in">
-                <div class="feature-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">
-                    🎯
-                </div>
-                <h3 class="feature-title">High Accuracy</h3>
-                <p class="feature-description">
-                    State-of-the-art models deliver precision detection of names, locations, organizations, contact information, and identification numbers.
-                </p>
-            </div>
-        </div>
-    </section>
 
     <script>
-        // Add animation delays to feature cards
         document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.feature-card');
-            cards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.1}s`;
+            // Add staggered animation delays
+            const animatedElements = document.querySelectorAll('.animate-slide-up');
+            animatedElements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.2 + 0.3}s`;
             });
+            
+            // Add floating particles effect
+            createFloatingParticles();
         });
+        
+        function createFloatingParticles() {
+            const hero = document.querySelector('.welcome-hero');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.cssText = `
+                    position: absolute;
+                    width: ${Math.random() * 4 + 1}px;
+                    height: ${Math.random() * 4 + 1}px;
+                    background: rgba(59, 130, 246, ${Math.random() * 0.5 + 0.2});
+                    border-radius: 50%;
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                    animation: particleFloat ${Math.random() * 10 + 10}s ease-in-out infinite;
+                    animation-delay: ${Math.random() * 5}s;
+                `;
+                hero.appendChild(particle);
+            }
+        }
+        
+        // Add CSS for particle animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes particleFloat {
+                0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.2; }
+                25% { transform: translateY(-20px) translateX(10px) scale(1.2); opacity: 0.4; }
+                50% { transform: translateY(-40px) translateX(-5px) scale(0.8); opacity: 0.6; }
+                75% { transform: translateY(-20px) translateX(-10px) scale(1.1); opacity: 0.3; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
