@@ -131,11 +131,62 @@
         }
         
         .brand-tagline {
-            font-size: 1.5rem;
-            font-weight: 500;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            letter-spacing: 0.01em;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 0.75rem;
+        }
+        
+        .brand-subtitle {
+            font-size: 1.1rem;
+            font-weight: 400;
             color: #64748b;
+            letter-spacing: 0.02em;
+            font-family: 'Inter', sans-serif;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            font-size: 0.95rem;
+        }
+        
+        .value-props {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 3rem 0 4rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .value-prop {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        .value-prop:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .prop-icon {
+            font-size: 2rem;
+            line-height: 1;
+        }
+        
+        .prop-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            text-align: center;
             font-family: 'Inter', sans-serif;
         }
         
@@ -235,16 +286,11 @@
             }
             
             .brand-tagline {
-                font-size: 1rem;
+                font-size: 1.25rem;
             }
             
-            .welcome-subtitle {
-                font-size: 1.5rem;
-            }
-            
-            .welcome-description {
-                font-size: 1.1rem;
-                margin-bottom: 2rem;
+            .brand-subtitle {
+                font-size: 0.85rem;
             }
             
             .welcome-content {
@@ -263,12 +309,12 @@
                     <span class="brand-highlight">PII</span>
                     <span class="brand-main">Detector</span>
                 </h1>
-                <div class="brand-tagline">Protect Your Data</div>
+                <div class="brand-tagline">Enterprise Data Protection Solution</div>
+                <div class="brand-subtitle">Advanced AI-Powered Privacy Protection</div>
             </div>
             
-            
             <a href="/set-welcome-complete" class="welcome-cta animate-slide-up">
-                <span>Get Started</span>
+                <span>Launch Application</span>
                 <svg class="cta-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="5" y1="12" x2="19" y2="12"/>
                     <polyline points="12,5 19,12 12,19"/>
