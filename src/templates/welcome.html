@@ -6,8 +6,63 @@
 {% block head %}
     <style>
         body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            background: linear-gradient(135deg, #0a0e27 0%, #070b1a 50%, #020408 100%);
             min-height: 100vh;
+            position: relative;
+            cursor: none;
+        }
+        
+        .custom-cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #3b82f6;
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease, background 0.15s ease;
+            transform: translate(-50%, -50%);
+        }
+        
+        .custom-cursor.active {
+            transform: translate(-50%, -50%) scale(0.8);
+            background: rgba(59, 130, 246, 0.6);
+        }
+        
+        a, button, .welcome-cta {
+            cursor: none;
+        }
+        
+        a:hover ~ .custom-cursor,
+        button:hover ~ .custom-cursor,
+        .welcome-cta:hover ~ .custom-cursor {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.3);
+            transform: translate(-50%, -50%) scale(1.5);
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 50%, rgba(34, 197, 94, 0.05) 0%, transparent 50%);
+            opacity: 0;
+            animation: pulseGlow 6s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulseGlow {
+            0% {
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 1;
+            }
         }
         
         .welcome-hero {
@@ -23,20 +78,21 @@
         .welcome-hero::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 20%, rgba(34, 197, 94, 0.1) 0%, transparent 50%);
-            animation: backgroundFloat 20s ease-in-out infinite;
+            width: 150%;
+            height: 150%;
+            top: -25%;
+            left: -25%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            animation: backgroundDrift 30s linear infinite;
         }
         
-        @keyframes backgroundFloat {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(-20px, -20px) rotate(120deg); }
-            66% { transform: translate(20px, -10px) rotate(240deg); }
+        @keyframes backgroundDrift {
+            from {
+                transform: translate(0, 0);
+            }
+            to {
+                transform: translate(-100px, -100px);
+            }
         }
         
         .welcome-content {
@@ -534,12 +590,15 @@
                         0 0 0 10px rgba(59, 130, 246, 0.1);
         }
         
-        .cta-icon {
+        .cta-arrow {
+            font-size: 1.2rem;
+            font-weight: 300;
             transition: transform 0.3s ease;
+            margin-left: 0.25rem;
         }
         
-        .welcome-cta:hover .cta-icon {
-            transform: translateX(5px) translateY(-2px);
+        .welcome-cta:hover .cta-arrow {
+            transform: translateX(3px);
         }
         
         @keyframes fadeInScale {
@@ -596,6 +655,8 @@
 
 {% block content %}
     <!-- Hero Section -->
+    <div class="custom-cursor"></div>
+    
     <section class="welcome-hero">
         <div class="welcome-content">
             <div class="welcome-branding animate-slide-up">
@@ -614,10 +675,6 @@
                 
                 <a href="/set-welcome-complete" class="welcome-cta">
                     <span>Start</span>
-                    <svg class="cta-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                        <polyline points="12,5 19,12 12,19"/>
-                    </svg>
                 </a>
             </div>
         </div>
@@ -633,7 +690,58 @@
             
             // Add floating particles effect
             createFloatingParticles();
+            
+            // Initialize custom cursor
+            initCustomCursor();
         });
+        
+        function initCustomCursor() {
+            const cursor = document.querySelector('.custom-cursor');
+            let mouseX = 0;
+            let mouseY = 0;
+            
+            // Track mouse movement
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                cursor.style.left = mouseX + 'px';
+                cursor.style.top = mouseY + 'px';
+            });
+            
+            // Add click effect
+            document.addEventListener('mousedown', () => {
+                cursor.classList.add('active');
+            });
+            
+            document.addEventListener('mouseup', () => {
+                cursor.classList.remove('active');
+            });
+            
+            // Change cursor on hover
+            const hoverElements = document.querySelectorAll('a, button, .welcome-cta');
+            hoverElements.forEach(elem => {
+                elem.addEventListener('mouseenter', () => {
+                    cursor.style.borderColor = '#10b981';
+                    cursor.style.background = 'rgba(16, 185, 129, 0.3)';
+                    cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                });
+                
+                elem.addEventListener('mouseleave', () => {
+                    cursor.style.borderColor = '#3b82f6';
+                    cursor.style.background = 'rgba(59, 130, 246, 0.3)';
+                    cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                });
+            });
+            
+            // Hide cursor when leaving window
+            document.addEventListener('mouseleave', () => {
+                cursor.style.opacity = '0';
+            });
+            
+            document.addEventListener('mouseenter', () => {
+                cursor.style.opacity = '1';
+            });
+        }
         
         function createFloatingParticles() {
             const hero = document.querySelector('.welcome-hero');
