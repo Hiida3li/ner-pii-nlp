@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Welcome to PII-Shield{% endblock %}
+{% block title %}Welcome to PII Detector{% endblock %}
 {% block description %}Advanced AI-powered platform for detecting and protecting personally identifiable information{% endblock %}
 
 {% block head %}
@@ -49,15 +49,15 @@
         }
         
         .welcome-logo {
-            width: 200px;
-            height: 200px;
+            width: 220px;
+            height: 220px;
             margin: 0 auto 3rem;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             animation: logoFloat 6s ease-in-out infinite;
-            filter: drop-shadow(0 20px 60px rgba(59, 130, 246, 0.4));
+            filter: drop-shadow(0 10px 30px rgba(59, 130, 246, 0.3));
         }
         
         @keyframes logoFloat {
@@ -239,142 +239,47 @@
                 <div class="logo-ring"></div>
                 <div class="logo-ring"></div>
                 <div class="logo-ring"></div>
-                <!-- Professional Hexagon Logo Design -->
-                <svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
-                    <defs>
-                        <!-- Professional Gradients -->
-                        <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#1e3a8a" />
-                            <stop offset="50%" style="stop-color:#2563eb" />
-                            <stop offset="100%" style="stop-color:#3b82f6" />
-                        </linearGradient>
-                        
-                        <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#059669" />
-                            <stop offset="50%" style="stop-color:#10b981" />
-                            <stop offset="100%" style="stop-color:#34d399" />
-                        </linearGradient>
-                        
-                        <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
-                            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-                            <stop offset="50%" style="stop-color:#60a5fa;stop-opacity:0.8" />
-                            <stop offset="100%" style="stop-color:#2563eb;stop-opacity:0.3" />
-                        </radialGradient>
-                        
-                        <!-- Professional Shadow -->
-                        <filter id="professionalShadow" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
-                            <feOffset dx="0" dy="4" result="offsetblur"/>
-                            <feFlood flood-color="#1e3a8a" flood-opacity="0.3"/>
-                            <feComposite in2="offsetblur" operator="in"/>
-                            <feMerge>
-                                <feMergeNode/>
-                                <feMergeNode in="SourceGraphic"/>
-                            </feMerge>
-                        </filter>
-                        
-                        <!-- Glow Effect -->
-                        <filter id="glowEffect" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
-                            <feMerge>
-                                <feMergeNode in="coloredBlur"/>
-                                <feMergeNode in="SourceGraphic"/>
-                            </feMerge>
-                        </filter>
-                    </defs>
+                <!-- Creative Neural Scanner Logo -->
+                <div style="width: 130px; height: 130px; position: relative; display: flex; align-items: center; justify-content: center;">
+                    <!-- Outer scanning rings -->
+                    <div style="position: absolute; width: 120px; height: 120px; border: 2px solid #3b82f6; border-radius: 50%; opacity: 0.3; animation: pulse 3s ease-in-out infinite;"></div>
+                    <div style="position: absolute; width: 100px; height: 100px; border: 2px solid #06b6d4; border-radius: 50%; opacity: 0.5; animation: pulse 3s ease-in-out infinite 0.5s;"></div>
+                    <div style="position: absolute; width: 80px; height: 80px; border: 2px solid #10b981; border-radius: 50%; opacity: 0.7; animation: pulse 3s ease-in-out infinite 1s;"></div>
                     
-                    <!-- Hexagon Shield Background -->
-                    <path d="M90 20 L140 50 L140 110 L90 140 L40 110 L40 50 Z" 
-                          fill="url(#primaryGradient)" 
-                          filter="url(#professionalShadow)" 
-                          opacity="0.9">
-                        <animate attributeName="opacity" values="0.9;0.7;0.9" dur="4s" repeatCount="indefinite"/>
-                    </path>
+                    <!-- Central hexagonal core -->
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #4f46e5, #06b6d4); clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%); position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);">
+                        <!-- Inner scanning dot -->
+                        <div style="width: 12px; height: 12px; background: #ffffff; border-radius: 50%; position: relative;">
+                            <div style="position: absolute; width: 6px; height: 6px; background: #4f46e5; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: scan 2s linear infinite;"></div>
+                        </div>
+                    </div>
                     
-                    <!-- Inner Hexagon -->
-                    <path d="M90 35 L125 55 L125 105 L90 125 L55 105 L55 55 Z" 
-                          fill="none" 
-                          stroke="url(#accentGradient)" 
-                          stroke-width="2" 
-                          opacity="0.8">
-                        <animate attributeName="stroke-dasharray" values="0 320;160 160;320 0" dur="3s" repeatCount="indefinite"/>
-                    </path>
-                    
-                    <!-- Central Core -->
-                    <circle cx="90" cy="80" r="35" fill="url(#coreGlow)" filter="url(#glowEffect)">
-                        <animate attributeName="r" values="35;38;35" dur="2s" repeatCount="indefinite"/>
-                    </circle>
-                    
-                    <!-- AI Eye Symbol -->
-                    <g transform="translate(90, 80)">
-                        <!-- Outer Eye -->
-                        <ellipse rx="25" ry="15" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.9">
-                            <animate attributeName="ry" values="15;18;15" dur="1.5s" repeatCount="indefinite"/>
-                        </ellipse>
-                        
-                        <!-- Inner Eye -->
-                        <circle r="10" fill="#ffffff">
-                            <animate attributeName="r" values="10;8;10" dur="1.2s" repeatCount="indefinite"/>
-                        </circle>
-                        
-                        <!-- Pupil -->
-                        <circle r="5" fill="url(#primaryGradient)">
-                            <animate attributeName="r" values="5;3;5" dur="1s" repeatCount="indefinite"/>
-                        </circle>
-                    </g>
-                    
-                    <!-- Data Streams -->
-                    <g opacity="0.7">
-                        <!-- Left Stream -->
-                        <rect x="20" y="75" width="30" height="2" fill="url(#accentGradient)">
-                            <animate attributeName="width" values="0;30;0" dur="2s" repeatCount="indefinite"/>
-                            <animate attributeName="x" values="50;20;50" dur="2s" repeatCount="indefinite"/>
-                        </rect>
-                        <rect x="20" y="85" width="25" height="2" fill="url(#accentGradient)">
-                            <animate attributeName="width" values="0;25;0" dur="2.2s" repeatCount="indefinite"/>
-                            <animate attributeName="x" values="45;20;45" dur="2.2s" repeatCount="indefinite"/>
-                        </rect>
-                        
-                        <!-- Right Stream -->
-                        <rect x="130" y="75" width="30" height="2" fill="url(#accentGradient)">
-                            <animate attributeName="width" values="0;30;0" dur="2.1s" repeatCount="indefinite"/>
-                        </rect>
-                        <rect x="135" y="85" width="25" height="2" fill="url(#accentGradient)">
-                            <animate attributeName="width" values="0;25;0" dur="2.3s" repeatCount="indefinite"/>
-                        </rect>
-                    </g>
-                    
-                    <!-- Security Nodes -->
-                    <g filter="url(#glowEffect)">
-                        <circle cx="90" cy="30" r="4" fill="#10b981">
-                            <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
-                        </circle>
-                        <circle cx="130" cy="50" r="4" fill="#10b981">
-                            <animate attributeName="opacity" values="1;0.3;1" dur="1.7s" repeatCount="indefinite"/>
-                        </circle>
-                        <circle cx="130" cy="110" r="4" fill="#10b981">
-                            <animate attributeName="opacity" values="1;0.3;1" dur="1.9s" repeatCount="indefinite"/>
-                        </circle>
-                        <circle cx="90" cy="130" r="4" fill="#10b981">
-                            <animate attributeName="opacity" values="1;0.3;1" dur="2.1s" repeatCount="indefinite"/>
-                        </circle>
-                        <circle cx="50" cy="110" r="4" fill="#10b981">
-                            <animate attributeName="opacity" values="1;0.3;1" dur="2.3s" repeatCount="indefinite"/>
-                        </circle>
-                        <circle cx="50" cy="50" r="4" fill="#10b981">
-                            <animate attributeName="opacity" values="1;0.3;1" dur="2.5s" repeatCount="indefinite"/>
-                        </circle>
-                    </g>
-                    
-                    <!-- Scanning Beam -->
-                    <line x1="90" y1="80" x2="90" y2="40" stroke="url(#accentGradient)" stroke-width="3" stroke-linecap="round" opacity="0.8">
-                        <animateTransform attributeName="transform" type="rotate" values="0 90 80;360 90 80" dur="3s" repeatCount="indefinite"/>
-                        <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.5s" repeatCount="indefinite"/>
-                    </line>
-                </svg>
+                    <!-- Data stream lines -->
+                    <div style="position: absolute; width: 2px; height: 20px; background: linear-gradient(to bottom, #10b981, transparent); top: 10px; left: 50%; transform: translateX(-50%); opacity: 0.8; animation: dataFlow 1.5s ease-in-out infinite;"></div>
+                    <div style="position: absolute; width: 2px; height: 20px; background: linear-gradient(to top, #10b981, transparent); bottom: 10px; left: 50%; transform: translateX(-50%); opacity: 0.8; animation: dataFlow 1.5s ease-in-out infinite 0.3s;"></div>
+                    <div style="position: absolute; width: 20px; height: 2px; background: linear-gradient(to right, #10b981, transparent); left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.8; animation: dataFlow 1.5s ease-in-out infinite 0.6s;"></div>
+                    <div style="position: absolute; width: 20px; height: 2px; background: linear-gradient(to left, #10b981, transparent); right: 10px; top: 50%; transform: translateY(-50%); opacity: 0.8; animation: dataFlow 1.5s ease-in-out infinite 0.9s;"></div>
+                </div>
+                
+                <style>
+                    @keyframes pulse {
+                        0%, 100% { transform: scale(1); opacity: 0.3; }
+                        50% { transform: scale(1.1); opacity: 0.8; }
+                    }
+                    @keyframes scan {
+                        0% { transform: translate(-50%, -50%) scale(1); }
+                        50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.5; }
+                        100% { transform: translate(-50%, -50%) scale(1); }
+                    }
+                    @keyframes dataFlow {
+                        0% { opacity: 0; transform: scale(0.8); }
+                        50% { opacity: 1; transform: scale(1.2); }
+                        100% { opacity: 0; transform: scale(0.8); }
+                    }
+                </style>
             </div>
             
-            <h1 class="welcome-title animate-slide-up">PII-Shield</h1>
+            <h1 class="welcome-title animate-slide-up">PII Detector</h1>
             <h2 class="welcome-subtitle animate-slide-up">كاشف البيانات الشخصية</h2>
             <p class="welcome-description animate-slide-up">
                 منصة ذكية متطورة لحماية البيانات الشخصية والمعلومات الحساسة في النصوص العربية والإنجليزية
