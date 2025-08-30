@@ -34,130 +34,118 @@
 
   <!-- Main Content -->
   <main class="section">
-    <!-- Model Selection -->
-    <div class="card mb-8">
-      <div class="card-header">
-        <h3>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
-          </svg>
-          AI Model Configuration
-        </h3>
-      </div>
-      <div class="card-body">
-        <div class="grid grid-cols-1 md:grid-cols-2">
-          <div class="form-group">
-            <label for="model-selector" class="form-label">Select AI Model</label>
+    <!-- Simplified Controls Bar -->
+    <div style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem; box-shadow: 0 5px 20px rgba(0,0,0,0.08);">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-weight: 600; color: #4a5568;">AI Model:</span>
             <div class="custom-select-wrapper">
-              <div id="model-selector-display" class="form-select custom-select-display" tabindex="0">
-                <span class="custom-select-text">CamelBert - Arabic Language Support</span>
+              <div id="model-selector-display" class="form-select custom-select-display" tabindex="0" style="background: white; border: 2px solid #e2e8f0; padding: 8px 16px; min-width: 200px;">
+                <span class="custom-select-text" style="font-size: 0.95rem;">CamelBert - Arabic</span>
                 <svg class="custom-select-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
                   <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
               </div>
               <div class="custom-select-dropdown" style="display: none;">
-                <div class="custom-select-option" data-value="v2">PII-Shield v2 - Enhanced Protection</div>
-                <div class="custom-select-option custom-select-option-selected" data-value="v3">CamelBert - Arabic Language Support</div>
+                <div class="custom-select-option" data-value="v2">PII-Shield v2</div>
+                <div class="custom-select-option custom-select-option-selected" data-value="v3">CamelBert - Arabic</div>
               </div>
               <select id="model-selector" class="form-select-hidden" style="display: none;">
-                <option value="v2">PII-Shield v2 - Enhanced Protection</option>
-                <option value="v3" selected>CamelBert - Arabic Language Support</option>
+                <option value="v2">PII-Shield v2</option>
+                <option value="v3" selected>CamelBert - Arabic</option>
               </select>
             </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Privacy Mode</label>
-            <label class="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" id="privacy-mode" class="form-checkbox" checked>
-              <span class="text-sm">Replace entities with generic labels for privacy</span>
-            </label>
-          </div>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="privacy-mode" class="form-checkbox" checked style="width: 20px; height: 20px;">
+            <span style="font-weight: 500; color: #4a5568;">Privacy Mode</span>
+          </label>
+        </div>
+        <div id="total-counter" style="display: none; background: white; padding: 10px 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+          <span style="color: #718096; font-size: 0.9rem;">Entities Found:</span>
+          <span id="total-count" style="font-size: 1.5rem; font-weight: 700; color: #2563eb; margin-left: 0.5rem;">0</span>
         </div>
       </div>
     </div>
 
-    <!-- Entity Counter -->
-    <div id="total-counter" class="total-counter animate-fade-in" style="display: none;">
-      <div class="total-counter-content">
-        <p class="total-counter-label">Total Entities Detected</p>
-        <h2 class="total-counter-value" id="total-count">0</h2>
-      </div>
-    </div>
 
-
-    <!-- Main Analysis Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2">
+    <!-- Main Analysis Area -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
       <!-- Input Section -->
-      <div class="card">
-        <div class="card-header">
-          <h3>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div style="background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div style="background: linear-gradient(135deg, #2563eb, #10b981); padding: 8px; border-radius: 8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
               <polyline points="14,2 14,8 20,8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/>
-              <polyline points="10,9 9,9 8,9"/>
             </svg>
-            Text Input
-          </h3>
+          </div>
+          <h3 style="font-size: 1.25rem; font-weight: 600; color: #2d3748; margin: 0;">Input Text</h3>
         </div>
-        <div class="card-body">
-          <div class="form-group">
-            <label for="input-text" class="form-label">Enter text to analyze</label>
-            <textarea 
-              id="input-text" 
-              class="form-textarea" 
-              placeholder="Paste or type your text here. Our AI will identify and highlight sensitive information like names, locations, organizations, emails, phone numbers, and other personally identifiable information..."
-              rows="8"
-            ></textarea>
-          </div>
-          <div class="flex gap-4">
-            <button id="extract-btn" class="btn btn-primary flex-1">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="20,6 9,17 4,12"/>
-              </svg>
-              Analyze Text
-            </button>
-            <button id="clear-btn" class="btn btn-secondary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3,6 5,6 21,6"/>
-                <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6"/>
-                <path d="M8,6V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
-              </svg>
-              Clear
-            </button>
-          </div>
+        <textarea 
+          id="input-text" 
+          class="form-textarea" 
+          placeholder="Paste or type your text here to detect sensitive information..."
+          rows="12"
+          style="width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem; line-height: 1.6; resize: vertical; min-height: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;"
+        ></textarea>
+        <div style="display: flex; gap: 1rem; margin-top: 1.25rem;">
+          <button id="extract-btn" style="flex: 1; background: linear-gradient(135deg, #2563eb, #10b981); color: white; padding: 12px 24px; border-radius: 10px; border: none; font-weight: 600; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: transform 0.2s, box-shadow 0.2s;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20,6 9,17 4,12"/>
+            </svg>
+            Analyze
+          </button>
+          <button id="clear-btn" style="background: #f7fafc; color: #4a5568; padding: 12px 24px; border-radius: 10px; border: 2px solid #e2e8f0; font-weight: 600; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+            Clear
+          </button>
         </div>
       </div>
 
       <!-- Results Section -->
-      <div class="card">
-        <div class="card-header">
-          <h3>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="3"/>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      <div style="background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div style="background: linear-gradient(135deg, #10b981, #06b6d4); padding: 8px; border-radius: 8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
+              <path d="M9 11l3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
             </svg>
-            Analysis Results
-          </h3>
-        </div>
-        <div class="card-body">
-          <div id="result-text" class="results-container">
-            <div class="results-empty">
-              <div class="results-empty-icon">🔍</div>
-              <p><strong>Ready to analyze</strong></p>
-              <small>Enter text above to detect personally identifiable information</small>
-            </div>
           </div>
-
-          <!-- Statistics Section -->
-          <div id="entity-stats" class="mt-6" style="display: none;">
-            <h4 class="text-lg font-semibold text-primary mb-4">Entity Statistics</h4>
-            <div class="stats-grid" id="entity-badges"></div>
+          <h3 style="font-size: 1.25rem; font-weight: 600; color: #2d3748; margin: 0;">Analysis Results</h3>
+        </div>
+        <div id="result-text" class="results-container" style="min-height: 300px; padding: 1rem; background: #f8f9fa; border-radius: 10px; border: 2px solid #e2e8f0; overflow-y: auto; max-height: 400px;">
+          <div class="results-empty" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 280px; color: #718096;">
+            <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">🔍</div>
+            <p style="font-size: 1.1rem; font-weight: 600; margin: 0; color: #4a5568;">Ready to analyze</p>
+            <small style="margin-top: 0.5rem; color: #718096;">Enter text to detect sensitive information</small>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div id="entity-stats" style="display: none; background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+      <h4 style="font-size: 1.25rem; font-weight: 600; color: #2d3748; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.75rem;">
+        <div style="background: linear-gradient(135deg, #f59e0b, #ef4444); padding: 6px; border-radius: 6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
+            <line x1="12" y1="2" x2="12" y2="6"/>
+            <line x1="12" y1="18" x2="12" y2="22"/>
+            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
+            <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+            <line x1="2" y1="12" x2="6" y2="12"/>
+            <line x1="18" y1="12" x2="22" y2="12"/>
+            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
+            <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+          </svg>
+        </div>
+        Entity Statistics
+      </h4>
+      <div class="stats-grid" id="entity-badges" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;"></div>
     </div>
 
   </main>
@@ -387,14 +375,32 @@ function initializeApp() {
       };
       
       const badge = document.createElement('div');
-      badge.className = 'stat-card animate-slide-up';
-      badge.innerHTML = `
-        <div class="stat-icon" style="background: ${config.color}20; color: ${config.color};">
-          ${config.emoji}
-        </div>
-        <p class="stat-label">${config.name}</p>
-        <p class="stat-value">${count}</p>
+      badge.style.cssText = `
+        background: white;
+        border: 2px solid ${config.color}30;
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       `;
+      badge.innerHTML = `
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">${config.emoji}</div>
+        <p style="font-size: 0.85rem; color: #718096; margin: 0;">${config.name}</p>
+        <p style="font-size: 1.5rem; font-weight: 700; color: ${config.color}; margin: 0.25rem 0 0 0;">${count}</p>
+      `;
+      
+      badge.onmouseenter = function() {
+        this.style.transform = 'translateY(-4px)';
+        this.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)';
+        this.style.borderColor = config.color;
+      };
+      
+      badge.onmouseleave = function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = '0 2px 10px rgba(0,0,0,0.05)';
+        this.style.borderColor = `${config.color}30`;
+      };
       
       entityBadges.appendChild(badge);
     });
