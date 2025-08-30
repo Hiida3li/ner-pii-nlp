@@ -143,7 +143,7 @@ MODEL_CONFIGS = {
 }
 ```
 
-## 📚 API Documentation
+##  API Documentation
 
 ### Core Endpoints
 
