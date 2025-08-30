@@ -372,7 +372,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 - [PyTorch](https://pytorch.org/) - Deep learning framework
 - [ArabertV2](https://huggingface.co/aubmindlab/bert-base-arabertv2) - Arabic language model
 
-## 📞 Support
+##  Support
 
 For issues, questions, or suggestions:
 - Open an issue on GitHub
