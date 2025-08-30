@@ -46,7 +46,7 @@ PII Detector is an advanced AI-powered platform for detecting and protecting per
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/ner-pii-nlp.git
+git clone https://github.com/Hiida3li/ner-pii-nlp.git
 cd ner-pii-nlp
 ```
 
