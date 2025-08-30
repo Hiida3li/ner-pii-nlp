@@ -42,12 +42,11 @@
             width: 20px;
             height: 20px;
             background: radial-gradient(circle,
-                rgba(16, 185, 129, 0.9) 0%,
-                rgba(16, 185, 129, 0.6) 30%,
-                rgba(59, 130, 246, 0.4) 60%,
-                rgba(59, 130, 246, 0.2) 85%,
+                rgba(59, 130, 246, 0.8) 0%,
+                rgba(59, 130, 246, 0.5) 40%,
+                rgba(59, 130, 246, 0.2) 70%,
                 transparent 100%);
-            border: 1.5px solid rgba(16, 185, 129, 0.5);
+            border: 2px solid rgba(59, 130, 246, 0.6);
             border-radius: 50%;
             position: fixed;
             pointer-events: none;
@@ -55,92 +54,52 @@
             top: 0;
             left: 0;
             opacity: 1;
-            transition: transform 0.2s ease;
+            transition: transform 0.15s ease,
+                        border-color 0.3s ease,
+                        background 0.3s ease;
             transform: translate(-50%, -50%);
-            animation: colorSwitch 3s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5),
+                        0 0 40px rgba(59, 130, 246, 0.3);
         }
         
-        /* Center dot with color animation */
+        /* Simple center dot */
         .custom-cursor::before {
             content: '';
             position: absolute;
-            width: 6px;
-            height: 6px;
+            width: 4px;
+            height: 4px;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             border-radius: 50%;
             background: white;
-            box-shadow: 0 0 10px white;
-            animation: centerColorSwitch 3s ease-in-out infinite;
+            opacity: 0.9;
         }
         
-        /* Outer ring with color animation */
+        /* Clean glow effect */
         .custom-cursor::after {
             content: '';
             position: absolute;
-            width: 28px;
-            height: 28px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
             border-radius: 50%;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            animation: ringColorSwitch 3s ease-in-out infinite;
+            background: radial-gradient(circle,
+                transparent 30%,
+                rgba(59, 130, 246, 0.1) 70%,
+                transparent 100%);
+            animation: pulse 2s ease-in-out infinite;
         }
         
-        @keyframes colorSwitch {
+        @keyframes pulse {
             0%, 100% {
-                background: radial-gradient(circle,
-                    rgba(16, 185, 129, 0.9) 0%,
-                    rgba(16, 185, 129, 0.6) 30%,
-                    rgba(59, 130, 246, 0.4) 60%,
-                    rgba(59, 130, 246, 0.2) 85%,
-                    transparent 100%);
-                border-color: rgba(16, 185, 129, 0.5);
-                box-shadow: 0 0 20px rgba(16, 185, 129, 0.7),
-                            0 0 40px rgba(16, 185, 129, 0.4),
-                            0 0 60px rgba(16, 185, 129, 0.2),
-                            inset 0 0 10px rgba(16, 185, 129, 0.3);
+                transform: scale(1);
+                opacity: 1;
             }
             50% {
-                background: radial-gradient(circle,
-                    rgba(59, 130, 246, 0.9) 0%,
-                    rgba(59, 130, 246, 0.6) 30%,
-                    rgba(147, 51, 234, 0.4) 60%,
-                    rgba(147, 51, 234, 0.2) 85%,
-                    transparent 100%);
-                border-color: rgba(59, 130, 246, 0.5);
-                box-shadow: 0 0 20px rgba(59, 130, 246, 0.7),
-                            0 0 40px rgba(147, 51, 234, 0.4),
-                            0 0 60px rgba(59, 130, 246, 0.2),
-                            inset 0 0 10px rgba(59, 130, 246, 0.3);
-            }
-        }
-        
-        @keyframes centerColorSwitch {
-            0%, 100% {
-                background: rgba(147, 197, 253, 0.9);
-                box-shadow: 0 0 8px rgba(147, 197, 253, 0.8),
-                            0 0 15px rgba(16, 185, 129, 0.6);
-            }
-            50% {
-                background: rgba(255, 255, 255, 0.9);
-                box-shadow: 0 0 8px rgba(255, 255, 255, 0.8),
-                            0 0 15px rgba(147, 51, 234, 0.6);
-            }
-        }
-        
-        @keyframes ringColorSwitch {
-            0%, 100% {
-                border-color: rgba(16, 185, 129, 0.3);
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.4;
-            }
-            50% {
-                border-color: rgba(147, 51, 234, 0.3);
-                transform: translate(-50%, -50%) scale(1.2);
-                opacity: 0.6;
+                transform: scale(1.5);
+                opacity: 0.5;
             }
         }
         
