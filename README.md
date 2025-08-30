@@ -90,22 +90,22 @@ python main.py
 #### Option 2: Using Uvicorn directly
 ```bash
 cd src
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn main:app --host 0.0.0.0 --port 8001 --reload
 ```
 
 #### Option 3: Production deployment
 ```bash
 cd src
-uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
+uvicorn main:app --host 0.0.0.0 --port 8001 --workers 4
 ```
 
 ### 🌐 Accessing the Application
 
 Once running, access the application at:
 
-- **Web Interface**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/docs
-- **Alternative API Docs**: http://localhost:8000/redoc
+- **Web Interface**: http://localhost:8001
+- **API Documentation**: http://localhost:8001/docs
+- **Alternative API Docs**: http://localhost:8001/redoc
 
 ## 🛠️ Configuration
 
@@ -116,7 +116,7 @@ Create a `.env` file in the root directory:
 ```env
 # Server Configuration
 HOST=0.0.0.0
-PORT=8000
+PORT=8001
 
 # Model Configuration  
 DEFAULT_MODEL=v2
