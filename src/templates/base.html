@@ -39,170 +39,115 @@
         }
         
         .custom-cursor {
-            width: 30px;
-            height: 30px;
+            width: 20px;
+            height: 20px;
+            background: rgba(59, 130, 246, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
             position: fixed;
             pointer-events: none;
             z-index: 99999;
             top: 0;
             left: 0;
-            opacity: 0.9;
+            opacity: 1;
+            transition: transform 0.2s ease,
+                        background 0.3s ease,
+                        border 0.3s ease;
             transform: translate(-50%, -50%);
-            animation: rotateReticle 8s linear infinite;
+            box-shadow: 0 8px 32px 0 rgba(59, 130, 246, 0.25),
+                        inset 0 0 0 1px rgba(147, 197, 253, 0.2),
+                        0 0 40px rgba(6, 182, 212, 0.2);
+            animation: glassFloat 4s ease-in-out infinite;
         }
         
-        /* Horizontal line */
+        /* Inner light reflection */
         .custom-cursor::before {
             content: '';
             position: absolute;
-            width: 100%;
-            height: 2px;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            background: linear-gradient(90deg, 
-                transparent 0%,
-                rgba(59, 130, 246, 0.3) 20%,
-                rgba(59, 130, 246, 0.8) 40%,
-                transparent 45%,
-                transparent 55%,
-                rgba(59, 130, 246, 0.8) 60%,
-                rgba(59, 130, 246, 0.3) 80%,
-                transparent 100%);
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+            width: 10px;
+            height: 10px;
+            top: 3px;
+            left: 3px;
+            border-radius: 50%;
+            background: linear-gradient(
+                135deg,
+                rgba(219, 234, 254, 0.6) 0%,
+                rgba(147, 197, 253, 0.3) 50%,
+                transparent 100%
+            );
+            animation: shimmer 3s ease-in-out infinite;
         }
         
-        /* Vertical line */
+        /* Center glow */
         .custom-cursor::after {
             content: '';
             position: absolute;
-            width: 2px;
-            height: 100%;
-            top: 0;
+            width: 8px;
+            height: 8px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(180deg, 
-                transparent 0%,
-                rgba(6, 182, 212, 0.3) 20%,
-                rgba(6, 182, 212, 0.8) 40%,
-                transparent 45%,
-                transparent 55%,
-                rgba(6, 182, 212, 0.8) 60%,
-                rgba(6, 182, 212, 0.3) 80%,
-                transparent 100%);
-            box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(circle,
+                rgba(6, 182, 212, 0.9) 0%,
+                rgba(59, 130, 246, 0.5) 40%,
+                transparent 70%);
+            animation: glowPulse 2s ease-in-out infinite;
         }
         
-        /* Corner brackets */
-        .custom-cursor-corners {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-        }
-        
-        .custom-cursor-corners::before {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border: 2px solid rgba(16, 185, 129, 0.6);
-            border-right: none;
-            border-bottom: none;
-            top: 8px;
-            left: 8px;
-            animation: cornerPulse 2s ease-in-out infinite;
-        }
-        
-        .custom-cursor-corners::after {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border: 2px solid rgba(16, 185, 129, 0.6);
-            border-left: none;
-            border-top: none;
-            bottom: 8px;
-            right: 8px;
-            animation: cornerPulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes rotateReticle {
-            0% {
-                transform: translate(-50%, -50%) rotate(0deg);
-            }
-            100% {
-                transform: translate(-50%, -50%) rotate(360deg);
-            }
-        }
-        
-        @keyframes cornerPulse {
+        @keyframes glassFloat {
             0%, 100% {
-                opacity: 0.6;
-                transform: scale(1);
+                box-shadow: 0 8px 32px 0 rgba(59, 130, 246, 0.25),
+                            inset 0 0 0 1px rgba(147, 197, 253, 0.2),
+                            0 0 40px rgba(6, 182, 212, 0.2);
             }
             50% {
-                opacity: 1;
-                transform: scale(1.1);
+                box-shadow: 0 8px 32px 0 rgba(59, 130, 246, 0.35),
+                            inset 0 0 0 1px rgba(147, 197, 253, 0.3),
+                            0 0 60px rgba(6, 182, 212, 0.3);
+            }
+        }
+        
+        @keyframes shimmer {
+            0%, 100% {
+                opacity: 0.5;
+                transform: rotate(0deg);
+            }
+            50% {
+                opacity: 0.8;
+                transform: rotate(180deg);
+            }
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.4;
             }
         }
         
         .custom-cursor.active {
-            animation: rotateReticle 8s linear infinite, contractReticle 0.2s ease;
+            transform: translate(-50%, -50%) scale(0.6);
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.9), rgba(16, 185, 129, 0.3));
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.7),
+                        0 0 60px rgba(16, 185, 129, 0.4);
         }
         
-        .custom-cursor.active::before,
-        .custom-cursor.active::after {
-            background: linear-gradient(90deg, 
-                transparent 0%,
-                rgba(16, 185, 129, 0.5) 20%,
-                rgba(16, 185, 129, 1) 40%,
-                transparent 45%,
-                transparent 55%,
-                rgba(16, 185, 129, 1) 60%,
-                rgba(16, 185, 129, 0.5) 80%,
-                transparent 100%);
-        }
-        
-        /* Hover state - changes crosshair color */
-        .custom-cursor.hover::before {
-            background: linear-gradient(90deg, 
-                transparent 0%,
-                rgba(16, 185, 129, 0.4) 20%,
-                rgba(16, 185, 129, 0.9) 40%,
-                transparent 45%,
-                transparent 55%,
-                rgba(16, 185, 129, 0.9) 60%,
-                rgba(16, 185, 129, 0.4) 80%,
-                transparent 100%);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
-        }
-        
-        .custom-cursor.hover::after {
-            background: linear-gradient(180deg, 
-                transparent 0%,
-                rgba(16, 185, 129, 0.4) 20%,
-                rgba(16, 185, 129, 0.9) 40%,
-                transparent 45%,
-                transparent 55%,
-                rgba(16, 185, 129, 0.9) 60%,
-                rgba(16, 185, 129, 0.4) 80%,
-                transparent 100%);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
-        }
-        
-        @keyframes contractReticle {
-            0% {
-                transform: translate(-50%, -50%) scale(1);
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(0.8);
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-            }
+        /* Simple hover state - just change color */
+        .custom-cursor.hover {
+            background: radial-gradient(circle, 
+                rgba(16, 185, 129, 1) 0%, 
+                rgba(16, 185, 129, 0.8) 30%,
+                rgba(16, 185, 129, 0.4) 60%,
+                rgba(16, 185, 129, 0.1) 100%);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.7),
+                        0 0 50px rgba(16, 185, 129, 0.4);
         }
         
         @keyframes magnifyPulse {
