@@ -281,7 +281,7 @@ Error: [Errno 48] Address already in use
 **Solution**: Change port in command or kill existing process:
 ```bash
 # Find process using port 8000
-lsof -i :8000
+lsof -i :8001
 # Kill the process
 kill -9 <PID>
 ```
