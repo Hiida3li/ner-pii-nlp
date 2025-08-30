@@ -39,13 +39,14 @@
         }
         
         .custom-cursor {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             background: radial-gradient(circle, 
-                rgba(59, 130, 246, 1) 0%, 
-                rgba(59, 130, 246, 0.8) 30%,
-                rgba(59, 130, 246, 0.4) 60%,
-                rgba(59, 130, 246, 0.1) 100%);
+                rgba(147, 51, 234, 0.9) 0%, 
+                rgba(59, 130, 246, 0.7) 25%,
+                rgba(16, 185, 129, 0.5) 50%,
+                rgba(59, 130, 246, 0.2) 75%,
+                rgba(147, 51, 234, 0.05) 100%);
             border-radius: 50%;
             position: fixed;
             pointer-events: none;
@@ -53,37 +54,103 @@
             top: 0;
             left: 0;
             opacity: 1;
-            transition: background 0.2s ease, 
-                        box-shadow 0.2s ease,
-                        transform 0.15s ease;
+            transition: background 0.3s ease, 
+                        box-shadow 0.3s ease,
+                        transform 0.2s ease,
+                        width 0.2s ease,
+                        height 0.2s ease;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6),
-                        0 0 40px rgba(59, 130, 246, 0.3);
-            animation: gentlePulse 3s ease-in-out infinite;
+            box-shadow: 0 0 30px rgba(147, 51, 234, 0.4),
+                        0 0 60px rgba(59, 130, 246, 0.3),
+                        0 0 90px rgba(16, 185, 129, 0.2),
+                        inset 0 0 15px rgba(255, 255, 255, 0.2);
+            animation: gentlePulse 4s ease-in-out infinite, colorShift 8s ease-in-out infinite;
+            backdrop-filter: blur(1px);
+            mix-blend-mode: screen;
         }
         
-        /* Simple inner dot */
+        /* Glowing inner core */
         .custom-cursor::before {
             content: '';
             position: absolute;
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             border-radius: 50%;
-            background: white;
-            opacity: 0.9;
+            background: radial-gradient(circle,
+                rgba(255, 255, 255, 1) 0%,
+                rgba(255, 255, 255, 0.8) 40%,
+                rgba(147, 51, 234, 0.6) 100%);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            animation: coreGlow 2s ease-in-out infinite;
+        }
+        
+        /* Outer ring */
+        .custom-cursor::after {
+            content: '';
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            opacity: 0.6;
+            animation: ringExpand 3s ease-in-out infinite;
         }
         
         @keyframes gentlePulse {
             0%, 100% {
-                box-shadow: 0 0 20px rgba(59, 130, 246, 0.6),
-                            0 0 40px rgba(59, 130, 246, 0.3);
+                box-shadow: 0 0 30px rgba(147, 51, 234, 0.4),
+                            0 0 60px rgba(59, 130, 246, 0.3),
+                            0 0 90px rgba(16, 185, 129, 0.2),
+                            inset 0 0 15px rgba(255, 255, 255, 0.2);
             }
             50% {
-                box-shadow: 0 0 25px rgba(59, 130, 246, 0.7),
-                            0 0 50px rgba(59, 130, 246, 0.4);
+                box-shadow: 0 0 40px rgba(147, 51, 234, 0.5),
+                            0 0 80px rgba(59, 130, 246, 0.4),
+                            0 0 120px rgba(16, 185, 129, 0.3),
+                            inset 0 0 20px rgba(255, 255, 255, 0.3);
+            }
+        }
+        
+        @keyframes colorShift {
+            0%, 100% {
+                filter: hue-rotate(0deg) brightness(1);
+            }
+            25% {
+                filter: hue-rotate(30deg) brightness(1.1);
+            }
+            50% {
+                filter: hue-rotate(-30deg) brightness(1.2);
+            }
+            75% {
+                filter: hue-rotate(15deg) brightness(1.1);
+            }
+        }
+        
+        @keyframes coreGlow {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.8;
+            }
+        }
+        
+        @keyframes ringExpand {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.2;
             }
         }
         
