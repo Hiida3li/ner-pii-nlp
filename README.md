@@ -11,7 +11,7 @@
 
 PII Detector is an advanced AI-powered platform for detecting and protecting personally identifiable information (PII) in text. Built with FastAPI and state-of-the-art NLP models, it provides real-time entity detection with a beautiful, intuitive interface.
 
-### ✨ Key Features
+###  Key Features
 
 - **🤖 Advanced AI Models**: PII-NER-v2 model with superior accuracy
 - **🌐 Web Interface**: Modern, responsive UI with dark/light themes
