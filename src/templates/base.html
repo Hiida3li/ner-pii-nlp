@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="auto">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,12 +13,11 @@
     <!-- CSS -->
     <link rel="stylesheet" href="/static/css/styles.css">
     
-    <!-- Theme detection script -->
+    <!-- Theme detection script - Default to dark theme -->
     <script>
         (function() {
             const savedTheme = localStorage.getItem('pii-shield-theme');
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+            const theme = savedTheme || 'dark'; // Default to dark theme
             document.documentElement.setAttribute('data-theme', theme);
         })();
     </script>
