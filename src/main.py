@@ -41,8 +41,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title=APP_TITLE, description=APP_DESCRIPTION, lifespan=lifespan)
 
 # Mount static files and templates
-app.mount("/static", StaticFiles(directory="src/static"), name="static")
-templates = Jinja2Templates(directory="src/templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
 # Pydantic models for API
 class TextRequest(BaseModel):
