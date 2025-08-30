@@ -21,7 +21,7 @@ PII Detector is an advanced AI-powered platform for detecting and protecting per
 - **🎯 Multi-language Support**: Optimized for English and Arabic text
 - **🔌 RESTful API**: Full-featured API with comprehensive documentation
 
-### 🏷️ Supported Entity Types
+###  Supported Entity Types
 
 - 👤 **Person Names** (PER)
 - 📍 **Locations** (LOC)
@@ -79,7 +79,7 @@ mkdir -p PII-NER-V2
 # Place model.pt in pii_shield_v001/
 ```
 
-### 🏃 Running the Application
+###  Running the Application
 
 #### Option 1: Using the main script (Recommended)
 ```bash
