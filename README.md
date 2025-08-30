@@ -72,7 +72,7 @@ pip install -r requirements.txt
 ```bash
 # Create required directories
 mkdir -p checkpoints
-mkdir -p pii_shield_v001
+mkdir -p PII-NER-V2
 
 # Download model files (contact repository owner for access)
 # Place pii_shield_002v.pt in checkpoints/
