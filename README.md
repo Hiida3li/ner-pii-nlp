@@ -256,7 +256,7 @@ ner-pii-nlp/
 │       ├── index.html              # Main application page
 │       └── welcome.html            # Welcome screen
 ├── checkpoints/
-│   └── PII-NER-v2                  # PII-NER-v2 model
+│   └── pii_shield_002v.pt         # PII-NER-v2 model
 ├── requirements.txt                # Python dependencies
 ├── .gitignore                      # Git ignore file
 ├── LICENSE                         # Apache 2.0 License
