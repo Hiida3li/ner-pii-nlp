@@ -7,7 +7,7 @@
     <div class="container">
       <div class="header-content">
         <div class="header-brand">
-          <svg class="header-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <svg class="header-logo dynamic-hover" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="transition: transform 0.3s ease;">
             <defs>
               <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
@@ -39,10 +39,10 @@
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <span style="font-weight: 600;">AI Model:</span>
-            <div class="model-display" style="padding: 10px 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.05)); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 12px; display: inline-flex; align-items: center; gap: 0.75rem;">
-              <span style="font-size: 1.2rem;">🚀</span>
-              <span style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">PII-NER-v2</span>
+            <span class="dynamic-hover" style="font-weight: 600; transition: transform 0.3s ease; display: inline-block;">AI Model:</span>
+            <div class="model-display dynamic-hover" style="padding: 10px 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.05)); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 12px; display: inline-flex; align-items: center; gap: 0.75rem; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+              <span class="rocket-emoji dynamic-hover" style="font-size: 1.2rem; display: inline-block; transition: transform 0.3s ease;">🚀</span>
+              <span class="model-name dynamic-hover" style="font-size: 1rem; font-weight: 600; color: var(--text-primary); display: inline-block; transition: transform 0.3s ease;">PII-NER-v2</span>
             </div>
             <select id="model-selector" class="form-select-hidden" style="display: none;">
               <option value="v2" selected>PII-NER-v2</option>
@@ -327,6 +327,69 @@ function initializeApp() {
   if (savedInput) {
     inputText.value = savedInput;
   }
+  
+  // Add dynamic hover effects to AI Model components
+  function addDynamicHoverEffects() {
+    // Shield logo hover effect
+    const shieldLogo = document.querySelector('.header-logo');
+    if (shieldLogo) {
+      shieldLogo.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.15) rotate(5deg)';
+      });
+      shieldLogo.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1) rotate(0deg)';
+      });
+    }
+    
+    // AI Model label hover effect
+    const aiModelLabel = document.querySelector('.dynamic-hover[style*="font-weight: 600"]');
+    if (aiModelLabel && aiModelLabel.textContent.includes('AI Model')) {
+      aiModelLabel.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.1)';
+      });
+      aiModelLabel.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+      });
+    }
+    
+    // Model display box hover effect
+    const modelDisplay = document.querySelector('.model-display');
+    if (modelDisplay) {
+      modelDisplay.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.05)';
+        this.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.2)';
+      });
+      modelDisplay.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+        this.style.boxShadow = 'none';
+      });
+    }
+    
+    // Rocket emoji hover effect with rotation
+    const rocketEmoji = document.querySelector('.rocket-emoji');
+    if (rocketEmoji) {
+      rocketEmoji.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.3) rotate(15deg)';
+      });
+      rocketEmoji.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1) rotate(0deg)';
+      });
+    }
+    
+    // PII-NER-v2 text hover effect
+    const modelName = document.querySelector('.model-name');
+    if (modelName) {
+      modelName.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.1)';
+      });
+      modelName.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+      });
+    }
+  }
+  
+  // Initialize dynamic hover effects
+  addDynamicHoverEffects();
   
   // Helper functions
   function setLoadingState(isLoading) {
