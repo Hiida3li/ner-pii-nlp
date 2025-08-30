@@ -379,5 +379,5 @@ For issues, questions, or suggestions:
 ---
 
 <div align="center">
-  Made with ❤️ by the PII Detector Team
+  Made by Orki Team
 </div>
