@@ -40,34 +40,13 @@
         <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
             <span style="font-weight: 600;">AI Model:</span>
-            <div class="custom-select-wrapper">
-              <div id="model-selector-display" class="form-select custom-select-display" tabindex="0" style="padding: 10px 20px; min-width: 200px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.05)); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 12px; transition: all 0.3s ease; cursor: none;">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                  <span class="model-emoji" style="font-size: 1.2rem;">🚀</span>
-                  <span class="custom-select-text" style="font-size: 1rem; font-weight: 600;">Enhanced v2</span>
-                </div>
-              </div>
-              <div class="custom-select-dropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 0.5rem; background: var(--surface); border: 2px solid rgba(59, 130, 246, 0.2); border-radius: 12px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); z-index: 1000; overflow: hidden;">
-                <div class="custom-select-option custom-select-option-selected" data-value="v2" style="padding: 1rem 1.2rem; display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
-                  <span style="font-size: 1.1rem;">🚀</span>
-                  <div style="flex: 1;">
-                    <div style="font-weight: 600;">Enhanced v2</div>
-                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">Best accuracy & performance</div>
-                  </div>
-                </div>
-                <div class="custom-select-option" data-value="v1" style="padding: 1rem 1.2rem; display: flex; align-items: center; gap: 0.75rem;">
-                  <span style="font-size: 1.1rem;">📊</span>
-                  <div style="flex: 1;">
-                    <div style="font-weight: 600;">Original Model</div>
-                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">Legacy support</div>
-                  </div>
-                </div>
-              </div>
-              <select id="model-selector" class="form-select-hidden" style="display: none;">
-                <option value="v2" selected>Enhanced v2</option>
-                <option value="v1">Original Model</option>
-              </select>
+            <div class="model-display" style="padding: 10px 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.05)); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 12px; display: inline-flex; align-items: center; gap: 0.75rem;">
+              <span style="font-size: 1.2rem;">🚀</span>
+              <span style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">Enhanced v2</span>
             </div>
+            <select id="model-selector" class="form-select-hidden" style="display: none;">
+              <option value="v2" selected>Enhanced v2</option>
+            </select>
           </div>
           <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
             <input type="checkbox" id="privacy-mode" class="form-checkbox" checked style="width: 20px; height: 20px;">
@@ -178,9 +157,6 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateThemeToggle(theme) {
     slider.textContent = theme === 'dark' ? '🌙' : '☀️';
   }
-  
-  // Initialize custom select dropdown
-  initializeCustomSelect();
   
   // Initialize main app
   initializeApp();
@@ -467,156 +443,6 @@ function initializeApp() {
       timeout = setTimeout(later, wait);
     };
   }
-}
-
-function initializeCustomSelect() {
-  const display = document.getElementById('model-selector-display');
-  const dropdown = document.querySelector('.custom-select-dropdown');
-  const options = document.querySelectorAll('.custom-select-option');
-  const hiddenSelect = document.getElementById('model-selector');
-  const selectText = document.querySelector('.custom-select-text');
-  
-  // Enhanced hover effect for display
-  display.addEventListener('mouseenter', function() {
-    this.style.transform = 'translateY(-2px)';
-    this.style.boxShadow = '0 8px 30px rgba(59, 130, 246, 0.25)';
-    this.style.borderColor = 'rgba(59, 130, 246, 0.5)';
-  });
-  
-  display.addEventListener('mouseleave', function() {
-    this.style.transform = '';
-    this.style.boxShadow = '';
-    this.style.borderColor = 'rgba(59, 130, 246, 0.3)';
-  });
-  
-  // Toggle dropdown with animation
-  display.addEventListener('click', function(e) {
-    e.stopPropagation();
-    const isOpen = dropdown.style.display === 'block';
-    
-    if (!isOpen) {
-      dropdown.style.display = 'block';
-      dropdown.style.opacity = '0';
-      dropdown.style.transform = 'translateY(-10px)';
-      setTimeout(() => {
-        dropdown.style.transition = 'all 0.3s ease';
-        dropdown.style.opacity = '1';
-        dropdown.style.transform = 'translateY(0)';
-      }, 10);
-    } else {
-      dropdown.style.opacity = '0';
-      dropdown.style.transform = 'translateY(-10px)';
-      setTimeout(() => {
-        dropdown.style.display = 'none';
-      }, 200);
-    }
-  });
-  
-  // Handle option selection
-  options.forEach(option => {
-    // Hover effect for options
-    option.addEventListener('mouseenter', function() {
-      if (!this.classList.contains('custom-select-option-selected')) {
-        this.style.background = 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.05))';
-        this.style.transform = 'translateX(5px)';
-      }
-    });
-    
-    option.addEventListener('mouseleave', function() {
-      if (!this.classList.contains('custom-select-option-selected')) {
-        this.style.background = '';
-        this.style.transform = '';
-      }
-    });
-    
-    option.addEventListener('click', function(e) {
-      e.stopPropagation();
-      
-      // Update selected state
-      options.forEach(opt => {
-        opt.classList.remove('custom-select-option-selected');
-        opt.style.background = '';
-        opt.style.transform = '';
-      });
-      this.classList.add('custom-select-option-selected');
-      this.style.background = 'linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(16, 185, 129, 0.08))';
-      
-      // Update display with model info
-      const modelName = this.querySelector('div > div:first-child')?.textContent || 'Enhanced v2';
-      const emoji = this.querySelector('span')?.textContent || '🚀';
-      
-      selectText.textContent = modelName;
-      const displayEmoji = display.querySelector('span');
-      if (displayEmoji) {
-        displayEmoji.textContent = emoji;
-      }
-      
-      // Update hidden select value
-      hiddenSelect.value = this.getAttribute('data-value');
-      
-      // Close dropdown with animation
-      dropdown.style.opacity = '0';
-      dropdown.style.transform = 'translateY(-10px)';
-      setTimeout(() => {
-        dropdown.style.display = 'none';
-      }, 200);
-      
-      // Trigger change event on hidden select
-      hiddenSelect.dispatchEvent(new Event('change'));
-    });
-  });
-  
-  // Close dropdown when clicking outside
-  document.addEventListener('click', function(e) {
-    if (!display.contains(e.target) && !dropdown.contains(e.target)) {
-      if (dropdown.style.display === 'block') {
-        dropdown.style.opacity = '0';
-        dropdown.style.transform = 'translateY(-10px)';
-        setTimeout(() => {
-          dropdown.style.display = 'none';
-        }, 200);
-      }
-    }
-  });
-  
-  // Handle keyboard navigation
-  display.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      display.click();
-    }
-  });
-  
-  // Add checkmark style for selected option
-  const style = document.createElement('style');
-  style.textContent = `
-    .custom-select-option-selected::after {
-      content: '✓';
-      position: absolute;
-      right: 1.2rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--primary);
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-    
-    .custom-select-option {
-      position: relative;
-      transition: all 0.2s ease;
-      cursor: none !important;
-    }
-    
-    .custom-select-wrapper {
-      position: relative;
-    }
-    
-    [data-theme="dark"] .custom-select-dropdown {
-      background: rgba(30, 41, 59, 0.98);
-      backdrop-filter: blur(20px);
-    }
-  `;
-  document.head.appendChild(style);
 }
 </script>
 {% endblock %}
