@@ -341,7 +341,7 @@ export LOG_LEVEL=WARNING
 gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001
 ```
 
-## 📈 Performance Optimization
+##  Performance Optimization
 
 ### Tips for Better Performance
 
@@ -351,7 +351,7 @@ gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001
 4. **Use CDN** for static files
 5. **Enable gzip compression** in nginx/Apache
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -365,7 +365,7 @@ Contributions are welcome! Please follow these steps:
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - [FastAPI](https://fastapi.tiangolo.com/) - Modern web framework
 - [Transformers](https://huggingface.co/transformers) - State-of-the-art NLP
