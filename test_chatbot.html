@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test PII Chatbot Integration</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 10px;
+        }
+        .test-case {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #10b981;
+        }
+        .test-input {
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .expected {
+            color: #059669;
+            font-weight: bold;
+        }
+        .api-key-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .result {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #f0f9ff;
+            border: 1px solid #3b82f6;
+            white-space: pre-wrap;
+        }
+        .error {
+            background: #fef2f2;
+            border-color: #ef4444;
+            color: #dc2626;
+        }
+        .success {
+            background: #f0fdf4;
+            border-color: #10b981;
+            color: #059669;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛡️ PII Protected Chatbot - Test Suite</h1>
+    
+    <div class="test-section">
+        <h2>Configuration</h2>
+        <label>OpenAI API Key:</label>
+        <input type="password" id="apiKey" class="api-key-input" placeholder="sk-...">
+        <label style="display: block; margin-top: 10px;">
+            <input type="checkbox" id="privacyMode" checked> Privacy Mode Enabled
+        </label>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Cases</h2>
+        
+        <div class="test-case">
+            <h3>Test 1: Personal Information</h3>
+            <div class="test-input">
+                "My name is John Smith and I live at 123 Main Street, New York. My email is john@example.com and my phone is 555-0123."
+            </div>
+            <p class="expected">Expected: PII entities should be masked as [PERSON], [LOCATION], [EMAIL], [PHONE_NUMBER]</p>
+            <button onclick="runTest(1)">Run Test 1</button>
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-case">
+            <h3>Test 2: Financial Information</h3>
+            <div class="test-input">
+                "My credit card number is 4532-1234-5678-9012 and my passport number is A12345678."
+            </div>
+            <p class="expected">Expected: Credit card and passport should be masked as [CREDIT_CARD], [PASSPORT_ID]</p>
+            <button onclick="runTest(2)">Run Test 2</button>
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-case">
+            <h3>Test 3: Organization and URL</h3>
+            <div class="test-input">
+                "I work at Microsoft Corporation. Visit our website at https://www.microsoft.com for more information."
+            </div>
+            <p class="expected">Expected: Organization and URL should be masked as [ORGANIZATION], [URL]</p>
+            <button onclick="runTest(3)">Run Test 3</button>
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-case">
+            <h3>Test 4: No PII Content</h3>
+            <div class="test-input">
+                "The weather today is sunny and warm. I enjoy reading books and watching movies."
+            </div>
+            <p class="expected">Expected: No masking should occur, text should pass through unchanged</p>
+            <button onclick="runTest(4)">Run Test 4</button>
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Full Integration Test</h2>
+        <button onclick="runFullTest()">Run All Tests</button>
+        <div id="fullResult" class="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        const testCases = {
+            1: "My name is John Smith and I live at 123 Main Street, New York. My email is john@example.com and my phone is 555-0123.",
+            2: "My credit card number is 4532-1234-5678-9012 and my passport number is A12345678.",
+            3: "I work at Microsoft Corporation. Visit our website at https://www.microsoft.com for more information.",
+            4: "The weather today is sunny and warm. I enjoy reading books and watching movies."
+        };
+
+        async function runTest(testNumber) {
+            const apiKey = document.getElementById('apiKey').value;
+            const privacyMode = document.getElementById('privacyMode').checked;
+            const resultDiv = document.getElementById(`result${testNumber}`);
+            
+            if (!apiKey) {
+                alert('Please enter your OpenAI API key');
+                return;
+            }
+
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Testing...';
+
+            try {
+                // Step 1: Detect PII
+                const piiResponse = await fetch('http://localhost:8001/api/extract', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: testCases[testNumber],
+                        model_version: 'v2'
+                    })
+                });
+
+                const piiData = await piiResponse.json();
+                
+                // Process message
+                let processedMessage = testCases[testNumber];
+                if (privacyMode && piiData.entities && piiData.entities.length > 0) {
+                    processedMessage = maskPiiEntities(testCases[testNumber], piiData.entities);
+                }
+
+                // Step 2: Send to chat API
+                const chatResponse = await fetch('http://localhost:8001/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: processedMessage,
+                        api_key: apiKey,
+                        conversation_history: [],
+                        pii_detected: piiData.entities && piiData.entities.length > 0,
+                        privacy_mode: privacyMode
+                    })
+                });
+
+                if (!chatResponse.ok) {
+                    const error = await chatResponse.json();
+                    throw new Error(error.detail || 'Chat API error');
+                }
+
+                const chatData = await chatResponse.json();
+
+                // Display results
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ Test ${testNumber} Passed\n\n`;
+                resultDiv.textContent += `Original: ${testCases[testNumber]}\n\n`;
+                resultDiv.textContent += `PII Detected: ${JSON.stringify(piiData.entity_counts, null, 2)}\n\n`;
+                if (privacyMode) {
+                    resultDiv.textContent += `Masked Message: ${processedMessage}\n\n`;
+                }
+                resultDiv.textContent += `AI Response: ${chatData.response}\n`;
+                resultDiv.textContent += `PII Protected: ${chatData.pii_protected}`;
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Test ${testNumber} Failed\n\nError: ${error.message}`;
+            }
+        }
+
+        function maskPiiEntities(text, entities) {
+            const PRIVACY_LABELS = {
+                'PER': '[PERSON]',
+                'LOC': '[LOCATION]',
+                'ORG': '[ORGANIZATION]',
+                'URL': '[URL]',
+                'EMAIL': '[EMAIL]',
+                'PHONE': '[PHONE_NUMBER]',
+                'CIVIL-ID': '[CIVIL_ID]',
+                'PASSPORT-ID': '[PASSPORT_ID]',
+                'CREDIT-CARD': '[CREDIT_CARD]'
+            };
+
+            const sortedEntities = [...entities].sort((a, b) => b.start - a.start);
+            let maskedText = text;
+            
+            sortedEntities.forEach(entity => {
+                const replacement = PRIVACY_LABELS[entity.entity_type] || `[${entity.entity_type}]`;
+                maskedText = maskedText.substring(0, entity.start) + replacement + maskedText.substring(entity.end);
+            });
+            
+            return maskedText;
+        }
+
+        async function runFullTest() {
+            const resultDiv = document.getElementById('fullResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Running all tests...\n\n';
+
+            let allPassed = true;
+            for (let i = 1; i <= 4; i++) {
+                await runTest(i);
+                const testResult = document.getElementById(`result${i}`);
+                if (testResult.className.includes('error')) {
+                    allPassed = false;
+                }
+            }
+
+            if (allPassed) {
+                resultDiv.className = 'result success';
+                resultDiv.textContent = '✅ All tests passed successfully!';
+            } else {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Some tests failed. Please check individual test results.';
+            }
+        }
+
+        // Load saved API key if exists
+        const savedApiKey = localStorage.getItem('openai-api-key');
+        if (savedApiKey) {
+            document.getElementById('apiKey').value = savedApiKey;
+        }
+
+        // Save API key on change
+        document.getElementById('apiKey').addEventListener('change', function() {
+            localStorage.setItem('openai-api-key', this.value);
+        });
+    </script>
+</body>
+</html>

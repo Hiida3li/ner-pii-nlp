@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-brand">
+          <svg class="header-logo dynamic-hover" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="transition: transform 0.3s ease;">
+            <defs>
+              <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <path fill="url(#logoGradient)" d="M50,10 L80,22 C80,42 76,67 50,90 C24,67 20,42 20,22 L50,10 Z" />
+            <circle fill="white" cx="50" cy="48" r="12" />
+            <path stroke="#2563eb" stroke-width="3" fill="none" stroke-linecap="round" d="M42,48 L48,54 L58,44" />
+          </svg>
+          <div>
+            <h1 class="header-title" style="transition: transform 0.3s ease;">PII Protected Chatbot</h1>
+            <p class="header-subtitle">AI Assistant with Privacy Protection</p>
+          </div>
+        </div>
+        <div class="header-controls">
+          <button class="theme-toggle" aria-label="Toggle dark mode">
+            <div class="theme-toggle-slider">☀️</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="section">
+    <!-- Controls Bar -->
+    <div class="card mb-6" style="padding: 1.5rem; border-radius: 15px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span class="dynamic-hover" style="font-weight: 600; transition: transform 0.3s ease; display: inline-block;">PII Model:</span>
+            <div class="model-display dynamic-hover" style="padding: 10px 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.05)); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 12px; display: inline-flex; align-items: center; gap: 0.75rem; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+              <span class="rocket-emoji dynamic-hover" style="font-size: 1.2rem; display: inline-block; transition: transform 0.3s ease;">🚀</span>
+              <span class="model-name dynamic-hover" style="font-size: 1rem; font-weight: 600; color: var(--text-primary); display: inline-block; transition: transform 0.3s ease;">PII-NER-v2</span>
+            </div>
+          </div>
+          <label class="privacy-mode-label" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; transition: transform 0.3s ease;">
+            <input type="checkbox" id="privacy-mode" class="form-checkbox" checked style="width: 20px; height: 20px;">
+            <span style="font-weight: 500;">Privacy Mode</span>
+          </label>
+          <label class="api-key-label" style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-weight: 500;">OpenAI API Key:</span>
+            <input type="password" id="api-key" class="form-input" placeholder="sk-..." style="width: 200px; padding: 8px; border-radius: 8px; border: 1px solid var(--border);">
+          </label>
+        </div>
+        <div id="pii-stats" style="display: none; padding: 10px 20px; border-radius: 10px; background: var(--bg-secondary);">
+          <span style="font-size: 0.9rem; opacity: 0.8;">PII Entities Protected:</span>
+          <span id="pii-count" style="font-size: 1.5rem; font-weight: 700; margin-left: 0.5rem; color: var(--accent);">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Interface -->
+    <div class="card" style="border-radius: 15px; padding: 0; height: 70vh; display: flex; flex-direction: column;">
+      <!-- Chat Messages Area -->
+      <div id="chat-messages" style="flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+        <!-- Welcome Message -->
+        <div class="message assistant-message">
+          <div style="display: flex; align-items: flex-start; gap: 1rem;">
+            <div class="message-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #10b981); display: flex; align-items: center; justify-content: center; color: white;">
+              🤖
+            </div>
+            <div class="message-content" style="flex: 1;">
+              <div class="message-bubble" style="background: var(--bg-secondary); padding: 1rem; border-radius: 12px; max-width: 80%;">
+                <p style="margin: 0;">Hello! I'm your privacy-protected AI assistant. When you send messages, any personally identifiable information (PII) will be automatically detected and masked before being sent to the AI model. This ensures your privacy while still allowing for helpful conversations.</p>
+                <p style="margin: 0.5rem 0 0 0; opacity: 0.8; font-size: 0.9rem;">Try typing a message with personal information to see how it works!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div style="border-top: 1px solid var(--border); padding: 1.5rem;">
+        <div style="display: flex; gap: 1rem;">
+          <textarea 
+            id="message-input" 
+            class="form-textarea" 
+            placeholder="Type your message here..."
+            rows="3"
+            style="flex: 1; padding: 1rem; border-radius: 10px; resize: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;"
+          ></textarea>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <button id="send-btn" class="btn btn-primary" style="padding: 12px 24px; height: fit-content;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 2L11 13"/>
+                <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+              </svg>
+              Send
+            </button>
+            <button id="clear-chat-btn" class="btn btn-secondary" style="padding: 8px 16px;">
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PII Detection Info Card -->
+    <div id="pii-info" class="card" style="margin-top: 1.5rem; padding: 1rem; border-radius: 12px; display: none;">
+      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem; font-weight: 600;">Detected PII Entities</h4>
+      <div id="pii-entities" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Theme toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const themeToggle = document.querySelector('.theme-toggle');
+  const slider = document.querySelector('.theme-toggle-slider');
+  
+  // Initialize theme
+  const savedTheme = localStorage.getItem('pii-shield-theme');
+  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const currentTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+  
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  updateThemeToggle(currentTheme);
+  
+  // Theme toggle event
+  themeToggle.addEventListener('click', function() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('pii-shield-theme', newTheme);
+    updateThemeToggle(newTheme);
+  });
+  
+  function updateThemeToggle(theme) {
+    slider.textContent = theme === 'dark' ? '🌙' : '☀️';
+  }
+  
+  // Initialize chatbot
+  initializeChatbot();
+});
+
+function initializeChatbot() {
+  const messageInput = document.getElementById('message-input');
+  const sendBtn = document.getElementById('send-btn');
+  const clearChatBtn = document.getElementById('clear-chat-btn');
+  const chatMessages = document.getElementById('chat-messages');
+  const apiKeyInput = document.getElementById('api-key');
+  const privacyMode = document.getElementById('privacy-mode');
+  const piiStats = document.getElementById('pii-stats');
+  const piiCount = document.getElementById('pii-count');
+  const piiInfo = document.getElementById('pii-info');
+  const piiEntities = document.getElementById('pii-entities');
+
+  let totalPiiCount = 0;
+  let conversationHistory = [];
+
+  // Entity configuration
+  const ENTITY_CONFIG = {
+    'PER': { color: '#2563eb', emoji: '👤', name: 'Person' },
+    'LOC': { color: '#10b981', emoji: '📍', name: 'Location' },
+    'ORG': { color: '#f59e0b', emoji: '🏢', name: 'Organization' },
+    'URL': { color: '#ef4444', emoji: '🔗', name: 'URL' },
+    'EMAIL': { color: '#8b5cf6', emoji: '📧', name: 'Email' },
+    'PHONE': { color: '#06b6d4', emoji: '📱', name: 'Phone' },
+    'CIVIL-ID': { color: '#22c55e', emoji: '🆔', name: 'Civil ID' },
+    'PASSPORT-ID': { color: '#a855f7', emoji: '🛂', name: 'Passport' },
+    'CREDIT-CARD': { color: '#ec4899', emoji: '💳', name: 'Credit Card' }
+  };
+
+  // Load saved API key
+  const savedApiKey = localStorage.getItem('openai-api-key');
+  if (savedApiKey) {
+    apiKeyInput.value = savedApiKey;
+  }
+
+  // Save API key on change
+  apiKeyInput.addEventListener('change', function() {
+    localStorage.setItem('openai-api-key', this.value);
+  });
+
+  // Send message on button click
+  sendBtn.addEventListener('click', sendMessage);
+  
+  // Send message on Enter (but not Shift+Enter)
+  messageInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  // Clear chat
+  clearChatBtn.addEventListener('click', function() {
+    chatMessages.innerHTML = `
+      <div class="message assistant-message">
+        <div style="display: flex; align-items: flex-start; gap: 1rem;">
+          <div class="message-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #10b981); display: flex; align-items: center; justify-content: center; color: white;">
+            🤖
+          </div>
+          <div class="message-content" style="flex: 1;">
+            <div class="message-bubble" style="background: var(--bg-secondary); padding: 1rem; border-radius: 12px; max-width: 80%;">
+              <p style="margin: 0;">Chat cleared! How can I help you today?</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    conversationHistory = [];
+    totalPiiCount = 0;
+    piiStats.style.display = 'none';
+    piiInfo.style.display = 'none';
+  });
+
+  async function sendMessage() {
+    const message = messageInput.value.trim();
+    if (!message) return;
+
+    const apiKey = apiKeyInput.value.trim();
+    if (!apiKey) {
+      alert('Please enter your OpenAI API key');
+      apiKeyInput.focus();
+      return;
+    }
+
+    // Add user message to chat
+    addMessageToChat('user', message);
+    messageInput.value = '';
+
+    // Process message with PII detection
+    try {
+      // Step 1: Detect PII entities
+      const piiResponse = await fetch('/api/extract', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: message,
+          model_version: 'v2'
+        })
+      });
+
+      if (!piiResponse.ok) {
+        throw new Error('Failed to detect PII');
+      }
+
+      const piiData = await piiResponse.json();
+      
+      // Step 2: Apply privacy protection if enabled
+      let processedMessage = message;
+      let piiDetected = false;
+      
+      if (piiData.entities && piiData.entities.length > 0) {
+        piiDetected = true;
+        
+        if (privacyMode.checked) {
+          // Replace PII entities with generic labels
+          processedMessage = maskPiiEntities(message, piiData.entities);
+        }
+
+        // Update PII stats
+        totalPiiCount += piiData.entities.length;
+        piiCount.textContent = totalPiiCount;
+        piiStats.style.display = 'block';
+        
+        // Show PII info
+        displayPiiInfo(piiData.entity_counts);
+      }
+
+      // Step 3: Send to GPT-4o-mini
+      const chatResponse = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: processedMessage,
+          api_key: apiKey,
+          conversation_history: conversationHistory,
+          pii_detected: piiDetected,
+          privacy_mode: privacyMode.checked
+        })
+      });
+
+      if (!chatResponse.ok) {
+        const error = await chatResponse.json();
+        throw new Error(error.detail || 'Failed to get AI response');
+      }
+
+      const chatData = await chatResponse.json();
+      
+      // Add AI response to chat
+      addMessageToChat('assistant', chatData.response, piiDetected && privacyMode.checked);
+      
+      // Update conversation history
+      conversationHistory.push(
+        { role: 'user', content: processedMessage },
+        { role: 'assistant', content: chatData.response }
+      );
+      
+      // Keep conversation history limited
+      if (conversationHistory.length > 10) {
+        conversationHistory = conversationHistory.slice(-10);
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      addMessageToChat('assistant', `Error: ${error.message}`);
+    }
+  }
+
+  function maskPiiEntities(text, entities) {
+    const PRIVACY_LABELS = {
+      'PER': '[PERSON]',
+      'LOC': '[LOCATION]',
+      'ORG': '[ORGANIZATION]',
+      'URL': '[URL]',
+      'EMAIL': '[EMAIL]',
+      'PHONE': '[PHONE_NUMBER]',
+      'CIVIL-ID': '[CIVIL_ID]',
+      'PASSPORT-ID': '[PASSPORT_ID]',
+      'CREDIT-CARD': '[CREDIT_CARD]'
+    };
+
+    // Sort entities by position (descending) to avoid position shifting
+    const sortedEntities = [...entities].sort((a, b) => b.start - a.start);
+    
+    let maskedText = text;
+    sortedEntities.forEach(entity => {
+      const replacement = PRIVACY_LABELS[entity.entity_type] || `[${entity.entity_type}]`;
+      maskedText = maskedText.substring(0, entity.start) + replacement + maskedText.substring(entity.end);
+    });
+    
+    return maskedText;
+  }
+
+  function addMessageToChat(role, content, wasProtected = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${role}-message`;
+    
+    const isUser = role === 'user';
+    const avatar = isUser ? '👤' : '🤖';
+    const bgColor = isUser ? 'linear-gradient(135deg, #f59e0b, #ef4444)' : 'linear-gradient(135deg, #2563eb, #10b981)';
+    
+    let protectionBadge = '';
+    if (wasProtected) {
+      protectionBadge = `
+        <div style="display: inline-flex; align-items: center; gap: 0.25rem; background: rgba(16, 185, 129, 0.1); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; color: var(--accent); margin-top: 0.5rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          PII Protected
+        </div>
+      `;
+    }
+    
+    messageDiv.innerHTML = `
+      <div style="display: flex; align-items: flex-start; gap: 1rem; ${isUser ? 'flex-direction: row-reverse;' : ''}">
+        <div class="message-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: ${bgColor}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">
+          ${avatar}
+        </div>
+        <div class="message-content" style="flex: 1; ${isUser ? 'display: flex; flex-direction: column; align-items: flex-end;' : ''}">
+          <div class="message-bubble" style="background: ${isUser ? 'var(--primary)' : 'var(--bg-secondary)'}; color: ${isUser ? 'white' : 'var(--text-primary)'}; padding: 1rem; border-radius: 12px; max-width: 80%;">
+            <p style="margin: 0; white-space: pre-wrap;">${content}</p>
+          </div>
+          ${protectionBadge}
+        </div>
+      </div>
+    `;
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function displayPiiInfo(entityCounts) {
+    if (!entityCounts || Object.keys(entityCounts).length === 0) {
+      piiInfo.style.display = 'none';
+      return;
+    }
+
+    piiInfo.style.display = 'block';
+    piiEntities.innerHTML = '';
+
+    Object.entries(entityCounts).forEach(([entityType, count]) => {
+      const config = ENTITY_CONFIG[entityType] || {
+        color: '#64748b',
+        emoji: '🔍',
+        name: entityType
+      };
+
+      const badge = document.createElement('span');
+      badge.style.cssText = `
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        background: ${config.color}20;
+        border: 1px solid ${config.color}40;
+        border-radius: 20px;
+        font-size: 0.9rem;
+      `;
+      badge.innerHTML = `${config.emoji} ${config.name}: ${count}`;
+      piiEntities.appendChild(badge);
+    });
+  }
+}
+</script>
+{% endblock %}
