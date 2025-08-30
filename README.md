@@ -318,7 +318,7 @@ COPY . .
 
 WORKDIR /app/src
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
 ```
 
 Build and run:
@@ -338,7 +338,7 @@ export LOG_LEVEL=WARNING
 
 2. **Use production server:**
 ```bash
-gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001
 ```
 
 ## 📈 Performance Optimization

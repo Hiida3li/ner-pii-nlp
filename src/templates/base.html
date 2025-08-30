@@ -39,79 +39,82 @@
         }
         
         .custom-cursor {
-            width: 18px;
-            height: 18px;
-            background: linear-gradient(135deg, 
-                rgba(99, 102, 241, 0.9) 0%,
-                rgba(236, 72, 153, 0.8) 50%,
-                rgba(99, 102, 241, 0.9) 100%);
+            width: 22px;
+            height: 22px;
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                #00ffff 0deg,
+                #ff00ff 120deg,
+                #ffff00 240deg,
+                #00ffff 360deg
+            );
             border-radius: 50%;
             position: fixed;
             pointer-events: none;
             z-index: 99999;
             top: 0;
             left: 0;
-            opacity: 0.95;
-            transition: transform 0.15s ease,
-                        box-shadow 0.2s ease;
+            opacity: 0.9;
+            transition: transform 0.2s ease;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2),
-                        0 0 20px rgba(99, 102, 241, 0.5),
-                        0 0 40px rgba(236, 72, 153, 0.3);
-            animation: floatingOrb 6s ease-in-out infinite;
+            filter: blur(0.5px);
+            animation: spinGradient 3s linear infinite;
         }
         
-        /* Clean inner dot */
+        /* Dark center core */
         .custom-cursor::before {
             content: '';
             position: absolute;
-            width: 4px;
-            height: 4px;
+            width: 14px;
+            height: 14px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(circle,
+                rgba(10, 14, 39, 0.9) 0%,
+                rgba(10, 14, 39, 0.7) 50%,
+                transparent 100%);
+        }
+        
+        /* Glowing center dot */
+        .custom-cursor::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             border-radius: 50%;
             background: white;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 10px white,
+                        0 0 20px rgba(0, 255, 255, 0.8);
+            animation: pulseDot 2s ease-in-out infinite;
         }
         
-        /* Trailing effect */
-        .custom-cursor::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            border-radius: 50%;
-            background: inherit;
-            opacity: 0.3;
-            animation: trailEffect 1s ease-in-out infinite;
-        }
-        
-        @keyframes floatingOrb {
-            0%, 100% {
-                transform: translate(-50%, -50%) scale(1) rotate(0deg);
-            }
-            25% {
-                transform: translate(-50%, -50%) scale(1.05) rotate(90deg);
+        @keyframes spinGradient {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+                filter: blur(0.5px) brightness(1);
             }
             50% {
-                transform: translate(-50%, -50%) scale(0.95) rotate(180deg);
+                filter: blur(0.5px) brightness(1.3);
             }
-            75% {
-                transform: translate(-50%, -50%) scale(1.05) rotate(270deg);
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+                filter: blur(0.5px) brightness(1);
             }
         }
         
-        @keyframes trailEffect {
-            0% {
-                transform: scale(1);
-                opacity: 0.3;
+        @keyframes pulseDot {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
             }
-            100% {
-                transform: scale(1.8);
-                opacity: 0;
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.7;
             }
         }
         
