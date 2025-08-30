@@ -93,7 +93,18 @@ class EntityProcessor:
             return {}
 
         entity_counts = {}
-        for _, entity_type, _, _ in entities:
-            entity_counts[entity_type] = entity_counts.get(entity_type, 0) + 1
+        # Count unique entities, not subtokens
+        seen_entities = set()
+        
+        for entity_text, entity_type, start, end in entities:
+            # Create unique key for this entity
+            entity_key = (entity_type, start, end)
+            
+            # Skip if we've already counted this entity
+            if entity_key not in seen_entities:
+                seen_entities.add(entity_key)
+                # Clean entity type (remove any ## or subtoken markers)
+                clean_type = entity_type.replace('##', '').strip()
+                entity_counts[clean_type] = entity_counts.get(clean_type, 0) + 1
 
         return entity_counts
