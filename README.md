@@ -376,8 +376,6 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 For issues, questions, or suggestions:
 - Open an issue on GitHub
-- Check the [FAQ section](#-troubleshooting)
-
 ---
 
 <div align="center">
