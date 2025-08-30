@@ -150,21 +150,59 @@
         }
         
         .custom-cursor.active {
-            transform: translate(-50%, -50%) scale(0.6);
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.9), rgba(16, 185, 129, 0.3));
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.7),
-                        0 0 60px rgba(16, 185, 129, 0.4);
+            animation: rotateReticle 8s linear infinite, contractReticle 0.2s ease;
         }
         
-        /* Simple hover state - just change color */
-        .custom-cursor.hover {
-            background: radial-gradient(circle, 
-                rgba(16, 185, 129, 1) 0%, 
-                rgba(16, 185, 129, 0.8) 30%,
-                rgba(16, 185, 129, 0.4) 60%,
-                rgba(16, 185, 129, 0.1) 100%);
-            box-shadow: 0 0 25px rgba(16, 185, 129, 0.7),
-                        0 0 50px rgba(16, 185, 129, 0.4);
+        .custom-cursor.active::before,
+        .custom-cursor.active::after {
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(16, 185, 129, 0.5) 20%,
+                rgba(16, 185, 129, 1) 40%,
+                transparent 45%,
+                transparent 55%,
+                rgba(16, 185, 129, 1) 60%,
+                rgba(16, 185, 129, 0.5) 80%,
+                transparent 100%);
+        }
+        
+        /* Hover state - changes crosshair color */
+        .custom-cursor.hover::before {
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(16, 185, 129, 0.4) 20%,
+                rgba(16, 185, 129, 0.9) 40%,
+                transparent 45%,
+                transparent 55%,
+                rgba(16, 185, 129, 0.9) 60%,
+                rgba(16, 185, 129, 0.4) 80%,
+                transparent 100%);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+        }
+        
+        .custom-cursor.hover::after {
+            background: linear-gradient(180deg, 
+                transparent 0%,
+                rgba(16, 185, 129, 0.4) 20%,
+                rgba(16, 185, 129, 0.9) 40%,
+                transparent 45%,
+                transparent 55%,
+                rgba(16, 185, 129, 0.9) 60%,
+                rgba(16, 185, 129, 0.4) 80%,
+                transparent 100%);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+        }
+        
+        @keyframes contractReticle {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
         }
         
         @keyframes magnifyPulse {
@@ -240,7 +278,9 @@
 </head>
 <body>
     <!-- Custom Cursor Element -->
-    <div class="custom-cursor"></div>
+    <div class="custom-cursor">
+        <div class="custom-cursor-corners"></div>
+    </div>
     
     {% block content %}{% endblock %}
     
