@@ -41,15 +41,10 @@
           <div style="display: flex; align-items: center; gap: 0.75rem;">
             <span style="font-weight: 600;">AI Model:</span>
             <div class="custom-select-wrapper">
-              <div id="model-selector-display" class="form-select custom-select-display" tabindex="0" style="padding: 10px 20px; min-width: 250px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.05)); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 12px; transition: all 0.3s ease;">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                  <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <span style="font-size: 1.2rem;">🚀</span>
-                    <span class="custom-select-text" style="font-size: 1rem; font-weight: 600;">Enhanced v2</span>
-                  </div>
-                  <svg class="custom-select-arrow" width="14" height="10" viewBox="0 0 12 8" fill="none" style="transition: transform 0.3s ease;">
-                    <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                  </svg>
+              <div id="model-selector-display" class="form-select custom-select-display" tabindex="0" style="padding: 10px 20px; min-width: 200px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.05)); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 12px; transition: all 0.3s ease; cursor: none;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                  <span class="model-emoji" style="font-size: 1.2rem;">🚀</span>
+                  <span class="custom-select-text" style="font-size: 1rem; font-weight: 600;">Enhanced v2</span>
                 </div>
               </div>
               <div class="custom-select-dropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 0.5rem; background: var(--surface); border: 2px solid rgba(59, 130, 246, 0.2); border-radius: 12px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); z-index: 1000; overflow: hidden;">
@@ -480,7 +475,6 @@ function initializeCustomSelect() {
   const options = document.querySelectorAll('.custom-select-option');
   const hiddenSelect = document.getElementById('model-selector');
   const selectText = document.querySelector('.custom-select-text');
-  const arrow = document.querySelector('.custom-select-arrow');
   
   // Enhanced hover effect for display
   display.addEventListener('mouseenter', function() {
@@ -509,11 +503,9 @@ function initializeCustomSelect() {
         dropdown.style.opacity = '1';
         dropdown.style.transform = 'translateY(0)';
       }, 10);
-      arrow.style.transform = 'rotate(180deg)';
     } else {
       dropdown.style.opacity = '0';
       dropdown.style.transform = 'translateY(-10px)';
-      arrow.style.transform = 'rotate(0deg)';
       setTimeout(() => {
         dropdown.style.display = 'none';
       }, 200);
