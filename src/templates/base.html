@@ -40,10 +40,13 @@
         }
         
         .custom-cursor {
-            width: 24px;
-            height: 24px;
-            border: 2px solid transparent;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.2));
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, 
+                rgba(59, 130, 246, 1) 0%, 
+                rgba(59, 130, 246, 0.8) 30%,
+                rgba(59, 130, 246, 0.4) 60%,
+                rgba(59, 130, 246, 0.1) 100%);
             border-radius: 50%;
             position: fixed;
             pointer-events: none;
@@ -51,46 +54,37 @@
             top: 0;
             left: 0;
             opacity: 1;
-            /* Only transition visual properties, not position */
             transition: background 0.2s ease, 
-                        border-color 0.2s ease,
                         box-shadow 0.2s ease,
-                        transform 0.1s ease;
+                        transform 0.15s ease;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5),
-                        0 0 40px rgba(59, 130, 246, 0.3),
-                        inset 0 0 8px rgba(255, 255, 255, 0.3);
-            animation: cursorPulse 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6),
+                        0 0 40px rgba(59, 130, 246, 0.3);
+            animation: gentlePulse 3s ease-in-out infinite;
         }
         
-        /* Magnifying glass lens effect */
+        /* Simple inner dot */
         .custom-cursor::before {
             content: '';
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 6px;
+            height: 6px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, 
-                rgba(255, 255, 255, 0.4) 0%, 
-                transparent 50%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            background: white;
+            opacity: 0.9;
         }
         
-        .custom-cursor.hover::before {
-            opacity: 1;
-        }
-        
-        @keyframes cursorPulse {
+        @keyframes gentlePulse {
             0%, 100% {
-                box-shadow: 0 0 20px rgba(59, 130, 246, 0.5),
-                            0 0 40px rgba(59, 130, 246, 0.3),
-                            inset 0 0 8px rgba(255, 255, 255, 0.3);
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.6),
+                            0 0 40px rgba(59, 130, 246, 0.3);
             }
             50% {
-                box-shadow: 0 0 30px rgba(59, 130, 246, 0.7),
-                            0 0 60px rgba(59, 130, 246, 0.4),
-                            inset 0 0 12px rgba(255, 255, 255, 0.5);
+                box-shadow: 0 0 25px rgba(59, 130, 246, 0.7),
+                            0 0 50px rgba(59, 130, 246, 0.4);
             }
         }
         
@@ -101,18 +95,24 @@
                         0 0 60px rgba(16, 185, 129, 0.4);
         }
         
-        /* Cursor stays same size but acts as magnifying lens */
+        /* Simple hover state - just change color */
         .custom-cursor.hover {
-            border: 2px solid rgba(16, 185, 129, 0.6);
-            background: radial-gradient(circle at 35% 35%,
-                rgba(255, 255, 255, 0.3) 0%,
-                rgba(16, 185, 129, 0.2) 20%,
-                rgba(16, 185, 129, 0.4) 40%,
-                rgba(16, 185, 129, 0.6) 60%,
-                rgba(16, 185, 129, 0.3) 100%);
-            box-shadow: 0 0 25px rgba(16, 185, 129, 0.6),
-                        0 0 50px rgba(16, 185, 129, 0.4),
-                        inset 0 0 10px rgba(255, 255, 255, 0.4);
+            background: radial-gradient(circle, 
+                rgba(16, 185, 129, 1) 0%, 
+                rgba(16, 185, 129, 0.8) 30%,
+                rgba(16, 185, 129, 0.4) 60%,
+                rgba(16, 185, 129, 0.1) 100%);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.7),
+                        0 0 50px rgba(16, 185, 129, 0.4);
+        }
+        
+        @keyframes magnifyPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
         }
         
         /* Elements get magnified when cursor hovers over them */
