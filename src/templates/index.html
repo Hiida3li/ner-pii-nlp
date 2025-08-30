@@ -41,19 +41,36 @@
           <div style="display: flex; align-items: center; gap: 0.75rem;">
             <span style="font-weight: 600;">AI Model:</span>
             <div class="custom-select-wrapper">
-              <div id="model-selector-display" class="form-select custom-select-display" tabindex="0" style="padding: 8px 16px; min-width: 200px;">
-                <span class="custom-select-text" style="font-size: 0.95rem;">CamelBert - Arabic</span>
-                <svg class="custom-select-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
-                  <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
+              <div id="model-selector-display" class="form-select custom-select-display" tabindex="0" style="padding: 10px 20px; min-width: 250px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.05)); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 12px; transition: all 0.3s ease;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="font-size: 1.2rem;">🚀</span>
+                    <span class="custom-select-text" style="font-size: 1rem; font-weight: 600;">Enhanced v2</span>
+                  </div>
+                  <svg class="custom-select-arrow" width="14" height="10" viewBox="0 0 12 8" fill="none" style="transition: transform 0.3s ease;">
+                    <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
               </div>
-              <div class="custom-select-dropdown" style="display: none;">
-                <div class="custom-select-option" data-value="v2">PII-Shield v2</div>
-                <div class="custom-select-option custom-select-option-selected" data-value="v3">CamelBert - Arabic</div>
+              <div class="custom-select-dropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 0.5rem; background: var(--surface); border: 2px solid rgba(59, 130, 246, 0.2); border-radius: 12px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); z-index: 1000; overflow: hidden;">
+                <div class="custom-select-option custom-select-option-selected" data-value="v2" style="padding: 1rem 1.2rem; display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <span style="font-size: 1.1rem;">🚀</span>
+                  <div style="flex: 1;">
+                    <div style="font-weight: 600;">Enhanced v2</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">Best accuracy & performance</div>
+                  </div>
+                </div>
+                <div class="custom-select-option" data-value="v1" style="padding: 1rem 1.2rem; display: flex; align-items: center; gap: 0.75rem;">
+                  <span style="font-size: 1.1rem;">📊</span>
+                  <div style="flex: 1;">
+                    <div style="font-weight: 600;">Original Model</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">Legacy support</div>
+                  </div>
+                </div>
               </div>
               <select id="model-selector" class="form-select-hidden" style="display: none;">
-                <option value="v2">PII-Shield v2</option>
-                <option value="v3" selected>CamelBert - Arabic</option>
+                <option value="v2" selected>Enhanced v2</option>
+                <option value="v1">Original Model</option>
               </select>
             </div>
           </div>
