@@ -123,7 +123,7 @@ DEFAULT_MODEL=v2
 MODEL_CACHE_SIZE=3
 
 # Security
-CORS_ORIGINS=["http://localhost:3000", "http://localhost:8000"]
+CORS_ORIGINS=["http://localhost:3000", "http://localhost:8001"]
 
 # Logging
 LOG_LEVEL=INFO
