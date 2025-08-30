@@ -19,7 +19,7 @@
             <path stroke="#2563eb" stroke-width="3" fill="none" stroke-linecap="round" d="M42,48 L48,54 L58,44" />
           </svg>
           <div>
-            <h1 class="header-title">PII Detector</h1>
+            <h1 class="header-title" style="transition: transform 0.3s ease;">PII Detector</h1>
             <p class="header-subtitle">Advanced Data Protection Platform</p>
           </div>
         </div>
@@ -48,7 +48,7 @@
               <option value="v2" selected>PII-NER-v2</option>
             </select>
           </div>
-          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <label class="privacy-mode-label" style="display: flex; align-items: center; gap: 0.5rem; cursor: none; transition: transform 0.3s ease;">
             <input type="checkbox" id="privacy-mode" class="form-checkbox" checked style="width: 20px; height: 20px;">
             <span style="font-weight: 500;">Privacy Mode</span>
           </label>
@@ -64,7 +64,7 @@
     <!-- Main Analysis Area -->
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
       <!-- Input Section -->
-      <div class="card" style="border-radius: 15px; padding: 1.5rem;">
+      <div class="card input-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease;">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
           <div style="background: linear-gradient(135deg, #2563eb, #10b981); padding: 8px; border-radius: 8px;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
@@ -99,7 +99,7 @@
       </div>
 
       <!-- Results Section -->
-      <div class="card" style="border-radius: 15px; padding: 1.5rem;">
+      <div class="card results-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease;">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
           <div style="background: linear-gradient(135deg, #10b981, #06b6d4); padding: 8px; border-radius: 8px;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
@@ -160,7 +160,90 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Initialize main app
   initializeApp();
+  
+  // Add dynamic hover effects
+  addDynamicHoverEffects();
 });
+
+function addDynamicHoverEffects() {
+  // Privacy Mode hover effect
+  const privacyLabel = document.querySelector('.privacy-mode-label');
+  if (privacyLabel) {
+    privacyLabel.addEventListener('mouseenter', function() {
+      this.style.transform = 'scale(1.08)';
+    });
+    privacyLabel.addEventListener('mouseleave', function() {
+      this.style.transform = 'scale(1)';
+    });
+  }
+  
+  // Input Text card hover effect
+  const inputCard = document.querySelector('.input-card');
+  if (inputCard) {
+    inputCard.addEventListener('mouseenter', function() {
+      this.style.transform = 'scale(1.02)';
+      this.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.15)';
+    });
+    inputCard.addEventListener('mouseleave', function() {
+      this.style.transform = 'scale(1)';
+      this.style.boxShadow = '';
+    });
+  }
+  
+  // Results card hover effect
+  const resultsCard = document.querySelector('.results-card');
+  if (resultsCard) {
+    resultsCard.addEventListener('mouseenter', function() {
+      this.style.transform = 'scale(1.02)';
+      this.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.15)';
+    });
+    resultsCard.addEventListener('mouseleave', function() {
+      this.style.transform = 'scale(1)';
+      this.style.boxShadow = '';
+    });
+  }
+  
+  // PII Detector header hover effect
+  const headerTitle = document.querySelector('.header-title');
+  if (headerTitle) {
+    headerTitle.addEventListener('mouseenter', function() {
+      this.style.transform = 'scale(1.1)';
+    });
+    headerTitle.addEventListener('mouseleave', function() {
+      this.style.transform = 'scale(1)';
+    });
+  }
+  
+  // Add CSS for smooth transitions
+  const style = document.createElement('style');
+  style.textContent = `
+    .privacy-mode-label:hover {
+      filter: brightness(1.1);
+    }
+    
+    .input-card, .results-card {
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    }
+    
+    .header-title {
+      display: inline-block;
+      transform-origin: center;
+    }
+    
+    .input-card h3, .results-card h3 {
+      transition: color 0.3s ease;
+    }
+    
+    .input-card:hover h3 {
+      color: var(--primary);
+    }
+    
+    .results-card:hover h3 {
+      color: var(--accent);
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 function initializeApp() {
   const extractBtn = document.getElementById('extract-btn');
