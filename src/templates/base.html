@@ -39,12 +39,15 @@
         }
         
         .custom-cursor {
-            width: 20px;
-            height: 20px;
-            background: rgba(59, 130, 246, 0.15);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            width: 22px;
+            height: 22px;
+            background: radial-gradient(circle,
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(255, 255, 255, 0.8) 20%,
+                rgba(59, 130, 246, 0.6) 50%,
+                rgba(59, 130, 246, 0.3) 80%,
+                rgba(59, 130, 246, 0.1) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             position: fixed;
             pointer-events: none;
@@ -54,59 +57,68 @@
             opacity: 1;
             transition: transform 0.2s ease,
                         background 0.3s ease,
-                        border 0.3s ease;
+                        border 0.3s ease,
+                        box-shadow 0.3s ease;
             transform: translate(-50%, -50%);
-            box-shadow: 0 8px 32px 0 rgba(59, 130, 246, 0.25),
-                        inset 0 0 0 1px rgba(147, 197, 253, 0.2),
-                        0 0 40px rgba(6, 182, 212, 0.2);
-            animation: glassFloat 4s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8),
+                        0 0 40px rgba(59, 130, 246, 0.6),
+                        0 0 60px rgba(59, 130, 246, 0.4),
+                        inset 0 0 10px rgba(255, 255, 255, 0.5);
+            animation: glowBright 3s ease-in-out infinite;
         }
         
-        /* Inner light reflection */
+        /* Bright center dot */
         .custom-cursor::before {
             content: '';
             position: absolute;
-            width: 10px;
-            height: 10px;
-            top: 3px;
-            left: 3px;
-            border-radius: 50%;
-            background: linear-gradient(
-                135deg,
-                rgba(219, 234, 254, 0.6) 0%,
-                rgba(147, 197, 253, 0.3) 50%,
-                transparent 100%
-            );
-            animation: shimmer 3s ease-in-out infinite;
-        }
-        
-        /* Center glow */
-        .custom-cursor::after {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             border-radius: 50%;
-            background: radial-gradient(circle,
-                rgba(6, 182, 212, 0.9) 0%,
-                rgba(59, 130, 246, 0.5) 40%,
-                transparent 70%);
-            animation: glowPulse 2s ease-in-out infinite;
+            background: white;
+            box-shadow: 0 0 10px white,
+                        0 0 20px white;
         }
         
-        @keyframes glassFloat {
+        /* Outer glow ring */
+        .custom-cursor::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            animation: ringPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes glowBright {
             0%, 100% {
-                box-shadow: 0 8px 32px 0 rgba(59, 130, 246, 0.25),
-                            inset 0 0 0 1px rgba(147, 197, 253, 0.2),
-                            0 0 40px rgba(6, 182, 212, 0.2);
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.8),
+                            0 0 40px rgba(59, 130, 246, 0.6),
+                            0 0 60px rgba(59, 130, 246, 0.4),
+                            inset 0 0 10px rgba(255, 255, 255, 0.5);
             }
             50% {
-                box-shadow: 0 8px 32px 0 rgba(59, 130, 246, 0.35),
-                            inset 0 0 0 1px rgba(147, 197, 253, 0.3),
-                            0 0 60px rgba(6, 182, 212, 0.3);
+                box-shadow: 0 0 30px rgba(255, 255, 255, 1),
+                            0 0 50px rgba(59, 130, 246, 0.8),
+                            0 0 80px rgba(59, 130, 246, 0.5),
+                            inset 0 0 15px rgba(255, 255, 255, 0.7);
+            }
+        }
+        
+        @keyframes ringPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.2;
             }
         }
         
