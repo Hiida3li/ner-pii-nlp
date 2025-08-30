@@ -10,8 +10,6 @@ import os
 import uvicorn
 import logging
 from contextlib import asynccontextmanager
-import httpx
-import json
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -61,21 +59,6 @@ class TextResponse(BaseModel):
     highlighted_text: str
     entities: List[EntityResult]
     entity_counts: Dict[str, int]
-
-class ChatMessage(BaseModel):
-    role: str
-    content: str
-
-class ChatRequest(BaseModel):
-    message: str
-    api_key: str
-    conversation_history: Optional[List[ChatMessage]] = []
-    pii_detected: Optional[bool] = False
-    privacy_mode: Optional[bool] = True
-
-class ChatResponse(BaseModel):
-    response: str
-    pii_protected: bool = False
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -183,72 +166,6 @@ async def get_models():
     from models.model_config import ModelConfig
     return {"models": ModelConfig.MODELS}
 
-
-@app.get("/chatbot", response_class=HTMLResponse)
-async def chatbot_page(request: Request):
-    """Render the chatbot page"""
-    logger.info("Chatbot page accessed")
-    return templates.TemplateResponse("chatbot.html", {"request": request})
-
-
-@app.post("/api/chat", response_model=ChatResponse)
-async def chat_with_gpt(request: ChatRequest):
-    """Chat with GPT-4o-mini with PII protection"""
-    logger.info(f"Chat request received, privacy_mode: {request.privacy_mode}")
-    
-    try:
-        # Prepare messages for OpenAI API
-        messages = [
-            {"role": "system", "content": "You are a helpful assistant. If the user's message mentions that PII has been protected or masked, acknowledge this and continue the conversation naturally."}
-        ]
-        
-        # Add conversation history
-        for msg in request.conversation_history:
-            messages.append({"role": msg.role, "content": msg.content})
-        
-        # Add current message
-        messages.append({"role": "user", "content": request.message})
-        
-        # Call OpenAI API
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                "https://api.openai.com/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {request.api_key}",
-                    "Content-Type": "application/json"
-                },
-                json={
-                    "model": "gpt-4o-mini",
-                    "messages": messages,
-                    "temperature": 0.7,
-                    "max_tokens": 500
-                },
-                timeout=30.0
-            )
-            
-            if response.status_code != 200:
-                error_data = response.json()
-                logger.error(f"OpenAI API error: {error_data}")
-                raise HTTPException(status_code=response.status_code, 
-                                  detail=error_data.get("error", {}).get("message", "OpenAI API error"))
-            
-            data = response.json()
-            ai_response = data["choices"][0]["message"]["content"]
-            
-            return ChatResponse(
-                response=ai_response,
-                pii_protected=request.pii_detected and request.privacy_mode
-            )
-            
-    except httpx.TimeoutException:
-        logger.error("OpenAI API timeout")
-        raise HTTPException(status_code=504, detail="Request to OpenAI API timed out")
-    except httpx.RequestError as e:
-        logger.error(f"Request error: {str(e)}")
-        raise HTTPException(status_code=503, detail=f"Failed to connect to OpenAI API: {str(e)}")
-    except Exception as e:
-        logger.exception(f"Unexpected error in chat endpoint: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 
 @app.get("/check-model-files")

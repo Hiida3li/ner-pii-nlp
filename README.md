@@ -14,7 +14,6 @@ PII Detector is an advanced AI-powered platform for detecting and protecting per
 ###  Key Features
 
 - **🤖 Advanced AI Models**: PII-NER-v2 model with superior accuracy
-- **💬 PII-Protected Chatbot**: GPT-4o-mini integration with automatic PII masking
 - **🌐 Web Interface**: Modern, responsive UI with dark/light themes
 - **⚡ Real-time Detection**: Instant PII identification and highlighting
 - **🔒 Privacy Mode**: Automatic masking of sensitive information
@@ -105,7 +104,6 @@ uvicorn main:app --host 0.0.0.0 --port 8001 --workers 4
 Once running, access the application at:
 
 - **Web Interface**: http://localhost:8001
-- **PII-Protected Chatbot**: http://localhost:8001/chatbot
 - **API Documentation**: http://localhost:8001/docs
 - **Alternative API Docs**: http://localhost:8001/redoc
 
@@ -144,27 +142,6 @@ MODEL_CONFIGS = {
     }
 }
 ```
-
-## 💬 PII-Protected Chatbot
-
-The PII-Protected Chatbot integrates with OpenAI's GPT-4o-mini model while automatically detecting and masking personally identifiable information before sending messages to the AI.
-
-### Features:
-- **Automatic PII Detection**: Scans messages for sensitive information
-- **Privacy Mode**: Replaces PII with generic labels ([PERSON], [LOCATION], etc.)
-- **Conversation History**: Maintains context across messages
-- **Multi-language Support**: Works with English and Arabic (including Omani dialect)
-
-### How to Use:
-1. Navigate to http://localhost:8001/chatbot
-2. Enter your OpenAI API key
-3. Enable/disable Privacy Mode as needed
-4. Start chatting - your PII will be automatically protected!
-
-### Example:
-- **User Input**: "My name is أحمد البلوشي and my phone is 92345678"
-- **Sent to GPT**: "My name is [PERSON] and my phone is [PHONE_NUMBER]"
-- **AI sees masked data**, protecting your privacy
 
 ##  API Documentation
 
@@ -209,27 +186,7 @@ Content-Type: application/json
 }
 ```
 
-#### 2. Chat with PII Protection
-```http
-POST /api/chat
-Content-Type: application/json
-
-{
-  "message": "Contact أحمد at ahmed@example.om or 92345678",
-  "api_key": "your-openai-api-key",
-  "privacy_mode": true
-}
-```
-
-**Response:**
-```json
-{
-  "response": "I can help you contact that person. The phone number and email have been masked for privacy.",
-  "pii_protected": true
-}
-```
-
-#### 3. Get Available Models
+#### 2. Get Available Models
 ```http
 GET /api/models
 ```
@@ -277,17 +234,6 @@ curl -X POST "http://localhost:8001/api/extract" \
   -d '{"text": "اسمي محمد بن سالم الحارثي من مسقط، رقمي 96891234567", "model_version": "v2"}'
 ```
 
-3. **Test Chatbot with PII Protection:**
-```bash
-curl -X POST "http://localhost:8001/api/chat" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "message": "My name is أحمد البلوشي and my email is ahmed@example.om",
-    "api_key": "your-openai-api-key",
-    "privacy_mode": true
-  }'
-```
-
 ## 📁 Project Structure
 
 ```
@@ -308,7 +254,6 @@ ner-pii-nlp/
 │   └── templates/
 │       ├── base.html               # Base template
 │       ├── index.html              # Main application page
-│       ├── chatbot.html            # PII-protected chatbot interface
 │       └── welcome.html            # Welcome screen
 ├── checkpoints/
 │   └── pii_shield_002v.pt         # PII-NER-v2 model
