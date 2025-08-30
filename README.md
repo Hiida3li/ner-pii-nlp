@@ -13,7 +13,7 @@ PII Detector is an advanced AI-powered platform for detecting and protecting per
 
 ### ✨ Key Features
 
-- **🤖 Advanced AI Models**: Enhanced v2 model with superior accuracy
+- **🤖 Advanced AI Models**: PII-NER-v2 model with superior accuracy
 - **🌐 Web Interface**: Modern, responsive UI with dark/light themes
 - **⚡ Real-time Detection**: Instant PII identification and highlighting
 - **🔒 Privacy Mode**: Automatic masking of sensitive information
@@ -197,7 +197,7 @@ GET /api/models
   "models": [
     {
       "id": "v2",
-      "name": "Enhanced v2",
+      "name": "PII-NER-v2",
       "description": "Best accuracy & performance"
     }
   ]
@@ -256,7 +256,7 @@ ner-pii-nlp/
 │       ├── index.html              # Main application page
 │       └── welcome.html            # Welcome screen
 ├── checkpoints/
-│   └── pii_shield_002v.pt         # Enhanced v2 model
+│   └── pii_shield_002v.pt         # PII-NER-v2 model
 ├── requirements.txt                # Python dependencies
 ├── .gitignore                      # Git ignore file
 ├── LICENSE                         # Apache 2.0 License
@@ -272,7 +272,7 @@ ner-pii-nlp/
 Error: Model file not found at path...
 ```
 **Solution**: Ensure model files are placed in correct directories:
-- `checkpoints/pii_shield_002v.pt` for v2 model
+- `checkpoints/pii_shield_002v.pt` for PII-NER-v2 model
 
 #### 2. Port already in use
 ```
