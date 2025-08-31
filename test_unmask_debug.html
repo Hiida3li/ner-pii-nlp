@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unmask Functionality Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .log {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        textarea {
+            width: 100%;
+            min-height: 60px;
+            margin: 10px 0;
+        }
+        .result {
+            background: #e8f5e8;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Unmask Functionality Debug Test</h1>
+    
+    <div class="test-section">
+        <h2>Step 1: Test Text Analysis</h2>
+        <textarea id="test-text" placeholder="Enter test text with PII">John Doe works at Microsoft and his email is john@example.com</textarea>
+        <button onclick="analyzeText()">Analyze Text</button>
+        <div id="analysis-result" class="log"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Step 2: Check Entity Mappings</h2>
+        <button onclick="checkMappings()">Check Current Mappings</button>
+        <div id="mappings-result" class="log"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Step 3: Test Get Masked Text</h2>
+        <button onclick="getMaskedText()">Get Masked Text</button>
+        <div id="masked-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Step 4: Test Unmasking</h2>
+        <textarea id="unmask-input" placeholder="Enter masked text here">Person1 works at Organization1 and his email is Email1</textarea>
+        <button onclick="testUnmask()">Test Unmask</button>
+        <div id="unmask-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Debug Logs</h2>
+        <div id="debug-logs" class="log"></div>
+    </div>
+
+    <script>
+        let currentEntities = [];
+        let entityDictionary = null;
+        
+        function log(message) {
+            const debugLogs = document.getElementById('debug-logs');
+            debugLogs.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${message}</div>`;
+        }
+        
+        async function analyzeText() {
+            const text = document.getElementById('test-text').value;
+            const resultDiv = document.getElementById('analysis-result');
+            
+            if (!text.trim()) {
+                resultDiv.innerHTML = 'Please enter some text to analyze';
+                return;
+            }
+            
+            try {
+                log('Starting text analysis...');
+                
+                const response = await fetch('http://localhost:9000/api/extract', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        model_version: 'v2'
+                    })
+                });
+                
+                const data = await response.json();
+                currentEntities = data.entities || [];
+                
+                resultDiv.innerHTML = `
+                    <strong>Analysis Results:</strong><br>
+                    Found ${currentEntities.length} entities<br>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                
+                // Initialize entity mappings
+                if (window.EntityDictionaryManager) {
+                    entityDictionary = new window.EntityDictionaryManager();
+                    entityDictionary.processEntities(currentEntities);
+                    log('Entity dictionary created and entities processed');
+                } else {
+                    log('ERROR: EntityDictionaryManager not available');
+                }
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+                resultDiv.innerHTML = `Error: ${error.message}`;
+            }
+        }
+        
+        function checkMappings() {
+            const resultDiv = document.getElementById('mappings-result');
+            
+            if (!entityDictionary) {
+                resultDiv.innerHTML = 'No entity dictionary available. Run analysis first.';
+                return;
+            }
+            
+            log('Checking current mappings...');
+            
+            const mappings = {
+                entityMappings: Array.from(entityDictionary.entityMappings.entries()),
+                reverseMappings: Array.from(entityDictionary.reverseMappings.entries()),
+                entityCounts: Array.from(entityDictionary.entityCounts.entries())
+            };
+            
+            resultDiv.innerHTML = `
+                <strong>Current Mappings:</strong><br>
+                Entity Mappings: ${mappings.entityMappings.length}<br>
+                Reverse Mappings: ${mappings.reverseMappings.length}<br>
+                Entity Counts: ${mappings.entityCounts.length}<br>
+                <pre>${JSON.stringify(mappings, null, 2)}</pre>
+            `;
+            
+            log(`Mappings checked: ${mappings.entityMappings.length} forward, ${mappings.reverseMappings.length} reverse`);
+        }
+        
+        function getMaskedText() {
+            const resultDiv = document.getElementById('masked-result');
+            
+            if (!entityDictionary || !currentEntities.length) {
+                resultDiv.innerHTML = 'No entity dictionary or entities available. Run analysis first.';
+                return;
+            }
+            
+            const originalText = document.getElementById('test-text').value;
+            const maskedText = entityDictionary.getMaskedText(originalText, currentEntities);
+            
+            resultDiv.innerHTML = `
+                <strong>Original:</strong> ${originalText}<br>
+                <strong>Masked:</strong> ${maskedText}
+            `;
+            
+            log(`Masked text generated: "${maskedText}"`);
+            
+            // Pre-fill the unmask input
+            document.getElementById('unmask-input').value = maskedText;
+        }
+        
+        function testUnmask() {
+            const maskedText = document.getElementById('unmask-input').value;
+            const resultDiv = document.getElementById('unmask-result');
+            
+            if (!maskedText.trim()) {
+                resultDiv.innerHTML = 'Please enter masked text to unmask';
+                return;
+            }
+            
+            if (!entityDictionary) {
+                resultDiv.innerHTML = 'No entity dictionary available. Run analysis first.';
+                return;
+            }
+            
+            log(`Testing unmask with input: "${maskedText}"`);
+            
+            const unmaskedText = entityDictionary.unmaskText(maskedText);
+            
+            resultDiv.innerHTML = `
+                <strong>Masked Input:</strong> ${maskedText}<br>
+                <strong>Unmasked Result:</strong> ${unmaskedText}<br>
+                <strong>Same as Input?</strong> ${maskedText === unmaskedText ? 'YES (Problem!)' : 'NO (Good!)'}
+            `;
+            
+            log(`Unmask result: "${unmaskedText}"`);
+        }
+        
+        // Load entity dictionary script
+        const script = document.createElement('script');
+        script.src = 'http://localhost:9000/static/js/entity-dictionary.js';
+        document.head.appendChild(script);
+        
+        log('Debug test page loaded');
+    </script>
+</body>
+</html>
