@@ -140,7 +140,7 @@ DEFAULT_MODEL=v2
 MODEL_CACHE_SIZE=3
 
 # Security
-CORS_ORIGINS=["http://localhost:3000", "http://localhost:8001"]
+CORS_ORIGINS=["http://localhost:3000", "http://localhost:9000"]
 
 # Logging
 LOG_LEVEL=INFO
@@ -248,7 +248,7 @@ pytest tests/test_api.py
 
 1. **Test with sample text:**
 ```bash
-curl -X POST "http://localhost:8001/api/extract" \
+curl -X POST "http://localhost:9000/api/extract" \
   -H "Content-Type: application/json" \
   -d '{"text": "Contact Sarah at sarah@email.com or 555-0123", "model_version": "v2"}'
 ```
