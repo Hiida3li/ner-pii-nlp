@@ -133,7 +133,7 @@ Create a `.env` file in the root directory:
 ```env
 # Server Configuration
 HOST=0.0.0.0
-PORT=8001
+PORT=9000
 
 # Model Configuration  
 DEFAULT_MODEL=v2
