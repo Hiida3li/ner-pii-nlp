@@ -380,7 +380,7 @@ export LOG_LEVEL=WARNING
 
 2. **Use production server:**
 ```bash
-gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001
+gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:9000
 ```
 
 ##  Performance Optimization
