@@ -62,7 +62,7 @@
 
 
     <!-- Main Analysis Area -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 350px; gap: 2rem; margin-bottom: 2rem;">
       <!-- Input Section -->
       <div class="card input-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease;">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
@@ -124,6 +124,90 @@
           <div class="stats-grid" id="entity-badges" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.75rem;"></div>
         </div>
       </div>
+
+      <!-- Entity Dictionary Panel -->
+      <div class="card entity-dictionary-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease; max-height: calc(100vh - 200px); overflow-y: auto;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="background: linear-gradient(135deg, #8b5cf6, #ec4899); padding: 8px; border-radius: 8px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
+                <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Entity Dictionary</h3>
+          </div>
+          <button id="toggle-dictionary" class="btn btn-sm" style="padding: 6px 12px; border-radius: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6,9 12,15 18,9"></polyline>
+            </svg>
+          </button>
+        </div>
+        
+        <div id="entity-dictionary-content" style="transition: all 0.3s ease;">
+          <!-- Search and Filter Controls -->
+          <div style="margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="position: relative;">
+              <input 
+                id="entity-search" 
+                type="text" 
+                placeholder="Search entities..." 
+                class="form-input" 
+                style="padding: 8px 12px; padding-left: 35px; font-size: 0.875rem;"
+              >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted);">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button id="filter-all" class="entity-filter-btn active" data-type="all" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 6px; border: 1px solid var(--border); background: var(--primary); color: white;">All</button>
+              <button id="filter-person" class="entity-filter-btn" data-type="PER" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 6px; border: 1px solid var(--border); background: var(--surface);">👤 Person</button>
+              <button id="filter-location" class="entity-filter-btn" data-type="LOC" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 6px; border: 1px solid var(--border); background: var(--surface);">📍 Location</button>
+              <button id="filter-organization" class="entity-filter-btn" data-type="ORG" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 6px; border: 1px solid var(--border); background: var(--surface);">🏢 Org</button>
+              <button id="filter-email" class="entity-filter-btn" data-type="EMAIL" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 6px; border: 1px solid var(--border); background: var(--surface);">📧 Email</button>
+              <button id="filter-phone" class="entity-filter-btn" data-type="PHONE" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 6px; border: 1px solid var(--border); background: var(--surface);">📱 Phone</button>
+            </div>
+          </div>
+
+          <!-- Entity Mapping List -->
+          <div id="entity-mapping-list" style="min-height: 300px;">
+            <div class="dictionary-empty" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 280px; opacity: 0.7;">
+              <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
+              <p style="font-size: 1rem; font-weight: 600; margin: 0; text-align: center;">No entity mappings yet</p>
+              <small style="margin-top: 0.5rem; text-align: center;">Analyze text to see entity mappings</small>
+            </div>
+          </div>
+
+          <!-- Dictionary Actions -->
+          <div style="border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem;">
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <button id="export-dictionary" class="btn btn-sm btn-secondary" style="padding: 6px 12px; font-size: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7,10 12,15 17,10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export
+              </button>
+              <button id="import-dictionary" class="btn btn-sm btn-secondary" style="padding: 6px 12px; font-size: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17,8 12,3 7,8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Import
+              </button>
+              <button id="clear-dictionary" class="btn btn-sm" style="padding: 6px 12px; font-size: 0.75rem; background: var(--danger); color: white; display: flex; align-items: center; gap: 0.5rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3,6 5,6 21,6"></polyline>
+                  <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+                </svg>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </main>
@@ -131,6 +215,8 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="/static/js/entity-dictionary.js"></script>
+<script src="/static/js/app.js"></script>
 <script>
 // Theme toggle functionality
 document.addEventListener('DOMContentLoaded', function() {
@@ -159,8 +245,15 @@ document.addEventListener('DOMContentLoaded', function() {
     slider.textContent = theme === 'dark' ? '🌙' : '☀️';
   }
   
-  // Initialize main app
-  initializeApp();
+  // Wait a bit for PIIShieldApp to initialize, then fallback if needed
+  setTimeout(() => {
+    if (!window.piiShieldApp) {
+      console.log('PIIShieldApp not found, using fallback initialization');
+      initializeApp();
+    } else {
+      console.log('PIIShieldApp is handling the application');
+    }
+  }, 100);
   
   // Add dynamic hover effects
   addDynamicHoverEffects();
@@ -296,10 +389,22 @@ function initializeApp() {
       }
       
       const data = await response.json();
-      updateResults(data);
-      updateEntityStats(data.entity_counts);
-      updateTotalCounter(data.entity_counts);
-      showSuccessFeedback();
+      
+      // The main app will handle these through its own methods
+      if (window.piiShieldApp) {
+        // Process entities with dictionary manager
+        if (data.entities && data.entities.length > 0) {
+          window.piiShieldApp.entityDictionary.processEntities(data.entities);
+        }
+        // Update UI
+        window.piiShieldApp.updateResults(data);
+        window.piiShieldApp.updateEntityStats(data.entity_counts);
+        window.piiShieldApp.updateTotalCounter(data.entity_counts);
+        window.piiShieldApp.showSuccessFeedback();
+      } else {
+        // Fallback if app not initialized
+        console.error('PIIShieldApp not initialized');
+      }
       
     } catch (error) {
       console.error('Analysis error:', error);
@@ -411,82 +516,9 @@ function initializeApp() {
     }
   }
   
-  function updateResults(data) {
-    if (data.highlighted_text) {
-      let displayText = data.highlighted_text;
-      
-      // Apply privacy mode if enabled
-      if (privacyMode && privacyMode.checked) {
-        displayText = applyPrivacyReplacement(displayText, data.entities);
-      }
-      
-      // Detect if text contains Arabic characters
-      const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
-      const hasArabic = arabicRegex.test(data.text || displayText);
-      
-      // Set appropriate text direction
-      const textDirection = hasArabic ? 'rtl' : 'ltr';
-      const textAlign = hasArabic ? 'right' : 'left';
-      
-      resultText.innerHTML = `<div class="results-text" style="direction: ${textDirection}; text-align: ${textAlign}; unicode-bidi: plaintext;">${displayText}</div>`;
-    } else {
-      resultText.innerHTML = `
-        <div class="results-empty">
-          <div class="results-empty-icon">✅</div>
-          <p><strong>No sensitive information detected</strong></p>
-          <small>Your text appears to be clean of personally identifiable information</small>
-        </div>
-      `;
-    }
-    resultText.classList.add('animate-fade-in');
-  }
+  // updateResults function is now handled by the main PIIShieldApp class
   
-  function applyPrivacyReplacement(highlightedText, entities) {
-    if (!entities || entities.length === 0) return highlightedText;
-    
-    // Generic replacement labels
-    const PRIVACY_LABELS = {
-      'PER': '[PERSON]',
-      'LOC': '[LOCATION]',
-      'ORG': '[ORGANIZATION]',
-      'URL': '[URL]',
-      'EMAIL': '[EMAIL]',
-      'PHONE': '[PHONE NUMBER]',
-      'CIVIL-ID': '[CIVIL ID]',
-      'PASSPORT-ID': '[PASSPORT ID]',
-      'CREDIT-CARD': '[CREDIT CARD]'
-    };
-    
-    // Sort entities by start position (descending) to avoid position shifting during replacement
-    const sortedEntities = [...entities].sort((a, b) => b.start - a.start);
-    
-    let result = highlightedText;
-    
-    // Replace entities with generic labels
-    sortedEntities.forEach(entity => {
-      const text = entity.text;
-      const entityType = entity.entity_type;
-      const replacement = PRIVACY_LABELS[entityType] || `[${entityType}]`;
-      
-      // Escape special regex characters in the entity text
-      const escapedText = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      
-      // Create regex to find and replace the entity text within HTML spans
-      const entityRegex = new RegExp(
-        `<span[^>]*class="[^"]*entity-highlight[^"]*"[^>]*>([^<]*${escapedText}[^<]*)</span>`,
-        'gi'
-      );
-      
-      result = result.replace(entityRegex, (match, entityContent) => {
-        // Replace the entity text with the privacy label while keeping the span structure
-        const newContent = entityContent.replace(new RegExp(escapedText, 'gi'), replacement);
-        return match.replace(entityContent, newContent);
-      });
-    });
-    
-    return result;
-  }
-  
+  // Note: These functions are kept as fallback for the inline script
   function updateEntityStats(counts) {
     if (!counts || Object.keys(counts).length === 0) {
       entityStats.style.display = 'none';

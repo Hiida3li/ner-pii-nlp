@@ -3,10 +3,10 @@ import os
 import logging
 from transformers import AutoTokenizer, AutoModelForTokenClassification
 from typing import List, Tuple, Dict, Optional
-from models.model_interface import ModelInterface
-from models.model_config import ModelConfig
-from config import Config
-from models.label_mapping import LabelProcessor
+from src.models.model_interface import ModelInterface
+from src.models.model_config import ModelConfig
+from src.config import Config
+from src.models.label_mapping import LabelProcessor
 
 logger = logging.getLogger(__name__)
 

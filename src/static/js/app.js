@@ -33,6 +33,10 @@ class PIIShieldApp {
         try {
             await this.cacheElements();
             await this.initModels();
+            
+            // Initialize Entity Dictionary Manager after DOM elements are cached
+            this.entityDictionary = new EntityDictionaryManager();
+            
             this.setupEventListeners();
             this.restoreState();
             this.initTooltips();
@@ -196,6 +200,11 @@ class PIIShieldApp {
                 textLength: text.length
             };
             
+            // Process entities with dictionary manager
+            if (data.entities && data.entities.length > 0) {
+                this.entityDictionary.processEntities(data.entities);
+            }
+            
             // Update UI
             this.updateResults(data);
             this.updateEntityStats(data.entity_counts);
@@ -240,7 +249,23 @@ class PIIShieldApp {
         if (!container) return;
         
         if (data.highlighted_text) {
-            container.innerHTML = `<div class="results-text">${data.highlighted_text}</div>`;
+            let displayText = data.highlighted_text;
+            
+            // Apply privacy mode replacement with entity dictionary
+            const privacyMode = document.getElementById('privacy-mode');
+            if (privacyMode && privacyMode.checked && data.entities) {
+                displayText = this.applyEntityDictionaryReplacement(displayText, data.entities);
+            }
+            
+            // Detect if text contains Arabic characters
+            const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+            const hasArabic = arabicRegex.test(data.text || displayText);
+            
+            // Set appropriate text direction
+            const textDirection = hasArabic ? 'rtl' : 'ltr';
+            const textAlign = hasArabic ? 'right' : 'left';
+            
+            container.innerHTML = `<div class="results-text" style="direction: ${textDirection}; text-align: ${textAlign}; unicode-bidi: plaintext;">${displayText}</div>`;
         } else {
             container.innerHTML = `
                 <div class="results-empty">
@@ -254,11 +279,69 @@ class PIIShieldApp {
         this.animateElement(container, 'fadeInScale');
     }
     
+    applyEntityDictionaryReplacement(highlightedText, entities) {
+        if (!entities || entities.length === 0 || !this.entityDictionary) return highlightedText;
+        
+        // Sort entities by start position (descending) to avoid position shifting during replacement
+        const sortedEntities = [...entities].sort((a, b) => b.start - a.start);
+        
+        let result = highlightedText;
+        
+        // Replace entities with dictionary-generated labels
+        sortedEntities.forEach(entity => {
+            const text = entity.text;
+            const entityType = entity.entity_type;
+            
+            // Get the masked entity name from the dictionary (Person1, Person2, etc.)
+            let replacement = this.entityDictionary.getMappingForEntity(text, entityType);
+            
+            // Fallback to generic label if dictionary mapping not found
+            if (!replacement) {
+                const FALLBACK_LABELS = {
+                    'PER': '[PERSON]',
+                    'LOC': '[LOCATION]', 
+                    'ORG': '[ORGANIZATION]',
+                    'URL': '[URL]',
+                    'EMAIL': '[EMAIL]',
+                    'PHONE': '[PHONE]',
+                    'CIVIL-ID': '[CIVIL-ID]',
+                    'PASSPORT-ID': '[PASSPORT]',
+                    'CREDIT-CARD': '[CREDIT-CARD]'
+                };
+                replacement = FALLBACK_LABELS[entityType] || `[${entityType}]`;
+            }
+            
+            // Escape special regex characters in the entity text
+            const escapedText = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            
+            // Create regex to find and replace the entity text within HTML spans
+            const entityRegex = new RegExp(
+                `<span[^>]*class="[^"]*entity-highlight[^"]*"[^>]*>([^<]*${escapedText}[^<]*)</span>`,
+                'gi'
+            );
+            
+            result = result.replace(entityRegex, (match, entityContent) => {
+                // Replace the entity text with the masked label while keeping the span structure
+                const newContent = entityContent.replace(new RegExp(escapedText, 'gi'), replacement);
+                return match.replace(entityContent, newContent);
+            });
+        });
+        
+        return result;
+    }
+    
     updateEntityStats(counts) {
         const container = this.elements['entity-badges'];
         const statsSection = this.elements['entity-stats'];
         
-        if (!container) return;
+        console.log('updateEntityStats called with:', counts);
+        console.log('Container element:', container);
+        console.log('Stats section element:', statsSection);
+        
+        if (!container) {
+            console.error('entity-badges container not found!');
+            return;
+        }
         
         container.innerHTML = '';
         
@@ -292,27 +375,33 @@ class PIIShieldApp {
     
     createEntityBadge(config, count) {
         const badge = document.createElement('div');
-        badge.className = 'stat-badge';
-        badge.style.opacity = '0';
+        badge.className = 'stat-card';
+        badge.style.cssText = `
+            border: 2px solid ${config.color}30;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: var(--background);
+            opacity: 0;
+        `;
         badge.innerHTML = `
-            <div class="stat-icon" style="background: ${config.color}20; color: ${config.color};">
-                ${config.emoji}
-            </div>
-            <div class="stat-content">
-                <p class="stat-label" title="${config.description}">${config.name}</p>
-                <p class="stat-value">${count}</p>
-            </div>
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">${config.emoji}</div>
+            <p style="font-size: 0.85rem; opacity: 0.7; margin: 0; color: var(--text-secondary);">${config.name}</p>
+            <p style="font-size: 1.5rem; font-weight: 700; color: ${config.color}; margin: 0.25rem 0 0 0;">${count}</p>
         `;
         
         // Add hover effects
         badge.addEventListener('mouseenter', () => {
             badge.style.transform = 'translateY(-4px)';
+            badge.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)';
             badge.style.borderColor = config.color;
         });
         
         badge.addEventListener('mouseleave', () => {
-            badge.style.transform = '';
-            badge.style.borderColor = '';
+            badge.style.transform = 'translateY(0)';
+            badge.style.boxShadow = '0 2px 10px rgba(0,0,0,0.05)';
+            badge.style.borderColor = `${config.color}30`;
         });
         
         return badge;

@@ -6,20 +6,10 @@ class ModelConfig:
     """
     
     MODELS = {
-        "v1": {
-            "name": "PII-Shield-v1",
-            "checkpoint": "../checkpoints/model_epoch_0_loss_0.1103.pt",  # Relative to src
-            "type": "pii_shield"
-        },
         "v2": {
-            "name": "PII-Shield-v2",
-            "checkpoint": "../checkpoints/pii_shield_002v.pt",  # Relative to src
+            "name": "PII-Shield",
+            "checkpoint": "checkpoints/pii_shield_002v.pt",  # From project root
             "type": "pii_shield"
-        },
-        "v3": {
-            "name": "PII-Shield (Base-Version)",
-            "checkpoint": None,  # Online model
-            "type": "camel_bert"
         }
     }
     

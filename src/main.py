@@ -16,12 +16,12 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Import from local modules
-from models.model_factory import ModelFactory
-from models.pii_shield_model import PIIShieldModel
-from models.camel_bert_model import CamelBertModel
-from models.entity_processor import EntityProcessor
-from models.entity_config import EntityConfig
-from config import Config
+from src.models.model_factory import ModelFactory
+from src.models.pii_shield_model import PIIShieldModel
+from src.models.camel_bert_model import CamelBertModel
+from src.models.entity_processor import EntityProcessor
+from src.models.entity_config import EntityConfig
+from src.config import Config
 
 # Application configuration
 APP_TITLE = "PII-Shield Demo"
@@ -41,8 +41,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title=APP_TITLE, description=APP_DESCRIPTION, lifespan=lifespan)
 
 # Mount static files and templates
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="src/static"), name="static")
+templates = Jinja2Templates(directory="src/templates")
 
 # Pydantic models for API
 class TextRequest(BaseModel):
@@ -104,7 +104,7 @@ async def extract_entities(request: TextRequest):
             raise HTTPException(status_code=500, detail="Failed to load CamelBert model")
     else:
         # For v1 and v2, verify model files exist
-        from models.model_config import ModelConfig
+        from src.models.model_config import ModelConfig
         model_info = ModelConfig.get_model_info(request.model_version)
         checkpoint_path = model_info.get("checkpoint")
         
@@ -163,7 +163,7 @@ async def welcome(request: Request):
 async def get_models():
     """Get available models"""
     logger.info("Models API accessed")
-    from models.model_config import ModelConfig
+    from src.models.model_config import ModelConfig
     return {"models": ModelConfig.MODELS}
 
 
@@ -171,7 +171,7 @@ async def get_models():
 @app.get("/check-model-files")
 async def check_model_files():
     """Helper endpoint to check if model files exist"""
-    from models.model_config import ModelConfig
+    from src.models.model_config import ModelConfig
     
     results = {}
     for version, info in ModelConfig.MODELS.items():

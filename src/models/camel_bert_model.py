@@ -1,7 +1,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForTokenClassification
 from typing import List, Tuple
-from models.model_interface import ModelInterface
+from src.models.model_interface import ModelInterface
 
 class CamelBertModel(ModelInterface):
     """Model class for handling the CamelBert-based NER model

@@ -1,10 +1,10 @@
 import os
 import logging
 from typing import Dict, Optional
-from models.model_interface import ModelInterface
-from models.pii_shield_model import PIIShieldModel
-from models.camel_bert_model import CamelBertModel
-from models.model_config import ModelConfig
+from src.models.model_interface import ModelInterface
+from src.models.pii_shield_model import PIIShieldModel
+from src.models.camel_bert_model import CamelBertModel
+from src.models.model_config import ModelConfig
 
 logger = logging.getLogger(__name__)
 

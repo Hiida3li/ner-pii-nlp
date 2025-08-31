@@ -532,8 +532,8 @@ body {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: var(--space-3);
 }
 
 .stat-card {
@@ -914,11 +914,88 @@ body {
 .animate-slide-up { animation: slideUp 0.3s ease-out; }
 .animate-pulse { animation: pulse 0.6s ease-in-out; }
 
+/* ===== ENTITY DICTIONARY STYLES ===== */
+
+.entity-dictionary-card {
+  min-width: 320px;
+  position: relative;
+}
+
+.entity-filter-btn {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  cursor: pointer !important;
+  user-select: none;
+}
+
+.entity-filter-btn:hover {
+  opacity: 0.8;
+}
+
+.entity-filter-btn.active {
+  font-weight: var(--weight-semibold);
+}
+
+.entity-mapping-item {
+  cursor: pointer;
+}
+
+.entity-group-header {
+  position: sticky;
+  top: 0;
+  background: var(--background);
+  z-index: 10;
+}
+
+.dictionary-empty {
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* Enhanced scrollbar for dictionary */
+#entity-dictionary-content {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+#entity-dictionary-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+#entity-dictionary-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#entity-dictionary-content::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 3px;
+}
+
+#entity-dictionary-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-muted);
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
+
+@media (max-width: 1200px) {
+  /* Switch to 2-column layout on smaller screens */
+  .container main > div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  
+  .entity-dictionary-card {
+    grid-column: 1 / -1;
+    max-height: 400px !important;
+  }
+}
 
 @media (max-width: 768px) {
   .container {
     padding: 0 var(--space-4);
+  }
+  
+  .container main > div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
   }
   
   .grid-cols-2 {

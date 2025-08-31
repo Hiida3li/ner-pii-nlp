@@ -1,5 +1,5 @@
 from typing import List, Tuple, Dict
-from models.entity_config import EntityConfig
+from src.models.entity_config import EntityConfig
 
 class EntityProcessor:
     """Process and format entities for display
