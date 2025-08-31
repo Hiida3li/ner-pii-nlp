@@ -366,7 +366,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
 Build and run:
 ```bash
 docker build -t pii-detector .
-docker run -p 8000:8000 pii-detector
+docker run -p 9000:9000 pii-detector
 ```
 
 ### Cloud Deployment (AWS/GCP/Azure)
