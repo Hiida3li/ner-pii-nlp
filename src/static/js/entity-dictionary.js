@@ -69,9 +69,9 @@ class EntityDictionaryManager {
         if (importBtn) importBtn.addEventListener('click', () => this.importDictionary());
         if (clearBtn) clearBtn.addEventListener('click', () => this.clearDictionary());
         
-        // Masking/Unmasking actions
+        // Masking/Unmasking actions - try both sets of IDs
         const copyMaskedBtn = document.getElementById('copy-masked-text');
-        const unmaskBtn = document.getElementById('unmask-text');
+        const unmaskBtn = document.getElementById('unmask-text') || document.getElementById('dictionary-unmask-btn');
         
         if (copyMaskedBtn) copyMaskedBtn.addEventListener('click', () => this.copyMaskedText());
         if (unmaskBtn) unmaskBtn.addEventListener('click', () => this.handleUnmaskText());
@@ -635,22 +635,40 @@ class EntityDictionaryManager {
     
     unmaskText(maskedText) {
         if (!maskedText || this.reverseMappings.size === 0) {
+            console.log('No masked text or no mappings available');
             return maskedText;
         }
         
         let unmaskedText = maskedText;
+        console.log('Starting unmask with:', maskedText);
+        console.log('Available reverse mappings:', this.reverseMappings);
+        
+        // Sort masked entities by length (longest first) to avoid partial replacements
+        const sortedMaskedEntities = Array.from(this.reverseMappings.keys())
+            .sort((a, b) => b.length - a.length);
         
         // Replace all masked entities with their original values
-        this.reverseMappings.forEach((mapping, maskedEntity) => {
-            // Use word boundaries to ensure we match complete entities, not parts
-            const regex = new RegExp(`\\b${maskedEntity}\\b`, 'g');
-            unmaskedText = unmaskedText.replace(regex, mapping.original);
+        sortedMaskedEntities.forEach((maskedEntity) => {
+            const mapping = this.reverseMappings.get(maskedEntity);
+            if (mapping && mapping.original) {
+                // Use global replace but be more flexible with word boundaries
+                const regex = new RegExp(`\\b${this.escapeRegex(maskedEntity)}\\b`, 'g');
+                const beforeReplace = unmaskedText;
+                unmaskedText = unmaskedText.replace(regex, mapping.original);
+                
+                if (beforeReplace !== unmaskedText) {
+                    console.log(`Replaced "${maskedEntity}" with "${mapping.original}"`);
+                }
+            }
         });
         
-        console.log('Masked text:', maskedText);
-        console.log('Unmasked text:', unmaskedText);
-        
+        console.log('Final unmasked text:', unmaskedText);
         return unmaskedText;
+    }
+    
+    // Helper function to escape special regex characters
+    escapeRegex(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
     
     // Get all current mappings for export/display
@@ -684,9 +702,10 @@ class EntityDictionaryManager {
     }
     
     handleUnmaskText() {
-        const input = document.getElementById('unmask-input');
-        const resultDiv = document.getElementById('unmasked-result');
-        const unmaskedTextDiv = document.getElementById('unmasked-text');
+        // Try both sets of IDs for compatibility
+        const input = document.getElementById('dictionary-unmask-input') || document.getElementById('unmask-input');
+        const resultDiv = document.getElementById('dictionary-unmasked-result') || document.getElementById('unmasked-result');
+        const unmaskedTextDiv = document.getElementById('dictionary-unmasked-text') || document.getElementById('unmasked-text');
         
         if (!input || !input.value.trim()) {
             this.showNotification('Please enter masked text to unmask', 'warning');
@@ -694,6 +713,9 @@ class EntityDictionaryManager {
         }
         
         const maskedText = input.value.trim();
+        console.log('Unmasking text:', maskedText);
+        console.log('Available mappings:', Array.from(this.reverseMappings.entries()));
+        
         const unmaskedText = this.unmaskText(maskedText);
         
         // Show the result
