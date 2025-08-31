@@ -9,17 +9,20 @@
 
 ## 🚀 Overview
 
-PII Detector is an advanced AI-powered platform for detecting and protecting personally identifiable information (PII) in text. Built with FastAPI and state-of-the-art NLP models, it provides real-time entity detection with a beautiful, intuitive interface.
+PII Detector is an advanced AI-powered platform for detecting and protecting personally identifiable information (PII) in text. Built with FastAPI and state-of-the-art NLP models, it provides real-time entity detection with a beautiful, intuitive interface and **bidirectional PII masking** for privacy-preserving LLM interactions.
 
 ###  Key Features
 
 - **🤖 Advanced AI Models**: PII-NER-v2 model with superior accuracy
-- **🌐 Web Interface**: Modern, responsive UI with dark/light themes
+- **🌐 Web Interface**: Modern, responsive UI with dark/light themes  
 - **⚡ Real-time Detection**: Instant PII identification and highlighting
 - **🔒 Privacy Mode**: Automatic masking of sensitive information
+- **🛡️ Bidirectional Masking**: Forward masking (PII → generic labels) and reverse unmasking for LLM workflows
+- **📚 Entity Dictionary**: Smart mapping system maintaining consistent entity numbering (Person1, Person2, etc.)
 - **📊 Entity Statistics**: Detailed breakdown of detected entities
 - **🎯 Multi-language Support**: Optimized for English and Arabic text (including Omani dialect)
 - **🔌 RESTful API**: Full-featured API with comprehensive documentation
+- **🔄 Privacy-Preserving LLM Workflow**: Send masked text to LLMs, receive responses, unmask back to original entities
 
 ###  Supported Entity Types
 
@@ -81,31 +84,45 @@ mkdir -p PII-NER-V2
 
 ###  Running the Application
 
-#### Option 1: Using the main script (Recommended)
 ```bash
-cd src
-python main.py
-```
-
-#### Option 2: Using Uvicorn directly
-```bash
-cd src
-uvicorn main:app --host 0.0.0.0 --port 8001 --reload
-```
-
-#### Option 3: Production deployment
-```bash
-cd src
-uvicorn main:app --host 0.0.0.0 --port 8001 --workers 4
+# Run the application (from project root)
+python -m uvicorn src.main:app --reload --port 9000
 ```
 
 ### 🌐 Accessing the Application
 
 Once running, access the application at:
 
-- **Web Interface**: http://localhost:8001
-- **API Documentation**: http://localhost:8001/docs
-- **Alternative API Docs**: http://localhost:8001/redoc
+- **Web Interface**: http://localhost:9000
+- **API Documentation**: http://localhost:9000/docs
+- **Alternative API Docs**: http://localhost:9000/redoc
+
+## 🛡️ Privacy-Preserving LLM Workflow
+
+### How Bidirectional Masking Works
+
+1. **🔍 Analysis & Mapping**: Detect entities and create bidirectional mappings
+   - `احمد` ↔ `Person1`
+   - `0501234567` ↔ `Phone1`
+
+2. **🔒 Forward Masking**: Convert original text to masked version
+   - Input: `"مرحبا اسمي احمد ورقمي 0501234567"`
+   - Output: `"مرحبا اسمي Person1 ورقمي Phone1"`
+
+3. **🤖 LLM Interaction**: Send masked text to any LLM service
+   - LLM processes without seeing real PII
+   - Privacy guaranteed: No sensitive data leaves your system
+
+4. **🔓 Reverse Unmasking**: Convert LLM response back to original entities
+   - LLM Response: `"Person1's number Phone1 is valid"`
+   - Final Result: `"احمد's number 0501234567 is valid"`
+
+### Using the Privacy Tools
+
+1. **Analyze Text**: Enter text and click "Analyze" to detect entities
+2. **Copy Masked Text**: Click the "Copy Masked" button in the Entity Dictionary panel
+3. **Send to LLM**: Paste masked text into any LLM service (ChatGPT, Claude, etc.)
+4. **Unmask Response**: Paste LLM response in the unmask field and click "Unmask"
 
 ## 🛠️ Configuration
 
@@ -131,14 +148,14 @@ LOG_LEVEL=INFO
 
 ### Model Configuration
 
-Edit `src/models/model_config.py` to customize model paths:
+The application now uses a single high-performance model:
 
 ```python
-MODEL_CONFIGS = {
+MODELS = {
     "v2": {
-        "model_path": "../checkpoints/pii_shield_002v.pt",
-        "model_name": "aubmindlab/bert-base-arabertv2",
-        "max_length": 512
+        "name": "PII-Shield",
+        "checkpoint": "checkpoints/pii_shield_002v.pt",
+        "type": "pii_shield"
     }
 }
 ```
@@ -194,15 +211,24 @@ GET /api/models
 **Response:**
 ```json
 {
-  "models": [
-    {
-      "id": "v2",
-      "name": "PII-NER-v2",
-      "description": "Best accuracy & performance"
+  "models": {
+    "v2": {
+      "name": "PII-Shield",
+      "checkpoint": "checkpoints/pii_shield_002v.pt",
+      "type": "pii_shield"
     }
-  ]
+  }
 }
 ```
+
+#### 3. Privacy Features
+
+The application includes built-in privacy tools for secure LLM interactions:
+
+- **Entity Dictionary Management**: Automatic mapping of PII to generic labels
+- **Bidirectional Masking**: Forward and reverse text transformation
+- **Session Isolation**: Mappings clear between analyses for privacy
+- **Export/Import**: Save and restore entity dictionaries
 
 ## 🧪 Testing
 
@@ -227,11 +253,24 @@ curl -X POST "http://localhost:8001/api/extract" \
   -d '{"text": "Contact Sarah at sarah@email.com or 555-0123", "model_version": "v2"}'
 ```
 
-2. **Test Omani Arabic text:**
+2. **Test Arabic text with PII:**
 ```bash
-curl -X POST "http://localhost:8001/api/extract" \
+curl -X POST "http://localhost:9000/api/extract" \
   -H "Content-Type: application/json" \
-  -d '{"text": "اسمي محمد بن سالم الحارثي من مسقط، رقمي 96891234567", "model_version": "v2"}'
+  -d '{"text": "مرحبا اسمي احمد ورقمي 0501234567", "model_version": "v2"}'
+```
+
+3. **Test bidirectional masking workflow:**
+```bash
+# 1. Analyze text to create mappings
+curl -X POST "http://localhost:9000/api/extract" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "احمد يعمل في Microsoft", "model_version": "v2"}'
+
+# 2. Use the web interface to:
+#    - Copy masked version: "Person1 يعمل في Organization1"
+#    - Send to LLM, get response
+#    - Unmask LLM response back to original entities
 ```
 
 ## 📁 Project Structure
@@ -249,8 +288,11 @@ ner-pii-nlp/
 │   │   ├── entity_processor.py    # Entity processing logic
 │   │   └── entity_config.py       # Entity type configurations
 │   ├── static/
-│   │   └── css/
-│   │       └── styles.css         # Application styles
+│   │   ├── css/
+│   │   │   └── styles.css         # Application styles
+│   │   └── js/
+│   │       ├── app.js             # Main application logic
+│   │       └── entity-dictionary.js # Entity dictionary & masking system
 │   └── templates/
 │       ├── base.html               # Base template
 │       ├── index.html              # Main application page
@@ -280,8 +322,8 @@ Error: [Errno 48] Address already in use
 ```
 **Solution**: Change port in command or kill existing process:
 ```bash
-# Find process using port 8000
-lsof -i :8001
+# Find process using port 9000
+lsof -i :9000
 # Kill the process
 kill -9 <PID>
 ```
