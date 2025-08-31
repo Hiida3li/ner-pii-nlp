@@ -68,6 +68,13 @@ class EntityDictionaryManager {
         if (exportBtn) exportBtn.addEventListener('click', () => this.exportDictionary());
         if (importBtn) importBtn.addEventListener('click', () => this.importDictionary());
         if (clearBtn) clearBtn.addEventListener('click', () => this.clearDictionary());
+        
+        // Masking/Unmasking actions
+        const copyMaskedBtn = document.getElementById('copy-masked-text');
+        const unmaskBtn = document.getElementById('unmask-text');
+        
+        if (copyMaskedBtn) copyMaskedBtn.addEventListener('click', () => this.copyMaskedText());
+        if (unmaskBtn) unmaskBtn.addEventListener('click', () => this.handleUnmaskText());
     }
     
     setupCollapsiblePanel() {
@@ -597,6 +604,113 @@ class EntityDictionaryManager {
             }
         });
         return mappings;
+    }
+    
+    // Masking and unmasking functions for privacy-preserving LLM interactions
+    getMaskedText(originalText, entities) {
+        if (!entities || entities.length === 0) {
+            return originalText;
+        }
+        
+        let maskedText = originalText;
+        
+        // Sort entities by start position (descending) to avoid position shifting during replacement
+        const sortedEntities = [...entities].sort((a, b) => b.start - a.start);
+        
+        sortedEntities.forEach(entity => {
+            const masked = this.getMappingForEntity(entity.text, entity.entity_type);
+            if (masked) {
+                // Replace the entity text with its masked version
+                maskedText = maskedText.substring(0, entity.start) + 
+                            masked + 
+                            maskedText.substring(entity.end);
+            }
+        });
+        
+        console.log('Original text:', originalText);
+        console.log('Masked text:', maskedText);
+        
+        return maskedText;
+    }
+    
+    unmaskText(maskedText) {
+        if (!maskedText || this.reverseMappings.size === 0) {
+            return maskedText;
+        }
+        
+        let unmaskedText = maskedText;
+        
+        // Replace all masked entities with their original values
+        this.reverseMappings.forEach((mapping, maskedEntity) => {
+            // Use word boundaries to ensure we match complete entities, not parts
+            const regex = new RegExp(`\\b${maskedEntity}\\b`, 'g');
+            unmaskedText = unmaskedText.replace(regex, mapping.original);
+        });
+        
+        console.log('Masked text:', maskedText);
+        console.log('Unmasked text:', unmaskedText);
+        
+        return unmaskedText;
+    }
+    
+    // Get all current mappings for export/display
+    getAllMappings() {
+        const mappings = {};
+        this.entityMappings.forEach((masked, key) => {
+            const [original, type] = key.split(':');
+            if (!mappings[type]) mappings[type] = {};
+            mappings[type][original] = masked;
+        });
+        return mappings;
+    }
+    
+    // UI methods for masking/unmasking
+    copyMaskedText() {
+        // Get the masked text from the main app
+        if (window.piiShieldApp && typeof window.piiShieldApp.getMaskedText === 'function') {
+            const maskedText = window.piiShieldApp.getMaskedText();
+            if (maskedText) {
+                navigator.clipboard.writeText(maskedText).then(() => {
+                    this.showNotification('Masked text copied to clipboard! 🔒', 'success');
+                }).catch(() => {
+                    this.showNotification('Failed to copy masked text', 'error');
+                });
+            } else {
+                this.showNotification('No analysis available to mask. Analyze text first.', 'warning');
+            }
+        } else {
+            this.showNotification('App not ready. Please refresh the page.', 'error');
+        }
+    }
+    
+    handleUnmaskText() {
+        const input = document.getElementById('unmask-input');
+        const resultDiv = document.getElementById('unmasked-result');
+        const unmaskedTextDiv = document.getElementById('unmasked-text');
+        
+        if (!input || !input.value.trim()) {
+            this.showNotification('Please enter masked text to unmask', 'warning');
+            return;
+        }
+        
+        const maskedText = input.value.trim();
+        const unmaskedText = this.unmaskText(maskedText);
+        
+        // Show the result
+        if (unmaskedTextDiv) {
+            unmaskedTextDiv.textContent = unmaskedText;
+        }
+        
+        if (resultDiv) {
+            resultDiv.style.display = 'block';
+        }
+        
+        // Copy unmasked text to clipboard
+        navigator.clipboard.writeText(unmaskedText).then(() => {
+            this.showNotification('Text unmasked and copied to clipboard! 🔓', 'success');
+        }).catch(() => {
+            this.showNotification('Text unmasked successfully', 'success');
+        });
     }
 }
 

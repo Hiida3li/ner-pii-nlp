@@ -600,6 +600,43 @@ class PIIShieldApp {
         return this.state.lastAnalysis;
     }
     
+    // Masking and unmasking methods for privacy-preserving LLM interactions
+    getMaskedText() {
+        if (!this.state.lastAnalysis || !this.entityDictionary) {
+            return null;
+        }
+        
+        const { results } = this.state.lastAnalysis;
+        const originalText = this.elements['input-text']?.value;
+        
+        if (!originalText || !results.entities) {
+            return null;
+        }
+        
+        return this.entityDictionary.getMaskedText(originalText, results.entities);
+    }
+    
+    unmaskText(maskedText) {
+        if (!maskedText || !this.entityDictionary) {
+            return maskedText;
+        }
+        
+        return this.entityDictionary.unmaskText(maskedText);
+    }
+    
+    copyMaskedText() {
+        const maskedText = this.getMaskedText();
+        if (maskedText) {
+            navigator.clipboard.writeText(maskedText).then(() => {
+                this.showNotification('Masked text copied to clipboard!', 'success');
+            }).catch(() => {
+                this.showNotification('Failed to copy masked text', 'error');
+            });
+        } else {
+            this.showNotification('No analysis available to mask', 'error');
+        }
+    }
+    
     exportResults() {
         if (!this.state.lastAnalysis) return null;
         

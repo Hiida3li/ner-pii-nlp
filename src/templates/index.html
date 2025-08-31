@@ -205,6 +205,34 @@
                 Clear
               </button>
             </div>
+            
+            <!-- Masking/Unmasking Actions -->
+            <div style="border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem;">
+              <div style="margin-bottom: 0.75rem;">
+                <small style="font-weight: 600; color: var(--text-secondary);">🔒 Privacy Tools</small>
+              </div>
+              <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <button id="copy-masked-text" class="btn btn-sm btn-primary" style="padding: 6px 12px; font-size: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  Copy Masked
+                </button>
+                <textarea id="unmask-input" placeholder="Paste masked text here to unmask..." style="flex: 1; min-width: 200px; padding: 6px 8px; font-size: 0.75rem; border: 1px solid var(--border); border-radius: 4px; resize: vertical; min-height: 60px;"></textarea>
+                <button id="unmask-text" class="btn btn-sm btn-secondary" style="padding: 6px 12px; font-size: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  Unmask
+                </button>
+              </div>
+              <div id="unmasked-result" style="margin-top: 0.75rem; padding: 8px; background: var(--surface); border-radius: 4px; min-height: 40px; font-size: 0.8rem; color: var(--text-secondary); display: none;">
+                <small style="font-weight: 600;">Unmasked text:</small>
+                <div id="unmasked-text" style="margin-top: 4px; color: var(--text-primary);"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
