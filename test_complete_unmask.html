@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Unmask Functionality Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f8fafc;
+        }
+        .test-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .test-card h2 {
+            color: #1e293b;
+            margin-top: 0;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+        .log {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
+            border-left: 4px solid #3b82f6;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin: 5px;
+        }
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            margin: 10px 0;
+            transition: border-color 0.2s ease;
+        }
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .result {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .error {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            color: #dc2626;
+        }
+        .success {
+            color: #059669;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status.ready { background: #dcfce7; color: #166534; }
+        .status.error { background: #fef2f2; color: #dc2626; }
+        .status.loading { background: #fef3c7; color: #d97706; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-card">
+        <h1>🔓 Complete Unmasking Functionality Test</h1>
+        <div>Status: <span id="app-status" class="status loading">Loading...</span></div>
+    </div>
+
+    <div class="test-card">
+        <h2>📝 Step 1: Analyze Text with PII</h2>
+        <textarea id="test-text" rows="4" placeholder="Enter text containing PII (names, emails, phone numbers, etc.)">John Doe works at Microsoft Corporation. His email is john.doe@microsoft.com and phone is +1-555-123-4567. Sarah Smith from Google can be reached at sarah@google.com.</textarea>
+        <button onclick="analyzeText()" id="analyze-btn">🔍 Analyze Text</button>
+        <div id="analysis-result" class="log"></div>
+    </div>
+
+    <div class="grid">
+        <div class="test-card">
+            <h2>📊 Step 2: Entity Mappings</h2>
+            <button onclick="checkMappings()">🗺️ Check Mappings</button>
+            <div id="mappings-result" class="log"></div>
+        </div>
+        
+        <div class="test-card">
+            <h2>🔒 Step 3: Generate Masked Text</h2>
+            <button onclick="generateMasked()">🎭 Generate Masked</button>
+            <div id="masked-text-result" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2>🔓 Step 4: Test Unmasking</h2>
+        <textarea id="unmask-input" rows="3" placeholder="Paste masked text here or use the generated one"></textarea>
+        <button onclick="testUnmask()">🔓 Unmask Text</button>
+        <div id="unmask-result" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>🧪 Step 5: Edge Case Tests</h2>
+        <button onclick="testEdgeCases()">⚡ Run Edge Case Tests</button>
+        <div id="edge-case-results" class="log"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>📋 Debug Console</h2>
+        <button onclick="clearLogs()">🗑️ Clear Logs</button>
+        <div id="debug-logs" class="log"></div>
+    </div>
+
+    <script>
+        // Global state
+        let appReady = false;
+        let currentEntities = [];
+        let originalText = '';
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const debugLogs = document.getElementById('debug-logs');
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            debugLogs.innerHTML += `<div><strong>[${timestamp}]</strong> ${prefix} ${message}</div>`;
+            debugLogs.scrollTop = debugLogs.scrollHeight;
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        function clearLogs() {
+            document.getElementById('debug-logs').innerHTML = '';
+        }
+
+        function updateStatus(status, message) {
+            const statusEl = document.getElementById('app-status');
+            statusEl.className = `status ${status}`;
+            statusEl.textContent = message;
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', async function() {
+            log('🚀 Starting initialization...');
+            
+            try {
+                // Load required scripts
+                await loadScript('http://localhost:9000/static/js/entity-dictionary.js');
+                await loadScript('http://localhost:9000/static/js/app.js');
+                
+                // Wait for app to be ready
+                let attempts = 0;
+                while (!window.piiShieldApp && attempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                
+                if (window.piiShieldApp && window.piiShieldApp.entityDictionary) {
+                    appReady = true;
+                    updateStatus('ready', 'Ready');
+                    log('✅ App initialized successfully', 'success');
+                } else {
+                    throw new Error('App failed to initialize properly');
+                }
+                
+            } catch (error) {
+                updateStatus('error', 'Error');
+                log(`❌ Initialization failed: ${error.message}`, 'error');
+            }
+        });
+
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        async function analyzeText() {
+            if (!appReady) {
+                log('⚠️ App not ready yet', 'error');
+                return;
+            }
+
+            const text = document.getElementById('test-text').value.trim();
+            if (!text) {
+                log('⚠️ Please enter text to analyze', 'error');
+                return;
+            }
+
+            originalText = text;
+            const resultDiv = document.getElementById('analysis-result');
+            
+            try {
+                log('🔍 Starting text analysis...');
+                
+                const response = await fetch('http://localhost:9000/api/extract', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: text,
+                        model_version: 'v2'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                currentEntities = data.entities || [];
+                
+                // Process entities with EntityDictionaryManager
+                if (window.piiShieldApp?.entityDictionary) {
+                    window.piiShieldApp.entityDictionary.processEntities(currentEntities);
+                    log(`✅ Processed ${currentEntities.length} entities`, 'success');
+                } else {
+                    log('⚠️ EntityDictionary not available', 'error');
+                }
+
+                resultDiv.innerHTML = `
+                    <strong>✅ Analysis Complete:</strong><br>
+                    📊 Found ${currentEntities.length} entities<br>
+                    📝 Text length: ${text.length} characters<br>
+                    🔍 Model: v2<br><br>
+                    <details>
+                        <summary>📋 Raw Results</summary>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </details>
+                `;
+
+                // Enable next steps
+                document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+                
+            } catch (error) {
+                log(`❌ Analysis error: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        function checkMappings() {
+            if (!window.piiShieldApp?.entityDictionary) {
+                log('⚠️ EntityDictionary not available', 'error');
+                return;
+            }
+
+            const dict = window.piiShieldApp.entityDictionary;
+            const resultDiv = document.getElementById('mappings-result');
+
+            const forwardMappings = Array.from(dict.entityMappings.entries());
+            const reverseMappings = Array.from(dict.reverseMappings.entries());
+            const entityCounts = Array.from(dict.entityCounts.entries());
+
+            log(`📊 Mappings check: ${forwardMappings.length} forward, ${reverseMappings.length} reverse`);
+
+            resultDiv.innerHTML = `
+                <strong>🗺️ Current Mappings:</strong><br>
+                📈 Forward mappings: ${forwardMappings.length}<br>
+                📉 Reverse mappings: ${reverseMappings.length}<br>
+                🔢 Entity counts: ${entityCounts.length}<br><br>
+                
+                <details>
+                    <summary>📋 Forward Mappings</summary>
+                    <pre>${JSON.stringify(forwardMappings, null, 2)}</pre>
+                </details>
+                
+                <details>
+                    <summary>📋 Reverse Mappings</summary>
+                    <pre>${JSON.stringify(reverseMappings, null, 2)}</pre>
+                </details>
+            `;
+        }
+
+        function generateMasked() {
+            if (!window.piiShieldApp?.entityDictionary || !originalText || !currentEntities.length) {
+                log('⚠️ No analysis available. Run analysis first.', 'error');
+                return;
+            }
+
+            const dict = window.piiShieldApp.entityDictionary;
+            const maskedText = dict.getMaskedText(originalText, currentEntities);
+            
+            const resultDiv = document.getElementById('masked-text-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <strong>🔒 Masked Text Generated:</strong><br><br>
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 2px dashed #cbd5e1;">
+                    <strong>Original:</strong><br>
+                    <code>${originalText}</code><br><br>
+                    <strong>Masked:</strong><br>
+                    <code>${maskedText}</code>
+                </div>
+            `;
+
+            // Pre-fill unmask input
+            document.getElementById('unmask-input').value = maskedText;
+            log(`✅ Generated masked text: "${maskedText}"`, 'success');
+        }
+
+        function testUnmask() {
+            const maskedInput = document.getElementById('unmask-input').value.trim();
+            if (!maskedInput) {
+                log('⚠️ Please enter masked text to unmask', 'error');
+                return;
+            }
+
+            if (!window.piiShieldApp?.entityDictionary) {
+                log('⚠️ EntityDictionary not available', 'error');
+                return;
+            }
+
+            const dict = window.piiShieldApp.entityDictionary;
+            log(`🔓 Testing unmask with: "${maskedInput}"`);
+            
+            const unmaskedText = dict.unmaskText(maskedInput);
+            const resultDiv = document.getElementById('unmask-result');
+            
+            resultDiv.style.display = 'block';
+            
+            const isWorking = maskedInput !== unmaskedText;
+            const statusIcon = isWorking ? '✅' : '❌';
+            const statusText = isWorking ? 'SUCCESS' : 'FAILED';
+            const statusClass = isWorking ? 'success' : 'error';
+            
+            resultDiv.className = `result ${statusClass}`;
+            resultDiv.innerHTML = `
+                <strong>${statusIcon} Unmask Test: ${statusText}</strong><br><br>
+                
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px;">
+                    <strong>🔒 Masked Input:</strong><br>
+                    <code>${maskedInput}</code><br><br>
+                    
+                    <strong>🔓 Unmasked Result:</strong><br>
+                    <code>${unmaskedText}</code><br><br>
+                    
+                    <strong>📊 Test Result:</strong><br>
+                    ${isWorking ? '✅ Text was successfully unmasked!' : '❌ Unmasking failed - text unchanged'}
+                </div>
+            `;
+
+            log(`${statusIcon} Unmask result: "${unmaskedText}" (${statusText})`, isWorking ? 'success' : 'error');
+        }
+
+        function testEdgeCases() {
+            if (!window.piiShieldApp?.entityDictionary) {
+                log('⚠️ EntityDictionary not available', 'error');
+                return;
+            }
+
+            const dict = window.piiShieldApp.entityDictionary;
+            const resultDiv = document.getElementById('edge-case-results');
+            const results = [];
+
+            log('🧪 Running edge case tests...');
+
+            // Test 1: Empty input
+            const test1 = dict.unmaskText('');
+            results.push(`Test 1 - Empty input: "${test1}" ${test1 === '' ? '✅' : '❌'}`);
+
+            // Test 2: No mappings
+            const originalMappings = dict.reverseMappings;
+            dict.reverseMappings = new Map();
+            const test2 = dict.unmaskText('Person1 works at Organization1');
+            dict.reverseMappings = originalMappings;
+            results.push(`Test 2 - No mappings: "${test2}" ${test2 === 'Person1 works at Organization1' ? '✅' : '❌'}`);
+
+            // Test 3: Partial matches
+            const test3 = dict.unmaskText('This Person1 text has mixed content');
+            results.push(`Test 3 - Partial matches: Working ${test3.includes('Person1') ? '❌' : '✅'}`);
+
+            // Test 4: Multiple occurrences
+            const test4 = dict.unmaskText('Person1 and Person1 are the same');
+            results.push(`Test 4 - Multiple occurrences: Working ${!test4.includes('Person1') ? '✅' : '❌'}`);
+
+            // Test 5: Case sensitivity
+            const test5 = dict.unmaskText('person1 vs Person1');
+            results.push(`Test 5 - Case sensitivity: "${test5}"`);
+
+            resultDiv.innerHTML = results.map(r => `<div>${r}</div>`).join('');
+            log('🧪 Edge case tests completed');
+        }
+
+        // Auto-fill sample text for quick testing
+        document.addEventListener('DOMContentLoaded', function() {
+            log('📄 Page loaded, ready for testing');
+        });
+    </script>
+</body>
+</html>

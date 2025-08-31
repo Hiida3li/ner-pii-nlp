@@ -705,29 +705,7 @@ function initializeApp() {
     });
   }
   
-  // Dictionary Unmask functionality
-  const dictionaryUnmaskBtn = document.getElementById('dictionary-unmask-btn');
-  const dictionaryUnmaskInput = document.getElementById('dictionary-unmask-input');
-  const dictionaryUnmaskedResult = document.getElementById('dictionary-unmasked-result');
-  const dictionaryUnmaskedText = document.getElementById('dictionary-unmasked-text');
-  
-  if (dictionaryUnmaskBtn) {
-    dictionaryUnmaskBtn.addEventListener('click', function() {
-      const maskedText = dictionaryUnmaskInput.value.trim();
-      if (!maskedText) {
-        alert('Please enter some masked text to unmask!');
-        return;
-      }
-
-      if (window.piiShieldApp && window.piiShieldApp.entityDictionary) {
-        const unmaskedText = window.piiShieldApp.entityDictionary.unmaskText(maskedText);
-        dictionaryUnmaskedText.textContent = unmaskedText;
-        dictionaryUnmaskedResult.style.display = 'block';
-      } else {
-        alert('Please analyze some text first to create entity mappings!');
-      }
-    });
-  }
+  // Dictionary Unmask functionality is handled by EntityDictionaryManager
 }
 </script>
 {% endblock %}
