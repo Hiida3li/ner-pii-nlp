@@ -360,7 +360,7 @@ COPY . .
 
 WORKDIR /app/src
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "9000"]
 ```
 
 Build and run:
