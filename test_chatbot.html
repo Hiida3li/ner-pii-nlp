@@ -112,7 +112,7 @@
             <div class="test-input">
                 "My credit card number is 4532-1234-5678-9012 and my passport number is A12345678."
             </div>
-            <p class="expected">Expected: Credit card and passport should be masked as [CREDIT_CARD], [PASSPORT_ID]</p>
+            <p class="expected">Expected: Credit card and passport should be masked as [CREDIT CARD], [PASSPORT ID]</p>
             <button onclick="runTest(2)">Run Test 2</button>
             <div id="result2" class="result" style="display:none;"></div>
         </div>
@@ -229,10 +229,10 @@
                 'ORG': '[ORGANIZATION]',
                 'URL': '[URL]',
                 'EMAIL': '[EMAIL]',
-                'PHONE': '[PHONE_NUMBER]',
-                'CIVIL-ID': '[CIVIL_ID]',
-                'PASSPORT-ID': '[PASSPORT_ID]',
-                'CREDIT-CARD': '[CREDIT_CARD]'
+                'PHONE': '[PHONE NUMBER]',
+                'CIVIL-ID': '[CIVIL ID]',
+                'PASSPORT-ID': '[PASSPORT ID]',
+                'CREDIT-CARD': '[CREDIT CARD]'
             };
 
             const sortedEntities = [...entities].sort((a, b) => b.start - a.start);
