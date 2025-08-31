@@ -17,7 +17,7 @@ COPY . .
 RUN mkdir -p static templates
 
 # Expose FastAPI port
-EXPOSE 8001
+EXPOSE 9000
 
 # Default command
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "9000"]
