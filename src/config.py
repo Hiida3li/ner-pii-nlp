@@ -10,7 +10,7 @@ class Config:
     # Server settings
     DEBUG = True
     HOST = "0.0.0.0"
-    PORT = 8001
+    PORT = 9000
     
     # Model confidence threshold
     CONFIDENCE_THRESHOLD = 0.75
