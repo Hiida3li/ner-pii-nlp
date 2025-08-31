@@ -419,7 +419,15 @@ function initializeApp() {
         displayText = applyPrivacyReplacement(displayText, data.entities);
       }
       
-      resultText.innerHTML = `<div class="results-text">${displayText}</div>`;
+      // Detect if text contains Arabic characters
+      const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+      const hasArabic = arabicRegex.test(data.text || displayText);
+      
+      // Set appropriate text direction
+      const textDirection = hasArabic ? 'rtl' : 'ltr';
+      const textAlign = hasArabic ? 'right' : 'left';
+      
+      resultText.innerHTML = `<div class="results-text" style="direction: ${textDirection}; text-align: ${textAlign}; unicode-bidi: plaintext;">${displayText}</div>`;
     } else {
       resultText.innerHTML = `
         <div class="results-empty">
