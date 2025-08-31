@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Copy Masked Text</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            max-width: 800px; 
+            margin: 0 auto;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 14px;
+        }
+        
+        .test-button:hover {
+            background: #1d4ed8;
+        }
+        
+        .result-area {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            min-height: 50px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Copy Masked Text Functionality Test</h1>
+    
+    <div class="test-container">
+        <h2>Step 1: Test API Connection</h2>
+        <button class="test-button" onclick="testAPI()">Test API Connection</button>
+        <div id="api-result" class="result-area">Click button to test API...</div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Step 2: Test Entity Analysis</h2>
+        <p>Test text: <strong>Ahmed works at Microsoft in Seattle</strong></p>
+        <button class="test-button" onclick="testAnalysis()">Test Analysis</button>
+        <div id="analysis-result" class="result-area">Click button to test analysis...</div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Step 3: Test Masking Logic</h2>
+        <button class="test-button" onclick="testMasking()">Test Masking Logic</button>
+        <div id="masking-result" class="result-area">Click button to test masking...</div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Step 4: Final Status</h2>
+        <div id="final-status" class="result-area">Run all tests to see final status...</div>
+        <button class="test-button" onclick="runAllTests()">Run All Tests</button>
+    </div>
+
+    <script>
+        let testResults = {
+            api: false,
+            analysis: false,
+            masking: false
+        };
+        
+        let lastAnalysisData = null;
+        let entityMappings = new Map();
+
+        async function testAPI() {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.textContent = 'Testing API connection...';
+            
+            try {
+                const response = await fetch('http://localhost:9000/api/models');
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = '<div class="success">✅ API Connection: Working<br>Models available: ' + Object.keys(data.models).join(', ') + '</div>';
+                    testResults.api = true;
+                } else {
+                    resultDiv.innerHTML = '<div class="error">❌ API Connection: Failed (HTTP ' + response.status + ')</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ API Connection: Error - ' + error.message + '</div>';
+            }
+        }
+
+        async function testAnalysis() {
+            const resultDiv = document.getElementById('analysis-result');
+            resultDiv.textContent = 'Testing entity analysis...';
+            
+            const testText = "Ahmed works at Microsoft in Seattle";
+            
+            try {
+                const response = await fetch('http://localhost:9000/api/extract', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        text: testText,
+                        model_version: 'v2'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    lastAnalysisData = { text: testText, data: data };
+                    
+                    if (data.entities && data.entities.length > 0) {
+                        resultDiv.innerHTML = `
+                            <div class="success">
+                                ✅ Analysis: Working<br>
+                                <strong>Entities found:</strong> ${data.entities.length}<br>
+                                <strong>Details:</strong><br>
+                                ${data.entities.map(e => `- "${e.text}" (${e.entity_type})`).join('<br>')}
+                            </div>
+                        `;
+                        testResults.analysis = true;
+                    } else {
+                        resultDiv.innerHTML = '<div class="error">❌ Analysis: No entities detected</div>';
+                    }
+                } else {
+                    resultDiv.innerHTML = '<div class="error">❌ Analysis: HTTP Error ' + response.status + '</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ Analysis: Error - ' + error.message + '</div>';
+            }
+        }
+
+        function testMasking() {
+            const resultDiv = document.getElementById('masking-result');
+            
+            if (!lastAnalysisData) {
+                resultDiv.innerHTML = '<div class="error">❌ Run analysis test first!</div>';
+                return;
+            }
+            
+            resultDiv.textContent = 'Testing masking logic...';
+            
+            try {
+                // Clear previous mappings
+                entityMappings.clear();
+                
+                // Create mappings
+                const entityCounts = {};
+                const { text, data } = lastAnalysisData;
+                
+                // Generate mappings like the real system
+                data.entities.forEach(entity => {
+                    const type = entity.entity_type;
+                    if (!entityCounts[type]) entityCounts[type] = 0;
+                    entityCounts[type]++;
+                    
+                    const typeName = {
+                        'PER': 'Person',
+                        'ORG': 'Organization',
+                        'LOC': 'Location',
+                        'PHONE': 'Phone',
+                        'EMAIL': 'Email'
+                    }[type] || type;
+                    
+                    const maskedName = typeName + entityCounts[type];
+                    entityMappings.set(entity.text, maskedName);
+                });
+                
+                // Apply masking (sort by position descending)
+                let maskedText = text;
+                const sortedEntities = [...data.entities].sort((a, b) => b.start - a.start);
+                
+                sortedEntities.forEach(entity => {
+                    const masked = entityMappings.get(entity.text);
+                    if (masked) {
+                        maskedText = maskedText.substring(0, entity.start) + 
+                                    masked + 
+                                    maskedText.substring(entity.end);
+                    }
+                });
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        ✅ Masking: Working<br>
+                        <strong>Original:</strong> ${text}<br>
+                        <strong>Masked:</strong> ${maskedText}<br>
+                        <strong>Mappings:</strong><br>
+                        ${Array.from(entityMappings.entries()).map(([orig, masked]) => `"${orig}" → "${masked}"`).join('<br>')}
+                    </div>
+                `;
+                testResults.masking = true;
+                
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ Masking: Error - ' + error.message + '</div>';
+            }
+        }
+
+        async function runAllTests() {
+            const statusDiv = document.getElementById('final-status');
+            statusDiv.textContent = 'Running all tests...';
+            
+            // Reset results
+            testResults = { api: false, analysis: false, masking: false };
+            
+            // Run tests in sequence
+            await testAPI();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testAnalysis();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            testMasking();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Show final status
+            const allPassed = testResults.api && testResults.analysis && testResults.masking;
+            
+            statusDiv.innerHTML = `
+                <div class="${allPassed ? 'success' : 'error'}">
+                    <h3>${allPassed ? '🎉 All Tests PASSED!' : '⚠️ Some Tests FAILED'}</h3>
+                    <strong>Test Results:</strong><br>
+                    API Connection: ${testResults.api ? '✅' : '❌'}<br>
+                    Entity Analysis: ${testResults.analysis ? '✅' : '❌'}<br>
+                    Masking Logic: ${testResults.masking ? '✅' : '❌'}<br>
+                    <br>
+                    <strong>Copy Masked Text Status:</strong> ${allPassed ? '✅ READY' : '❌ NOT READY'}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
