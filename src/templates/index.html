@@ -77,9 +77,9 @@
         <textarea 
           id="input-text" 
           class="form-textarea" 
-          placeholder="Paste or type your text here to detect sensitive information..."
+          placeholder="Paste or type your text here to detect sensitive information... / الصق أو اكتب النص هنا لاكتشاف المعلومات الحساسة"
           rows="12"
-          style="width: 100%; padding: 1rem; border-radius: 10px; font-size: 1rem; line-height: 1.6; resize: vertical; min-height: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;"
+          style="width: 100%; padding: 1rem; border-radius: 10px; font-size: 1rem; line-height: 1.6; resize: vertical; min-height: 300px; font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', Roboto, sans-serif; direction: auto;"
         ></textarea>
         <div style="display: flex; gap: 1rem; margin-top: 1.25rem;">
           <button id="extract-btn" class="btn btn-primary" style="flex: 1; padding: 12px 24px; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
@@ -450,10 +450,10 @@ function initializeApp() {
       'ORG': '[ORGANIZATION]',
       'URL': '[URL]',
       'EMAIL': '[EMAIL]',
-      'PHONE': '[PHONE_NUMBER]',
-      'CIVIL-ID': '[CIVIL_ID]',
-      'PASSPORT-ID': '[PASSPORT_ID]',
-      'CREDIT-CARD': '[CREDIT_CARD]'
+      'PHONE': '[PHONE NUMBER]',
+      'CIVIL-ID': '[CIVIL ID]',
+      'PASSPORT-ID': '[PASSPORT ID]',
+      'CREDIT-CARD': '[CREDIT CARD]'
     };
     
     // Sort entities by start position (descending) to avoid position shifting during replacement
