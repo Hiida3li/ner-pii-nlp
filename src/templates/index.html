@@ -34,20 +34,22 @@
 
   <!-- Main Content -->
   <main class="section">
-    <!-- Simplified Controls Bar -->
-    <div class="card mb-6" style="padding: 1.5rem; border-radius: 15px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-        <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <span class="dynamic-hover" style="font-weight: 600; transition: transform 0.3s ease; display: inline-block;">AI Model:</span>
-            <div class="model-display dynamic-hover" style="padding: 10px 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.05)); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 12px; display: inline-flex; align-items: center; gap: 0.75rem; transition: transform 0.3s ease, box-shadow 0.3s ease;">
-              <span class="rocket-emoji dynamic-hover" style="font-size: 1.2rem; display: inline-block; transition: transform 0.3s ease;">🚀</span>
-              <span class="model-name dynamic-hover" style="font-size: 1rem; font-weight: 600; color: var(--text-primary); display: inline-block; transition: transform 0.3s ease;">PII-NER-v2</span>
-            </div>
-            <select id="model-selector" class="form-select-hidden" style="display: none;">
-              <option value="v2" selected>PII-NER-v2</option>
-            </select>
-          </div>
+    <!-- Hero Section -->
+    <div class="card mb-6" style="padding: 2rem; border-radius: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.03)); border: 1px solid rgba(59, 130, 246, 0.1);">
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary);">🛡️ Privacy-Preserving PII Detection</h2>
+        <p style="font-size: 1.1rem; color: var(--text-secondary); margin: 0;">Detect sensitive information and create masked versions for secure LLM interactions</p>
+      </div>
+      
+      <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="model-display" style="padding: 10px 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.05)); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 12px; display: inline-flex; align-items: center; gap: 0.75rem;">
+          <span style="font-size: 1.2rem;">🚀</span>
+          <span style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">PII-Shield Model</span>
+        </div>
+        <select id="model-selector" class="form-select-hidden" style="display: none;">
+          <option value="v2" selected>PII-NER-v2</option>
+        </select>
+      </div>
           <label class="privacy-mode-label" style="display: flex; align-items: center; gap: 0.5rem; cursor: none; transition: transform 0.3s ease;">
             <input type="checkbox" id="privacy-mode" class="form-checkbox" checked style="width: 20px; height: 20px;">
             <span style="font-weight: 500;">Privacy Mode</span>
@@ -62,7 +64,7 @@
 
 
     <!-- Main Analysis Area -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr 350px; gap: 2rem; margin-bottom: 2rem;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
       <!-- Input Section -->
       <div class="card input-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease;">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
@@ -125,8 +127,8 @@
         </div>
       </div>
 
-      <!-- Entity Dictionary Panel -->
-      <div class="card entity-dictionary-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease; max-height: calc(100vh - 200px); overflow-y: auto;">
+      <!-- Entity Dictionary Panel (Hidden for Demo) -->
+      <div class="card entity-dictionary-card" style="display: none; border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease; max-height: calc(100vh - 200px); overflow-y: auto;">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1.25rem;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
             <div style="background: linear-gradient(135deg, #8b5cf6, #ec4899); padding: 8px; border-radius: 8px;">
@@ -234,6 +236,83 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Privacy Workflow Section -->
+    <div class="card" style="border-radius: 20px; padding: 2rem; margin-bottom: 2rem; background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(236, 72, 153, 0.03)); border: 1px solid rgba(139, 92, 246, 0.1);">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary);">🔒 Privacy-Preserving LLM Workflow</h3>
+        <p style="font-size: 1rem; color: var(--text-secondary); margin: 0;">Securely interact with any LLM service without exposing real PII data</p>
+      </div>
+
+      <!-- Workflow Steps -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <div class="workflow-step" style="padding: 1.5rem; background: var(--background); border-radius: 15px; border: 2px solid rgba(59, 130, 246, 0.1); text-align: center;">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔍</div>
+          <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">1. Analyze Text</h4>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin: 0;">Detect PII entities and create secure mappings</p>
+        </div>
+        
+        <div class="workflow-step" style="padding: 1.5rem; background: var(--background); border-radius: 15px; border: 2px solid rgba(16, 185, 129, 0.1); text-align: center;">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">📋</div>
+          <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">2. Copy Masked Text</h4>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin: 0;">Get privacy-safe version for LLM input</p>
+        </div>
+        
+        <div class="workflow-step" style="padding: 1.5rem; background: var(--background); border-radius: 15px; border: 2px solid rgba(245, 158, 11, 0.1); text-align: center;">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">🤖</div>
+          <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">3. Send to LLM</h4>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin: 0;">Use any LLM service safely</p>
+        </div>
+        
+        <div class="workflow-step" style="padding: 1.5rem; background: var(--background); border-radius: 15px; border: 2px solid rgba(139, 92, 246, 0.1); text-align: center;">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔓</div>
+          <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">4. Unmask Response</h4>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin: 0;">Restore original entities in LLM output</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <button id="copy-masked-demo" class="btn btn-primary" style="padding: 12px 24px; font-size: 1rem; display: flex; align-items: center; gap: 0.75rem; border-radius: 12px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          Copy Masked Text
+        </button>
+        
+        <button id="show-unmask-demo" class="btn btn-secondary" style="padding: 12px 24px; font-size: 1rem; display: flex; align-items: center; gap: 0.75rem; border-radius: 12px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          Show Unmasking Tool
+        </button>
+      </div>
+
+      <!-- Unmasking Tool (Initially Hidden) -->
+      <div id="unmask-tool" style="display: none; margin-top: 2rem; padding: 1.5rem; background: var(--surface); border-radius: 15px; border: 1px solid var(--border);">
+        <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">🔓 Unmask LLM Response</h4>
+        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+          <textarea 
+            id="unmask-input-demo" 
+            placeholder="Paste LLM response with masked entities here (e.g., 'Person1 works at Organization1')..." 
+            style="flex: 1; min-height: 100px; padding: 1rem; border: 1px solid var(--border); border-radius: 10px; font-family: monospace; font-size: 0.9rem; resize: vertical;"
+          ></textarea>
+          <button id="unmask-btn-demo" class="btn btn-primary" style="padding: 12px 20px; white-space: nowrap;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            Unmask
+          </button>
+        </div>
+        <div id="unmask-result-demo" style="margin-top: 1rem; padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.2); display: none;">
+          <h5 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; color: #059669;">✅ Unmasked Result:</h5>
+          <div id="unmask-output-demo" style="font-size: 1rem; color: var(--text-primary); white-space: pre-wrap;"></div>
         </div>
       </div>
     </div>
