@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Entity Dictionary Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        .test-case {
+            background: #f8f9fa;
+            border-left: 5px solid #007bff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .test-case:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,123,255,0.15);
+            border-left-color: #0056b3;
+        }
+        .test-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0056b3;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .test-description {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .test-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            border: 2px dashed #e9ecef;
+            white-space: pre-wrap;
+            position: relative;
+        }
+        .expected-output {
+            background: #e7f5e7;
+            border: 2px solid #28a745;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        .expected-title {
+            font-weight: 600;
+            color: #155724;
+            margin-bottom: 5px;
+        }
+        .copy-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            transition: all 0.3s ease;
+        }
+        .copy-btn:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+        }
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .step-number {
+            background: #007bff;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔒 Entity Dictionary Test Suite</h1>
+        <p>Comprehensive tests for Privacy Mode with Entity Mapping</p>
+    </div>
+
+    <div class="container">
+        <div class="instructions">
+            <h3>📋 How to Test:</h3>
+            <div class="step">
+                <div class="step-number">1</div>
+                <span>Click any test case below to copy the text</span>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <span>Open the PII app and ensure "Privacy Mode" is enabled</span>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <span>Paste the text and click "Analyze"</span>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <span>Check the Entity Dictionary panel (right column) and Results</span>
+            </div>
+        </div>
+
+        <div class="test-case" onclick="copyText('test1')">
+            <div class="test-title">
+                🌍 Test 1: Mixed English Entities
+            </div>
+            <div class="test-description">
+                Multiple people and organizations to test sequential numbering
+            </div>
+            <div class="test-content" id="test1">John Smith works at Microsoft. Sarah Johnson works at Google. Mike Wilson is at Apple Inc.</div>
+            <div class="expected-output">
+                <div class="expected-title">Expected Output:</div>
+                <strong>Results:</strong> Person1 works at Organization1. Person2 works at Organization2. Person3 is at Organization3.<br>
+                <strong>Dictionary:</strong> John Smith→Person1, Sarah Johnson→Person2, Mike Wilson→Person3, Microsoft→Organization1, Google→Organization2, Apple Inc.→Organization3
+            </div>
+            <button class="copy-btn">Copy Text</button>
+        </div>
+
+        <div class="test-case" onclick="copyText('test2')">
+            <div class="test-title">
+                🕌 Test 2: Arabic Entities
+            </div>
+            <div class="test-description">
+                Arabic names and organizations for multilingual support testing
+            </div>
+            <div class="test-content" id="test2">مرحبا اسمي أحمد وصديقي محمد. نحن نعمل في شركة مايكروسوفت وشركة جوجل.</div>
+            <div class="expected-output">
+                <div class="expected-title">Expected Output:</div>
+                <strong>Results:</strong> مرحبا اسمي Person1 وصديقي Person2. نحن نعمل في Organization1 وOrganization2.<br>
+                <strong>Dictionary:</strong> أحمد→Person1, محمد→Person2, شركة مايكروسوفت→Organization1, شركة جوجل→Organization2
+            </div>
+            <button class="copy-btn">Copy Text</button>
+        </div>
+
+        <div class="test-case" onclick="copyText('test3')">
+            <div class="test-title">
+                📧 Test 3: Contact Information
+            </div>
+            <div class="test-description">
+                Emails and phone numbers with proper entity type distinction
+            </div>
+            <div class="test-content" id="test3">Contact John at john.smith@company.com or call 555-123-4567. Sarah can be reached at sarah@business.org or 555-987-6543.</div>
+            <div class="expected-output">
+                <div class="expected-title">Expected Output:</div>
+                <strong>Results:</strong> Contact Person1 at Email1 or call Phone1. Person2 can be reached at Email2 or Phone2.<br>
+                <strong>Dictionary:</strong> John→Person1, Sarah→Person2, john.smith@company.com→Email1, sarah@business.org→Email2, 555-123-4567→Phone1, 555-987-6543→Phone2
+            </div>
+            <button class="copy-btn">Copy Text</button>
+        </div>
+
+        <div class="test-case" onclick="copyText('test4')">
+            <div class="test-title">
+                🏢 Test 4: Large Scale Test
+            </div>
+            <div class="test-description">
+                Multiple entity types to test dictionary scalability
+            </div>
+            <div class="test-content" id="test4">Ahmed Al-Rashid from Kuwait works at Microsoft Corporation in Seattle. His email is ahmed@microsoft.com and phone is +965-1234-5678. Sarah Johnson from Google Inc. in California can be reached at sarah@google.com or 650-555-9999. Mike Chen at Apple Inc. uses mike@apple.com and his number is 408-555-1111.</div>
+            <div class="expected-output">
+                <div class="expected-title">Expected Output:</div>
+                <strong>Results:</strong> Person1 from Location1 works at Organization1 in Location2. His email is Email1 and phone is Phone1. Person2 from Organization2 in Location3 can be reached at Email2 or Phone2. Person3 at Organization3 uses Email3 and his number is Phone3.<br>
+                <strong>Dictionary:</strong> 3 Persons, 3 Organizations, 3 Locations, 3 Emails, 3 Phones (total: 15 entities)
+            </div>
+            <button class="copy-btn">Copy Text</button>
+        </div>
+
+        <div class="test-case" onclick="copyText('test5')">
+            <div class="test-title">
+                🔄 Test 5: Consistency Test
+            </div>
+            <div class="test-description">
+                Same entities repeated - should maintain same mapping
+            </div>
+            <div class="test-content" id="test5">John Smith works at Microsoft. Later, John Smith contacted Microsoft again. Sarah Johnson also knows John Smith from Microsoft.</div>
+            <div class="expected-output">
+                <div class="expected-title">Expected Output:</div>
+                <strong>Results:</strong> Person1 works at Organization1. Later, Person1 contacted Organization1 again. Person2 also knows Person1 from Organization1.<br>
+                <strong>Dictionary:</strong> John Smith→Person1 (consistent), Microsoft→Organization1 (consistent), Sarah Johnson→Person2
+            </div>
+            <button class="copy-btn">Copy Text</button>
+        </div>
+    </div>
+
+    <script>
+        function copyText(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.innerText;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                // Visual feedback
+                const testCase = element.closest('.test-case');
+                const originalBg = testCase.style.background;
+                
+                testCase.style.background = 'linear-gradient(135deg, #d4edda, #c3e6cb)';
+                testCase.style.borderLeftColor = '#28a745';
+                
+                // Update button text
+                const btn = testCase.querySelector('.copy-btn');
+                const originalText = btn.innerText;
+                btn.innerText = 'Copied! ✅';
+                btn.style.background = '#28a745';
+                
+                setTimeout(() => {
+                    testCase.style.background = originalBg;
+                    testCase.style.borderLeftColor = '#007bff';
+                    btn.innerText = originalText;
+                    btn.style.background = '#007bff';
+                }, 2500);
+                
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+                alert('Please manually copy the text from the test case.');
+            });
+        }
+        
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const testCases = document.querySelectorAll('.test-case');
+            
+            testCases.forEach((testCase, index) => {
+                testCase.style.animationDelay = `${index * 0.1}s`;
+                testCase.style.animation = 'slideInUp 0.6s ease-out forwards';
+            });
+        });
+        
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .test-case {
+                opacity: 0;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

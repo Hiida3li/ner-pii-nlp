@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Entity Stats Display</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            max-width: 800px; 
+            margin: 0 auto;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Replicate the actual stats grid styles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .working-example {
+            background: #d4edda;
+            border: 2px solid #28a745;
+        }
+        
+        .broken-example {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <h1>Entity Stats Display Test</h1>
+    
+    <div class="test-container">
+        <h2>✅ Working Version (How it should look)</h2>
+        <div class="stats-grid">
+            <div class="stat-card working-example">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">👤</div>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0;">Person</p>
+                <p style="font-size: 1.5rem; font-weight: 700; color: #2563eb; margin: 0.25rem 0 0 0;">2</p>
+            </div>
+            <div class="stat-card working-example">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏢</div>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0;">Organization</p>
+                <p style="font-size: 1.5rem; font-weight: 700; color: #f59e0b; margin: 0.25rem 0 0 0;">2</p>
+            </div>
+            <div class="stat-card working-example">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📍</div>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0;">Location</p>
+                <p style="font-size: 1.5rem; font-weight: 700; color: #10b981; margin: 0.25rem 0 0 0;">1</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>🔧 Test Dynamic Generation</h2>
+        <button onclick="generateStats()">Generate Entity Stats</button>
+        <div id="test-entity-badges" class="stats-grid"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>📊 Test with Real API</h2>
+        <textarea id="test-input" style="width: 100%; height: 100px; padding: 10px;">John Smith and Sarah Johnson work at Microsoft and Google in Seattle.</textarea>
+        <br><br>
+        <button onclick="testRealAPI()">Test with API</button>
+        <div id="api-result"></div>
+        <div id="api-entity-badges" class="stats-grid"></div>
+    </div>
+
+    <script>
+        const ENTITY_CONFIG = {
+            'PER': { color: '#2563eb', emoji: '👤', name: 'Person' },
+            'LOC': { color: '#10b981', emoji: '📍', name: 'Location' },
+            'ORG': { color: '#f59e0b', emoji: '🏢', name: 'Organization' },
+            'URL': { color: '#ef4444', emoji: '🔗', name: 'URL' },
+            'EMAIL': { color: '#8b5cf6', emoji: '📧', name: 'Email' },
+            'PHONE': { color: '#06b6d4', emoji: '📱', name: 'Phone' }
+        };
+        
+        function generateStats() {
+            const container = document.getElementById('test-entity-badges');
+            container.innerHTML = '';
+            
+            const testCounts = {
+                'PER': 3,
+                'ORG': 2,
+                'LOC': 1,
+                'EMAIL': 1
+            };
+            
+            Object.entries(testCounts).forEach(([entityType, count]) => {
+                const config = ENTITY_CONFIG[entityType] || {
+                    color: '#64748b',
+                    emoji: '🔍',
+                    name: entityType
+                };
+                
+                const badge = document.createElement('div');
+                badge.className = 'stat-card';
+                badge.style.cssText = `
+                    border: 2px solid ${config.color}30;
+                    border-radius: 12px;
+                    padding: 1rem;
+                    text-align: center;
+                    transition: all 0.3s ease;
+                    background: white;
+                `;
+                badge.innerHTML = `
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">${config.emoji}</div>
+                    <p style="font-size: 0.85rem; opacity: 0.7; margin: 0;">${config.name}</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; color: ${config.color}; margin: 0.25rem 0 0 0;">${count}</p>
+                `;
+                
+                badge.onmouseenter = function() {
+                    this.style.transform = 'translateY(-4px)';
+                    this.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)';
+                    this.style.borderColor = config.color;
+                };
+                
+                badge.onmouseleave = function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                    this.style.borderColor = `${config.color}30`;
+                };
+                
+                container.appendChild(badge);
+            });
+        }
+        
+        async function testRealAPI() {
+            const input = document.getElementById('test-input').value;
+            const resultDiv = document.getElementById('api-result');
+            const badgesDiv = document.getElementById('api-entity-badges');
+            
+            try {
+                const response = await fetch('http://localhost:9000/api/extract', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        text: input,
+                        model_version: 'v2'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `<p style="color: green;">✅ API Response received. Entity counts:</p>
+                    <pre>${JSON.stringify(data.entity_counts, null, 2)}</pre>`;
+                
+                // Generate badges from API response
+                badgesDiv.innerHTML = '';
+                
+                if (data.entity_counts) {
+                    Object.entries(data.entity_counts).forEach(([entityType, count]) => {
+                        const config = ENTITY_CONFIG[entityType] || {
+                            color: '#64748b',
+                            emoji: '🔍',
+                            name: entityType
+                        };
+                        
+                        const badge = document.createElement('div');
+                        badge.className = 'stat-card';
+                        badge.style.cssText = `
+                            border: 2px solid ${config.color}30;
+                            border-radius: 12px;
+                            padding: 1rem;
+                            text-align: center;
+                            transition: all 0.3s ease;
+                            background: white;
+                        `;
+                        badge.innerHTML = `
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">${config.emoji}</div>
+                            <p style="font-size: 0.85rem; opacity: 0.7; margin: 0;">${config.name}</p>
+                            <p style="font-size: 1.5rem; font-weight: 700; color: ${config.color}; margin: 0.25rem 0 0 0;">${count}</p>
+                        `;
+                        
+                        badgesDiv.appendChild(badge);
+                    });
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Auto-generate on load
+        window.addEventListener('DOMContentLoaded', () => {
+            generateStats();
+        });
+    </script>
+</body>
+</html>

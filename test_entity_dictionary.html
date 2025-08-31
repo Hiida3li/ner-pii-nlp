@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Entity Dictionary Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            max-width: 1200px; 
+            margin: 0 auto;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        
+        .test-button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .test-button:hover {
+            background: #1d4ed8;
+        }
+        
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .entity-item {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        
+        .test-scenario {
+            background: #fff8dc;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Entity Dictionary Accumulation Test</h1>
+    
+    <div class="test-container">
+        <h2>Test Scenarios</h2>
+        
+        <div class="test-scenario">
+            <h3>Scenario 1: Arabic Text with Phone Numbers</h3>
+            <p>First analysis with 4 phone numbers:</p>
+            <pre>مرحبا اسمي احمد ورقم هاتفي هو 0501234567 
+وصديقي محمد رقمه 0502345678
+وايضا يمكنك التواصل على 0503456789
+او على الرقم الاخر 0504567890</pre>
+            <button class="test-button" onclick="testScenario1()">Test Scenario 1</button>
+        </div>
+        
+        <div class="test-scenario">
+            <h3>Scenario 2: Different Text with 2 Phone Numbers</h3>
+            <p>Second analysis with only 2 phone numbers (should show Phone1 and Phone2, not Phone5 and Phone6):</p>
+            <pre>للتواصل اتصل على 0505678901
+او ارسل رسالة على 0506789012</pre>
+            <button class="test-button" onclick="testScenario2()">Test Scenario 2</button>
+        </div>
+        
+        <div class="test-scenario">
+            <h3>Scenario 3: Mixed Entities</h3>
+            <p>Third analysis with mixed entity types:</p>
+            <pre>John Smith works at Microsoft and his email is john@example.com
+Call him at 555-1234 or visit the office in Seattle</pre>
+            <button class="test-button" onclick="testScenario3()">Test Scenario 3</button>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Manual Test</h2>
+        <textarea id="test-input" class="test-input" placeholder="Enter text to test..."></textarea>
+        <br>
+        <button class="test-button" onclick="testManual()">Analyze</button>
+        <button class="test-button" onclick="clearResults()">Clear</button>
+    </div>
+    
+    <div class="test-container">
+        <h2>Results</h2>
+        <div id="api-result" class="results"></div>
+        <div id="entity-counts" class="results"></div>
+        <div id="dictionary-contents" class="results"></div>
+    </div>
+
+    <script>
+        async function callAPI(text) {
+            try {
+                const response = await fetch('http://localhost:9000/api/extract', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        text: text,
+                        model_version: 'v2'
+                    })
+                });
+                
+                const data = await response.json();
+                displayResults(data, text);
+                return data;
+                
+            } catch (error) {
+                document.getElementById('api-result').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        function displayResults(data, originalText) {
+            // Show raw API response
+            document.getElementById('api-result').innerHTML = `
+                <h3>API Response</h3>
+                <p><strong>Original Text:</strong> ${originalText}</p>
+                <p><strong>Total Entities Found:</strong> ${data.entities?.length || 0}</p>
+            `;
+            
+            // Show entity counts
+            if (data.entity_counts) {
+                let countsHTML = '<h3>Entity Counts from API</h3>';
+                Object.entries(data.entity_counts).forEach(([type, count]) => {
+                    countsHTML += `<div class="entity-item"><strong>${type}:</strong> ${count}</div>`;
+                });
+                document.getElementById('entity-counts').innerHTML = countsHTML;
+            }
+            
+            // Show what should be in dictionary
+            if (data.entities) {
+                let dictHTML = '<h3>Expected Dictionary Contents</h3>';
+                const uniqueEntities = new Map();
+                
+                data.entities.forEach(entity => {
+                    const key = `${entity.text}:${entity.entity_type}`;
+                    if (!uniqueEntities.has(key)) {
+                        uniqueEntities.set(key, {
+                            text: entity.text,
+                            type: entity.entity_type
+                        });
+                    }
+                });
+                
+                // Group by type
+                const byType = {};
+                uniqueEntities.forEach((entity) => {
+                    if (!byType[entity.type]) {
+                        byType[entity.type] = [];
+                    }
+                    byType[entity.type].push(entity.text);
+                });
+                
+                Object.entries(byType).forEach(([type, texts]) => {
+                    dictHTML += `<h4>${type} (${texts.length} unique)</h4>`;
+                    texts.forEach((text, index) => {
+                        dictHTML += `<div class="entity-item">${text} → ${type}${index + 1}</div>`;
+                    });
+                });
+                
+                document.getElementById('dictionary-contents').innerHTML = dictHTML;
+            }
+        }
+        
+        function testScenario1() {
+            const text = `مرحبا اسمي احمد ورقم هاتفي هو 0501234567 
+وصديقي محمد رقمه 0502345678
+وايضا يمكنك التواصل على 0503456789
+او على الرقم الاخر 0504567890`;
+            callAPI(text);
+        }
+        
+        function testScenario2() {
+            const text = `للتواصل اتصل على 0505678901
+او ارسل رسالة على 0506789012`;
+            callAPI(text);
+        }
+        
+        function testScenario3() {
+            const text = `John Smith works at Microsoft and his email is john@example.com
+Call him at 555-1234 or visit the office in Seattle`;
+            callAPI(text);
+        }
+        
+        function testManual() {
+            const text = document.getElementById('test-input').value;
+            if (text) {
+                callAPI(text);
+            }
+        }
+        
+        function clearResults() {
+            document.getElementById('test-input').value = '';
+            document.getElementById('api-result').innerHTML = '';
+            document.getElementById('entity-counts').innerHTML = '';
+            document.getElementById('dictionary-contents').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
