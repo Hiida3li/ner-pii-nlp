@@ -220,15 +220,21 @@ class PrivacyChat {
         }
     }
     
-    addMessage(role, content, entities = null) {
+    addMessage(role, content, entities = null, messageData = null) {
         // Process content for PII highlighting if entities provided
         let displayContent = content;
         if (entities && entities.length > 0) {
             displayContent = this.highlightEntities(content, entities);
         }
         
+        // Prepare data attributes for user messages with privacy data
+        let dataAttributes = '';
+        if (messageData && messageData.userMessage) {
+            dataAttributes = `data-original="${messageData.original}" data-masked="${messageData.masked}"`;
+        }
+        
         const messageHtml = `
-            <div class="message-wrapper">
+            <div class="message-wrapper" ${dataAttributes}>
                 <div class="message ${role}">
                     <div class="message-avatar">
                         ${role === 'user' ? 'U' : 'AI'}
