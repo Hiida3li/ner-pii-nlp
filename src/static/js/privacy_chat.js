@@ -430,6 +430,19 @@ class PrivacyChat {
         }
     }
     
+    detectTextDirection(text) {
+        // Regular expression to detect Arabic characters
+        const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+        // Regular expression to detect Hebrew characters
+        const hebrewRegex = /[\u0590-\u05FF]/;
+        
+        // Check if text contains Arabic or Hebrew
+        if (arabicRegex.test(text) || hebrewRegex.test(text)) {
+            return 'rtl';
+        }
+        return 'ltr';
+    }
+    
     addMessage(role, content, entities = null, messageData = null) {
         // Process content for PII highlighting if entities provided
         let displayContent = content;
@@ -442,6 +455,10 @@ class PrivacyChat {
                 displayContent = this.highlightEntities(content, entities);
             }
         }
+        
+        // Detect text direction
+        const textDirection = this.detectTextDirection(content);
+        const dirClass = textDirection === 'rtl' ? 'rtl' : 'ltr';
         
         // Prepare data attributes for user messages with privacy data
         let dataAttributes = '';
@@ -459,7 +476,7 @@ class PrivacyChat {
                         ${role === 'user' ? 'U' : 'AI'}
                     </div>
                     <div class="message-content">
-                        ${displayContent}
+                        <div class="message-text ${dirClass}">${displayContent}</div>
                     </div>
                 </div>
             </div>
