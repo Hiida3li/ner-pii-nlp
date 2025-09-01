@@ -195,18 +195,19 @@ class PrivacyChat {
             const messageData = {
                 original: data.original_message,
                 masked: data.masked_message,
-                userMessage: true
+                userMessage: true,
+                userEntities: data.user_entities || []
             };
             
             // Add user message (show masked or original based on privacy mode)
             const userMessageToShow = this.privacyMode ? data.masked_message : data.original_message;
-            this.addMessage('user', userMessageToShow, null, messageData);
+            this.addMessage('user', userMessageToShow, messageData.userEntities, messageData);
             
             // Hide typing indicator
             this.hideTypingIndicator();
             
             // Add assistant message with highlighted entities
-            this.addMessage('assistant', data.display_response, data.entities);
+            this.addMessage('assistant', data.display_response, data.response_entities || []);
             
             // Show what was sent to AI if in privacy mode
             if (this.privacyMode && data.masked_message) {
@@ -224,13 +225,21 @@ class PrivacyChat {
         // Process content for PII highlighting if entities provided
         let displayContent = content;
         if (entities && entities.length > 0) {
-            displayContent = this.highlightEntities(content, entities);
+            if (role === 'user' && messageData && messageData.userMessage) {
+                // For user messages, highlight based on current privacy mode
+                displayContent = this.highlightUserMessage(content, entities, messageData);
+            } else {
+                // For AI responses, use standard highlighting
+                displayContent = this.highlightEntities(content, entities);
+            }
         }
         
         // Prepare data attributes for user messages with privacy data
         let dataAttributes = '';
         if (messageData && messageData.userMessage) {
-            dataAttributes = `data-original="${messageData.original}" data-masked="${messageData.masked}"`;
+            const escapedOriginal = messageData.original.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            const escapedMasked = messageData.masked.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            dataAttributes = `data-original="${escapedOriginal}" data-masked="${escapedMasked}"`;
         }
         
         const messageHtml = `
@@ -250,25 +259,86 @@ class PrivacyChat {
         this.scrollToBottom();
     }
     
-    highlightEntities(text, entities) {
+    highlightUserMessage(text, entities, messageData) {
+        // Determine which text to highlight and what entities to use
+        const isShowingMasked = this.privacyMode;
+        let textToHighlight = isShowingMasked ? messageData.masked : messageData.original;
+        
+        if (isShowingMasked) {
+            // Highlighting masked text with placeholders
+            return this.highlightMaskedEntities(textToHighlight, entities);
+        } else {
+            // Highlighting original text with actual PII
+            return this.highlightOriginalEntities(textToHighlight, entities);
+        }
+    }
+    
+    highlightMaskedEntities(text, entities) {
         let highlightedText = text;
         
-        // Replace placeholders with highlighted spans
-        const entityTypes = {
+        // Find all placeholders in masked text
+        const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard)\d+/gi;
+        
+        highlightedText = highlightedText.replace(placeholderRegex, (match) => {
+            const baseType = match.replace(/\d+/, '').toLowerCase();
+            const cssClass = this.getEntityCssClass(baseType);
+            return `<span class="pii-entity ${cssClass}">${match}</span>`;
+        });
+        
+        return highlightedText;
+    }
+    
+    highlightOriginalEntities(text, entities) {
+        let highlightedText = text;
+        
+        // Sort entities by position (reverse) to maintain correct positions when replacing
+        const sortedEntities = [...entities].sort((a, b) => b.start - a.start);
+        
+        for (const entity of sortedEntities) {
+            const cssClass = this.getEntityCssClass(entity.entity_type.toLowerCase());
+            const start = entity.start;
+            const end = entity.end;
+            const originalText = entity.text;
+            
+            highlightedText = 
+                highlightedText.slice(0, start) + 
+                `<span class="pii-entity ${cssClass}">${originalText}</span>` +
+                highlightedText.slice(end);
+        }
+        
+        return highlightedText;
+    }
+    
+    getEntityCssClass(entityType) {
+        const entityTypeMap = {
+            'per': 'pii-person',
             'person': 'pii-person',
+            'loc': 'pii-location',
             'location': 'pii-location',
+            'org': 'pii-organization',
             'organization': 'pii-organization',
             'email': 'pii-person',
             'phone': 'pii-person',
-            'url': 'pii-organization'
+            'url': 'pii-organization',
+            'civilid': 'pii-person',
+            'passport': 'pii-person',
+            'creditcard': 'pii-organization',
+            'credit-card': 'pii-organization'
         };
+        
+        return entityTypeMap[entityType.toLowerCase()] || 'pii-masked';
+    }
+    
+    highlightEntities(text, entities) {
+        // For AI responses with placeholders
+        let highlightedText = text;
         
         // Find all placeholders in text
         const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard)\d+/gi;
         
         highlightedText = highlightedText.replace(placeholderRegex, (match) => {
-            const baseType = match.replace(/\d+/, '');
-            const cssClass = this.privacyMode ? 'pii-masked' : (entityTypes[baseType] || 'pii-masked');
+            const baseType = match.replace(/\d+/, '').toLowerCase();
+            const cssClass = this.getEntityCssClass(baseType);
             return `<span class="pii-entity ${cssClass}">${match}</span>`;
         });
         
@@ -318,7 +388,32 @@ class PrivacyChat {
             toggleSwitch.classList.add('off');
         }
         
-        console.log(`Privacy mode: ${this.privacyMode ? 'ON' : 'OFF'}`);
+        // Update all user messages to show/hide original data
+        this.updateMessagesPrivacyView();
+        
+        console.log(`Privacy mode: ${this.privacyMode ? 'ON (Masked)' : 'OFF (Original data shown)'}`);
+    }
+    
+    updateMessagesPrivacyView() {
+        // Find all user message wrappers that have privacy data
+        const userMessages = this.elements.chatMessages.querySelectorAll('.message-wrapper[data-original]');
+        
+        userMessages.forEach(messageWrapper => {
+            const originalMessage = this.unescapeHtml(messageWrapper.getAttribute('data-original'));
+            const maskedMessage = this.unescapeHtml(messageWrapper.getAttribute('data-masked'));
+            const messageContent = messageWrapper.querySelector('.message-content');
+            
+            if (originalMessage && maskedMessage && messageContent) {
+                // Show original or masked based on privacy mode
+                const contentToShow = this.privacyMode ? maskedMessage : originalMessage;
+                messageContent.textContent = contentToShow;
+            }
+        });
+    }
+    
+    unescapeHtml(text) {
+        if (!text) return text;
+        return text.replace(/&quot;/g, '"').replace(/&#39;/g, "'");
     }
     
     async resetChatEndpoint() {

@@ -38,7 +38,8 @@ class PrivacyChatResponse(BaseModel):
     original_message: str
     masked_message: str
     display_response: str
-    entities: Optional[List[Dict]] = []
+    user_entities: Optional[List[Dict]] = []  # Entities found in user message
+    response_entities: Optional[List[Dict]] = []  # Entities found in AI response
 
 class SimpleChatbot:
     def __init__(self):
@@ -200,8 +201,8 @@ Always use the exact same placeholders the user mentions."""},
         # Step 3: Send masked message to LLM (LLM responds with placeholders)
         ai_response = self.chat_with_ai(masked_message)
         
-        # Step 4: Return - LLM already uses correct placeholders
-        return masked_message, ai_response, ai_response
+        # Step 4: Return - LLM already uses correct placeholders, plus detected entities
+        return masked_message, ai_response, ai_response, entities
 
 # Store chatbot sessions
 chatbot_sessions = {}
@@ -231,24 +232,38 @@ async def privacy_chat_api(request: PrivacyChatRequest):
     
     try:
         # Process message
-        masked_user, masked_response, display_response = chatbot.process_message(
+        masked_user, masked_response, display_response, detected_entities = chatbot.process_message(
             request.message, request.privacy_mode
         )
         
-        # Find placeholder entities for highlighting
-        entities = []
-        pattern = r'(person|location|organization|email|phone)\d+'
+        # Convert detected entities to frontend format for user message highlighting
+        user_entities = []
+        for entity in detected_entities:
+            user_entities.append({
+                'text': entity['text'],
+                'entity_type': entity['entity_type'],
+                'start': entity['start'],
+                'end': entity['end'],
+                'placeholder': chatbot.entity_mappings.get(entity['text'], entity['text'])
+            })
+        
+        # Find placeholder entities in AI response for highlighting
+        response_entities = []
+        pattern = r'(person|location|organization|email|phone|url|civilid|passport|creditcard)\d+'
         for match in re.finditer(pattern, display_response.lower()):
-            entities.append({
+            response_entities.append({
                 'text': match.group(),
-                'type': match.group().rstrip('0123456789')
+                'type': match.group().rstrip('0123456789'),
+                'start': match.start(),
+                'end': match.end()
             })
         
         return PrivacyChatResponse(
             original_message=request.message,
             masked_message=masked_user,
             display_response=display_response,
-            entities=entities
+            user_entities=user_entities,
+            response_entities=response_entities
         )
         
     except Exception as e:
@@ -257,7 +272,8 @@ async def privacy_chat_api(request: PrivacyChatRequest):
             original_message=request.message,
             masked_message=request.message,
             display_response="Privacy protection is active. Your message has been processed safely.",
-            entities=[]
+            user_entities=[],
+            response_entities=[]
         )
 
 @app.post("/api/privacy-chat/reset")
