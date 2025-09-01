@@ -290,16 +290,29 @@ class PrivacyChat {
             </div>
         `;
         
-        // Show centered input, hide bottom input
-        if (document.getElementById('centered-input')) {
-            document.getElementById('centered-input').style.display = 'block';
+        // Re-cache welcome screen element since we just recreated it
+        this.elements.welcomeScreen = document.getElementById('welcome-screen');
+        
+        // Always ensure centered input is visible for new chat
+        const centeredInput = document.getElementById('centered-input');
+        if (centeredInput) {
+            centeredInput.style.display = 'block';
         }
-        if (document.getElementById('bottom-input')) {
-            document.getElementById('bottom-input').style.display = 'none';
+        
+        // Hide bottom input for new chat
+        const bottomInput = document.getElementById('bottom-input');
+        if (bottomInput) {
+            bottomInput.style.display = 'none';
         }
         
         // Remove has-messages class
         this.elements.chatMessages.classList.remove('has-messages');
+        
+        // Re-focus the input for better UX
+        const chatInput = document.getElementById('chat-input');
+        if (chatInput) {
+            setTimeout(() => chatInput.focus(), 100);
+        }
     }
     
     autoResizeTextarea() {

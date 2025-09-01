@@ -29,36 +29,45 @@
         /* Sidebar Toggle Button */
         .sidebar-toggle {
             position: fixed;
-            left: 20px;
-            top: 20px;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 16px;
-            color: white;
+            left: 284px;
+            top: 16px;
+            width: 36px;
+            height: 36px;
+            background: #212121;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #9ca3af;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1001;
             transition: all 0.3s;
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         
         .sidebar-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 32px rgba(118, 75, 162, 0.5);
+            background: #303030;
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #e5e7eb;
         }
         
-        .sidebar-toggle.active {
-            left: 400px;
-        }
         
         .sidebar-toggle svg {
-            width: 24px;
-            height: 24px;
+            width: 18px;
+            height: 18px;
             transition: transform 0.3s;
+        }
+        
+        
+        /* When sidebar is collapsed, button moves to left edge */
+        .sidebar-toggle:not(.active) {
+            left: 16px;
+        }
+        
+        /* Icon rotation for open/close state */
+        .sidebar-toggle:not(.active) svg {
+            transform: rotate(0deg);
         }
         
         .sidebar-toggle.active svg {
@@ -91,8 +100,9 @@
         .sidebar-header {
             padding: 2rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.4);
+            background: #181818;
             backdrop-filter: blur(10px);
+            position: relative;
         }
 
         .sidebar-logo {
@@ -484,39 +494,49 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 1rem;
-            background: #221143;
-            border: none;
+            background: #303030;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             color: white;
             font-size: 0.875rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 12px rgba(34, 17, 67, 0.4);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .privacy-toggle:hover {
-            transform: translateY(-1px);
-            background: #2a1a52;
-            box-shadow: 0 6px 16px rgba(34, 17, 67, 0.5);
+            transform: translateY(-2px);
+            background: #404040;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .privacy-toggle.off {
-            background: #dc2626;
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+            background: rgba(220, 38, 38, 0.2);
+            border-color: rgba(220, 38, 38, 0.3);
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+        }
+        
+        .privacy-toggle.off:hover {
+            background: rgba(220, 38, 38, 0.3);
+            border-color: rgba(220, 38, 38, 0.4);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
         }
 
         .toggle-switch {
             width: 36px;
             height: 20px;
-            background: #221143;
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 20px;
             position: relative;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .toggle-switch.off {
-            background: #dc2626;
+            background: rgba(220, 38, 38, 0.3);
+            border-color: rgba(220, 38, 38, 0.4);
         }
 
         .toggle-knob {
@@ -615,7 +635,7 @@
         }
 
         .user .message-avatar {
-            background: #221143;
+            background: #303030;
             color: white;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
@@ -635,9 +655,9 @@
         }
         
         .user .message-content {
-            background: #221143;
+            background: #303030;
             color: white;
-            border: 1px solid rgba(34, 17, 67, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 1rem 1.25rem;
             border-radius: 18px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -860,7 +880,7 @@
         .send-btn {
             width: 40px;
             height: 40px;
-            background: #221143;
+            background: #303030;
             border: none;
             color: white;
             cursor: pointer;
@@ -874,8 +894,8 @@
 
         .send-btn:hover {
             transform: scale(1.05);
-            background: #2a1a52;
-            box-shadow: 0 6px 16px rgba(34, 17, 67, 0.5);
+            background: #404040;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
         }
         
         .send-btn:active {
@@ -1078,14 +1098,10 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .sidebar-toggle {
-                width: 40px;
-                height: 40px;
+                width: 36px;
+                height: 36px;
                 left: 10px;
                 top: 10px;
-            }
-            
-            .sidebar-toggle.active {
-                left: 10px;
             }
 
             .sidebar {
@@ -1159,10 +1175,10 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar Toggle Button -->
-    <button class="sidebar-toggle active" id="sidebar-toggle">
+    <!-- Sidebar Toggle Button (Always Visible) -->
+    <button class="sidebar-toggle" id="sidebar-toggle">
         <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M15 18l-6-6 6-6"/>
+            <path d="M3 12h18M3 6h18M3 18h18"/>
         </svg>
     </button>
     
