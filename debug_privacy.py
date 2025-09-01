@@ -17,11 +17,12 @@ import json
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Privacy Debug Interface", description="Debug what gets sent to LLM")
-
-# Mount static files and templates
-app.mount("/static", StaticFiles(directory="src/static"), name="static")
-templates = Jinja2Templates(directory="src/templates")
+app = FastAPI(
+    title="Privacy Debug Interface", 
+    description="Debug what gets sent to LLM",
+    docs_url=None,  # Disable automatic docs
+    redoc_url=None  # Disable redoc
+)
 
 class DebugRequest(BaseModel):
     message: str
