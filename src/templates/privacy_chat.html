@@ -134,85 +134,104 @@
         .sidebar-logo {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center;
             margin-bottom: 1.5rem;
-            padding: 0 1.5rem;
-        }
-
-        .logo-icon-robot {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+            padding: 1rem;
         }
         
-        .mini-robot {
-            width: 25px;
-            height: 22px;
+        /* Sidebar Robot Logo - Scaled down version */
+        .sidebar-robot-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .sidebar-lightning {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: 11px;
+            height: 18px;
+            background: #00c8ff;
+            clip-path: polygon(
+                65% 0%,
+                20% 48%,
+                40% 48%,
+                25% 100%,
+                70% 52%,
+                50% 52%
+            );
+        }
+        
+        .sidebar-robot-head {
+            width: 60px;
+            height: 46px;
             background: linear-gradient(135deg, #ff00ff, #00ffff);
-            border-radius: 8px;
+            border-radius: 20px;
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         
-        .mini-robot::before,
-        .mini-robot::after {
+        .sidebar-robot-head::before,
+        .sidebar-robot-head::after {
             content: '';
             position: absolute;
-            width: 8px;
-            height: 10px;
+            width: 12px;
+            height: 15px;
             background: inherit;
-            border-radius: 3px;
+            border-radius: 5px;
         }
         
-        .mini-robot::before {
-            left: -6px;
+        .sidebar-robot-head::before {
+            left: -8px;
             top: 50%;
             transform: translateY(-50%);
         }
         
-        .mini-robot::after {
-            right: -6px;
+        .sidebar-robot-head::after {
+            right: -8px;
             top: 50%;
             transform: translateY(-50%);
         }
         
-        .mini-face {
-            width: 18px;
-            height: 14px;
+        .sidebar-robot-face {
+            width: 43px;
+            height: 30px;
             background: white;
-            border-radius: 4px;
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 1px;
+            gap: 4px;
+            position: relative;
+            z-index: 2;
         }
         
-        .mini-eyes {
+        .sidebar-eyes {
             display: flex;
-            gap: 8px;
+            gap: 13px;
             margin-top: 3px;
         }
         
-        .mini-eye {
-            width: 3px;
-            height: 5px;
-            background: #1e2025;
-            border-radius: 1px;
+        .sidebar-eye {
+            width: 7px;
+            height: 13px;
+            background: #1e2832;
+            border-radius: 4px;
         }
         
-        .mini-mouth {
-            width: 3px;
-            height: 1px;
-            background: #1e2025;
-            border-radius: 0 0 3px 3px;
+        .sidebar-mouth {
+            width: 6px;
+            height: 1.5px;
+            background: #1e2832;
+            border-radius: 0 0 6px 6px;
+            margin-top: 1px;
         }
         
 
@@ -1207,14 +1226,15 @@
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
-                    <div class="logo-icon-robot">
-                        <div class="mini-robot">
-                            <div class="mini-face">
-                                <div class="mini-eyes">
-                                    <div class="mini-eye"></div>
-                                    <div class="mini-eye"></div>
+                    <div class="sidebar-robot-wrapper">
+                        <div class="sidebar-lightning"></div>
+                        <div class="sidebar-robot-head">
+                            <div class="sidebar-robot-face">
+                                <div class="sidebar-eyes">
+                                    <div class="sidebar-eye"></div>
+                                    <div class="sidebar-eye"></div>
                                 </div>
-                                <div class="mini-mouth"></div>
+                                <div class="sidebar-mouth"></div>
                             </div>
                         </div>
                     </div>
