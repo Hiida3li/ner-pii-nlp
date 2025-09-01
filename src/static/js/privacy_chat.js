@@ -17,6 +17,7 @@ class PrivacyChat {
         this.cacheElements();
         this.setupEventListeners();
         this.initSession();
+        this.updateSessionList();
     }
     
     cacheElements() {
@@ -28,7 +29,9 @@ class PrivacyChat {
             chatList: document.getElementById('chat-list'),
             welcomeScreen: document.getElementById('welcome-screen'),
             privacyToggle: document.getElementById('privacy-toggle'),
-            toggleSwitch: document.getElementById('toggle-switch')
+            toggleSwitch: document.getElementById('toggle-switch'),
+            mobileMenuToggle: document.getElementById('mobile-menu-toggle'),
+            sidebar: document.querySelector('.sidebar')
         };
         
         // Debug: Check which elements were found
@@ -94,6 +97,22 @@ class PrivacyChat {
                 this.elements.chatInput.focus();
             });
         });
+        
+        // Mobile menu toggle
+        if (this.elements.mobileMenuToggle && this.elements.sidebar) {
+            this.elements.mobileMenuToggle.addEventListener('click', () => {
+                this.elements.sidebar.classList.toggle('open');
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && 
+                    !e.target.closest('.sidebar') && 
+                    !e.target.closest('.mobile-menu-toggle')) {
+                    this.elements.sidebar.classList.remove('open');
+                }
+            });
+        }
     }
     
     initSession() {
