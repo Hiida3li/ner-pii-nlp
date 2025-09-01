@@ -30,88 +30,44 @@
             position: relative;
         }
         
-        /* Sidebar Toggle Button */
+        /* Sidebar Toggle Button - ChatGPT Style */
         .sidebar-toggle {
             position: fixed;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 32px;
-            height: 64px;
-            background: linear-gradient(to right, #303030 0%, #404040 100%);
-            border: none;
-            border-radius: 0 32px 32px 0;
+            left: 20px;
+            top: 20px;
+            width: 36px;
+            height: 36px;
+            background: #212121;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
             color: #e5e7eb;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1001;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-        }
-        
-        .sidebar-toggle.active {
-            left: 304px;
-            border-radius: 32px 0 0 32px;
-            background: linear-gradient(to left, #303030 0%, #404040 100%);
+            transition: background 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
         
         .sidebar-toggle:hover {
-            width: 40px;
-            background: linear-gradient(to right, #404040 0%, #505050 100%);
-            box-shadow: 3px 0 12px rgba(0, 0, 0, 0.3);
+            background: #303030;
+            transform: scale(1.05);
         }
         
-        .sidebar-toggle.active:hover {
-            background: linear-gradient(to left, #404040 0%, #505050 100%);
+        .sidebar-toggle:active {
+            transform: scale(0.95);
         }
         
         
         .sidebar-toggle svg {
             width: 20px;
             height: 20px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .sidebar-toggle:not(.active) svg {
-            transform: rotate(0deg);
+            transition: transform 0.2s ease;
         }
         
         .sidebar-toggle.active svg {
             transform: rotate(180deg);
-        }
-        
-        /* Tooltip for toggle button */
-        .sidebar-toggle::after {
-            content: 'Open Sidebar';
-            position: absolute;
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            margin-left: 10px;
-            background: #303030;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        
-        .sidebar-toggle.active::after {
-            content: 'Close Sidebar';
-            left: auto;
-            right: 100%;
-            margin-left: 0;
-            margin-right: 10px;
-        }
-        
-        .sidebar-toggle:hover::after {
-            opacity: 1;
         }
 
         /* Enhanced Sidebar */
@@ -131,9 +87,12 @@
         }
         
         .sidebar.collapsed {
-            width: 0;
+            transform: translateX(-350px);
             opacity: 0;
-            transform: translateX(-100%);
+            visibility: hidden;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                        opacity 0.3s ease,
+                        visibility 0s 0.4s;
             margin-right: -320px;
         }
 
