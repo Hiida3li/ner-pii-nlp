@@ -67,6 +67,40 @@
             width: 20px;
             height: 20px;
         }
+        
+        /* New Chat Icon Button */
+        .new-chat-icon {
+            position: fixed;
+            left: 1rem;
+            top: 4rem;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 8px;
+            color: #e5e7eb;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+            transition: all 0.2s ease;
+        }
+        
+        .new-chat-icon:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+        
+        .new-chat-icon:active {
+            transform: scale(0.95);
+        }
+        
+        .new-chat-icon svg {
+            width: 20px;
+            height: 20px;
+        }
 
         /* Enhanced Sidebar */
         .sidebar {
@@ -1176,6 +1210,13 @@
         </svg>
     </button>
     
+    <!-- New Chat Button - Under Toggle -->
+    <button class="new-chat-icon" id="new-chat-icon" aria-label="New Chat" title="New Chat">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+        </svg>
+    </button>
+    
     <div class="container" id="container">
         <!-- Enhanced Sidebar -->
         <div class="sidebar" id="sidebar">
@@ -1193,12 +1234,6 @@
                         </div>
                     </div>
                 </div>
-                <button class="new-chat-btn" id="new-chat-btn">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2v10M7 7h10"/>
-                    </svg>
-                    New Chat
-                </button>
             </div>
             
             <div class="sessions-label">Recent Chats</div>

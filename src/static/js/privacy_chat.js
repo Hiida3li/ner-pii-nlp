@@ -30,6 +30,7 @@ class PrivacyChat {
             chatInputBottom: document.getElementById('chat-input-bottom'),
             sendBtnBottom: document.getElementById('send-btn-bottom'),
             newChatBtn: document.getElementById('new-chat-btn'),
+            newChatIcon: document.getElementById('new-chat-icon'),
             chatList: document.getElementById('chat-list'),
             welcomeScreen: document.getElementById('welcome-screen'),
             privacyToggle: document.getElementById('privacy-toggle'),
@@ -108,10 +109,19 @@ class PrivacyChat {
             });
         }
         
-        // New chat
-        this.elements.newChatBtn.addEventListener('click', () => {
-            this.createNewSession();
-        });
+        // New chat button in sidebar
+        if (this.elements.newChatBtn) {
+            this.elements.newChatBtn.addEventListener('click', () => {
+                this.createNewSession();
+            });
+        }
+        
+        // New chat icon button (fixed position)
+        if (this.elements.newChatIcon) {
+            this.elements.newChatIcon.addEventListener('click', () => {
+                this.createNewSession();
+            });
+        }
         
         // Privacy toggle
         this.elements.privacyToggle.addEventListener('click', () => {
