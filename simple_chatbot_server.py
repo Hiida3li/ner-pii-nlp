@@ -236,7 +236,7 @@ Remember: Be authentically Omani in your responses while respecting privacy plac
         # Step 3: Send masked message to LLM (LLM responds with placeholders)
         ai_response = self.chat_with_ai(masked_message)
         
-        # Step 4: Return - LLM already uses correct placeholders, plus detected entities
+        # Step 4: Return response - LLM already uses correct placeholders
         return masked_message, ai_response, ai_response, entities
 
 # Store chatbot sessions
