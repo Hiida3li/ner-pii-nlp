@@ -191,8 +191,16 @@ class PrivacyChat {
             
             const data = await response.json();
             
-            // Add user message with MASKED version (what the AI sees)
-            this.addMessage('user', data.masked_message);
+            // Store both original and masked versions for the current message
+            const messageData = {
+                original: data.original_message,
+                masked: data.masked_message,
+                userMessage: true
+            };
+            
+            // Add user message (show masked or original based on privacy mode)
+            const userMessageToShow = this.privacyMode ? data.masked_message : data.original_message;
+            this.addMessage('user', userMessageToShow, null, messageData);
             
             // Hide typing indicator
             this.hideTypingIndicator();

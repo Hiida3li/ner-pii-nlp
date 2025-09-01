@@ -35,6 +35,7 @@ class PrivacyChatRequest(BaseModel):
     session_id: Optional[int] = 1
 
 class PrivacyChatResponse(BaseModel):
+    original_message: str
     masked_message: str
     display_response: str
     entities: Optional[List[Dict]] = []
@@ -244,6 +245,7 @@ async def privacy_chat_api(request: PrivacyChatRequest):
             })
         
         return PrivacyChatResponse(
+            original_message=request.message,
             masked_message=masked_user,
             display_response=display_response,
             entities=entities
@@ -252,6 +254,7 @@ async def privacy_chat_api(request: PrivacyChatRequest):
     except Exception as e:
         logger.error(f"Chat error: {e}")
         return PrivacyChatResponse(
+            original_message=request.message,
             masked_message=request.message,
             display_response="Privacy protection is active. Your message has been processed safely.",
             entities=[]
