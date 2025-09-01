@@ -24,37 +24,75 @@
             height: 100vh;
         }
 
-        /* Sidebar - Black theme */
+        /* Enhanced Sidebar */
         .sidebar {
-            width: 260px;
-            background: #111111;
+            width: 280px;
+            background: linear-gradient(180deg, #0a0a0a 0%, #111111 100%);
             display: flex;
             flex-direction: column;
-            border-right: 1px solid rgba(255,255,255,0.2);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            position: relative;
         }
 
         .sidebar-header {
-            padding: 0.75rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.3);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            background: rgba(16, 163, 127, 0.1);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #10a37f 0%, #5436DA 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
         }
 
         .new-chat-btn {
             width: 100%;
-            padding: 0.75rem;
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 6px;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #10a37f 0%, #0d8a6a 100%);
+            border: none;
+            border-radius: 8px;
             color: #fff;
             font-size: 0.875rem;
+            font-weight: 500;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            transition: background 0.2s;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(16, 163, 127, 0.3);
         }
 
         .new-chat-btn:hover {
-            background: rgba(255,255,255,0.05);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.4);
+        }
+
+        .new-chat-btn:active {
+            transform: translateY(0);
         }
 
         .chat-list {
@@ -63,31 +101,175 @@
             padding: 0.5rem;
         }
 
+        .chat-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-list::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .chat-list::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+        }
+
+        .chat-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .sessions-label {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.5rem 0.75rem;
+            margin-top: 0.5rem;
+        }
+
         .chat-item {
             padding: 0.75rem;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: space-between;
             margin-bottom: 0.25rem;
             font-size: 0.875rem;
             color: #ececf1;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #10a37f;
+            transform: translateX(-100%);
+            transition: transform 0.2s;
         }
 
         .chat-item:hover {
             background: rgba(255,255,255,0.05);
+            padding-left: 1rem;
         }
 
         .chat-item.active {
-            background: rgba(255,255,255,0.1);
+            background: rgba(16, 163, 127, 0.15);
+            color: #10a37f;
+        }
+
+        .chat-item.active::before {
+            transform: translateX(0);
+        }
+
+        .chat-item-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex: 1;
+            min-width: 0;
         }
 
         .chat-icon {
-            width: 16px;
-            height: 16px;
-            opacity: 0.7;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .chat-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .chat-actions {
+            display: none;
+            gap: 0.25rem;
+        }
+
+        .chat-item:hover .chat-actions {
+            display: flex;
+        }
+
+        .chat-action-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            background: transparent;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .chat-action-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .chat-action-btn.delete:hover {
+            background: rgba(255, 69, 69, 0.2);
+            color: #ff4545;
+        }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            padding: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.3);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .user-profile:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 0.875rem;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .user-status {
+            font-size: 0.75rem;
+            color: #666;
         }
 
         /* Main Chat Area */
@@ -477,22 +659,33 @@
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
+        <!-- Enhanced Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="logo-icon">🛡️</div>
+                    <div class="logo-text">Privacy Chat</div>
+                </div>
                 <button class="new-chat-btn" id="new-chat-btn">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M8 1v14M1 8h14"/>
+                        <path d="M12 2v10M7 7h10"/>
                     </svg>
-                    New chat
+                    New Chat
                 </button>
             </div>
+            
+            <div class="sessions-label">Recent Chats</div>
             <div class="chat-list" id="chat-list">
-                <div class="chat-item active">
-                    <svg class="chat-icon" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-                    </svg>
-                    Session 1
+                <!-- Chat sessions will be dynamically added here -->
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">U</div>
+                    <div class="user-info">
+                        <div class="user-name">User</div>
+                        <div class="user-status">Privacy Mode Active</div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -97,9 +97,12 @@ class PrivacyChat {
     }
     
     initSession() {
+        const timestamp = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         this.sessions[this.currentSession] = {
             messages: [],
-            name: `Session ${this.currentSession}`
+            name: `Chat ${this.currentSession}`,
+            timestamp: timestamp,
+            firstMessage: null
         };
     }
     
@@ -122,23 +125,100 @@ class PrivacyChat {
     }
     
     updateSessionList() {
-        const sessionHtml = Object.keys(this.sessions).map(id => `
-            <div class="chat-item ${id == this.currentSession ? 'active' : ''}" data-session="${id}">
-                <svg class="chat-icon" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-                </svg>
-                Session ${id}
-            </div>
-        `).join('');
+        const sessionHtml = Object.keys(this.sessions)
+            .sort((a, b) => b - a) // Show newest first
+            .map(id => {
+                const session = this.sessions[id];
+                const displayName = session.firstMessage ? 
+                    this.truncateText(session.firstMessage, 25) : 
+                    session.name;
+                
+                return `
+                    <div class="chat-item ${id == this.currentSession ? 'active' : ''}" data-session="${id}">
+                        <div class="chat-item-content">
+                            <svg class="chat-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            <span class="chat-name" title="${displayName}">${displayName}</span>
+                        </div>
+                        <div class="chat-actions">
+                            <button class="chat-action-btn rename" data-session="${id}" title="Rename">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </button>
+                            <button class="chat-action-btn delete" data-session="${id}" title="Delete">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         
-        this.elements.chatList.innerHTML = sessionHtml;
+        this.elements.chatList.innerHTML = sessionHtml || '<div style="padding: 1rem; color: #666; text-align: center;">No chats yet</div>';
         
-        // Add click handlers
+        // Add click handlers for sessions
         document.querySelectorAll('.chat-item').forEach(item => {
-            item.addEventListener('click', () => {
-                this.switchSession(item.dataset.session);
+            item.addEventListener('click', (e) => {
+                // Don't switch session if clicking on action buttons
+                if (!e.target.closest('.chat-actions')) {
+                    this.switchSession(item.dataset.session);
+                }
             });
         });
+        
+        // Add handlers for rename buttons
+        document.querySelectorAll('.chat-action-btn.rename').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.renameSession(btn.dataset.session);
+            });
+        });
+        
+        // Add handlers for delete buttons
+        document.querySelectorAll('.chat-action-btn.delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.deleteSession(btn.dataset.session);
+            });
+        });
+    }
+    
+    truncateText(text, maxLength) {
+        if (text.length <= maxLength) return text;
+        return text.substring(0, maxLength) + '...';
+    }
+    
+    renameSession(sessionId) {
+        const session = this.sessions[sessionId];
+        const newName = prompt('Enter new name for this chat:', session.name);
+        if (newName && newName.trim()) {
+            session.name = newName.trim();
+            session.firstMessage = null; // Clear first message to use custom name
+            this.updateSessionList();
+        }
+    }
+    
+    deleteSession(sessionId) {
+        if (Object.keys(this.sessions).length === 1) {
+            alert('Cannot delete the last session');
+            return;
+        }
+        
+        if (confirm('Are you sure you want to delete this chat?')) {
+            delete this.sessions[sessionId];
+            
+            // If deleting current session, switch to another
+            if (sessionId == this.currentSession) {
+                const remainingSessions = Object.keys(this.sessions);
+                this.currentSession = remainingSessions[remainingSessions.length - 1];
+                this.switchSession(this.currentSession);
+            } else {
+                this.updateSessionList();
+            }
+        }
     }
     
     switchSession(sessionId) {
@@ -227,6 +307,12 @@ class PrivacyChat {
                 userMessage: true,
                 userEntities: data.user_entities || []
             };
+            
+            // Store first message for session naming
+            if (!this.sessions[this.currentSession].firstMessage) {
+                this.sessions[this.currentSession].firstMessage = message;
+                this.updateSessionList();
+            }
             
             // Add user message (show masked or original based on privacy mode)
             const userMessageToShow = this.privacyMode ? data.masked_message : data.original_message;
