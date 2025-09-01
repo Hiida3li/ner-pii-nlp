@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Send Message</title>
+</head>
+<body>
+    <h1>Test Message Sending</h1>
+    <button onclick="testSend()">Test Send Message</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testSend() {
+            console.log('Testing send...');
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const response = await fetch('http://localhost:9001/api/privacy-chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Test message from browser',
+                        privacy_mode: true,
+                        session_id: 99
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Response:', data);
+                resultDiv.innerHTML = `
+                    <h3>Success!</h3>
+                    <p>Original: ${data.original_message}</p>
+                    <p>Masked: ${data.masked_message}</p>
+                    <p>Response: ${data.display_response}</p>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `<h3>Error: ${error.message}</h3>`;
+            }
+        }
+    </script>
+</body>
+</html>
