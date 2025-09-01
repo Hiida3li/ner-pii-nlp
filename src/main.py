@@ -10,6 +10,11 @@ import os
 import uvicorn
 import logging
 from contextlib import asynccontextmanager
+import openai
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -60,6 +65,13 @@ class TextResponse(BaseModel):
     entities: List[EntityResult]
     entity_counts: Dict[str, int]
 
+class ChatRequest(BaseModel):
+    message: str
+    history: Optional[List[Dict[str, str]]] = []
+
+class ChatResponse(BaseModel):
+    response: str
+
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -89,6 +101,64 @@ async def set_welcome_complete():
     response = RedirectResponse(url="/app")
     response.set_cookie(key="welcome_completed", value="true", max_age=2592000)  # 30 days
     return response
+
+
+@app.get("/chatbot", response_class=HTMLResponse)
+async def chatbot_page(request: Request):
+    """Render the PII Privacy Layer ChatBot demo page"""
+    logger.info("ChatBot demo page accessed")
+    return templates.TemplateResponse(
+        "chatbot.html", 
+        {"request": request}
+    )
+
+
+@app.post("/api/chat", response_model=ChatResponse)
+async def chat_with_ai(request: ChatRequest):
+    """Chat endpoint with OpenAI integration"""
+    logger.info("Chat API called")
+    
+    # Get OpenAI API key from environment
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        logger.error("OpenAI API key not found in environment")
+        raise HTTPException(status_code=500, detail="OpenAI API key not configured")
+    
+    # Set OpenAI API key
+    openai.api_key = api_key
+    
+    try:
+        # Prepare messages for OpenAI
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant. Be concise and clear in your responses."}
+        ]
+        
+        # Add conversation history if provided
+        for msg in request.history[-5:]:  # Keep last 5 messages for context
+            messages.append({"role": msg.get("role", "user"), "content": msg.get("content", "")})
+        
+        # Add current message
+        messages.append({"role": "user", "content": request.message})
+        
+        # Call OpenAI API
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+            max_tokens=500,
+            temperature=0.7
+        )
+        
+        # Extract response
+        ai_response = response.choices[0].message.content
+        
+        return ChatResponse(response=ai_response)
+        
+    except Exception as e:
+        logger.exception(f"Error calling OpenAI API: {str(e)}")
+        # Return a fallback response if OpenAI fails
+        return ChatResponse(
+            response="I understand your message. As a demonstration, this shows how PII detection works as a privacy layer. Your sensitive information would be highlighted and protected in a real implementation."
+        )
 
 
 @app.post("/api/extract", response_model=TextResponse)
