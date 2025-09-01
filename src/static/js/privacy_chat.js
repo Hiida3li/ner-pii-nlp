@@ -168,10 +168,7 @@ class PrivacyChat {
         this.elements.chatInput.value = '';
         this.autoResizeTextarea();
         
-        // Add user message
-        this.addMessage('user', message);
-        
-        // Show typing indicator
+        // Show typing indicator (don't show user message yet)
         this.showTypingIndicator();
         
         try {
@@ -193,6 +190,9 @@ class PrivacyChat {
             }
             
             const data = await response.json();
+            
+            // Add user message with MASKED version (what the AI sees)
+            this.addMessage('user', data.masked_message);
             
             // Hide typing indicator
             this.hideTypingIndicator();
