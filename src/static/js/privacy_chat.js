@@ -684,6 +684,13 @@ class PrivacyChat {
                     console.warn('Failed to parse entities data:', e);
                 }
                 
+                // Determine which message to show
+                const messageToShow = this.privacyMode ? maskedMessage : originalMessage;
+                
+                // Detect text direction for the current message
+                const textDirection = this.detectTextDirection(messageToShow);
+                const dirClass = textDirection === 'rtl' ? 'rtl' : 'ltr';
+                
                 // Create message data for highlighting
                 const messageData = {
                     original: originalMessage,
@@ -697,9 +704,9 @@ class PrivacyChat {
                 
                 if (entities && entities.length > 0) {
                     const highlightedContent = this.highlightUserMessage(contentToShow, entities, messageData);
-                    messageContent.innerHTML = highlightedContent;
+                    messageContent.innerHTML = `<div class="message-text ${dirClass}">${highlightedContent}</div>`;
                 } else {
-                    messageContent.textContent = contentToShow;
+                    messageContent.innerHTML = `<div class="message-text ${dirClass}">${contentToShow}</div>`;
                 }
             }
         });
