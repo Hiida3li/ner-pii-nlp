@@ -465,16 +465,26 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* Chat Header for Privacy Toggle */
+        .chat-header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            background: rgba(30, 32, 37, 0.6);
+            border-bottom: 1px solid rgba(34, 17, 67, 0.2);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
         /* Privacy Toggle */
         .privacy-toggle {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            z-index: 100;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.625rem 1.25rem;
+            padding: 0.5rem 1rem;
             background: #221143;
             border: none;
             border-radius: 20px;
@@ -565,10 +575,9 @@
         }
 
         .message {
-            max-width: 70%;
             display: flex;
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             animation: fadeInUp 0.3s ease;
         }
         
@@ -584,11 +593,13 @@
         }
 
         .message.user {
+            max-width: 70%;
             margin-left: auto;
             flex-direction: row-reverse;
         }
 
         .message.assistant {
+            max-width: 100%;
             margin-right: auto;
         }
 
@@ -602,46 +613,57 @@
             font-weight: 600;
             font-size: 1rem;
             flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .user .message-avatar {
             background: #221143;
             color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .assistant .message-avatar {
-            background: #2a1a52;
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
             color: white;
+            width: 36px;
+            height: 36px;
+            font-size: 0.9rem;
+            border-radius: 10px;
         }
 
         .message-content {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1rem 1.25rem;
-            border-radius: 18px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             max-width: 100%;
             word-wrap: break-word;
-            backdrop-filter: blur(10px);
         }
         
         .user .message-content {
             background: #221143;
             color: white;
             border: 1px solid rgba(34, 17, 67, 0.4);
+            padding: 1rem 1.25rem;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
         }
         
         .assistant .message-content {
-            background: rgba(34, 17, 67, 0.3);
+            background: transparent;
             color: #e5e7eb;
-            border: 1px solid rgba(34, 17, 67, 0.4);
+            padding: 0;
+            border: none;
+            box-shadow: none;
         }
         
         .message-text {
             font-size: 0.95rem;
-            line-height: 1.6;
+            line-height: 1.8;
             unicode-bidi: plaintext;
             text-align: start;
+        }
+        
+        .assistant .message-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            letter-spacing: 0.01em;
         }
         
         /* RTL Support for Arabic */
@@ -1014,8 +1036,8 @@
         /* Typing Indicator */
         .typing-indicator {
             display: flex;
-            gap: 0.25rem;
-            padding: 0.5rem 0;
+            gap: 0.3rem;
+            padding: 0;
         }
 
         .typing-dot {
@@ -1086,9 +1108,11 @@
                 margin-left: 0;
             }
 
+            .chat-header {
+                padding: 0.5rem 1rem;
+            }
+            
             .privacy-toggle {
-                top: 1rem;
-                right: 1rem;
                 padding: 0.4rem 0.8rem;
                 font-size: 0.75rem;
             }
@@ -1188,11 +1212,13 @@
 
         <!-- Main Chat Area -->
         <div class="main-chat">
-            <!-- Privacy Toggle -->
-            <div class="privacy-toggle" id="privacy-toggle">
-                <span>Privacy Mode</span>
-                <div class="toggle-switch" id="toggle-switch">
-                    <div class="toggle-knob"></div>
+            <!-- Chat Header with Privacy Toggle -->
+            <div class="chat-header">
+                <div class="privacy-toggle" id="privacy-toggle">
+                    <span>Privacy Mode</span>
+                    <div class="toggle-switch" id="toggle-switch">
+                        <div class="toggle-knob"></div>
+                    </div>
                 </div>
             </div>
 
