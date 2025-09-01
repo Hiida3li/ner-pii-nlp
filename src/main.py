@@ -226,13 +226,19 @@ class SimpleChatbot:
         try:
             # Use the app's already-loaded model
             model = app.state.model_factory.get_model("v2")
-            entity_processor = EntityProcessor()
             
-            # Get raw predictions from model
+            # Get predictions from model (returns list of tuples)
             predictions = model.predict(text)
             
-            # Process entities
-            entities = entity_processor.process_entities(text, predictions, EntityConfig.SIMPLIFIED_TAGS)
+            # Convert to dictionary format for consistency
+            entities = []
+            for entity in predictions:
+                entities.append({
+                    'text': entity[0],
+                    'entity_type': entity[1],
+                    'start': entity[2],
+                    'end': entity[3]
+                })
             return entities
         except Exception as e:
             logger.warning(f"PII detection failed: {e}")
