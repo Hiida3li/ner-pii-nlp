@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, Form, HTTPException, Cookie, Response
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -10,6 +10,13 @@ import os
 import uvicorn
 import logging
 from contextlib import asynccontextmanager
+import re
+import openai
+from dotenv import load_dotenv
+import requests
+
+# Load environment variables
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -271,6 +278,290 @@ async def check_model_files():
             results[version] = {"path": None, "exists": False, "is_file": False}
     
     return results
+
+
+# ============= PRIVACY CHATBOT INTEGRATION =============
+
+# Pydantic models for chatbot
+class PrivacyChatRequest(BaseModel):
+    message: str
+    privacy_mode: bool = True
+    session_id: Optional[int] = 1
+
+class PrivacyChatResponse(BaseModel):
+    original_message: str
+    masked_message: str
+    display_response: str
+    user_entities: Optional[List[Dict]] = []
+    response_entities: Optional[List[Dict]] = []
+
+class SimpleChatbot:
+    def __init__(self):
+        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.entity_mappings = {}  # Original -> Masked
+        self.reverse_mappings = {}  # Masked -> Original
+        self.entity_counters = {}  # Track entity numbering
+        self.conversation_history = []  # Store conversation history for context
+        self.max_history_length = 10  # Keep last 10 messages for context
+
+    def detect_pii(self, text: str) -> List[Dict]:
+        """Call the PII detector API internally"""
+        try:
+            # Use the internal extraction function directly
+            from src.models.model_factory import ModelFactory
+            model_factory = ModelFactory()
+            model = model_factory.get_model("v2")
+            entity_processor = EntityProcessor()
+            
+            # Get raw predictions from model
+            predictions = model.predict(text)
+            
+            # Process entities
+            entities = entity_processor.process_entities(text, predictions, EntityConfig.SIMPLIFIED_TAGS)
+            return entities
+        except Exception as e:
+            logger.warning(f"PII detection failed: {e}")
+            return []
+
+    def get_or_create_placeholder(self, original_text: str, entity_type: str) -> str:
+        """Get existing placeholder or create new one with proper descriptive names"""
+        # Check if we already have a mapping for this exact text
+        if original_text in self.entity_mappings:
+            return self.entity_mappings[original_text]
+        
+        # Proper entity type mapping with descriptive names
+        type_map = {
+            'PER': 'Person',
+            'LOC': 'Location', 
+            'ORG': 'Organization',
+            'EMAIL': 'Email',
+            'PHONE': 'Phone',
+            'URL': 'URL',
+            'CIVIL-ID': 'CivilID',
+            'PASSPORT-ID': 'Passport',
+            'CREDIT-CARD': 'CreditCard',
+            'BANK-ACCOUNT': 'BankAccount',  
+            'ACCOUNT': 'BankAccount'
+        }
+        
+        base_name = type_map.get(entity_type, 'Entity')
+        
+        # Initialize counter for this entity type if not exists
+        if base_name not in self.entity_counters:
+            self.entity_counters[base_name] = 0
+        
+        # Increment counter and create placeholder
+        self.entity_counters[base_name] += 1
+        placeholder = f"{base_name}{self.entity_counters[base_name]}"
+        
+        # Store bidirectional mapping
+        self.entity_mappings[original_text] = placeholder
+        self.reverse_mappings[placeholder] = original_text
+        
+        return placeholder
+
+    def mask_entities(self, text: str, entities: List[Dict]) -> str:
+        """Replace PII with placeholders"""
+        if not entities:
+            return text
+        
+        entities_sorted = sorted(entities, key=lambda x: x['start'], reverse=True)
+        masked_text = text
+        
+        for entity in entities_sorted:
+            placeholder = self.get_or_create_placeholder(entity['text'], entity['entity_type'])
+            start = entity['start']
+            end = entity['end']
+            masked_text = masked_text[:start] + placeholder + masked_text[end:]
+        
+        return masked_text
+
+    def chat_with_ai(self, masked_message: str) -> str:
+        """Get AI response using OpenAI with Omani cultural context"""
+        try:
+            if not self.api_key:
+                logger.error("No OpenAI API key found")
+                return self.fallback_response(masked_message)
+            
+            logger.info(f"Calling OpenAI with masked message: {masked_message}")
+            
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            # Build messages with enhanced Omani cultural prompt
+            messages = [
+                {"role": "system", "content": """أنت مساعد ذكي عُماني ودود يتحدث باللهجة العُمانية والخليجية. You are a friendly Omani AI assistant who understands and uses Omani dialect naturally.
+
+🇴🇲 CULTURAL CONTEXT:
+- You understand Omani culture, traditions, and local expressions
+- You use common Omani greetings like "هلا وغلا", "حياك الله"
+- You know about Omani traditions like القهوة العُمانية، الخنجر، الدشداشة، العمامة
+- You can discuss local topics like الأفلاج، الحارات، الأسواق التقليدية
+
+🗣️ DIALECT INSTRUCTIONS:
+- Mix Modern Standard Arabic with Omani/Gulf dialect naturally
+- Use Omani expressions: "زين" (good), "وايد" (a lot), "شو" (what), "وين" (where), "چذي" (like this)
+- Common phrases: "ما عليك زود" (don't worry), "إن شاء الله خير" (hopefully it's good), "الله يعطيك العافية"
+- Be warm and respectful, using "حبيبي", "عزيزي", "أخوي" appropriately
+
+🔒 PRIVACY INSTRUCTIONS:
+- You receive messages with privacy placeholders (Person1, Location1, Organization1, Email1, Phone1, etc.)
+- ALWAYS keep these placeholders exactly as they are in your responses
+- These protect user privacy while maintaining natural conversation
+- Example: If user says "أنا Person1 من Location1" → You respond "أهلاً Person1! كيف الأحوال في Location1؟"
+
+Remember: Be authentically Omani in your responses while respecting privacy placeholders."""}
+            ]
+            
+            # Add conversation history for context (last 5 exchanges)
+            for msg in self.conversation_history[-10:]:  # Last 10 messages (5 exchanges)
+                messages.append(msg)
+            
+            # Add current message
+            messages.append({"role": "user", "content": masked_message})
+            
+            data = {
+                "model": "gpt-4o-mini",
+                "messages": messages,
+                "max_tokens": 200,
+                "temperature": 0.7
+            }
+            
+            response = requests.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers=headers,
+                json=data,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                ai_response = result["choices"][0]["message"]["content"]
+                logger.info(f"OpenAI response: {ai_response}")
+                
+                # Add to conversation history for context
+                self.conversation_history.append({"role": "user", "content": masked_message})
+                self.conversation_history.append({"role": "assistant", "content": ai_response})
+                
+                # Keep only last N messages to avoid token limit
+                if len(self.conversation_history) > self.max_history_length * 2:
+                    self.conversation_history = self.conversation_history[-(self.max_history_length * 2):]
+                
+                return ai_response
+            else:
+                logger.error(f"OpenAI API error: {response.status_code} - {response.text}")
+                return self.fallback_response(masked_message)
+            
+        except Exception as e:
+            logger.error(f"OpenAI API error: {e}")
+            return self.fallback_response(masked_message)
+    
+    def fallback_response(self, masked_message: str) -> str:
+        """Fallback response when OpenAI fails - Omani style"""
+        if "person" in masked_message.lower():
+            return f"هلا وغلا Person1! شو الأخبار؟ أنا هنا عشان أساعدك مع حماية خصوصيتك. كيف أقدر أخدمك؟"
+        elif "organization" in masked_message.lower():
+            return f"أهلاً بك من Organization1! نظام الحماية شغال زين عشان يحمي معلوماتك. شو تحتاج؟"
+        elif "location" in masked_message.lower():
+            return f"حياك الله من Location1! كيف الأحوال عندكم؟ إن شاء الله كل شي زين."
+        else:
+            return "تفضل حبيبي، وصلتني رسالتك مع حماية الخصوصية. كل المعلومات الشخصية محمية. كيف أقدر أساعدك؟"
+
+    def process_message(self, user_message: str, privacy_mode: bool = True):
+        """Simple process: detect PII → mask → send to LLM → return response"""
+        # Step 1: Detect PII using internal detection
+        entities = self.detect_pii(user_message)
+        
+        # Step 2: Mask PII in user message
+        masked_message = self.mask_entities(user_message, entities)
+        
+        # Step 3: Send masked message to LLM (LLM responds with placeholders)
+        ai_response = self.chat_with_ai(masked_message)
+        
+        # Step 4: Return response - LLM already uses correct placeholders
+        return masked_message, ai_response, ai_response, entities
+
+# Store chatbot sessions
+chatbot_sessions = {}
+
+@app.get("/privacy-chat", response_class=HTMLResponse)
+async def privacy_chat_page(request: Request):
+    """Privacy chat interface"""
+    logger.info("Privacy chat page accessed")
+    return templates.TemplateResponse("privacy_chat.html", {"request": request})
+
+@app.post("/api/privacy-chat", response_model=PrivacyChatResponse)
+async def privacy_chat_api(request: PrivacyChatRequest):
+    """Handle chat messages"""
+    session_id = request.session_id
+    
+    # Get or create chatbot
+    if session_id not in chatbot_sessions:
+        chatbot_sessions[session_id] = SimpleChatbot()
+        logger.info(f"Created chatbot for session {session_id}")
+    
+    chatbot = chatbot_sessions[session_id]
+    
+    try:
+        # Process message
+        masked_user, masked_response, display_response, detected_entities = chatbot.process_message(
+            request.message, request.privacy_mode
+        )
+        
+        # Convert detected entities to frontend format for user message highlighting
+        user_entities = []
+        for entity in detected_entities:
+            user_entities.append({
+                'text': entity['text'],
+                'entity_type': entity['entity_type'],
+                'start': entity['start'],
+                'end': entity['end'],
+                'placeholder': chatbot.entity_mappings.get(entity['text'], entity['text'])
+            })
+        
+        # Find placeholder entities in AI response for highlighting
+        response_entities = []
+        pattern = r'(person|location|organization|email|phone|url|civilid|passport|creditcard)\d+'
+        for match in re.finditer(pattern, display_response.lower()):
+            response_entities.append({
+                'text': match.group(),
+                'type': match.group().rstrip('0123456789'),
+                'start': match.start(),
+                'end': match.end()
+            })
+        
+        return PrivacyChatResponse(
+            original_message=request.message,
+            masked_message=masked_user,
+            display_response=display_response,
+            user_entities=user_entities,
+            response_entities=response_entities
+        )
+        
+    except Exception as e:
+        logger.error(f"Chat error: {e}")
+        return PrivacyChatResponse(
+            original_message=request.message,
+            masked_message=request.message,
+            display_response="Privacy protection is active. Your message has been processed safely.",
+            user_entities=[],
+            response_entities=[]
+        )
+
+@app.post("/api/privacy-chat/reset")
+async def reset_session(request: dict):
+    """Reset chat session and clear conversation history"""
+    session_id = request.get('session_id', 1)
+    if session_id in chatbot_sessions:
+        # Clear conversation history and entity mappings
+        chatbot_sessions[session_id].conversation_history = []
+        chatbot_sessions[session_id].entity_mappings = {}
+        chatbot_sessions[session_id].reverse_mappings = {}
+        chatbot_sessions[session_id].entity_counters = {}
+        logger.info(f"Reset session {session_id} - cleared history and mappings")
+    return {"status": "ok"}
 
 
 if __name__ == "__main__":

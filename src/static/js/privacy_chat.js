@@ -30,24 +30,50 @@ class PrivacyChat {
             privacyToggle: document.getElementById('privacy-toggle'),
             toggleSwitch: document.getElementById('toggle-switch')
         };
+        
+        // Debug: Check which elements were found
+        console.log('Elements found:', {
+            chatMessages: !!this.elements.chatMessages,
+            chatInput: !!this.elements.chatInput,
+            sendBtn: !!this.elements.sendBtn,
+            newChatBtn: !!this.elements.newChatBtn,
+            chatList: !!this.elements.chatList,
+            welcomeScreen: !!this.elements.welcomeScreen,
+            privacyToggle: !!this.elements.privacyToggle,
+            toggleSwitch: !!this.elements.toggleSwitch
+        });
     }
     
     setupEventListeners() {
         // Send message
-        this.elements.sendBtn.addEventListener('click', () => this.sendMessage());
+        if (this.elements.sendBtn) {
+            this.elements.sendBtn.addEventListener('click', () => {
+                console.log('Send button clicked');
+                this.sendMessage();
+            });
+        } else {
+            console.error('Send button not found!');
+        }
         
         // Enter to send
-        this.elements.chatInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                this.sendMessage();
-            }
-        });
+        if (this.elements.chatInput) {
+            this.elements.chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    console.log('Enter key pressed');
+                    this.sendMessage();
+                }
+            });
+        } else {
+            console.error('Chat input not found!');
+        }
         
         // Auto-resize textarea
-        this.elements.chatInput.addEventListener('input', () => {
-            this.autoResizeTextarea();
-        });
+        if (this.elements.chatInput) {
+            this.elements.chatInput.addEventListener('input', () => {
+                this.autoResizeTextarea();
+            });
+        }
         
         // New chat
         this.elements.newChatBtn.addEventListener('click', () => {
@@ -157,7 +183,9 @@ class PrivacyChat {
     }
     
     async sendMessage() {
+        console.log('sendMessage called');
         const message = this.elements.chatInput.value.trim();
+        console.log('Message:', message, 'IsTyping:', this.isTyping);
         if (!message || this.isTyping) return;
         
         // Hide welcome screen
@@ -173,6 +201,7 @@ class PrivacyChat {
         
         try {
             // Send to backend
+            console.log('Sending to backend:', { message, privacy_mode: this.privacyMode, session_id: this.currentSession });
             const response = await fetch('/api/privacy-chat', {
                 method: 'POST',
                 headers: {
