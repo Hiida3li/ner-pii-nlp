@@ -1169,15 +1169,16 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Toggle Button - Always Visible -->
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Sidebar">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+    </button>
+    
+    <div class="container" id="container">
         <!-- Enhanced Sidebar -->
         <div class="sidebar" id="sidebar">
-            <!-- Toggle button attached to sidebar -->
-            <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Sidebar">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 12h18M3 6h18M3 18h18"/>
-                </svg>
-            </button>
             <div class="sidebar-header">
                 <div class="sidebar-logo">
                     <div class="logo-icon-robot">
