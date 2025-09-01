@@ -106,19 +106,82 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .logo-icon {
+        .logo-icon-robot {
             width: 55px;
             height: 55px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #221143;
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 1.8rem;
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.5);
+            box-shadow: 0 8px 24px rgba(34, 17, 67, 0.5);
             animation: subtle-pulse 3s ease-in-out infinite;
+            position: relative;
+        }
+        
+        .mini-robot {
+            width: 35px;
+            height: 30px;
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .mini-robot::before,
+        .mini-robot::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 10px;
+            background: inherit;
+            border-radius: 3px;
+        }
+        
+        .mini-robot::before {
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .mini-robot::after {
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .mini-face {
+            width: 24px;
+            height: 18px;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+        
+        .mini-eyes {
+            display: flex;
+            gap: 8px;
+            margin-top: 3px;
+        }
+        
+        .mini-eye {
+            width: 4px;
+            height: 7px;
+            background: #1e2025;
+            border-radius: 2px;
+        }
+        
+        .mini-mouth {
+            width: 4px;
+            height: 1px;
+            background: #1e2025;
+            border-radius: 0 0 4px 4px;
         }
         
         @keyframes subtle-pulse {
@@ -467,8 +530,12 @@
             flex: 1;
             overflow-y: auto;
             padding: 2rem;
-            padding-bottom: 180px;
             background: rgba(30, 32, 37, 0.5);
+            position: relative;
+        }
+        
+        .chat-messages.has-messages {
+            padding-bottom: 180px;
         }
         
         .chat-messages::-webkit-scrollbar {
@@ -686,14 +753,24 @@
 
         /* Input Area */
         .input-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem auto 0;
+            padding: 0 1.5rem;
+        }
+        
+        .input-container.bottom {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
+            max-width: none;
             background: rgba(30, 32, 37, 0.9);
             border-top: 1px solid rgba(34, 17, 67, 0.3);
             padding: 1.5rem;
             backdrop-filter: blur(10px);
+            margin: 0;
         }
 
         .input-wrapper {
@@ -775,12 +852,115 @@
             justify-content: center;
             padding: 2rem;
             text-align: center;
+            position: relative;
         }
         
-        .robot-icon {
-            font-size: 80px;
-            margin-bottom: 1.5rem;
+        /* Custom Robot Logo */
+        .robot-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
             animation: float 3s ease-in-out infinite;
+        }
+
+        .lightning {
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: 20px;
+            height: 32px;
+            background: #00c8ff;
+            clip-path: polygon(
+                65% 0%,
+                20% 48%,
+                40% 48%,
+                25% 100%,
+                70% 52%,
+                50% 52%
+            );
+        }
+
+        .robot-head {
+            width: 120px;
+            height: 95px;
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            border-radius: 40px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 40px rgba(138, 43, 226, 0.3);
+        }
+
+        .robot-head::before,
+        .robot-head::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 30px;
+            background: inherit;
+            border-radius: 10px;
+        }
+
+        .robot-head::before {
+            left: -17px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .robot-head::after {
+            right: -17px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .robot-face {
+            width: 85px;
+            height: 60px;
+            background: white;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .eyes {
+            display: flex;
+            gap: 25px;
+            margin-top: 8px;
+        }
+
+        .eye {
+            width: 14px;
+            height: 24px;
+            background: #1e2025;
+            border-radius: 7px;
+            animation: blink 4s infinite;
+        }
+
+        @keyframes blink {
+            0%, 90%, 100% {
+                transform: scaleY(1);
+            }
+            95% {
+                transform: scaleY(0.1);
+            }
+        }
+
+        .mouth {
+            width: 12px;
+            height: 3px;
+            background: #1e2025;
+            border-radius: 0 0 12px 12px;
+            margin-top: 2px;
         }
         
         @keyframes float {
@@ -788,7 +968,7 @@
                 transform: translateY(0px);
             }
             50% {
-                transform: translateY(-20px);
+                transform: translateY(-15px);
             }
         }
 
@@ -945,9 +1125,19 @@
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
-                    <div class="logo-icon">🤖</div>
+                    <div class="logo-icon-robot">
+                        <div class="mini-robot">
+                            <div class="mini-face">
+                                <div class="mini-eyes">
+                                    <div class="mini-eye"></div>
+                                    <div class="mini-eye"></div>
+                                </div>
+                                <div class="mini-mouth"></div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="logo-text">
-                        <div class="logo-title">Chatoy</div>
+                        <div class="logo-title">BOT.AI</div>
                         <div class="logo-subtitle">AI Assistant</div>
                     </div>
                 </div>
@@ -988,25 +1178,55 @@
             <!-- Chat Messages -->
             <div class="chat-messages" id="chat-messages">
                 <div class="welcome-screen" id="welcome-screen">
-                    <div class="robot-icon">🤖</div>
-                    <h1 class="welcome-title">Chatoy</h1>
+                    <div class="robot-wrapper">
+                        <div class="lightning"></div>
+                        <div class="robot-head">
+                            <div class="robot-face">
+                                <div class="eyes">
+                                    <div class="eye"></div>
+                                    <div class="eye"></div>
+                                </div>
+                                <div class="mouth"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <h1 class="welcome-title">BOT.AI</h1>
                     <p class="welcome-subtitle">
                         Good to see you! How can I help?
                     </p>
+                    
+                    <!-- Centered Input Area -->
+                    <div class="input-container" id="centered-input">
+                        <div class="input-wrapper">
+                            <div class="input-box">
+                                <textarea 
+                                    class="chat-input" 
+                                    id="chat-input" 
+                                    placeholder="Send a message..."
+                                    rows="1"
+                                ></textarea>
+                                <button class="send-btn" id="send-btn">
+                                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Input Area -->
-            <div class="input-container">
+            <!-- Bottom Input Area (hidden initially) -->
+            <div class="input-container bottom" id="bottom-input" style="display: none;">
                 <div class="input-wrapper">
                     <div class="input-box">
                         <textarea 
                             class="chat-input" 
-                            id="chat-input" 
+                            id="chat-input-bottom" 
                             placeholder="Send a message..."
                             rows="1"
                         ></textarea>
-                        <button class="send-btn" id="send-btn">
+                        <button class="send-btn" id="send-btn-bottom">
                             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
                             </svg>

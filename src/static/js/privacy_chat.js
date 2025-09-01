@@ -71,9 +71,15 @@ class PrivacyChat {
             console.error('Chat input not found!');
         }
         
-        // Auto-resize textarea
+        // Auto-resize textarea - both inputs
         if (this.elements.chatInput) {
             this.elements.chatInput.addEventListener('input', () => {
+                this.autoResizeTextarea();
+            });
+        }
+        
+        if (this.elements.chatInputBottom) {
+            this.elements.chatInputBottom.addEventListener('input', () => {
                 this.autoResizeTextarea();
             });
         }
@@ -243,8 +249,19 @@ class PrivacyChat {
     clearChat() {
         this.elements.chatMessages.innerHTML = `
             <div class="welcome-screen" id="welcome-screen">
-                <div class="robot-icon">🤖</div>
-                <h1 class="welcome-title">Chatoy</h1>
+                <div class="robot-wrapper">
+                    <div class="lightning"></div>
+                    <div class="robot-head">
+                        <div class="robot-face">
+                            <div class="eyes">
+                                <div class="eye"></div>
+                                <div class="eye"></div>
+                            </div>
+                            <div class="mouth"></div>
+                        </div>
+                    </div>
+                </div>
+                <h1 class="welcome-title">BOT.AI</h1>
                 <p class="welcome-subtitle">
                     Good to see you! How can I help?
                 </p>
@@ -253,9 +270,30 @@ class PrivacyChat {
     }
     
     autoResizeTextarea() {
-        const textarea = this.elements.chatInput;
-        textarea.style.height = 'auto';
-        textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+        // Resize whichever textarea is active
+        const activeInput = this.elements.welcomeScreen && this.elements.welcomeScreen.style.display !== 'none' ? 
+            this.elements.chatInput : this.elements.chatInputBottom;
+        if (activeInput) {
+            activeInput.style.height = 'auto';
+            activeInput.style.height = Math.min(activeInput.scrollHeight, 200) + 'px';
+        }
+    }
+    
+    moveInputToBottom() {
+        // Hide centered input and show bottom input
+        if (this.elements.centeredInput) {
+            this.elements.centeredInput.style.display = 'none';
+        }
+        if (this.elements.bottomInput) {
+            this.elements.bottomInput.style.display = 'block';
+        }
+        // Add class to adjust padding
+        this.elements.chatMessages.classList.add('has-messages');
+        
+        // Focus on bottom input
+        if (this.elements.chatInputBottom) {
+            this.elements.chatInputBottom.focus();
+        }
     }
     
     async sendMessage() {
