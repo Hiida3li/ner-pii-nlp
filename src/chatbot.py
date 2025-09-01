@@ -67,57 +67,18 @@ Be helpful, friendly, and maintain natural conversation flow while respecting th
                 json={
                     "text": text,
                     "model_version": "v2"
-                },
-                timeout=2  # Very short timeout
+                }
             )
             
             if response.status_code == 200:
                 return response.json()
             else:
                 print(f"PII detection failed: {response.status_code}")
-                return self._mock_pii_detection(text)
+                return {"entities": []}
                 
         except Exception as e:
             print(f"Error calling PII detector: {e}")
-            return self._mock_pii_detection(text)
-    
-    def _mock_pii_detection(self, text: str) -> Dict:
-        """Mock PII detection for demo purposes"""
-        entities = []
-        
-        # Simple pattern matching for demo
-        import re
-        
-        # Find names (capitalized words)
-        for match in re.finditer(r'\b[A-Z][a-z]+\s+[A-Z][a-z]+\b', text):
-            entities.append({
-                'text': match.group(),
-                'entity_type': 'PER',
-                'start': match.start(),
-                'end': match.end()
-            })
-        
-        # Find companies (Microsoft, Google, etc.)
-        for company in ['Microsoft', 'Google', 'Apple', 'Amazon', 'Facebook', 'OpenAI']:
-            if company in text:
-                start = text.find(company)
-                entities.append({
-                    'text': company,
-                    'entity_type': 'ORG', 
-                    'start': start,
-                    'end': start + len(company)
-                })
-        
-        # Find emails
-        for match in re.finditer(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', text):
-            entities.append({
-                'text': match.group(),
-                'entity_type': 'EMAIL',
-                'start': match.start(),
-                'end': match.end()
-            })
-        
-        return {"entities": entities}
+            return {"entities": []}
     
     def mask_entities(self, text: str, entities: List[Dict]) -> str:
         """
