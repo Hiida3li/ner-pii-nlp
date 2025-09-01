@@ -129,7 +129,7 @@ class SimpleChatbot:
         return unmasked_text
 
     def chat_with_ai(self, masked_message: str) -> str:
-        """Get AI response using OpenAI"""
+        """Get AI response using OpenAI with Omani cultural context"""
         try:
             if not self.api_key:
                 logger.error("No OpenAI API key found")
@@ -146,18 +146,42 @@ class SimpleChatbot:
                 "Content-Type": "application/json"
             }
             
+            # Build messages with enhanced Omani cultural prompt
+            messages = [
+                {"role": "system", "content": """أنت مساعد ذكي عُماني ودود يتحدث باللهجة العُمانية والخليجية. You are a friendly Omani AI assistant who understands and uses Omani dialect naturally.
+
+🇴🇲 CULTURAL CONTEXT:
+- You understand Omani culture, traditions, and local expressions
+- You use common Omani greetings like "صباح الخير والنور", "مساء الورد", "هلا وغلا", "حياك الله"
+- You're familiar with Omani cities (مسقط، صلالة، نزوى، صحار، الرستاق، عبري، صور)
+- You know about Omani traditions like القهوة العُمانية، الخنجر، الدشداشة، العمامة
+- You can discuss local topics like الأفلاج، الحارات، الأسواق التقليدية
+
+🗣️ DIALECT INSTRUCTIONS:
+- Mix Modern Standard Arabic with Omani/Gulf dialect naturally
+- Use Omani expressions: "زين" (good), "وايد" (a lot), "شو" (what), "وين" (where), "چذي" (like this)
+- Common phrases: "ما عليك زود" (don't worry), "إن شاء الله خير" (hopefully it's good), "الله يعطيك العافية"
+- Be warm and respectful, using "حبيبي", "عزيزي", "أخوي" appropriately
+
+🔒 PRIVACY INSTRUCTIONS:
+- You receive messages with privacy placeholders (Person1, Location1, Organization1, Email1, Phone1, etc.)
+- ALWAYS keep these placeholders exactly as they are in your responses
+- These protect user privacy while maintaining natural conversation
+- Example: If user says "أنا Person1 من Location1" → You respond "أهلاً Person1! كيف الأحوال في Location1؟"
+
+Remember: Be authentically Omani in your responses while respecting privacy placeholders."""}
+            ]
+            
+            # Add conversation history for context (last 5 exchanges)
+            for msg in self.conversation_history[-10:]:  # Last 10 messages (5 exchanges)
+                messages.append(msg)
+            
+            # Add current message
+            messages.append({"role": "user", "content": masked_message})
+            
             data = {
                 "model": "gpt-4o-mini",
-                "messages": [
-                    {"role": "system", "content": """You are a helpful assistant. Important: When you receive messages with placeholders like 'person1', 'organization1', 'email1', etc., treat them as real entities and use the SAME placeholders in your response. 
-
-For example:
-- If user says "Hi I'm person1 from organization1" 
-- You respond "Hello person1! How are things at organization1?"
-
-Always use the exact same placeholders the user mentions."""},
-                    {"role": "user", "content": masked_message}
-                ],
+                "messages": messages,
                 "max_tokens": 200,
                 "temperature": 0.7
             }
@@ -173,6 +197,15 @@ Always use the exact same placeholders the user mentions."""},
                 result = response.json()
                 ai_response = result["choices"][0]["message"]["content"]
                 logger.info(f"OpenAI response: {ai_response}")
+                
+                # Add to conversation history for context
+                self.conversation_history.append({"role": "user", "content": masked_message})
+                self.conversation_history.append({"role": "assistant", "content": ai_response})
+                
+                # Keep only last N messages to avoid token limit
+                if len(self.conversation_history) > self.max_history_length * 2:
+                    self.conversation_history = self.conversation_history[-(self.max_history_length * 2):]
+                
                 return ai_response
             else:
                 logger.error(f"OpenAI API error: {response.status_code} - {response.text}")
@@ -183,13 +216,15 @@ Always use the exact same placeholders the user mentions."""},
             return self.fallback_response(masked_message)
     
     def fallback_response(self, masked_message: str) -> str:
-        """Fallback response when OpenAI fails"""
+        """Fallback response when OpenAI fails - Omani style"""
         if "person" in masked_message.lower():
-            return f"Hello! I see you mentioned person1. I'm using placeholders to protect your privacy. How can I help you?"
+            return f"هلا وغلا Person1! شو الأخبار؟ أنا هنا عشان أساعدك مع حماية خصوصيتك. كيف أقدر أخدمك؟"
         elif "organization" in masked_message.lower():
-            return f"I notice you're from organization1. The privacy system is working to protect company names. What can I assist with?"
+            return f"أهلاً بك من Organization1! نظام الحماية شغال زين عشان يحمي معلوماتك. شو تحتاج؟"
+        elif "location" in masked_message.lower():
+            return f"حياك الله من Location1! كيف الأحوال عندكم؟ إن شاء الله كل شي زين."
         else:
-            return "I received your message with privacy protection enabled. All sensitive information has been masked with placeholders."
+            return "تفضل حبيبي، وصلتني رسالتك مع حماية الخصوصية. كل المعلومات الشخصية محمية. كيف أقدر أساعدك؟"
 
     def process_message(self, user_message: str, privacy_mode: bool = True):
         """Simple process: detect PII → mask → send to LLM → return response"""
@@ -279,11 +314,15 @@ async def privacy_chat_api(request: PrivacyChatRequest):
 
 @app.post("/api/privacy-chat/reset")
 async def reset_session(request: dict):
-    """Reset chat session"""
+    """Reset chat session and clear conversation history"""
     session_id = request.get('session_id', 1)
     if session_id in chatbot_sessions:
-        del chatbot_sessions[session_id]
-        logger.info(f"Reset session {session_id}")
+        # Clear conversation history and entity mappings
+        chatbot_sessions[session_id].conversation_history = []
+        chatbot_sessions[session_id].entity_mappings = {}
+        chatbot_sessions[session_id].reverse_mappings = {}
+        chatbot_sessions[session_id].entity_counters = {}
+        logger.info(f"Reset session {session_id} - cleared history and mappings")
     return {"status": "ok"}
 
 if __name__ == "__main__":
