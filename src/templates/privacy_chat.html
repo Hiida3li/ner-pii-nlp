@@ -579,39 +579,6 @@
             margin-bottom: 3rem;
         }
 
-        .example-prompts {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .example-prompt {
-            padding: 1rem;
-            background: #1a1a1a;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: left;
-        }
-
-        .example-prompt:hover {
-            border-color: #10a37f;
-            background: rgba(16, 163, 127, 0.1);
-        }
-
-        .example-prompt-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #ffffff;
-        }
-
-        .example-prompt-text {
-            font-size: 0.875rem;
-            color: #cccccc;
-        }
-
         /* Typing Indicator */
         .typing-indicator {
             display: flex;
@@ -644,17 +611,6 @@
             }
         }
 
-        /* Privacy Info Banner */
-        .privacy-info {
-            background: rgba(16, 163, 127, 0.1);
-            border: 1px solid #10a37f;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem auto;
-            max-width: 48rem;
-            font-size: 0.875rem;
-            color: #10a37f;
-        }
 
         /* Mobile Menu Toggle */
         .mobile-menu-toggle {
@@ -804,26 +760,6 @@
                         Your conversations are protected by real-time PII detection. 
                         Personal information is masked before reaching the AI.
                     </p>
-                    
-                    <div class="privacy-info">
-                        🛡️ <strong>Privacy Layer Active:</strong> All personal information (names, locations, emails, etc.) 
-                        is automatically replaced with secure placeholders before being sent to the AI model.
-                    </div>
-
-                    <div class="example-prompts">
-                        <div class="example-prompt" data-prompt="Hi, I'm John Smith from Microsoft in Seattle. My email is john@example.com">
-                            <div class="example-prompt-title">Test Privacy Protection</div>
-                            <div class="example-prompt-text">Try a message with personal information</div>
-                        </div>
-                        <div class="example-prompt" data-prompt="Can you help me plan a trip to Paris next month?">
-                            <div class="example-prompt-title">Travel Planning</div>
-                            <div class="example-prompt-text">Ask about travel destinations</div>
-                        </div>
-                        <div class="example-prompt" data-prompt="What's the weather like today?">
-                            <div class="example-prompt-title">General Query</div>
-                            <div class="example-prompt-text">Ask a simple question</div>
-                        </div>
-                    </div>
                 </div>
             </div>
 

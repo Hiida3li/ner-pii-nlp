@@ -88,16 +88,6 @@ class PrivacyChat {
             this.togglePrivacyMode();
         });
         
-        // Example prompts
-        document.querySelectorAll('.example-prompt').forEach(prompt => {
-            prompt.addEventListener('click', () => {
-                const text = prompt.dataset.prompt;
-                this.elements.chatInput.value = text;
-                this.autoResizeTextarea();
-                this.elements.chatInput.focus();
-            });
-        });
-        
         // Mobile menu toggle
         if (this.elements.mobileMenuToggle && this.elements.sidebar) {
             this.elements.mobileMenuToggle.addEventListener('click', () => {
@@ -266,11 +256,6 @@ class PrivacyChat {
                     Your conversations are protected by real-time PII detection. 
                     Personal information is masked before reaching the AI.
                 </p>
-                
-                <div class="privacy-info">
-                    🛡️ <strong>Privacy Layer Active:</strong> All personal information (names, locations, emails, etc.) 
-                    is automatically replaced with secure placeholders before being sent to the AI model.
-                </div>
             </div>
         `;
     }
