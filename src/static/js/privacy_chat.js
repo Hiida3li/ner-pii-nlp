@@ -30,8 +30,8 @@ class PrivacyChat {
             welcomeScreen: document.getElementById('welcome-screen'),
             privacyToggle: document.getElementById('privacy-toggle'),
             toggleSwitch: document.getElementById('toggle-switch'),
-            mobileMenuToggle: document.getElementById('mobile-menu-toggle'),
-            sidebar: document.querySelector('.sidebar')
+            sidebarToggle: document.getElementById('sidebar-toggle'),
+            sidebar: document.getElementById('sidebar')
         };
         
         // Debug: Check which elements were found
@@ -88,19 +88,11 @@ class PrivacyChat {
             this.togglePrivacyMode();
         });
         
-        // Mobile menu toggle
-        if (this.elements.mobileMenuToggle && this.elements.sidebar) {
-            this.elements.mobileMenuToggle.addEventListener('click', () => {
-                this.elements.sidebar.classList.toggle('open');
-            });
-            
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', (e) => {
-                if (window.innerWidth <= 768 && 
-                    !e.target.closest('.sidebar') && 
-                    !e.target.closest('.mobile-menu-toggle')) {
-                    this.elements.sidebar.classList.remove('open');
-                }
+        // Sidebar toggle
+        if (this.elements.sidebarToggle && this.elements.sidebar) {
+            this.elements.sidebarToggle.addEventListener('click', () => {
+                this.elements.sidebar.classList.toggle('collapsed');
+                this.elements.sidebarToggle.classList.toggle('active');
             });
         }
     }
@@ -251,10 +243,10 @@ class PrivacyChat {
     clearChat() {
         this.elements.chatMessages.innerHTML = `
             <div class="welcome-screen" id="welcome-screen">
-                <h1 class="welcome-title">Privacy-Protected ChatBot</h1>
+                <div class="robot-icon">🤖</div>
+                <h1 class="welcome-title">Chatoy</h1>
                 <p class="welcome-subtitle">
-                    Your conversations are protected by real-time PII detection. 
-                    Personal information is masked before reaching the AI.
+                    Good to see you! How can I help?
                 </p>
             </div>
         `;
