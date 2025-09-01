@@ -281,7 +281,7 @@ class PrivacyChat {
         console.log('Available entities:', entities);
         
         // Create a more comprehensive regex that matches all possible placeholder patterns
-        const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard|bankaccount|credit card|civil id)\d*/gi;
+        const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard|bankaccount)\d*/gi;
         
         highlightedText = highlightedText.replace(placeholderRegex, (match) => {
             const baseType = match.replace(/\d+$/, '').toLowerCase().replace(/\s+/g, '');
@@ -296,6 +296,9 @@ class PrivacyChat {
     highlightOriginalEntities(text, entities) {
         let highlightedText = text;
         
+        console.log('Highlighting original entities in text:', text);
+        console.log('Available entities:', entities);
+        
         // Sort entities by position (reverse) to maintain correct positions when replacing
         const sortedEntities = [...entities].sort((a, b) => b.start - a.start);
         
@@ -304,6 +307,8 @@ class PrivacyChat {
             const start = entity.start;
             const end = entity.end;
             const originalText = entity.text;
+            
+            console.log(`Highlighting entity: '${originalText}' (${entity.entity_type}) at ${start}-${end} with class '${cssClass}'`);
             
             highlightedText = 
                 highlightedText.slice(0, start) + 
@@ -369,12 +374,16 @@ class PrivacyChat {
         // For AI responses with placeholders
         let highlightedText = text;
         
-        // Find all placeholders in text
-        const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard)\d+/gi;
+        console.log('Highlighting AI response entities in text:', text);
+        console.log('Available entities:', entities);
+        
+        // Find all placeholders in text using comprehensive regex
+        const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard|bankaccount)\d*/gi;
         
         highlightedText = highlightedText.replace(placeholderRegex, (match) => {
-            const baseType = match.replace(/\d+/, '').toLowerCase();
+            const baseType = match.replace(/\d+$/, '').toLowerCase().replace(/\s+/g, '');
             const cssClass = this.getEntityCssClass(baseType);
+            console.log(`Found AI response placeholder: '${match}', baseType: '${baseType}', cssClass: '${cssClass}'`);
             return `<span class="pii-entity ${cssClass}">${match}</span>`;
         });
         

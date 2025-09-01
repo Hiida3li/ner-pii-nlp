@@ -81,11 +81,11 @@ class SimpleChatbot:
             'EMAIL': 'Email',
             'PHONE': 'Phone',
             'URL': 'URL',
-            'CIVIL-ID': 'Civil ID',
+            'CIVIL-ID': 'CivilID',
             'PASSPORT-ID': 'Passport',
-            'CREDIT-CARD': 'Credit Card',
-            'BANK-ACCOUNT': 'Credit Card',  # Map bank accounts to Credit Card
-            'ACCOUNT': 'Credit Card'
+            'CREDIT-CARD': 'CreditCard',
+            'BANK-ACCOUNT': 'BankAccount',  
+            'ACCOUNT': 'BankAccount'
         }
         
         base_name = type_map.get(entity_type, 'Entity')

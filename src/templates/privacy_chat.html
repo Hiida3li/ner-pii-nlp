@@ -13,8 +13,8 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
-            background: #343541;
-            color: #ececf1;
+            background: #000000;
+            color: #ffffff;
             height: 100vh;
             overflow: hidden;
         }
@@ -24,13 +24,13 @@
             height: 100vh;
         }
 
-        /* Sidebar - Exact ChatGPT style */
+        /* Sidebar - Black theme */
         .sidebar {
             width: 260px;
-            background: #202123;
+            background: #111111;
             display: flex;
             flex-direction: column;
-            border-right: 1px solid rgba(255,255,255,0.1);
+            border-right: 1px solid rgba(255,255,255,0.2);
         }
 
         .sidebar-header {
@@ -180,7 +180,7 @@
         }
 
         .message.assistant {
-            background: #444654;
+            background: #1a1a1a;
         }
 
         .message-avatar {
@@ -209,7 +209,7 @@
             flex: 1;
             line-height: 1.6;
             font-size: 1rem;
-            color: #d1d5db;
+            color: #ffffff;
         }
 
         /* PII Highlighting */
@@ -314,7 +314,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(to top, #343541 60%, transparent);
+            background: linear-gradient(to top, #000000 60%, transparent);
             padding: 1rem 0 2rem;
         }
 
@@ -325,8 +325,8 @@
         }
 
         .input-box {
-            background: #40414f;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.3);
             border-radius: 12px;
             padding: 0.75rem;
             display: flex;
@@ -335,7 +335,7 @@
         }
 
         .input-box:focus-within {
-            border-color: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
         }
 
         .chat-input {
@@ -351,14 +351,14 @@
         }
 
         .chat-input::placeholder {
-            color: #8e8ea0;
+            color: #cccccc;
         }
 
         .send-btn {
             padding: 0.5rem;
             background: transparent;
             border: none;
-            color: #8e8ea0;
+            color: #cccccc;
             cursor: pointer;
             border-radius: 6px;
             transition: all 0.2s;
@@ -393,7 +393,7 @@
 
         .welcome-subtitle {
             font-size: 1.125rem;
-            color: #8e8ea0;
+            color: #cccccc;
             margin-bottom: 3rem;
         }
 
@@ -406,8 +406,8 @@
 
         .example-prompt {
             padding: 1rem;
-            background: #40414f;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.2);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
@@ -422,12 +422,12 @@
         .example-prompt-title {
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: #ececf1;
+            color: #ffffff;
         }
 
         .example-prompt-text {
             font-size: 0.875rem;
-            color: #8e8ea0;
+            color: #cccccc;
         }
 
         /* Typing Indicator */
@@ -440,7 +440,7 @@
         .typing-dot {
             width: 8px;
             height: 8px;
-            background: #8e8ea0;
+            background: #ffffff;
             border-radius: 50%;
             animation: typing 1.4s infinite;
         }
