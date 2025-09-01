@@ -18,6 +18,8 @@ class PrivacyChat {
         this.setupEventListeners();
         this.initSession();
         this.updateSessionList();
+        // Reset backend session on page load to clear entity mappings
+        this.resetChatEndpoint();
     }
     
     cacheElements() {
