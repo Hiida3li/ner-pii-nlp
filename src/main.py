@@ -10,11 +10,6 @@ import os
 import uvicorn
 import logging
 from contextlib import asynccontextmanager
-import openai
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -65,12 +60,15 @@ class TextResponse(BaseModel):
     entities: List[EntityResult]
     entity_counts: Dict[str, int]
 
-class ChatRequest(BaseModel):
+class PrivacyChatRequest(BaseModel):
     message: str
-    history: Optional[List[Dict[str, str]]] = []
+    privacy_mode: bool = True
+    session_id: Optional[int] = 1
 
-class ChatResponse(BaseModel):
-    response: str
+class PrivacyChatResponse(BaseModel):
+    masked_message: str
+    display_response: str
+    entities: Optional[List[Dict]] = []
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -103,62 +101,78 @@ async def set_welcome_complete():
     return response
 
 
-@app.get("/chatbot", response_class=HTMLResponse)
-async def chatbot_page(request: Request):
-    """Render the PII Privacy Layer ChatBot demo page"""
-    logger.info("ChatBot demo page accessed")
-    return templates.TemplateResponse(
-        "chatbot.html", 
-        {"request": request}
-    )
+@app.get("/privacy-chat", response_class=HTMLResponse)
+async def privacy_chat_page(request: Request):
+    """Render the privacy-preserving chatbot interface"""
+    logger.info("Privacy chat page accessed")
+    return templates.TemplateResponse("privacy_chat.html", {"request": request})
 
 
-@app.post("/api/chat", response_model=ChatResponse)
-async def chat_with_ai(request: ChatRequest):
-    """Chat endpoint with OpenAI integration"""
-    logger.info("Chat API called")
+# Store chatbot instances per session
+chatbot_sessions = {}
+
+@app.post("/api/privacy-chat", response_model=PrivacyChatResponse)
+async def privacy_chat_api(request: PrivacyChatRequest):
+    """Handle chat messages with privacy protection"""
+    from src.chatbot import PrivacyChatbot
     
-    # Get OpenAI API key from environment
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        logger.error("OpenAI API key not found in environment")
-        raise HTTPException(status_code=500, detail="OpenAI API key not configured")
+    session_id = request.session_id
     
-    # Set OpenAI API key
-    openai.api_key = api_key
+    # Get or create chatbot for this session
+    if session_id not in chatbot_sessions:
+        try:
+            chatbot_sessions[session_id] = PrivacyChatbot()
+            logger.info(f"Created new chatbot for session {session_id}")
+        except Exception as e:
+            logger.error(f"Failed to create chatbot: {e}")
+            return PrivacyChatResponse(
+                masked_message=request.message,
+                display_response="Sorry, I'm having trouble connecting to the AI service.",
+                entities=[]
+            )
+    
+    chatbot = chatbot_sessions[session_id]
     
     try:
-        # Prepare messages for OpenAI
-        messages = [
-            {"role": "system", "content": "You are a helpful assistant. Be concise and clear in your responses."}
-        ]
-        
-        # Add conversation history if provided
-        for msg in request.history[-5:]:  # Keep last 5 messages for context
-            messages.append({"role": msg.get("role", "user"), "content": msg.get("content", "")})
-        
-        # Add current message
-        messages.append({"role": "user", "content": request.message})
-        
-        # Call OpenAI API
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            max_tokens=500,
-            temperature=0.7
+        # Process message through privacy pipeline
+        masked_user, masked_response, display_response = chatbot.process_message(
+            request.message, 
+            request.privacy_mode
         )
         
-        # Extract response
-        ai_response = response.choices[0].message.content
+        # Find entities in response for highlighting
+        entities = []
+        import re
+        pattern = r'(person|location|organization|email|phone)\d+'
+        for match in re.finditer(pattern, display_response.lower()):
+            entities.append({
+                'text': match.group(),
+                'type': match.group().rstrip('0123456789')
+            })
         
-        return ChatResponse(response=ai_response)
+        return PrivacyChatResponse(
+            masked_message=masked_user,
+            display_response=display_response,
+            entities=entities
+        )
         
     except Exception as e:
-        logger.exception(f"Error calling OpenAI API: {str(e)}")
-        # Return a fallback response if OpenAI fails
-        return ChatResponse(
-            response="I understand your message. As a demonstration, this shows how PII detection works as a privacy layer. Your sensitive information would be highlighted and protected in a real implementation."
+        logger.error(f"Error in privacy chat: {e}")
+        return PrivacyChatResponse(
+            masked_message=request.message,
+            display_response=f"Sorry, an error occurred: {str(e)}",
+            entities=[]
         )
+
+
+@app.post("/api/privacy-chat/reset")
+async def reset_chat_session(request: Dict):
+    """Reset a chat session"""
+    session_id = request.get('session_id', 1)
+    if session_id in chatbot_sessions:
+        chatbot_sessions[session_id].reset_conversation()
+        logger.info(f"Reset chat session {session_id}")
+    return {"status": "ok"}
 
 
 @app.post("/api/extract", response_model=TextResponse)
