@@ -33,49 +33,85 @@
         /* Sidebar Toggle Button */
         .sidebar-toggle {
             position: fixed;
-            left: 284px;
-            top: 16px;
-            width: 36px;
-            height: 36px;
-            background: #212121;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: #9ca3af;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 64px;
+            background: linear-gradient(to right, #303030 0%, #404040 100%);
+            border: none;
+            border-radius: 0 32px 32px 0;
+            color: #e5e7eb;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1001;
-            transition: all 0.3s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .sidebar-toggle.active {
+            left: 304px;
+            border-radius: 32px 0 0 32px;
+            background: linear-gradient(to left, #303030 0%, #404040 100%);
         }
         
         .sidebar-toggle:hover {
-            background: #303030;
-            border-color: rgba(255, 255, 255, 0.2);
-            color: #e5e7eb;
+            width: 40px;
+            background: linear-gradient(to right, #404040 0%, #505050 100%);
+            box-shadow: 3px 0 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sidebar-toggle.active:hover {
+            background: linear-gradient(to left, #404040 0%, #505050 100%);
         }
         
         
         .sidebar-toggle svg {
-            width: 18px;
-            height: 18px;
-            transition: transform 0.3s;
+            width: 20px;
+            height: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        
-        /* When sidebar is collapsed, button moves to left edge */
-        .sidebar-toggle:not(.active) {
-            left: 16px;
-        }
-        
-        /* Icon rotation for open/close state */
         .sidebar-toggle:not(.active) svg {
             transform: rotate(0deg);
         }
         
         .sidebar-toggle.active svg {
             transform: rotate(180deg);
+        }
+        
+        /* Tooltip for toggle button */
+        .sidebar-toggle::after {
+            content: 'Open Sidebar';
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 10px;
+            background: #303030;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .sidebar-toggle.active::after {
+            content: 'Close Sidebar';
+            left: auto;
+            right: 100%;
+            margin-left: 0;
+            margin-right: 10px;
+        }
+        
+        .sidebar-toggle:hover::after {
+            opacity: 1;
         }
 
         /* Enhanced Sidebar */
@@ -1182,9 +1218,9 @@
 </head>
 <body>
     <!-- Sidebar Toggle Button (Always Visible) -->
-    <button class="sidebar-toggle" id="sidebar-toggle">
-        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 12h18M3 6h18M3 18h18"/>
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Sidebar">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6"/>
         </svg>
     </button>
     
