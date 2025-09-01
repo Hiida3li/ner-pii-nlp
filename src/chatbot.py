@@ -210,7 +210,7 @@ Be helpful, friendly, and maintain natural conversation flow while respecting th
                     messages=messages,
                     max_tokens=500,
                     temperature=0.7,
-                    timeout=10  # 10 second timeout
+                    timeout=3  # 3 second timeout
                 )
                 
                 ai_response = response.choices[0].message.content
