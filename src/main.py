@@ -91,6 +91,16 @@ async def set_welcome_complete():
     return response
 
 
+@app.get("/chatbot", response_class=HTMLResponse)
+async def chatbot_page(request: Request):
+    """Render the Privacy ChatBot demo page"""
+    logger.info("ChatBot page accessed")
+    return templates.TemplateResponse(
+        "chatbot.html", 
+        {"request": request, "title": "Privacy ChatBot - PII Detector", "description": "Enterprise privacy layer for AI conversations"}
+    )
+
+
 @app.post("/api/extract", response_model=TextResponse)
 async def extract_entities(request: TextRequest):
     """Extract entities from text"""
