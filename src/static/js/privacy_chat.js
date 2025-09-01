@@ -287,11 +287,55 @@ class PrivacyChat {
                 <p class="welcome-subtitle">
                     Good to see you! How can I help?
                 </p>
+                
+                <!-- Centered Input Area -->
+                <div class="input-container" id="centered-input">
+                    <div class="input-wrapper">
+                        <div class="input-box">
+                            <textarea 
+                                class="chat-input" 
+                                id="chat-input" 
+                                placeholder="Send a message..."
+                                rows="1"
+                            ></textarea>
+                            <button class="send-btn" id="send-btn">
+                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         `;
         
         // Re-cache welcome screen element since we just recreated it
         this.elements.welcomeScreen = document.getElementById('welcome-screen');
+        
+        // Re-cache the new input elements
+        this.elements.chatInput = document.getElementById('chat-input');
+        this.elements.sendBtn = document.getElementById('send-btn');
+        
+        // Re-attach event listeners to the new elements
+        if (this.elements.sendBtn) {
+            this.elements.sendBtn.addEventListener('click', () => {
+                console.log('Send button clicked (new chat)');
+                this.sendMessage();
+            });
+        }
+        
+        if (this.elements.chatInput) {
+            this.elements.chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.sendMessage();
+                }
+            });
+            
+            this.elements.chatInput.addEventListener('input', () => {
+                this.autoResizeTextarea();
+            });
+        }
         
         // Always ensure centered input is visible for new chat
         const centeredInput = document.getElementById('centered-input');
@@ -309,9 +353,8 @@ class PrivacyChat {
         this.elements.chatMessages.classList.remove('has-messages');
         
         // Re-focus the input for better UX
-        const chatInput = document.getElementById('chat-input');
-        if (chatInput) {
-            setTimeout(() => chatInput.focus(), 100);
+        if (this.elements.chatInput) {
+            setTimeout(() => this.elements.chatInput.focus(), 100);
         }
     }
     

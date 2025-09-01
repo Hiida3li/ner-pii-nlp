@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy ChatBot - PII Protected Conversations</title>
+    <!-- Modern Arabic Font and Pixel Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -212,12 +216,12 @@
         }
         
         .logo-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
+            font-family: 'Press Start 2P', 'VT323', monospace;
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            letter-spacing: 1px;
             line-height: 1;
         }
         
@@ -542,16 +546,18 @@
         .toggle-knob {
             width: 16px;
             height: 16px;
-            background: white;
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
             border-radius: 50%;
             position: absolute;
             top: 2px;
             left: 2px;
-            transition: left 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .toggle-switch.off .toggle-knob {
             left: 18px;
+            background: linear-gradient(135deg, #ff6b6b, #dc2626);
         }
 
         /* Chat Messages Area */
@@ -595,7 +601,6 @@
 
         .message {
             display: flex;
-            gap: 1rem;
             margin-bottom: 1.5rem;
             animation: fadeInUp 0.3s ease;
         }
@@ -623,31 +628,10 @@
         }
 
         .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 1rem;
-            flex-shrink: 0;
+            display: none;
         }
 
-        .user .message-avatar {
-            background: #303030;
-            color: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
 
-        .assistant .message-avatar {
-            background: linear-gradient(135deg, #ff00ff, #00ffff);
-            color: white;
-            width: 36px;
-            height: 36px;
-            font-size: 0.9rem;
-            border-radius: 10px;
-        }
 
         .message-content {
             max-width: 100%;
@@ -679,6 +663,14 @@
             text-align: start;
         }
         
+        /* Arabic text styling */
+        .message-text:lang(ar),
+        [dir="rtl"] .message-text {
+            font-family: 'IBM Plex Sans Arabic', 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+        
         .assistant .message-text {
             font-size: 1rem;
             line-height: 1.8;
@@ -689,6 +681,10 @@
         .message-text.rtl {
             direction: rtl;
             text-align: right;
+            font-family: 'IBM Plex Sans Arabic', 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            font-weight: 400;
+            letter-spacing: 0;
+            line-height: 1.7;
         }
         
         .message-text.ltr {
@@ -871,6 +867,16 @@
             text-align: left;
             padding-top: 0.25rem;
             padding-bottom: 0.5rem;
+            font-family: inherit;
+        }
+        
+        /* Arabic text in input */
+        .chat-input:lang(ar),
+        .chat-input[dir="rtl"] {
+            font-family: 'IBM Plex Sans Arabic', 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            font-size: 1rem;
+            text-align: right;
+            direction: rtl;
         }
 
         .chat-input::placeholder {
@@ -1037,13 +1043,13 @@
         }
 
         .welcome-title {
-            font-size: 3.5rem;
-            font-weight: 800;
+            font-family: 'Press Start 2P', 'VT323', monospace;
+            font-size: 3rem;
+            font-weight: 400;
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #221143 0%, #2a1a52 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -1px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 2px;
         }
 
         .welcome-subtitle {
