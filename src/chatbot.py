@@ -33,18 +33,19 @@ class PrivacyChatbot:
         self.entity_counters = {}  # Track entity numbering
         
         # System prompt for the chatbot
-        self.system_prompt = """You are a friendly AI assistant for casual daily conversations. 
+        self.system_prompt = """You are a friendly Omani AI assistant for casual daily conversations. You are acknowledge with all Omani dialect 
         
 IMPORTANT PRIVACY INSTRUCTIONS:
-1. You may receive messages with privacy placeholders like 'person1', 'person2', 'location1', 'organization1', etc.
+1. You may receive messages with privacy placeholders like 'Person1', 'Person2', 'Location1', 'Organization1', 'Credit Card1', 'Passport1', etc.
 2. When you see these placeholders, treat them as actual entities and respond naturally.
-3. ALWAYS keep these placeholders in your responses exactly as they are (e.g., if you see 'person1', write 'person1' in your response).
+3. ALWAYS keep these placeholders in your responses exactly as they are (e.g., if you see 'Person1', write 'Person1' in your response).
 4. Never try to guess or replace these placeholders with real names or information.
 5. These placeholders protect user privacy while allowing natural conversation.
 
+
 Example:
-User: "Hello, I'm person1 from location1"
-You: "Nice to meet you, person1! How are things in location1?"
+User: "Hello, I'm Person1 from Location1"
+You: "Nice to meet you, Person1! How are things in Location1?"
 
 Be helpful, friendly, and maintain natural conversation flow while respecting these privacy placeholders."""
         
@@ -53,31 +54,39 @@ Be helpful, friendly, and maintain natural conversation flow while respecting th
     
     def detect_pii(self, text: str) -> Dict:
         """
-        Call PII detector API to identify entities in text
-        
-        Args:
-            text: Input text to scan for PII
-            
-        Returns:
-            Dictionary with entities and their positions
+        Call PII detector directly using the same model factory
         """
         try:
-            response = requests.post(
-                self.pii_detector_url,
-                json={
-                    "text": text,
-                    "model_version": "v2"
-                }
-            )
+            # Import the model factory from the main app
+            from src.models.model_factory import ModelFactory
             
-            if response.status_code == 200:
-                return response.json()
-            else:
-                print(f"PII detection failed: {response.status_code}")
+            # Get or create the model factory instance
+            if not hasattr(self, 'model_factory'):
+                self.model_factory = ModelFactory()
+            
+            # Get the model
+            model = self.model_factory.get_model("v2")
+            if not model:
+                print("Failed to load PII detection model")
                 return {"entities": []}
+            
+            # Process the text directly
+            entities = model.predict(text)
+            
+            # Convert to the expected format
+            entity_results = []
+            for entity in entities:
+                entity_results.append({
+                    'text': entity[0],
+                    'entity_type': entity[1], 
+                    'start': entity[2],
+                    'end': entity[3]
+                })
+            
+            return {"entities": entity_results}
                 
         except Exception as e:
-            print(f"Error calling PII detector: {e}")
+            print(f"Error in PII detection: {e}")
             return {"entities": []}
     
     def mask_entities(self, text: str, entities: List[Dict]) -> str:
@@ -206,15 +215,29 @@ Be helpful, friendly, and maintain natural conversation flow while respecting th
                 import openai
                 openai.api_key = self.api_key
                 
-                response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    messages=messages,
-                    max_tokens=500,
-                    temperature=0.7,
-                    timeout=3  # 3 second timeout
+                # Use direct API call like the working version
+                import requests
+                headers = {
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json"
+                }
+                data = {
+                    "model": "gpt-4o-mini",
+                    "messages": messages,
+                    "max_tokens": 500,
+                    "temperature": 0.7
+                }
+                response = requests.post(
+                    "https://api.openai.com/v1/chat/completions",
+                    headers=headers,
+                    json=data,
+                    timeout=10
                 )
-                
-                ai_response = response.choices[0].message.content
+                if response.status_code == 200:
+                    result = response.json()
+                    ai_response = result["choices"][0]["message"]["content"]
+                else:
+                    raise Exception(f"API error: {response.status_code}")
                 
             except Exception as api_error:
                 print(f"OpenAI API error: {api_error}")
