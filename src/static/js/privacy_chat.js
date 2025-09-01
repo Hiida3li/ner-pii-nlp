@@ -239,7 +239,8 @@ class PrivacyChat {
         if (messageData && messageData.userMessage) {
             const escapedOriginal = messageData.original.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
             const escapedMasked = messageData.masked.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-            dataAttributes = `data-original="${escapedOriginal}" data-masked="${escapedMasked}"`;
+            const entitiesJson = JSON.stringify(messageData.userEntities || []).replace(/"/g, '&quot;');
+            dataAttributes = `data-original="${escapedOriginal}" data-masked="${escapedMasked}" data-entities="${entitiesJson}"`;
         }
         
         const messageHtml = `
@@ -401,12 +402,35 @@ class PrivacyChat {
         userMessages.forEach(messageWrapper => {
             const originalMessage = this.unescapeHtml(messageWrapper.getAttribute('data-original'));
             const maskedMessage = this.unescapeHtml(messageWrapper.getAttribute('data-masked'));
+            const entitiesData = messageWrapper.getAttribute('data-entities');
             const messageContent = messageWrapper.querySelector('.message-content');
             
             if (originalMessage && maskedMessage && messageContent) {
-                // Show original or masked based on privacy mode
+                // Parse entities data if available
+                let entities = [];
+                try {
+                    entities = entitiesData ? JSON.parse(entitiesData) : [];
+                } catch (e) {
+                    console.warn('Failed to parse entities data:', e);
+                }
+                
+                // Create message data for highlighting
+                const messageData = {
+                    original: originalMessage,
+                    masked: maskedMessage,
+                    userMessage: true,
+                    userEntities: entities
+                };
+                
+                // Show and highlight content based on privacy mode
                 const contentToShow = this.privacyMode ? maskedMessage : originalMessage;
-                messageContent.textContent = contentToShow;
+                
+                if (entities && entities.length > 0) {
+                    const highlightedContent = this.highlightUserMessage(contentToShow, entities, messageData);
+                    messageContent.innerHTML = highlightedContent;
+                } else {
+                    messageContent.textContent = contentToShow;
+                }
             }
         });
     }
