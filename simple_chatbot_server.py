@@ -47,7 +47,8 @@ class SimpleChatbot:
         self.entity_mappings = {}  # Original -> Masked
         self.reverse_mappings = {}  # Masked -> Original
         self.entity_counters = {}  # Track entity numbering
-        self.conversation_history = []
+        self.conversation_history = []  # Store conversation history for context
+        self.max_history_length = 10  # Keep last 10 messages for context
 
     def detect_pii(self, text: str) -> List[Dict]:
         """Call the real PII detector API"""
