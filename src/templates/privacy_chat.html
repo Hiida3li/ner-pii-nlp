@@ -794,11 +794,13 @@
 
         /* Input Area */
         .input-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin: 2rem auto 0;
-            padding: 0 1.5rem;
+            position: absolute;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 600px;
+            max-width: calc(100% - 4rem);
+            padding: 0;
         }
         
         .input-container.bottom {
@@ -891,11 +893,16 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            text-align: center;
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding: 3rem 2rem;
+            text-align: left;
             position: relative;
+        }
+        
+        .welcome-content {
+            margin-left: 2rem;
+            margin-top: 2rem;
         }
         
         /* Custom Robot Logo */
@@ -1225,22 +1232,24 @@
             <!-- Chat Messages -->
             <div class="chat-messages" id="chat-messages">
                 <div class="welcome-screen" id="welcome-screen">
-                    <div class="robot-wrapper">
-                        <div class="lightning"></div>
-                        <div class="robot-head">
-                            <div class="robot-face">
-                                <div class="eyes">
-                                    <div class="eye"></div>
-                                    <div class="eye"></div>
+                    <div class="welcome-content">
+                        <div class="robot-wrapper">
+                            <div class="lightning"></div>
+                            <div class="robot-head">
+                                <div class="robot-face">
+                                    <div class="eyes">
+                                        <div class="eye"></div>
+                                        <div class="eye"></div>
+                                    </div>
+                                    <div class="mouth"></div>
                                 </div>
-                                <div class="mouth"></div>
                             </div>
                         </div>
+                        <h1 class="welcome-title">BOT.AI</h1>
+                        <p class="welcome-subtitle">
+                            Good to see you! How can I help?
+                        </p>
                     </div>
-                    <h1 class="welcome-title">BOT.AI</h1>
-                    <p class="welcome-subtitle">
-                        Good to see you! How can I help?
-                    </p>
                     
                     <!-- Centered Input Area -->
                     <div class="input-container" id="centered-input">
