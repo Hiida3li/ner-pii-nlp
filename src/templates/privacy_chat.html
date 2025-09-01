@@ -28,46 +28,44 @@
             padding: 1rem;
             gap: 1rem;
             position: relative;
+            transition: padding-left 0.3s ease;
         }
         
-        /* Sidebar Toggle Button - ChatGPT Style */
+        .container.sidebar-open {
+            padding-left: 1rem;
+        }
+        
+        .container.sidebar-closed {
+            padding-left: 4rem;
+        }
+        
+        /* Sidebar Toggle Button - Fixed Position */
         .sidebar-toggle {
             position: fixed;
-            left: 20px;
-            top: 20px;
-            width: 36px;
-            height: 36px;
-            background: #212121;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            left: 1rem;
+            top: 1rem;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: none;
             border-radius: 8px;
             color: #e5e7eb;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1001;
-            transition: background 0.2s ease, transform 0.2s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 1002;
+            transition: all 0.2s ease;
         }
         
         .sidebar-toggle:hover {
-            background: #303030;
-            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.15);
         }
-        
-        .sidebar-toggle:active {
-            transform: scale(0.95);
-        }
-        
         
         .sidebar-toggle svg {
             width: 20px;
             height: 20px;
-            transition: transform 0.2s ease;
-        }
-        
-        .sidebar-toggle.active svg {
-            transform: rotate(180deg);
         }
 
         /* Enhanced Sidebar */
@@ -80,20 +78,15 @@
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             transform-origin: left center;
         }
         
         .sidebar.collapsed {
-            transform: translateX(-350px);
+            margin-left: -340px;
             opacity: 0;
-            visibility: hidden;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-                        opacity 0.3s ease,
-                        visibility 0s 0.4s;
-            margin-right: -320px;
         }
 
         .sidebar-header {
@@ -1176,16 +1169,15 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar Toggle Button (Always Visible) -->
-    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Sidebar">
-        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 18l6-6-6-6"/>
-        </svg>
-    </button>
-    
     <div class="container">
         <!-- Enhanced Sidebar -->
         <div class="sidebar" id="sidebar">
+            <!-- Toggle button attached to sidebar -->
+            <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Sidebar">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                </svg>
+            </button>
             <div class="sidebar-header">
                 <div class="sidebar-logo">
                     <div class="logo-icon-robot">
