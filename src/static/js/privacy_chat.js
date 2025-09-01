@@ -1,5 +1,5 @@
 /**
- * Privacy Chat - Modern UI with PII protection
+ * Privacy Chat - ChatGPT-style interface with PII protection
  */
 
 class PrivacyChat {
@@ -21,24 +21,23 @@ class PrivacyChat {
     
     cacheElements() {
         this.elements = {
-            messagesArea: document.getElementById('messagesArea'),
-            messageInput: document.getElementById('messageInput'),
-            sendButton: document.getElementById('sendButton'),
-            newChatBtn: document.getElementById('newChatBtn'),
-            sessionsList: document.getElementById('sessionsList'),
-            welcomeState: document.getElementById('welcomeState'),
-            privacyToggle: document.getElementById('privacyToggle'),
-            mobileSidebarToggle: document.getElementById('mobileSidebarToggle'),
-            sidebar: document.getElementById('sidebar')
+            chatMessages: document.getElementById('chat-messages'),
+            chatInput: document.getElementById('chat-input'),
+            sendBtn: document.getElementById('send-btn'),
+            newChatBtn: document.getElementById('new-chat-btn'),
+            chatList: document.getElementById('chat-list'),
+            welcomeScreen: document.getElementById('welcome-screen'),
+            privacyToggle: document.getElementById('privacy-toggle'),
+            toggleSwitch: document.getElementById('toggle-switch')
         };
     }
     
     setupEventListeners() {
         // Send message
-        this.elements.sendButton.addEventListener('click', () => this.sendMessage());
+        this.elements.sendBtn.addEventListener('click', () => this.sendMessage());
         
         // Enter to send
-        this.elements.messageInput.addEventListener('keydown', (e) => {
+        this.elements.chatInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 this.sendMessage();
@@ -46,9 +45,8 @@ class PrivacyChat {
         });
         
         // Auto-resize textarea
-        this.elements.messageInput.addEventListener('input', () => {
+        this.elements.chatInput.addEventListener('input', () => {
             this.autoResizeTextarea();
-            this.elements.sendButton.disabled = !this.elements.messageInput.value.trim();
         });
         
         // New chat
@@ -61,20 +59,13 @@ class PrivacyChat {
             this.togglePrivacyMode();
         });
         
-        // Mobile sidebar toggle
-        if (this.elements.mobileSidebarToggle) {
-            this.elements.mobileSidebarToggle.addEventListener('click', () => {
-                this.elements.sidebar.classList.toggle('collapsed');
-            });
-        }
-        
         // Example prompts
         document.querySelectorAll('.example-prompt').forEach(prompt => {
             prompt.addEventListener('click', () => {
                 const text = prompt.dataset.prompt;
-                this.elements.messageInput.value = text;
+                this.elements.chatInput.value = text;
                 this.autoResizeTextarea();
-                this.elements.messageInput.focus();
+                this.elements.chatInput.focus();
             });
         });
     }
@@ -82,13 +73,13 @@ class PrivacyChat {
     initSession() {
         this.sessions[this.currentSession] = {
             messages: [],
-            name: `جلسة ${this.currentSession}`
+            name: `Session ${this.currentSession}`
         };
     }
     
     createNewSession() {
         // Save current session
-        const messages = this.elements.messagesArea.querySelectorAll('.message-wrapper');
+        const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
         this.sessions[this.currentSession].messages = Array.from(messages).map(m => m.outerHTML);
         
         // Create new session
@@ -106,15 +97,18 @@ class PrivacyChat {
     
     updateSessionList() {
         const sessionHtml = Object.keys(this.sessions).map(id => `
-            <div class="session-item ${id == this.currentSession ? 'active' : ''}" data-session="${id}">
-                جلسة ${id}
+            <div class="chat-item ${id == this.currentSession ? 'active' : ''}" data-session="${id}">
+                <svg class="chat-icon" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                </svg>
+                Session ${id}
             </div>
         `).join('');
         
-        this.elements.sessionsList.innerHTML = sessionHtml;
+        this.elements.chatList.innerHTML = sessionHtml;
         
         // Add click handlers
-        document.querySelectorAll('.session-item').forEach(item => {
+        document.querySelectorAll('.chat-item').forEach(item => {
             item.addEventListener('click', () => {
                 this.switchSession(item.dataset.session);
             });
@@ -123,7 +117,7 @@ class PrivacyChat {
     
     switchSession(sessionId) {
         // Save current session
-        const messages = this.elements.messagesArea.querySelectorAll('.message-wrapper');
+        const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
         this.sessions[this.currentSession].messages = Array.from(messages).map(m => m.outerHTML);
         
         // Switch to new session
@@ -132,12 +126,7 @@ class PrivacyChat {
         // Load session messages
         this.clearChat();
         if (this.sessions[sessionId].messages.length > 0) {
-            // Remove welcome state and add messages
-            const welcomeState = document.getElementById('welcomeState');
-            if (welcomeState) {
-                welcomeState.style.display = 'none';
-            }
-            this.elements.messagesArea.innerHTML = this.sessions[sessionId].messages.join('');
+            this.elements.chatMessages.innerHTML = this.sessions[sessionId].messages.join('');
         }
         
         // Update UI
@@ -145,39 +134,39 @@ class PrivacyChat {
     }
     
     clearChat() {
-        this.elements.messagesArea.innerHTML = `
-            <div class="welcome-state" id="welcomeState">
-                <h1 class="welcome-title">مساعد الذكاء الاصطناعي العُماني</h1>
+        this.elements.chatMessages.innerHTML = `
+            <div class="welcome-screen" id="welcome-screen">
+                <h1 class="welcome-title">Privacy-Protected ChatBot</h1>
                 <p class="welcome-subtitle">
-                    محادثاتك محمية بنظام كشف المعلومات الشخصية. جميع البيانات الحساسة يتم إخفاؤها قبل الوصول للذكاء الاصطناعي
+                    Your conversations are protected by real-time PII detection. 
+                    Personal information is masked before reaching the AI.
                 </p>
                 
                 <div class="privacy-info">
-                    🔒 <strong>طبقة الحماية نشطة:</strong> جميع المعلومات الشخصية (الأسماء، المواقع، الإيميلات، إلخ) 
-                    يتم استبدالها تلقائياً برموز آمنة قبل إرسالها للذكاء الاصطناعي
+                    🛡️ <strong>Privacy Layer Active:</strong> All personal information (names, locations, emails, etc.) 
+                    is automatically replaced with secure placeholders before being sent to the AI model.
                 </div>
             </div>
         `;
     }
     
     autoResizeTextarea() {
-        const textarea = this.elements.messageInput;
+        const textarea = this.elements.chatInput;
         textarea.style.height = 'auto';
-        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
     }
     
     async sendMessage() {
-        const message = this.elements.messageInput.value.trim();
+        const message = this.elements.chatInput.value.trim();
         if (!message || this.isTyping) return;
         
         // Hide welcome screen
-        const welcome = document.getElementById('welcomeState');
-        if (welcome) welcome.style.display = 'none';
+        const welcome = document.getElementById('welcome-screen');
+        if (welcome) welcome.remove();
         
         // Clear input
-        this.elements.messageInput.value = '';
+        this.elements.chatInput.value = '';
         this.autoResizeTextarea();
-        this.elements.sendButton.disabled = true;
         
         // Show typing indicator (don't show user message yet)
         this.showTypingIndicator();
@@ -228,7 +217,7 @@ class PrivacyChat {
         } catch (error) {
             console.error('Error:', error);
             this.hideTypingIndicator();
-            this.addMessage('assistant', 'عذراً، حدث خطأ. يرجى المحاولة مرة أخرى.');
+            this.addMessage('assistant', 'Sorry, I encountered an error. Please try again.');
         }
     }
     
@@ -255,10 +244,10 @@ class PrivacyChat {
         }
         
         const messageHtml = `
-            <div class="message-wrapper ${role}" ${dataAttributes}>
+            <div class="message-wrapper" ${dataAttributes}>
                 <div class="message ${role}">
                     <div class="message-avatar">
-                        ${role === 'user' ? 'أنت' : 'AI'}
+                        ${role === 'user' ? 'U' : 'AI'}
                     </div>
                     <div class="message-content">
                         ${displayContent}
@@ -267,7 +256,7 @@ class PrivacyChat {
             </div>
         `;
         
-        this.elements.messagesArea.insertAdjacentHTML('beforeend', messageHtml);
+        this.elements.chatMessages.insertAdjacentHTML('beforeend', messageHtml);
         this.scrollToBottom();
     }
     
@@ -288,12 +277,16 @@ class PrivacyChat {
     highlightMaskedEntities(text, entities) {
         let highlightedText = text;
         
-        // Find all placeholders in masked text
+        console.log('Highlighting masked entities in text:', text);
+        console.log('Available entities:', entities);
+        
+        // Create a more comprehensive regex that matches all possible placeholder patterns
         const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard|bankaccount)\d*/gi;
         
         highlightedText = highlightedText.replace(placeholderRegex, (match) => {
             const baseType = match.replace(/\d+$/, '').toLowerCase().replace(/\s+/g, '');
             const cssClass = this.getEntityCssClass(baseType);
+            console.log(`Found placeholder: '${match}', baseType: '${baseType}', cssClass: '${cssClass}'`);
             return `<span class="pii-entity ${cssClass}">${match}</span>`;
         });
         
@@ -303,6 +296,9 @@ class PrivacyChat {
     highlightOriginalEntities(text, entities) {
         let highlightedText = text;
         
+        console.log('Highlighting original entities in text:', text);
+        console.log('Available entities:', entities);
+        
         // Sort entities by position (reverse) to maintain correct positions when replacing
         const sortedEntities = [...entities].sort((a, b) => b.start - a.start);
         
@@ -311,6 +307,8 @@ class PrivacyChat {
             const start = entity.start;
             const end = entity.end;
             const originalText = entity.text;
+            
+            console.log(`Highlighting entity: '${originalText}' (${entity.entity_type}) at ${start}-${end} with class '${cssClass}'`);
             
             highlightedText = 
                 highlightedText.slice(0, start) + 
@@ -362,12 +360,22 @@ class PrivacyChat {
             'account': 'pii-bankaccount'
         };
         
-        return entityTypeMap[entityType.toLowerCase()] || 'pii-masked';
+        const mappedClass = entityTypeMap[entityType.toLowerCase()];
+        if (mappedClass) {
+            console.log(`Mapping entity type '${entityType}' to CSS class '${mappedClass}'`);
+            return mappedClass;
+        }
+        
+        console.warn(`Unknown entity type '${entityType}', using default 'pii-masked'`);
+        return 'pii-masked';
     }
     
     highlightEntities(text, entities) {
         // For AI responses with placeholders
         let highlightedText = text;
+        
+        console.log('Highlighting AI response entities in text:', text);
+        console.log('Available entities:', entities);
         
         // Find all placeholders in text using comprehensive regex
         const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard|bankaccount)\d*/gi;
@@ -375,6 +383,7 @@ class PrivacyChat {
         highlightedText = highlightedText.replace(placeholderRegex, (match) => {
             const baseType = match.replace(/\d+$/, '').toLowerCase().replace(/\s+/g, '');
             const cssClass = this.getEntityCssClass(baseType);
+            console.log(`Found AI response placeholder: '${match}', baseType: '${baseType}', cssClass: '${cssClass}'`);
             return `<span class="pii-entity ${cssClass}">${match}</span>`;
         });
         
@@ -385,7 +394,7 @@ class PrivacyChat {
         this.isTyping = true;
         
         const typingHtml = `
-            <div class="message-wrapper assistant" id="typing-indicator">
+            <div class="message-wrapper" id="typing-indicator">
                 <div class="message assistant">
                     <div class="message-avatar">AI</div>
                     <div class="message-content">
@@ -399,7 +408,7 @@ class PrivacyChat {
             </div>
         `;
         
-        this.elements.messagesArea.insertAdjacentHTML('beforeend', typingHtml);
+        this.elements.chatMessages.insertAdjacentHTML('beforeend', typingHtml);
         this.scrollToBottom();
     }
     
@@ -414,13 +423,14 @@ class PrivacyChat {
         
         // Update UI
         const toggle = this.elements.privacyToggle;
+        const toggleSwitch = this.elements.toggleSwitch;
         
         if (this.privacyMode) {
-            toggle.classList.add('active');
             toggle.classList.remove('off');
+            toggleSwitch.classList.remove('off');
         } else {
-            toggle.classList.remove('active');
             toggle.classList.add('off');
+            toggleSwitch.classList.add('off');
         }
         
         // Update all user messages to show/hide original data
@@ -431,7 +441,7 @@ class PrivacyChat {
     
     updateMessagesPrivacyView() {
         // Find all user message wrappers that have privacy data
-        const userMessages = this.elements.messagesArea.querySelectorAll('.message-wrapper[data-original]');
+        const userMessages = this.elements.chatMessages.querySelectorAll('.message-wrapper[data-original]');
         
         userMessages.forEach(messageWrapper => {
             const originalMessage = this.unescapeHtml(messageWrapper.getAttribute('data-original'));
@@ -491,7 +501,7 @@ class PrivacyChat {
     }
     
     scrollToBottom() {
-        this.elements.messagesArea.scrollTop = this.elements.messagesArea.scrollHeight;
+        this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
     }
 }
 
