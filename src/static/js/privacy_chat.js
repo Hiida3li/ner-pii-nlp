@@ -277,12 +277,16 @@ class PrivacyChat {
     highlightMaskedEntities(text, entities) {
         let highlightedText = text;
         
-        // Find all placeholders in masked text
-        const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard)\d+/gi;
+        console.log('Highlighting masked entities in text:', text);
+        console.log('Available entities:', entities);
+        
+        // Create a more comprehensive regex that matches all possible placeholder patterns
+        const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard|bankaccount|credit card|civil id)\d*/gi;
         
         highlightedText = highlightedText.replace(placeholderRegex, (match) => {
-            const baseType = match.replace(/\d+/, '').toLowerCase();
+            const baseType = match.replace(/\d+$/, '').toLowerCase().replace(/\s+/g, '');
             const cssClass = this.getEntityCssClass(baseType);
+            console.log(`Found placeholder: '${match}', baseType: '${baseType}', cssClass: '${cssClass}'`);
             return `<span class="pii-entity ${cssClass}">${match}</span>`;
         });
         
@@ -312,22 +316,53 @@ class PrivacyChat {
     
     getEntityCssClass(entityType) {
         const entityTypeMap = {
+            // Person entities
             'per': 'pii-person',
             'person': 'pii-person',
+            
+            // Location entities  
             'loc': 'pii-location',
             'location': 'pii-location',
+            
+            // Organization entities
             'org': 'pii-organization',
             'organization': 'pii-organization',
-            'email': 'pii-person',
-            'phone': 'pii-person',
-            'url': 'pii-organization',
-            'civilid': 'pii-person',
-            'passport': 'pii-person',
-            'creditcard': 'pii-organization',
-            'credit-card': 'pii-organization'
+            
+            // Email entities
+            'email': 'pii-email',
+            
+            // Phone entities
+            'phone': 'pii-phone',
+            
+            // URL entities
+            'url': 'pii-url',
+            
+            // Civil ID entities
+            'civilid': 'pii-civilid',
+            'civil-id': 'pii-civilid',
+            
+            // Passport entities
+            'passport': 'pii-passport',
+            'passport-id': 'pii-passport',
+            
+            // Credit Card entities
+            'creditcard': 'pii-creditcard',
+            'credit-card': 'pii-creditcard',
+            
+            // Bank Account entities
+            'bankaccount': 'pii-bankaccount',
+            'bank-account': 'pii-bankaccount',
+            'account': 'pii-bankaccount'
         };
         
-        return entityTypeMap[entityType.toLowerCase()] || 'pii-masked';
+        const mappedClass = entityTypeMap[entityType.toLowerCase()];
+        if (mappedClass) {
+            console.log(`Mapping entity type '${entityType}' to CSS class '${mappedClass}'`);
+            return mappedClass;
+        }
+        
+        console.warn(`Unknown entity type '${entityType}', using default 'pii-masked'`);
+        return 'pii-masked';
     }
     
     highlightEntities(text, entities) {
