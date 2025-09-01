@@ -25,13 +25,17 @@ class PrivacyChat {
             chatMessages: document.getElementById('chat-messages'),
             chatInput: document.getElementById('chat-input'),
             sendBtn: document.getElementById('send-btn'),
+            chatInputBottom: document.getElementById('chat-input-bottom'),
+            sendBtnBottom: document.getElementById('send-btn-bottom'),
             newChatBtn: document.getElementById('new-chat-btn'),
             chatList: document.getElementById('chat-list'),
             welcomeScreen: document.getElementById('welcome-screen'),
             privacyToggle: document.getElementById('privacy-toggle'),
             toggleSwitch: document.getElementById('toggle-switch'),
             sidebarToggle: document.getElementById('sidebar-toggle'),
-            sidebar: document.getElementById('sidebar')
+            sidebar: document.getElementById('sidebar'),
+            centeredInput: document.getElementById('centered-input'),
+            bottomInput: document.getElementById('bottom-input')
         };
         
         // Debug: Check which elements were found
@@ -39,36 +43,54 @@ class PrivacyChat {
             chatMessages: !!this.elements.chatMessages,
             chatInput: !!this.elements.chatInput,
             sendBtn: !!this.elements.sendBtn,
+            chatInputBottom: !!this.elements.chatInputBottom,
+            sendBtnBottom: !!this.elements.sendBtnBottom,
             newChatBtn: !!this.elements.newChatBtn,
             chatList: !!this.elements.chatList,
             welcomeScreen: !!this.elements.welcomeScreen,
             privacyToggle: !!this.elements.privacyToggle,
-            toggleSwitch: !!this.elements.toggleSwitch
+            toggleSwitch: !!this.elements.toggleSwitch,
+            bottomInput: !!this.elements.bottomInput
         });
     }
     
     setupEventListeners() {
-        // Send message
+        // Send message - centered button
         if (this.elements.sendBtn) {
             this.elements.sendBtn.addEventListener('click', () => {
                 console.log('Send button clicked');
                 this.sendMessage();
             });
-        } else {
-            console.error('Send button not found!');
         }
         
-        // Enter to send
+        // Send message - bottom button
+        if (this.elements.sendBtnBottom) {
+            this.elements.sendBtnBottom.addEventListener('click', () => {
+                console.log('Bottom send button clicked');
+                this.sendMessage();
+            });
+        }
+        
+        // Enter to send - centered input
         if (this.elements.chatInput) {
             this.elements.chatInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    console.log('Enter key pressed');
+                    console.log('Enter key pressed in centered input');
                     this.sendMessage();
                 }
             });
-        } else {
-            console.error('Chat input not found!');
+        }
+        
+        // Enter to send - bottom input
+        if (this.elements.chatInputBottom) {
+            this.elements.chatInputBottom.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    console.log('Enter key pressed in bottom input');
+                    this.sendMessage();
+                }
+            });
         }
         
         // Auto-resize textarea - both inputs
@@ -267,6 +289,17 @@ class PrivacyChat {
                 </p>
             </div>
         `;
+        
+        // Show centered input, hide bottom input
+        if (document.getElementById('centered-input')) {
+            document.getElementById('centered-input').style.display = 'block';
+        }
+        if (document.getElementById('bottom-input')) {
+            document.getElementById('bottom-input').style.display = 'none';
+        }
+        
+        // Remove has-messages class
+        this.elements.chatMessages.classList.remove('has-messages');
     }
     
     autoResizeTextarea() {
@@ -280,34 +313,61 @@ class PrivacyChat {
     }
     
     moveInputToBottom() {
-        // Hide centered input and show bottom input
-        if (this.elements.centeredInput) {
-            this.elements.centeredInput.style.display = 'none';
+        // Hide centered input container completely
+        const centeredInput = document.getElementById('centered-input');
+        if (centeredInput) {
+            centeredInput.style.display = 'none';
         }
-        if (this.elements.bottomInput) {
-            this.elements.bottomInput.style.display = 'block';
+        
+        // Show bottom input
+        const bottomInput = document.getElementById('bottom-input');
+        if (bottomInput) {
+            bottomInput.style.display = 'block';
         }
+        
         // Add class to adjust padding
         this.elements.chatMessages.classList.add('has-messages');
         
         // Focus on bottom input
         if (this.elements.chatInputBottom) {
-            this.elements.chatInputBottom.focus();
+            setTimeout(() => {
+                this.elements.chatInputBottom.focus();
+            }, 100);
         }
     }
     
     async sendMessage() {
         console.log('sendMessage called');
-        const message = this.elements.chatInput.value.trim();
+        
+        // Determine which input is active
+        const isWelcomeVisible = document.getElementById('welcome-screen') !== null;
+        let message;
+        
+        if (isWelcomeVisible) {
+            // Get message from centered input
+            message = this.elements.chatInput ? this.elements.chatInput.value.trim() : '';
+        } else {
+            // Get message from bottom input
+            message = this.elements.chatInputBottom ? this.elements.chatInputBottom.value.trim() : '';
+        }
+        
         console.log('Message:', message, 'IsTyping:', this.isTyping);
         if (!message || this.isTyping) return;
         
-        // Hide welcome screen
-        const welcome = document.getElementById('welcome-screen');
-        if (welcome) welcome.remove();
+        // If on welcome screen, move input to bottom first
+        if (isWelcomeVisible) {
+            // Hide welcome screen
+            const welcome = document.getElementById('welcome-screen');
+            if (welcome) welcome.remove();
+            
+            // Move input to bottom
+            this.moveInputToBottom();
+        }
         
-        // Clear input
-        this.elements.chatInput.value = '';
+        // Clear the appropriate input
+        if (this.elements.chatInputBottom) {
+            this.elements.chatInputBottom.value = '';
+        }
         this.autoResizeTextarea();
         
         // Show typing indicator (don't show user message yet)
