@@ -568,96 +568,27 @@ class PIIShieldModel(ModelInterface):
                         i = j
                         continue
                 
-                # Validate PERSON entities - filter out single letters and random strings
+                # Validate PERSON entities - only filter extreme cases
                 if entity_type == 'PERSON' or entity_type == 'PER':
                     clean_text = entity_text.strip()
-                    # Skip single character detections
+                    # Only skip single character detections
                     if len(clean_text) <= 1:
                         i = j
                         continue
-                    # Skip if it's just random characters without proper vowel distribution
-                    vowels = set('aeiouAEIOU')
-                    vowel_count = sum(1 for c in clean_text if c in vowels)
-                    consonant_count = sum(1 for c in clean_text if c.isalpha() and c not in vowels)
-                    
-                    # Names typically have 20-40% vowels
-                    if len(clean_text) > 3:
-                        alpha_chars = [c for c in clean_text if c.isalpha()]
-                        if alpha_chars:
-                            vowel_ratio = vowel_count / len(alpha_chars)
-                            if vowel_ratio < 0.15:  # Less than 15% vowels is suspicious
-                                i = j
-                                continue
-                    
-                    # Skip if it contains too many consecutive consonants (likely random)
-                    if re.search(r'[bcdfghjklmnpqrstvwxyz]{4,}', clean_text.lower()):
-                        i = j
-                        continue
-                    
-                    # Skip if it looks like random characters (high entropy check)
-                    if len(clean_text) > 5 and re.match(r'^[a-z]+$', clean_text.lower()):
-                        # Check for repeating patterns that indicate randomness
-                        if re.search(r'([a-z])\1{3,}', clean_text.lower()):  # Same letter 4+ times
-                            i = j
-                            continue
-                        # Check for unlikely letter combinations
-                        if re.search(r'[jqxz]{2,}|[wfghj]{4,}', clean_text.lower()):
-                            i = j
-                            continue
                 
-                # Validate ORGANIZATION entities - filter out random strings
+                # Validate ORGANIZATION entities - only filter extreme cases
                 if entity_type == 'ORGANIZATION' or entity_type == 'ORG':
                     clean_text = entity_text.strip()
-                    # Skip very short detections
+                    # Only skip single character detections
                     if len(clean_text) <= 1:
                         i = j
                         continue
-                    
-                    # Allow common short org names like IBM, AI, UN, etc.
-                    if len(clean_text) <= 3 and clean_text.isupper():
-                        # This is likely a valid acronym, keep it
-                        pass
-                    else:
-                        # For longer names, apply vowel check
-                        vowels = set('aeiouAEIOU')
-                        vowel_count = sum(1 for c in clean_text if c in vowels)
-                        
-                        if len(clean_text) > 4:
-                            alpha_chars = [c for c in clean_text if c.isalpha()]
-                            if alpha_chars:
-                                vowel_ratio = vowel_count / len(alpha_chars)
-                                if vowel_ratio < 0.15:  # Less than 15% vowels
-                                    i = j
-                                    continue
-                        
-                        # Skip if it contains too many consecutive consonants
-                        if re.search(r'[bcdfghjklmnpqrstvwxyz]{5,}', clean_text.lower()):
-                            i = j
-                            continue
-                        
-                        # Skip if it looks like random characters
-                        if len(clean_text) > 8 and re.match(r'^[a-z]+$', clean_text.lower()):
-                            # Check for unlikely patterns
-                            if re.search(r'([a-z])\1{3,}|[jqxz]{2,}|[wfghj]{5,}', clean_text.lower()):
-                                i = j
-                                continue
                 
-                # Validate LOCATION entities - minimum length and filter common misspellings
+                # Validate LOCATION entities - only filter extreme cases
                 if entity_type == 'LOCATION' or entity_type == 'LOC':
                     clean_text = entity_text.strip()
-                    # Skip very short locations (less than 3 chars)
-                    if len(clean_text) <= 2:
-                        i = j
-                        continue
-                    
-                    # Filter out common misspellings
-                    misspellings = ['englich', 'engish', 'enlish', 'englsh']
-                    if clean_text.lower() in misspellings:
-                        i = j
-                        continue
-                    
-                    # Skip if it's just numbers
-                    if clean_text.isdigit():
+                    # Only skip single character locations
+                    if len(clean_text) <= 1:
                         i = j
                         continue
                 
