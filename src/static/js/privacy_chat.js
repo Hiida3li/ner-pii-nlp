@@ -132,19 +132,7 @@ class PrivacyChat {
         if (this.elements.sidebarToggle && this.elements.sidebar) {
             this.elements.sidebarToggle.addEventListener('click', () => {
                 this.elements.sidebar.classList.toggle('collapsed');
-                this.elements.sidebarToggle.classList.toggle('active');
-                
-                // Update container padding
-                const container = document.getElementById('container');
-                if (container) {
-                    if (this.elements.sidebar.classList.contains('collapsed')) {
-                        container.classList.add('sidebar-closed');
-                        container.classList.remove('sidebar-open');
-                    } else {
-                        container.classList.add('sidebar-open');
-                        container.classList.remove('sidebar-closed');
-                    }
-                }
+                this.elements.sidebarToggle.classList.toggle('collapsed');
             });
         }
     }
