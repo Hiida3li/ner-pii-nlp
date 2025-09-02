@@ -335,7 +335,7 @@ PRIVACY INSTRUCTIONS:
             data = {
                 "model": "gpt-5",
                 "messages": messages,
-                "max_tokens": 200,
+                "max_completion_tokens": 200,
                 "temperature": 0.7
             }
             
