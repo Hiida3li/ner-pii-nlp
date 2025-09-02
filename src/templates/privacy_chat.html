@@ -1336,5 +1336,31 @@
     </div>
 
     <script src="/static/js/privacy_chat.js"></script>
+    <script>
+        // Debug script to test privacy toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const privacyToggle = document.getElementById('privacy-toggle');
+                console.log('Debug: Privacy toggle found?', privacyToggle);
+                
+                if (privacyToggle) {
+                    // Try to add a direct click handler
+                    privacyToggle.onclick = function(e) {
+                        console.log('Direct onclick triggered!');
+                        // Try to call the toggle function if the app exists
+                        if (window.privacyChat && typeof window.privacyChat.togglePrivacyMode === 'function') {
+                            console.log('Calling togglePrivacyMode from direct handler');
+                            window.privacyChat.togglePrivacyMode();
+                        }
+                    };
+                    
+                    // Test if button is clickable
+                    const rect = privacyToggle.getBoundingClientRect();
+                    console.log('Button position:', rect);
+                    console.log('Button computed style:', window.getComputedStyle(privacyToggle));
+                }
+            }, 1000); // Wait 1 second to ensure everything is loaded
+        });
+    </script>
 </body>
 </html>
