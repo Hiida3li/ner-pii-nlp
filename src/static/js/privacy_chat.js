@@ -718,7 +718,8 @@ class PrivacyChat {
         console.log('Available entities:', entities);
         
         // Create a more comprehensive regex that matches all possible placeholder patterns
-        const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard|bankaccount)\d*/gi;
+        // MUST have a number after the entity type to be a valid placeholder
+        const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard|bankaccount)\d+/gi;
         
         highlightedText = highlightedText.replace(placeholderRegex, (match) => {
             const baseType = match.replace(/\d+$/, '').toLowerCase().replace(/\s+/g, '');
