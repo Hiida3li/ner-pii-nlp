@@ -40,10 +40,21 @@
         }
         
         /* Sidebar Toggle Button - Fixed Position */
+        /* Floating logo above toggle */
+        .floating-logo {
+            position: fixed;
+            left: 0.75rem;
+            top: 1rem;
+            z-index: 1003;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
         .sidebar-toggle {
             position: fixed;
             left: 1rem;
-            top: 1rem;
+            top: 5rem;
             width: 40px;
             height: 40px;
             background: rgba(255, 255, 255, 0.1);
