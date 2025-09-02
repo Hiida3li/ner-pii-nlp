@@ -697,10 +697,27 @@ class PIIShieldModel(ModelInterface):
             # Detect obfuscated PII (with spaces, dots, symbols) - do this AFTER ID detection
             merged_entities.extend(self._detect_obfuscated_pii(text, merged_entities))
             
+            # Remove duplicate/overlapping entities
+            final_entities = []
+            seen_positions = set()
+            
             # Sort by start position
             merged_entities.sort(key=lambda x: x[2])
             
-            return merged_entities
+            for entity in merged_entities:
+                text, entity_type, start, end = entity
+                # Check if this position overlaps with any already added entity
+                overlap = False
+                for seen_start, seen_end in seen_positions:
+                    if (start >= seen_start and start < seen_end) or (end > seen_start and end <= seen_end):
+                        overlap = True
+                        break
+                
+                if not overlap:
+                    final_entities.append(entity)
+                    seen_positions.add((start, end))
+            
+            return final_entities
             
         except Exception as e:
             logger.exception(f"Error during prediction: {str(e)}")
