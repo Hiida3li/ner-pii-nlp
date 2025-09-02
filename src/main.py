@@ -333,9 +333,9 @@ PRIVACY INSTRUCTIONS:
             messages.append({"role": "user", "content": masked_message})
             
             data = {
-                "model": "gpt-5",
+                "model": "gpt-3.5-turbo",
                 "messages": messages,
-                "max_completion_tokens": 200,
+                "max_tokens": 200,
                 "temperature": 0.7
             }
             
