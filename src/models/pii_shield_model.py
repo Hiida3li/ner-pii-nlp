@@ -592,18 +592,12 @@ class PIIShieldModel(ModelInterface):
                         i = j
                         continue
                 
-                # General validation for all other entity types
-                # Skip any entity that's just 1-2 characters or digits (except valid IDs)
-                if entity_type not in ['PHONE', 'EMAIL', 'URL', 'CREDIT-CARD', 'CIVIL-ID', 'PASSPORT-ID']:
-                    clean_text = entity_text.strip()
-                    # Skip single/double character entities
-                    if len(clean_text) <= 2:
-                        i = j
-                        continue
-                    # Skip pure numbers unless it's an ID type
-                    if clean_text.isdigit() and len(clean_text) < 4:
-                        i = j
-                        continue
+                # General validation - commented out to allow all entities through
+                # if entity_type not in ['PHONE', 'EMAIL', 'URL', 'CREDIT-CARD', 'CIVIL-ID', 'PASSPORT-ID']:
+                #     clean_text = entity_text.strip()
+                #     if len(clean_text) <= 1:
+                #         i = j
+                #         continue
                 
                 if entity_text:  # Only add non-empty entities
                     merged_entities.append((entity_text, entity_type, start, end))
