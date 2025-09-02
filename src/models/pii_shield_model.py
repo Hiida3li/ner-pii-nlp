@@ -718,10 +718,8 @@ class PIIShieldModel(ModelInterface):
                 if not already_detected and '@' not in url_text and self._is_valid_url(url_text):
                     merged_entities.append((url_text, 'URL', url_start, url_end))
             
-            # Detect obfuscated PII (with spaces, dots, symbols)
-            merged_entities.extend(self._detect_obfuscated_pii(text, merged_entities))
-            
             # Fallback detection for IDs that model might miss
+            # IMPORTANT: Check these BEFORE obfuscated detection to avoid phone conflicts
             # Detect Civil IDs - broader pattern to catch more cases
             civil_id_patterns = [
                 r'\b(?:civil\s*(?:id)?|id\s*(?:number)?)[:\s]+(\d{9,12})\b',
@@ -774,6 +772,9 @@ class PIIShieldModel(ModelInterface):
                         if not already_detected:
                             merged_entities.append((passport_text, 'PASSPORT', start, end))
                             break  # Found one, stop checking patterns
+            
+            # Detect obfuscated PII (with spaces, dots, symbols) - do this AFTER ID detection
+            merged_entities.extend(self._detect_obfuscated_pii(text, merged_entities))
             
             # Sort by start position
             merged_entities.sort(key=lambda x: x[2])
