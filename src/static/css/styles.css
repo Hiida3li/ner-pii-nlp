@@ -37,7 +37,7 @@
   
   /* Semantic Colors - Dark Theme Default */
   --background: #212121;
-  --surface: #212121;
+  --surface: #181818;
   --surface-hover: #303030;
   --border: rgba(255, 255, 255, 0.1);
   --border-focus: #ff00ff;
@@ -113,7 +113,7 @@
 /* Dark Theme */
 [data-theme="dark"] {
   --background: #212121 !important;
-  --surface: #212121;
+  --surface: #181818;
   --surface-hover: #303030;
   --border: rgba(255, 255, 255, 0.1);
   --text-primary: #e5e7eb;
@@ -126,7 +126,7 @@
 /* Light Theme - using same dark colors for consistency */
 [data-theme="light"] {
   --background: #212121 !important;
-  --surface: #2a2a2a;
+  --surface: #181818;
   --surface-hover: #303030;
   --border: rgba(255, 255, 255, 0.1);
   --text-primary: #e5e7eb;
