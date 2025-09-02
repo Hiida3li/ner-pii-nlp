@@ -42,6 +42,9 @@ class PrivacyChat {
             bottomInput: document.getElementById('bottom-input')
         };
         
+        // Log privacy toggle element status
+        console.log('Privacy toggle element in cacheElements:', this.elements.privacyToggle);
+        
         // Debug: Check which elements were found
         console.log('Elements found:', {
             chatMessages: !!this.elements.chatMessages,
