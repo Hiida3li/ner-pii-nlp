@@ -722,19 +722,25 @@ class PIIShieldModel(ModelInterface):
             merged_entities.extend(self._detect_obfuscated_pii(text, merged_entities))
             
             # Fallback detection for IDs that model might miss
-            # Detect Civil IDs
-            civil_id_pattern = r'\b(?:civil\s*(?:id)?|id\s*(?:number)?:?\s*)(\d{9,12})\b'
-            for match in re.finditer(civil_id_pattern, text, re.IGNORECASE):
-                id_text = match.group(1)
-                if self._is_valid_civil_id(id_text):
-                    start = match.start(1)
-                    end = match.end(1)
-                    already_detected = any(
-                        s <= start < e or s < end <= e 
-                        for _, _, s, e in merged_entities
-                    )
-                    if not already_detected:
-                        merged_entities.append((id_text, 'CIVIL-ID', start, end))
+            # Detect Civil IDs - broader pattern to catch more cases
+            civil_id_patterns = [
+                r'\b(?:civil\s*(?:id)?|id\s*(?:number)?)[:\s]+(\d{9,12})\b',
+                r'\b(?:civil|id)[:\s]*(\d{9,12})\b',
+                r'\b(\d{9,12})\b'  # Any 9-12 digit number that passes validation
+            ]
+            for pattern in civil_id_patterns:
+                for match in re.finditer(pattern, text, re.IGNORECASE):
+                    id_text = match.group(1)
+                    if self._is_valid_civil_id(id_text):
+                        start = match.start(1) if match.lastindex else match.start()
+                        end = match.end(1) if match.lastindex else match.end()
+                        already_detected = any(
+                            s <= start < e or s < end <= e 
+                            for _, _, s, e in merged_entities
+                        )
+                        if not already_detected:
+                            merged_entities.append((id_text, 'CIVIL-ID', start, end))
+                            break  # Found one, no need to check other patterns
             
             # Detect Credit Cards
             credit_card_pattern = r'\b([45]\d{3}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4})\b'
@@ -750,19 +756,24 @@ class PIIShieldModel(ModelInterface):
                     if not already_detected:
                         merged_entities.append((card_text, 'CREDIT-CARD', start, end))
             
-            # Detect Passport numbers
-            passport_pattern = r'\b([A-Z]{1,2}\d{7,9})\b'
-            for match in re.finditer(passport_pattern, text):
-                passport_text = match.group(1)
-                if self._is_valid_passport(passport_text):
-                    start = match.start()
-                    end = match.end()
-                    already_detected = any(
-                        s <= start < e or s < end <= e 
-                        for _, _, s, e in merged_entities
-                    )
-                    if not already_detected:
-                        merged_entities.append((passport_text, 'PASSPORT', start, end))
+            # Detect Passport numbers - look for context or pattern
+            passport_patterns = [
+                r'\b(?:passport|pass)[:\s]*([A-Z]{1,2}\d{7,9})\b',  # With "passport" context
+                r'\b([A-Z]{1,2}\d{7,9})\b'  # Just the pattern
+            ]
+            for pattern in passport_patterns:
+                for match in re.finditer(pattern, text):
+                    passport_text = match.group(1) if match.lastindex else match.group()
+                    if self._is_valid_passport(passport_text):
+                        start = match.start(1) if match.lastindex else match.start()
+                        end = match.end(1) if match.lastindex else match.end()
+                        already_detected = any(
+                            s <= start < e or s < end <= e 
+                            for _, _, s, e in merged_entities
+                        )
+                        if not already_detected:
+                            merged_entities.append((passport_text, 'PASSPORT', start, end))
+                            break  # Found one, stop checking patterns
             
             # Sort by start position
             merged_entities.sort(key=lambda x: x[2])
