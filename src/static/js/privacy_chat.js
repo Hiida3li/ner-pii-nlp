@@ -20,6 +20,8 @@ class PrivacyChat {
         this.updateSessionList();
         // Reset backend session on page load to clear entity mappings
         this.resetChatEndpoint();
+        // Initialize privacy toggle state
+        this.initializePrivacyToggle();
     }
     
     cacheElements() {
@@ -729,6 +731,11 @@ class PrivacyChat {
         
         // Update UI
         const toggle = this.elements.privacyToggle;
+        if (!toggle) {
+            console.error('Privacy toggle element not found');
+            return;
+        }
+        
         const slider = toggle.querySelector('.privacy-toggle-slider');
         
         if (this.privacyMode) {
