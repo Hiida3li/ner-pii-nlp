@@ -2,43 +2,115 @@
 
 {% block head %}
 <style>
-    body {
+    /* Dark theme styles */
+    [data-theme="dark"] body {
         background: #212121 !important;
         background-color: #212121 !important;
     }
-    html {
-        background: #212121 !important;
-    }
-    /* Card backgrounds to #181818 */
-    .card {
+    
+    [data-theme="dark"] .card {
         background: #181818 !important;
         background-color: #181818 !important;
     }
-    .input-card, .results-card, .entity-dictionary-card {
+    
+    [data-theme="dark"] .input-card, 
+    [data-theme="dark"] .results-card, 
+    [data-theme="dark"] .entity-dictionary-card {
         background: #181818 !important;
     }
-    .results-container {
+    
+    [data-theme="dark"] .results-container {
         background: #181818 !important;
+        border: 1px solid #303030 !important;
     }
-    #input-text {
+    
+    [data-theme="dark"] #input-text {
+        background: #1a1a1a !important;
+        color: #e5e7eb !important;
+        border: 1px solid #303030 !important;
+    }
+    
+    [data-theme="dark"] .form-textarea, 
+    [data-theme="dark"] .form-input {
         background: #1a1a1a !important;
         color: #e5e7eb !important;
     }
-    .form-textarea, .form-input {
-        background: #1a1a1a !important;
-        color: #e5e7eb !important;
-    }
-    /* Header component */
-    .app-header {
+    
+    [data-theme="dark"] .app-header {
         background: #181818 !important;
     }
-    /* Ready to analyze empty state box */
-    .results-empty {
+    
+    [data-theme="dark"] .results-empty {
+        background: transparent !important;
+    }
+    
+    [data-theme="dark"] .mb-6 {
         background: #181818 !important;
     }
-    /* Controls bar */
-    .mb-6 {
-        background: #181818 !important;
+    
+    /* Light theme styles */
+    [data-theme="light"] body {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+    }
+    
+    [data-theme="light"] .card {
+        background: #f8f9fa !important;
+        background-color: #f8f9fa !important;
+        color: #212529 !important;
+    }
+    
+    [data-theme="light"] .input-card, 
+    [data-theme="light"] .results-card, 
+    [data-theme="light"] .entity-dictionary-card {
+        background: #f8f9fa !important;
+        color: #212529 !important;
+    }
+    
+    [data-theme="light"] .results-container {
+        background: #ffffff !important;
+        border: 1px solid #dee2e6 !important;
+        color: #212529 !important;
+    }
+    
+    [data-theme="light"] #input-text {
+        background: #ffffff !important;
+        color: #212529 !important;
+        border: 1px solid #dee2e6 !important;
+    }
+    
+    [data-theme="light"] .form-textarea, 
+    [data-theme="light"] .form-input {
+        background: #ffffff !important;
+        color: #212529 !important;
+        border: 1px solid #dee2e6 !important;
+    }
+    
+    [data-theme="light"] .app-header {
+        background: #f8f9fa !important;
+        color: #212529 !important;
+    }
+    
+    [data-theme="light"] .results-empty {
+        background: transparent !important;
+        color: #212529 !important;
+    }
+    
+    [data-theme="light"] .mb-6 {
+        background: #f8f9fa !important;
+        color: #212529 !important;
+    }
+    
+    /* Fix text colors for light theme */
+    [data-theme="light"] h3,
+    [data-theme="light"] span,
+    [data-theme="light"] p,
+    [data-theme="light"] small {
+        color: #212529 !important;
+    }
+    
+    [data-theme="light"] .dynamic-hover {
+        color: #212529 !important;
     }
 </style>
 {% endblock %}
@@ -83,7 +155,7 @@
   <!-- Main Content -->
   <main class="section">
     <!-- Simplified Controls Bar -->
-    <div class="card mb-6" style="padding: 1.5rem; border-radius: 15px; background: #181818;">
+    <div class="card mb-6" style="padding: 1.5rem; border-radius: 15px;">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -112,7 +184,7 @@
     <!-- Main Analysis Area -->
     <div style="display: grid; grid-template-columns: 1fr 1fr 350px; gap: 2rem; margin-bottom: 2rem;">
       <!-- Input Section -->
-      <div class="card input-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease; background: #181818;">
+      <div class="card input-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease;">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
           <div style="background: linear-gradient(135deg, #ff00ff, #00ffff); padding: 8px; border-radius: 8px;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
@@ -148,7 +220,7 @@
       </div>
 
       <!-- Results Section -->
-      <div class="card results-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease; background: #181818;">
+      <div class="card results-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease;">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
           <div style="background: linear-gradient(135deg, #10b981, #06b6d4); padding: 8px; border-radius: 8px;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
@@ -185,7 +257,7 @@
       </div>
 
       <!-- Entity Dictionary Panel -->
-      <div class="card entity-dictionary-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease; max-height: calc(100vh - 200px); overflow-y: auto; background: #181818;">
+      <div class="card entity-dictionary-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease; max-height: calc(100vh - 200px); overflow-y: auto;">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1.25rem;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
             <div style="background: linear-gradient(135deg, #8b5cf6, #ec4899); padding: 8px; border-radius: 8px;">

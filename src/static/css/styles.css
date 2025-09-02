@@ -123,26 +123,31 @@
   --border-focus: #ff00ff;
 }
 
-/* Light Theme - using same dark colors for consistency */
+/* Light Theme */
 [data-theme="light"] {
-  --background: #212121 !important;
-  --surface: #181818;
-  --surface-hover: #303030;
-  --border: rgba(255, 255, 255, 0.1);
-  --text-primary: #e5e7eb;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
+  --background: #ffffff !important;
+  --surface: #f8f9fa;
+  --surface-hover: #e9ecef;
+  --border: rgba(0, 0, 0, 0.1);
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --text-muted: #adb5bd;
   --primary-light: rgba(255, 0, 255, 0.1);
   --border-focus: #ff00ff;
 }
 
-/* Force dark background for both themes */
+/* Theme-specific body backgrounds */
 [data-theme="dark"] body,
-[data-theme="light"] body,
-html[data-theme="dark"] body,
-html[data-theme="light"] body {
+html[data-theme="dark"] body {
   background-color: #212121 !important;
   background: #212121 !important;
+}
+
+[data-theme="light"] body,
+html[data-theme="light"] body {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #212529 !important;
 }
 
 /* Dark theme specific component styles */
