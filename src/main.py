@@ -331,7 +331,7 @@ PRIVACY INSTRUCTIONS:
             messages.append({"role": "user", "content": masked_message})
             
             data = {
-                "model": "gpt-4o-mini",
+                "model": "gpt-5",
                 "messages": messages,
                 "max_tokens": 200,
                 "temperature": 0.7

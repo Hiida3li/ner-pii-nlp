@@ -222,7 +222,7 @@ Be helpful, friendly, and maintain natural conversation flow while respecting th
                     "Content-Type": "application/json"
                 }
                 data = {
-                    "model": "gpt-4o-mini",
+                    "model": "gpt-5",
                     "messages": messages,
                     "max_tokens": 500,
                     "temperature": 0.7
