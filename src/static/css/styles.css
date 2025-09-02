@@ -36,7 +36,7 @@
   --gray-900: #0f172a;
   
   /* Semantic Colors - Dark Theme Default */
-  --background: #202023;
+  --background: #212121;
   --surface: #212121;
   --surface-hover: #303030;
   --border: rgba(255, 255, 255, 0.1);
@@ -112,8 +112,21 @@
 
 /* Dark Theme */
 [data-theme="dark"] {
-  --background: #202023;
+  --background: #212121;
   --surface: #212121;
+  --surface-hover: #303030;
+  --border: rgba(255, 255, 255, 0.1);
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --primary-light: rgba(255, 0, 255, 0.1);
+  --border-focus: #ff00ff;
+}
+
+/* Light Theme - using same dark colors for consistency */
+[data-theme="light"] {
+  --background: #212121;
+  --surface: #2a2a2a;
   --surface-hover: #303030;
   --border: rgba(255, 255, 255, 0.1);
   --text-primary: #e5e7eb;
