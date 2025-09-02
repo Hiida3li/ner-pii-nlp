@@ -615,6 +615,9 @@
             padding: 2rem;
             background: rgba(30, 32, 37, 0.5);
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .chat-messages.has-messages {
@@ -644,12 +647,15 @@
 
         .message-wrapper {
             width: 100%;
+            max-width: 800px;
             margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
         }
 
         .message {
             display: flex;
-            margin-bottom: 1.5rem;
+            width: 100%;
             animation: fadeInUp 0.3s ease;
         }
         
@@ -665,14 +671,12 @@
         }
 
         .message.user {
-            max-width: 70%;
-            margin-left: auto;
+            justify-content: flex-end;
             flex-direction: row-reverse;
         }
 
         .message.assistant {
-            max-width: 100%;
-            margin-right: auto;
+            justify-content: flex-start;
         }
 
         .message-avatar {
@@ -682,7 +686,7 @@
 
 
         .message-content {
-            max-width: 100%;
+            max-width: 70%;
             word-wrap: break-word;
         }
         
@@ -697,11 +701,13 @@
         }
         
         .assistant .message-content {
-            background: transparent;
+            background: rgba(34, 17, 67, 0.3);
             color: #e5e7eb;
-            padding: 0;
-            border: none;
-            box-shadow: none;
+            padding: 1rem 1.25rem;
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            border-radius: 18px;
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
+            backdrop-filter: blur(10px);
         }
         
         .message-text {
