@@ -1340,57 +1340,74 @@
 
     <script src="/static/js/privacy_chat.js"></script>
     <script>
-        // Enhanced privacy toggle functionality
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM loaded, setting up privacy toggle...');
+        // Global function for privacy toggle
+        function handlePrivacyToggle(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
             
-            // Setup with shorter delay
-            setTimeout(() => {
-                const privacyToggle = document.getElementById('privacy-toggle');
-                console.log('Privacy toggle element:', privacyToggle);
-                
-                if (privacyToggle) {
-                    // Remove any existing handlers
-                    const newToggle = privacyToggle.cloneNode(true);
-                    privacyToggle.parentNode.replaceChild(newToggle, privacyToggle);
+            console.log('=== Privacy Toggle Clicked (Direct onclick) ===');
+            
+            const button = document.getElementById('privacy-toggle');
+            const slider = button ? button.querySelector('.privacy-toggle-slider') : null;
+            
+            // Try to use the app's toggle function
+            if (window.privacyChat && typeof window.privacyChat.togglePrivacyMode === 'function') {
+                console.log('Using app togglePrivacyMode');
+                window.privacyChat.togglePrivacyMode();
+            } else {
+                console.log('Using manual toggle');
+                // Manual toggle
+                if (button) {
+                    const isActive = button.classList.contains('active');
                     
-                    // Add fresh event listener
-                    newToggle.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('=== Privacy Toggle Button Clicked ===');
+                    if (isActive) {
+                        button.classList.remove('active');
+                        if (slider) slider.textContent = '🔓';
+                        localStorage.setItem('privacyMode', 'false');
+                        console.log('Privacy mode OFF');
+                    } else {
+                        button.classList.add('active');
+                        if (slider) slider.textContent = '🔒';
+                        localStorage.setItem('privacyMode', 'true');
+                        console.log('Privacy mode ON');
+                    }
+                    
+                    // Update all messages if they exist
+                    const messages = document.querySelectorAll('.message-wrapper[data-original]');
+                    messages.forEach(msg => {
+                        const original = msg.getAttribute('data-original');
+                        const masked = msg.getAttribute('data-masked');
+                        const content = msg.querySelector('.message-text');
                         
-                        // Try to call the toggle function
-                        if (window.privacyChat && typeof window.privacyChat.togglePrivacyMode === 'function') {
-                            console.log('Executing togglePrivacyMode()');
-                            window.privacyChat.togglePrivacyMode();
-                        } else {
-                            console.error('PrivacyChat instance not available, using fallback');
-                            // Manual toggle as fallback
-                            const slider = this.querySelector('.privacy-toggle-slider');
-                            const isActive = this.classList.contains('active');
-                            
-                            if (isActive) {
-                                this.classList.remove('active');
-                                if (slider) slider.textContent = '🔓';
-                                localStorage.setItem('privacyMode', 'false');
-                            } else {
-                                this.classList.add('active');
-                                if (slider) slider.textContent = '🔒';
-                                localStorage.setItem('privacyMode', 'true');
-                            }
-                            
-                            // Try to update messages manually
-                            const messages = document.querySelectorAll('.message-wrapper[data-original]');
-                            console.log(`Found ${messages.length} messages to update`);
+                        if (content && original && masked) {
+                            const shouldMask = button.classList.contains('active');
+                            content.textContent = shouldMask ? masked : original;
                         }
                     });
-                    
-                    console.log('Privacy toggle event listener attached successfully');
-                } else {
-                    console.error('Privacy toggle button not found in DOM');
                 }
-            }, 300);
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Privacy toggle setup complete');
+            
+            // Make sure the button works even with different event types
+            const button = document.getElementById('privacy-toggle');
+            if (button) {
+                // Remove pointer-events blocking from any parent elements
+                let parent = button.parentElement;
+                while (parent) {
+                    if (parent.style) {
+                        parent.style.pointerEvents = 'auto';
+                    }
+                    parent = parent.parentElement;
+                }
+                
+                console.log('Privacy toggle button ready');
+            }
         });
     </script>
 </body>
