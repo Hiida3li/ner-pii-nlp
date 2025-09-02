@@ -467,9 +467,10 @@ class PrivacyChat {
         this.showTypingIndicator();
         
         try {
-            // Send to backend
-            console.log('Sending to backend:', { message, privacy_mode: this.privacyMode, session_id: this.currentSession });
-            const response = await fetch('/api/privacy-chat', {
+            // Use streaming endpoint
+            console.log('Sending to backend (streaming):', { message, privacy_mode: this.privacyMode, session_id: this.currentSession });
+            
+            const response = await fetch('/api/privacy-chat/stream', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -485,44 +486,102 @@ class PrivacyChat {
                 throw new Error('Failed to get response');
             }
             
-            const data = await response.json();
+            // Process streaming response
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let userMessageData = null;
+            let assistantMessageWrapper = null;
+            let assistantMessageContent = null;
+            let maskedResponse = '';
+            let unmaskedResponse = '';
+            let responseEntities = [];
             
-            // Store both original and masked versions for the current message
-            const messageData = {
-                original: data.original_message,
-                masked: data.masked_message,
-                userMessage: true,
-                userEntities: data.user_entities || []
-            };
-            
-            // Store first message for session naming
-            if (!this.sessions[this.currentSession].firstMessage) {
-                this.sessions[this.currentSession].firstMessage = message;
-                this.updateSessionList();
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
+                
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(line.slice(6));
+                            
+                            if (data.type === 'init') {
+                                // Process initial data with user message info
+                                userMessageData = {
+                                    original: data.original_message,
+                                    masked: data.masked_message,
+                                    userMessage: true,
+                                    userEntities: data.user_entities || []
+                                };
+                                
+                                // Store first message for session naming
+                                if (!this.sessions[this.currentSession].firstMessage) {
+                                    this.sessions[this.currentSession].firstMessage = message;
+                                    this.updateSessionList();
+                                }
+                                
+                                // Add user message
+                                const userMessageToShow = this.privacyMode ? data.masked_message : data.original_message;
+                                this.addMessage('user', userMessageToShow, userMessageData.userEntities, userMessageData);
+                                
+                                // Hide typing indicator
+                                this.hideTypingIndicator();
+                                
+                                // Create assistant message placeholder for streaming
+                                assistantMessageWrapper = this.createStreamingMessage();
+                                assistantMessageContent = assistantMessageWrapper.querySelector('.message-text');
+                                
+                            } else if (data.type === 'chunk') {
+                                // Append chunk to response
+                                maskedResponse += data.masked_chunk;
+                                unmaskedResponse += data.unmasked_chunk;
+                                
+                                // Update displayed content based on privacy mode
+                                const displayText = this.privacyMode ? maskedResponse : unmaskedResponse;
+                                if (assistantMessageContent) {
+                                    // Apply highlighting to placeholders if in privacy mode
+                                    if (this.privacyMode) {
+                                        assistantMessageContent.innerHTML = this.highlightPlaceholders(displayText);
+                                    } else {
+                                        assistantMessageContent.textContent = displayText;
+                                    }
+                                }
+                                
+                            } else if (data.type === 'complete') {
+                                // Store response entities for later use
+                                responseEntities = data.response_entities || [];
+                                
+                                // Add data attributes to assistant message for privacy toggle
+                                if (assistantMessageWrapper) {
+                                    assistantMessageWrapper.setAttribute('data-original', unmaskedResponse);
+                                    assistantMessageWrapper.setAttribute('data-masked', maskedResponse);
+                                    assistantMessageWrapper.setAttribute('data-entities', JSON.stringify(responseEntities));
+                                    assistantMessageWrapper.setAttribute('data-role', 'assistant');
+                                    
+                                    // Final highlighting
+                                    const finalDisplay = this.privacyMode ? maskedResponse : unmaskedResponse;
+                                    if (this.privacyMode) {
+                                        assistantMessageContent.innerHTML = this.highlightPlaceholders(finalDisplay);
+                                    } else {
+                                        assistantMessageContent.innerHTML = this.highlightEntities(finalDisplay, responseEntities);
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error parsing streaming data:', e);
+                        }
+                    }
+                }
             }
             
-            // Add user message (show masked or original based on privacy mode)
-            const userMessageToShow = this.privacyMode ? data.masked_message : data.original_message;
-            this.addMessage('user', userMessageToShow, messageData.userEntities, messageData);
-            
-            // Hide typing indicator
-            this.hideTypingIndicator();
-            
-            // Add assistant message with highlighted entities
-            // Store both original and masked responses for toggling
-            const assistantMessageData = {
-                original: data.unmasked_response || data.display_response,
-                masked: data.display_response,
-                entities: data.response_entities || [],
-                isAssistant: true
-            };
-            // Show appropriate version based on privacy mode
-            const responseToShow = this.privacyMode ? data.display_response : (data.unmasked_response || data.display_response);
-            this.addMessage('assistant', responseToShow, data.response_entities || [], assistantMessageData);
-            
             // Show what was sent to AI if in privacy mode
-            if (this.privacyMode && data.masked_message) {
-                console.log('🔒 Sent to AI (masked):', data.masked_message);
+            if (this.privacyMode && userMessageData) {
+                console.log('🔒 Sent to AI (masked):', userMessageData.masked);
             }
             
         } catch (error) {
