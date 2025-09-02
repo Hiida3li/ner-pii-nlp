@@ -446,10 +446,13 @@
 <script src="/static/js/entity-dictionary.js"></script>
 <script src="/static/js/app.js"></script>
 <script>
-// Theme toggle functionality
+// Theme and Privacy toggle functionality
 document.addEventListener('DOMContentLoaded', function() {
   const themeToggle = document.querySelector('.theme-toggle');
   const slider = document.querySelector('.theme-toggle-slider');
+  const privacyToggle = document.querySelector('.privacy-toggle');
+  const privacyCheckbox = document.getElementById('privacy-mode');
+  const privacyIcon = document.querySelector('.privacy-toggle-icon');
   
   // Initialize theme
   const savedTheme = localStorage.getItem('pii-shield-theme');
@@ -467,6 +470,24 @@ document.addEventListener('DOMContentLoaded', function() {
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('pii-shield-theme', newTheme);
     updateThemeToggle(newTheme);
+  });
+  
+  // Privacy toggle event
+  privacyToggle.addEventListener('click', function() {
+    const isActive = privacyCheckbox.checked;
+    privacyCheckbox.checked = !isActive;
+    
+    if (!isActive) {
+      privacyToggle.classList.add('active');
+      privacyIcon.textContent = '🔒';
+    } else {
+      privacyToggle.classList.remove('active');
+      privacyIcon.textContent = '🔓';
+    }
+    
+    // Trigger change event for compatibility with existing code
+    const event = new Event('change');
+    privacyCheckbox.dispatchEvent(event);
   });
   
   function updateThemeToggle(theme) {
