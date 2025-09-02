@@ -615,20 +615,10 @@
             padding: 2rem;
             background: rgba(30, 32, 37, 0.5);
             position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
         
         .chat-messages.has-messages {
             padding-bottom: 180px;
-        }
-        
-        /* Inner container for centered messages */
-        .messages-container {
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto;
         }
         
         .chat-messages::-webkit-scrollbar {
@@ -654,15 +644,12 @@
 
         .message-wrapper {
             width: 100%;
-            max-width: 800px;
             margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: center;
         }
 
         .message {
             display: flex;
-            width: 100%;
+            margin-bottom: 1.5rem;
             animation: fadeInUp 0.3s ease;
         }
         
@@ -678,12 +665,14 @@
         }
 
         .message.user {
-            justify-content: flex-end;
+            max-width: 70%;
+            margin-left: auto;
             flex-direction: row-reverse;
         }
 
         .message.assistant {
-            justify-content: flex-start;
+            max-width: 70%;
+            margin-right: auto;
         }
 
         .message-avatar {
@@ -693,7 +682,7 @@
 
 
         .message-content {
-            max-width: 70%;
+            max-width: 100%;
             word-wrap: break-word;
         }
         
@@ -708,32 +697,13 @@
         }
         
         .assistant .message-content {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+            background: #181818;
             color: #e5e7eb;
             padding: 1rem 1.25rem;
-            border: 1px solid rgba(124, 58, 237, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 18px;
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .assistant .message-content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #7c3aed, #6366f1, #7c3aed);
-            background-size: 200% 100%;
-            animation: shimmer 3s linear infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
         }
         
         .message-text {
