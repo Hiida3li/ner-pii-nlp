@@ -471,26 +471,43 @@ async def privacy_chat_api(request: PrivacyChatRequest):
                 'placeholder': chatbot.entity_mappings.get(entity['text'], entity['text'])
             })
         
-        # Find entities in AI response for highlighting
+        # Find entities in AI response for highlighting using PII detector on unmasked response
         response_entities = []
-        
-        # Find placeholders in masked response
-        pattern = r'(person|location|organization|email|phone|url|civilid|passport|creditcard)\d+'
-        for match in re.finditer(pattern, masked_response.lower()):
-            placeholder = match.group()
-            # Get the original value for this placeholder
-            original_value = chatbot.reverse_mappings.get(placeholder.capitalize(), placeholder)
-            if original_value == placeholder:
-                original_value = chatbot.reverse_mappings.get(placeholder.upper(), placeholder)
+        try:
+            # Use PII detector to find entities in the unmasked AI response
+            detected_response_entities = chatbot.detect_pii(unmasked_response)
             
-            response_entities.append({
-                'text': original_value,
-                'type': match.group().rstrip('0123456789'),
-                'value': original_value,
-                'placeholder': placeholder,
-                'start': match.start(),
-                'end': match.end()
-            })
+            for entity in detected_response_entities:
+                # Get the placeholder for this entity if it exists
+                placeholder = chatbot.entity_mappings.get(entity['text'], entity['text'])
+                
+                response_entities.append({
+                    'text': entity['text'],
+                    'entity_type': entity['entity_type'], 
+                    'start': entity['start'],
+                    'end': entity['end'],
+                    'placeholder': placeholder,
+                    'type': entity['entity_type'].lower(),
+                    'value': entity['text']
+                })
+        except Exception as e:
+            logger.warning(f"Failed to detect entities in AI response: {e}")
+            # Fallback to placeholder detection in masked response
+            pattern = r'(person|location|organization|email|phone|url|civilid|passport|creditcard)\d+'
+            for match in re.finditer(pattern, masked_response.lower()):
+                placeholder = match.group()
+                original_value = chatbot.reverse_mappings.get(placeholder.capitalize(), placeholder)
+                if original_value == placeholder:
+                    original_value = chatbot.reverse_mappings.get(placeholder.upper(), placeholder)
+                
+                response_entities.append({
+                    'text': original_value,
+                    'type': match.group().rstrip('0123456789'),
+                    'value': original_value,
+                    'placeholder': placeholder,
+                    'start': match.start(),
+                    'end': match.end()
+                })
         
         response_data = {
             "original_message": request.message,
