@@ -494,6 +494,38 @@ class PIIShieldModel(ModelInterface):
                                 i = j
                                 continue
                 
+                # Validate LOCATION entities - minimum length and filter common misspellings
+                if entity_type == 'LOCATION' or entity_type == 'LOC':
+                    clean_text = entity_text.strip()
+                    # Skip very short locations (less than 3 chars)
+                    if len(clean_text) <= 2:
+                        i = j
+                        continue
+                    
+                    # Filter out common misspellings
+                    misspellings = ['englich', 'engish', 'enlish', 'englsh']
+                    if clean_text.lower() in misspellings:
+                        i = j
+                        continue
+                    
+                    # Skip if it's just numbers
+                    if clean_text.isdigit():
+                        i = j
+                        continue
+                
+                # General validation for all other entity types
+                # Skip any entity that's just 1-2 characters or digits (except valid IDs)
+                if entity_type not in ['PHONE', 'EMAIL', 'URL', 'CREDIT-CARD', 'CIVIL-ID', 'PASSPORT-ID']:
+                    clean_text = entity_text.strip()
+                    # Skip single/double character entities
+                    if len(clean_text) <= 2:
+                        i = j
+                        continue
+                    # Skip pure numbers unless it's an ID type
+                    if clean_text.isdigit() and len(clean_text) < 4:
+                        i = j
+                        continue
+                
                 if entity_text:  # Only add non-empty entities
                     merged_entities.append((entity_text, entity_type, start, end))
                 i = j
