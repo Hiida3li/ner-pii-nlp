@@ -530,14 +530,26 @@ class PIIShieldModel(ModelInterface):
                 # Clean up the entity text
                 entity_text = entity_text.replace('##', '').strip()
                 
-                # Additional validation for specific entity types
-                if entity_type == 'CREDIT-CARD':
-                    # Credit cards should have 13-19 digits
-                    digits_only = ''.join(c for c in entity_text if c.isdigit())
-                    if len(digits_only) < 13:
-                        # Might be misclassified, check if it's a phone number
-                        if len(digits_only) >= 7 and len(digits_only) <= 15:
-                            entity_type = 'PHONE'
+                # Validate Credit Cards
+                if entity_type == 'CREDIT-CARD' or entity_type == 'CREDITCARD':
+                    if not self._is_valid_credit_card(entity_text):
+                        # Skip invalid credit cards
+                        i = j
+                        continue
+                
+                # Validate Civil IDs
+                if entity_type == 'CIVIL-ID' or entity_type == 'CIVILID':
+                    if not self._is_valid_civil_id(entity_text):
+                        # Skip invalid civil IDs
+                        i = j
+                        continue
+                
+                # Validate Passport IDs
+                if entity_type == 'PASSPORT-ID' or entity_type == 'PASSPORT':
+                    if not self._is_valid_passport(entity_text):
+                        # Skip invalid passport numbers
+                        i = j
+                        continue
                 
                 # Validate Omani phone numbers
                 if entity_type == 'PHONE':
