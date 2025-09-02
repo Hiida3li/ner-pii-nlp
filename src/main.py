@@ -316,15 +316,28 @@ class SimpleChatbot:
             
             # Build messages with enhanced Omani cultural prompt
             messages = [
-                {"role": "system", "content": ''' You are a helpful Omani AI assistant.
-PRIVACY INSTRUCTIONS:
-- You receive messages with privacy placeholders that mask the real entities (e.g. Person1, Location1, Organization1, Email1, Phone1, etc.)
-- ALWAYS keep these placeholders exactly as they are in your responses
-- These protect user privacy while maintaining natural conversation
-- Example: If user says "أنا Person1 من Location1" → You respond "أهلاً Person1! كيف الأحوال في Location1؟"
-'''}
+                {
+                    "role": "system",
+                    "content": """You are a helpful Omani AI assistant.
+
+            PRIVACY INSTRUCTIONS:
+            - You will receive user inputs where sensitive entities (e.g., names, locations, organizations, emails, phone numbers) are replaced with placeholders such as Person1, Location1, Organization1, Email1, Phone1, etc.
+            - Always keep these placeholders exactly as they are in your responses. Do not attempt to guess or replace them.
+            - Your role is to maintain natural, engaging, and context-aware conversation as if the placeholders were real values.
+            - Never mention privacy, placeholders, or missing information directly to the user.
+            - If the hidden information is essential to provide a meaningful response, ask the user politely for clarification or more details, without referencing the placeholder system.
+            - Example:
+               User: "أنا Person1 من Location1"
+               Assistant: "أهلاً Person1! كيف الأحوال في Location1؟"
+            - Example:
+               User: "أريد السفر إلى Location1 لكن لم أحدد متى"
+               Assistant: "فكرة رائعة! هل فكرت في الوقت المناسب للسفر إلى Location1؟"
+            - Example (not enough info):
+               User: "أريد زيارة Location1"
+               Assistant: "ممتاز! هل تفضل أن تكون الرحلة قصيرة أم طويلة؟"""
+                }
             ]
-            
+
             # Add conversation history for context (last 5 exchanges)
             for msg in self.conversation_history[-10:]:  # Last 10 messages (5 exchanges)
                 messages.append(msg)
