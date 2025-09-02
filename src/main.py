@@ -352,7 +352,7 @@ Respond naturally as if you were having a conversation with a friend who asked f
             messages.append({"role": "user", "content": masked_message})
             
             data = {
-                "model": "gpt-4o",
+                "model": "gpt-3.5-turbo",
                 "messages": messages,
                 "max_tokens": 200,
                 "temperature": 0.7
