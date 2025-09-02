@@ -39,10 +39,6 @@
         border: 1px solid #595959 !important;
     }
     
-    [data-theme="dark"] .app-header {
-        background: #181818 !important;
-        border-bottom: 1px solid #595959 !important;
-    }
     
     [data-theme="dark"] .results-empty {
         background: transparent !important;
@@ -214,11 +210,13 @@
 
 {% block content %}
 <div class="container">
-  <!-- Header -->
-  <header class="app-header">
-    <div class="container">
-      <div class="header-content">
-        <div class="header-brand">
+  <!-- Main Content -->
+  <main class="section">
+    <!-- Controls Bar with Logo and Theme Toggle -->
+    <div class="card mb-6" style="padding: 1rem 1.5rem; border-radius: 15px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+          <!-- Logo -->
           <div class="header-logo dynamic-hover" style="position: relative; width: 40px; height: 34px; transition: transform 0.3s ease;">
             <!-- Lightning Bolt -->
             <div style="position: absolute; top: -6px; left: 50%; transform: translateX(-50%); z-index: 10; width: 5px; height: 8px; background: #00c8ff; clip-path: polygon(65% 0%, 20% 48%, 40% 48%, 25% 100%, 70% 52%, 50% 52%);"></div>
@@ -239,27 +237,15 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="header-controls">
-          <button class="theme-toggle" aria-label="Toggle dark mode">
-            <div class="theme-toggle-slider">☀️</div>
-          </button>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="section">
-    <!-- Simplified Controls Bar -->
-    <div class="card mb-6" style="padding: 1.5rem; border-radius: 15px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-        <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+          
+          <!-- Privacy Toggle -->
           <button class="privacy-toggle active" aria-label="Toggle privacy mode">
             <div class="privacy-toggle-slider">🔒</div>
           </button>
           <!-- Hidden checkbox for privacy mode compatibility -->
           <input type="checkbox" id="privacy-mode" checked style="display: none;">
+          
+          <!-- AI Model -->
           <div style="display: flex; align-items: center; gap: 0.75rem;">
             <span class="dynamic-hover" style="font-weight: 600; transition: transform 0.3s ease; display: inline-block;">AI Model:</span>
             <div class="model-display dynamic-hover" style="padding: 10px 20px; background: rgba(255, 0, 255, 0.1); border: 2px solid rgba(255, 0, 255, 0.3); border-radius: 12px; display: inline-flex; align-items: center; gap: 0.75rem; transition: transform 0.3s ease, box-shadow 0.3s ease;">
@@ -271,9 +257,15 @@
             </select>
           </div>
         </div>
-        <div id="total-counter" class="stat-highlight" style="display: none; padding: 10px 20px; border-radius: 10px;">
-          <span style="font-size: 0.9rem; opacity: 0.8;">Entities Found:</span>
-          <span id="total-count" style="font-size: 1.5rem; font-weight: 700; margin-left: 0.5rem;">0</span>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div id="total-counter" class="stat-highlight" style="display: none; padding: 10px 20px; border-radius: 10px;">
+            <span style="font-size: 0.9rem; opacity: 0.8;">Entities Found:</span>
+            <span id="total-count" style="font-size: 1.5rem; font-weight: 700; margin-left: 0.5rem;">0</span>
+          </div>
+          <!-- Theme Toggle -->
+          <button class="theme-toggle" aria-label="Toggle dark mode">
+            <div class="theme-toggle-slider">☀️</div>
+          </button>
         </div>
       </div>
     </div>
