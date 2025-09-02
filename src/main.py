@@ -585,25 +585,42 @@ async def privacy_chat_stream(request: PrivacyChatRequest):
                 yield f"data: {json.dumps(chunk_data)}\n\n"
                 await asyncio.sleep(0.03)  # Small delay for streaming effect
             
-            # Send completion signal with entities using PII detector on unmasked response
+            # Send completion signal with entities
             response_entities = []
             try:
-                # Use PII detector to find entities in the unmasked AI response
-                detected_response_entities = chatbot.detect_pii(unmasked_response)
-                
-                for entity in detected_response_entities:
-                    # Get the placeholder for this entity if it exists
-                    placeholder = chatbot.entity_mappings.get(entity['text'], entity['text'])
+                # First, find all placeholders in the masked response
+                placeholder_pattern = r'\b(Person|Location|Organization|Email|Phone|URL|CivilID|Passport|CreditCard)\d+\b'
+                for match in re.finditer(placeholder_pattern, ai_response, re.IGNORECASE):
+                    placeholder = match.group()
+                    # Get the original value for this placeholder
+                    original_value = chatbot.reverse_mappings.get(placeholder, '')
+                    if not original_value:
+                        # Try different case variations
+                        original_value = chatbot.reverse_mappings.get(placeholder.capitalize(), '')
+                        if not original_value:
+                            original_value = chatbot.reverse_mappings.get(placeholder.upper(), '')
+                            if not original_value:
+                                original_value = chatbot.reverse_mappings.get(placeholder.lower(), '')
                     
-                    response_entities.append({
-                        'text': entity['text'],
-                        'entity_type': entity['entity_type'],
-                        'start': entity['start'],
-                        'end': entity['end'],
-                        'placeholder': placeholder,
-                        'type': entity['entity_type'].lower(),
-                        'value': entity['text']
-                    })
+                    if original_value:
+                        # Determine entity type from placeholder
+                        entity_type = re.sub(r'\d+', '', placeholder).upper()
+                        
+                        # Find position in unmasked response
+                        unmasked_start = unmasked_response.find(original_value)
+                        unmasked_end = unmasked_start + len(original_value) if unmasked_start >= 0 else -1
+                        
+                        response_entities.append({
+                            'text': original_value,
+                            'entity_type': entity_type,
+                            'start': match.start(),  # Position in masked response
+                            'end': match.end(),      # Position in masked response
+                            'unmasked_start': unmasked_start,  # Position in unmasked response
+                            'unmasked_end': unmasked_end,      # Position in unmasked response
+                            'placeholder': placeholder,
+                            'type': entity_type.lower(),
+                            'value': original_value
+                        })
             except Exception as e:
                 logger.warning(f"Failed to detect entities in AI response (streaming): {e}")
                 # Fallback to placeholder detection
