@@ -334,7 +334,6 @@ CONVERSATIONAL STYLE:
 
 CAPABILITIES:
 - Answer questions on any topic (science, technology, history, culture, etc.)
-- Help with problems and provide solutions
 - Engage in casual conversation and small talk
 - Provide explanations, advice, and recommendations
 - Help with analysis, writing, coding, math, and creative tasks
