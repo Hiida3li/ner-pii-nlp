@@ -85,7 +85,7 @@ detection_result = test_pii_detection(comprehensive_test)
 
 if detection_result:
     entities = detection_result.get('entities', [])
-    masked_text = detection_result.get('masked_text', '')
+    masked_text = detection_result.get('masked_text', detection_result.get('highlighted_text', ''))
     
     print(f"✅ Detected {len(entities)} entities\n")
     
