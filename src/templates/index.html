@@ -495,22 +495,26 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   // Privacy toggle event
-  privacyToggle.addEventListener('click', function() {
-    const isActive = privacyCheckbox.checked;
-    privacyCheckbox.checked = !isActive;
+  if (privacyToggle) {
+    const privacySlider = document.querySelector('.privacy-toggle-slider');
     
-    if (!isActive) {
-      privacyToggle.classList.add('active');
-      privacyIcon.textContent = '🔒';
-    } else {
-      privacyToggle.classList.remove('active');
-      privacyIcon.textContent = '🔓';
-    }
-    
-    // Trigger change event for compatibility with existing code
-    const event = new Event('change');
-    privacyCheckbox.dispatchEvent(event);
-  });
+    privacyToggle.addEventListener('click', function() {
+      const isActive = privacyCheckbox.checked;
+      privacyCheckbox.checked = !isActive;
+      
+      if (!isActive) {
+        privacyToggle.classList.add('active');
+        privacySlider.textContent = '🔒';
+      } else {
+        privacyToggle.classList.remove('active');
+        privacySlider.textContent = '🔓';
+      }
+      
+      // Trigger change event for compatibility with existing code
+      const event = new Event('change');
+      privacyCheckbox.dispatchEvent(event);
+    });
+  }
   
   function updateThemeToggle(theme) {
     slider.textContent = theme === 'dark' ? '🌙' : '☀️';
