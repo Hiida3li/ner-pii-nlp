@@ -29,7 +29,9 @@
           </div>
         </div>
         <div class="header-controls">
-          <!-- Theme toggle removed for consistent dark theme -->
+          <button class="theme-toggle" aria-label="Toggle dark mode">
+            <div class="theme-toggle-slider">☀️</div>
+          </button>
         </div>
       </div>
     </div>
@@ -261,11 +263,32 @@
 <script src="/static/js/entity-dictionary.js"></script>
 <script src="/static/js/app.js"></script>
 <script>
-// Theme initialization
+// Theme toggle functionality
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize theme - always use dark theme to match chat page
-  document.documentElement.setAttribute('data-theme', 'dark');
-  localStorage.setItem('pii-shield-theme', 'dark');
+  const themeToggle = document.querySelector('.theme-toggle');
+  const slider = document.querySelector('.theme-toggle-slider');
+  
+  // Initialize theme
+  const savedTheme = localStorage.getItem('pii-shield-theme');
+  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const currentTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+  
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  updateThemeToggle(currentTheme);
+  
+  // Theme toggle event
+  themeToggle.addEventListener('click', function() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('pii-shield-theme', newTheme);
+    updateThemeToggle(newTheme);
+  });
+  
+  function updateThemeToggle(theme) {
+    slider.textContent = theme === 'dark' ? '🌙' : '☀️';
+  }
   
   // Wait a bit for PIIShieldApp to initialize, then fallback if needed
   setTimeout(() => {
