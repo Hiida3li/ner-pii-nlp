@@ -729,14 +729,14 @@ class PrivacyChat {
         
         // Update UI
         const toggle = this.elements.privacyToggle;
-        const toggleSwitch = this.elements.toggleSwitch;
+        const slider = toggle.querySelector('.privacy-toggle-slider');
         
         if (this.privacyMode) {
-            toggle.classList.remove('off');
-            toggleSwitch.classList.remove('off');
+            toggle.classList.add('active');
+            if (slider) slider.textContent = '🔒';
         } else {
-            toggle.classList.add('off');
-            toggleSwitch.classList.add('off');
+            toggle.classList.remove('active');
+            if (slider) slider.textContent = '🔓';
         }
         
         // Update all user messages to show/hide original data
