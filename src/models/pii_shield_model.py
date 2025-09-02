@@ -419,6 +419,40 @@ class PIIShieldModel(ModelInterface):
                         i = j
                         continue
                 
+                # Validate PERSON entities - filter out single letters and random strings
+                if entity_type == 'PERSON':
+                    # Skip single character detections
+                    if len(entity_text.strip()) <= 1:
+                        i = j
+                        continue
+                    # Skip if it's just random characters without vowels (likely gibberish)
+                    vowels = set('aeiouAEIOU')
+                    if len(entity_text) > 3 and not any(c in vowels for c in entity_text):
+                        i = j
+                        continue
+                    # Skip if it contains too many consecutive consonants (likely random)
+                    import re
+                    if re.search(r'[bcdfghjklmnpqrstvwxyz]{5,}', entity_text.lower()):
+                        i = j
+                        continue
+                
+                # Validate ORGANIZATION entities - filter out random strings
+                if entity_type == 'ORGANIZATION':
+                    # Skip single character detections
+                    if len(entity_text.strip()) <= 2:
+                        i = j
+                        continue
+                    # Skip if it's just random characters without vowels
+                    vowels = set('aeiouAEIOU')
+                    if len(entity_text) > 4 and not any(c in vowels for c in entity_text):
+                        i = j
+                        continue
+                    # Skip if it contains too many consecutive consonants
+                    import re
+                    if re.search(r'[bcdfghjklmnpqrstvwxyz]{6,}', entity_text.lower()):
+                        i = j
+                        continue
+                
                 if entity_text:  # Only add non-empty entities
                     merged_entities.append((entity_text, entity_type, start, end))
                 i = j
