@@ -153,6 +153,31 @@
     [data-theme="light"] .dynamic-hover {
         color: #212529 !important;
     }
+    
+    /* Privacy toggle button styles */
+    .privacy-toggle {
+        cursor: pointer;
+        font-weight: 500;
+    }
+    
+    .privacy-toggle:hover {
+        background: rgba(255, 255, 255, 0.15) !important;
+        transform: scale(1.02);
+    }
+    
+    .privacy-toggle.active {
+        background: rgba(255, 0, 255, 0.2) !important;
+        border-color: #ff00ff !important;
+    }
+    
+    .privacy-toggle.active .privacy-toggle-icon {
+        color: #ff00ff;
+    }
+    
+    /* Hidden checkbox for privacy mode */
+    #privacy-mode {
+        display: none;
+    }
 </style>
 {% endblock %}
 
@@ -184,10 +209,16 @@
             </div>
           </div>
         </div>
-        <div class="header-controls">
+        <div class="header-controls" style="display: flex; gap: 0.75rem;">
+          <button class="privacy-toggle active" aria-label="Toggle privacy mode" style="padding: 0.5rem 1rem; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid #595959; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease;">
+            <span class="privacy-toggle-icon">🔒</span>
+            <span class="privacy-toggle-text" style="font-size: 0.875rem;">Privacy Mode</span>
+          </button>
           <button class="theme-toggle" aria-label="Toggle dark mode">
             <div class="theme-toggle-slider">☀️</div>
           </button>
+          <!-- Hidden checkbox for privacy mode compatibility -->
+          <input type="checkbox" id="privacy-mode" checked style="display: none;">
         </div>
       </div>
     </div>
@@ -209,10 +240,6 @@
               <option value="v2" selected>PII-NER-v2</option>
             </select>
           </div>
-          <label class="privacy-mode-label" style="display: flex; align-items: center; gap: 0.5rem; cursor: none; transition: transform 0.3s ease;">
-            <input type="checkbox" id="privacy-mode" class="form-checkbox" checked style="width: 20px; height: 20px;">
-            <span style="font-weight: 500;">Privacy Mode</span>
-          </label>
         </div>
         <div id="total-counter" class="stat-highlight" style="display: none; padding: 10px 20px; border-radius: 10px;">
           <span style="font-size: 0.9rem; opacity: 0.8;">Entities Found:</span>
