@@ -706,7 +706,7 @@ class PIIShieldModel(ModelInterface):
                             for _, _, s, e in merged_entities
                         )
                         if not already_detected:
-                            merged_entities.append((passport_text, 'PASSPORT', start, end))
+                            merged_entities.append((passport_text, 'PASSPORT-ID', start, end))
                             break  # Found one, stop checking patterns
             
             # Detect obfuscated PII (with spaces, dots, symbols) - do this AFTER ID detection

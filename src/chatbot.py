@@ -153,6 +153,7 @@ Respond naturally as if you were having a conversation with a friend who asked f
             'URL': 'url',
             'CIVIL-ID': 'civilid',
             'PASSPORT-ID': 'passport',
+            'PASSPORT': 'passport',  # Support both PASSPORT and PASSPORT-ID
             'CREDIT-CARD': 'creditcard'
         }
         
