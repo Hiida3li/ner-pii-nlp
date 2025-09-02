@@ -511,12 +511,14 @@ class PrivacyChat {
             // Add assistant message with highlighted entities
             // Store both original and masked responses for toggling
             const assistantMessageData = {
-                original: data.display_response,
+                original: data.unmasked_response || data.display_response,
                 masked: data.display_response,
                 entities: data.response_entities || [],
                 isAssistant: true
             };
-            this.addMessage('assistant', data.display_response, data.response_entities || [], assistantMessageData);
+            // Show appropriate version based on privacy mode
+            const responseToShow = this.privacyMode ? data.display_response : (data.unmasked_response || data.display_response);
+            this.addMessage('assistant', responseToShow, data.response_entities || [], assistantMessageData);
             
             // Show what was sent to AI if in privacy mode
             if (this.privacyMode && data.masked_message) {
@@ -551,12 +553,12 @@ class PrivacyChat {
                 // For user messages, highlight based on current privacy mode
                 displayContent = this.highlightUserMessage(content, entities, messageData);
             } else if (role === 'assistant') {
-                // For AI responses, apply privacy mode masking
-                if (this.privacyMode && entities.length > 0) {
-                    // Mask entities in assistant response
-                    displayContent = this.maskAssistantMessage(content, entities);
+                // For AI responses, show appropriate version based on privacy mode
+                if (this.privacyMode) {
+                    // Show masked version with placeholders highlighted
+                    displayContent = this.highlightPlaceholders(content);
                 } else {
-                    // Show original with highlighting
+                    // Show original with entities highlighted
                     displayContent = this.highlightEntities(content, entities);
                 }
             }
@@ -575,9 +577,10 @@ class PrivacyChat {
                 const entitiesJson = JSON.stringify(messageData.userEntities || []).replace(/"/g, '&quot;');
                 dataAttributes = `data-original="${escapedOriginal}" data-masked="${escapedMasked}" data-entities="${entitiesJson}" data-role="user"`;
             } else if (messageData.isAssistant) {
-                const escapedOriginal = messageData.original.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                const escapedOriginal = (messageData.original || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                const escapedMasked = (messageData.masked || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
                 const entitiesJson = JSON.stringify(messageData.entities || []).replace(/"/g, '&quot;');
-                dataAttributes = `data-original="${escapedOriginal}" data-entities="${entitiesJson}" data-role="assistant"`;
+                dataAttributes = `data-original="${escapedOriginal}" data-masked="${escapedMasked}" data-entities="${entitiesJson}" data-role="assistant"`;
             }
         }
         
@@ -612,21 +615,15 @@ class PrivacyChat {
         }
     }
     
-    maskAssistantMessage(text, entities) {
-        // Replace entity values with placeholders in assistant messages
-        let maskedText = text;
+    highlightPlaceholders(text) {
+        // Highlight placeholders in masked text
+        const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard|bankaccount)\d*/gi;
         
-        entities.forEach(entity => {
-            if (entity.value) {
-                const entityRegex = new RegExp(this.escapeRegExp(entity.value), 'gi');
-                const placeholder = entity.type.toUpperCase();
-                maskedText = maskedText.replace(entityRegex, (match) => {
-                    return `<span class="pii-entity ${this.getEntityCssClass(entity.type)}">${placeholder}</span>`;
-                });
-            }
+        return text.replace(placeholderRegex, (match) => {
+            const baseType = match.replace(/\d+$/, '').toLowerCase();
+            const cssClass = this.getEntityCssClass(baseType);
+            return `<span class="pii-entity ${cssClass}">${match}</span>`;
         });
-        
-        return maskedText;
     }
     
     escapeRegExp(str) {
@@ -882,6 +879,7 @@ class PrivacyChat {
                 }
             } else if (role === 'assistant' && originalMessage && messageContent) {
                 // Handle assistant messages
+                const maskedMessage = this.unescapeHtml(messageWrapper.getAttribute('data-masked'));
                 let entities = [];
                 try {
                     entities = entitiesData ? JSON.parse(entitiesData) : [];
@@ -889,15 +887,17 @@ class PrivacyChat {
                     console.warn('Failed to parse entities data:', e);
                 }
                 
-                const textDirection = this.detectTextDirection(originalMessage);
+                // Choose which version to show based on privacy mode
+                const messageToShow = this.privacyMode ? maskedMessage : originalMessage;
+                const textDirection = this.detectTextDirection(messageToShow);
                 const dirClass = textDirection === 'rtl' ? 'rtl' : 'ltr';
                 
                 let displayContent;
-                if (this.privacyMode && entities.length > 0) {
-                    // Mask entities in assistant response
-                    displayContent = this.maskAssistantMessage(originalMessage, entities);
+                if (this.privacyMode) {
+                    // Show masked version with placeholders highlighted
+                    displayContent = this.highlightPlaceholders(maskedMessage);
                 } else {
-                    // Show original with highlighting
+                    // Show original with entities highlighted
                     displayContent = this.highlightEntities(originalMessage, entities);
                 }
                 

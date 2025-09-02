@@ -209,6 +209,7 @@ class PrivacyChatResponse(BaseModel):
     original_message: str
     masked_message: str
     display_response: str
+    unmasked_response: str  # Response with actual entities
     user_entities: Optional[List[Dict]] = []
     response_entities: Optional[List[Dict]] = []
 
@@ -387,8 +388,23 @@ PRIVACY INSTRUCTIONS:
         # Step 3: Send masked message to LLM (LLM responds with placeholders)
         ai_response = self.chat_with_ai(masked_message)
         
-        # Step 4: Return response - LLM already uses correct placeholders
-        return masked_message, ai_response, ai_response, entities
+        # Step 4: Unmask the AI response to get version with real entities
+        unmasked_response = self.unmask_response(ai_response)
+        
+        # Step 5: Return both masked and unmasked versions
+        return masked_message, ai_response, unmasked_response, entities
+    
+    def unmask_response(self, masked_response: str) -> str:
+        """Replace placeholders in response with original entities"""
+        unmasked = masked_response
+        
+        # Replace each placeholder with its original value
+        for placeholder, original in self.reverse_mappings.items():
+            # Case-insensitive replacement to handle different capitalizations
+            pattern = re.compile(re.escape(placeholder), re.IGNORECASE)
+            unmasked = pattern.sub(original, unmasked)
+        
+        return unmasked
 
 # Store chatbot sessions
 chatbot_sessions = {}
@@ -421,7 +437,7 @@ async def privacy_chat_api(request: PrivacyChatRequest):
         # Process message
         result = chatbot.process_message(request.message, request.privacy_mode)
         logger.info(f"Process message returned: {result}")
-        masked_user, masked_response, display_response, detected_entities = result
+        masked_user, masked_response, unmasked_response, detected_entities = result
         
         # Convert detected entities to frontend format for user message highlighting
         user_entities = []
@@ -434,13 +450,23 @@ async def privacy_chat_api(request: PrivacyChatRequest):
                 'placeholder': chatbot.entity_mappings.get(entity['text'], entity['text'])
             })
         
-        # Find placeholder entities in AI response for highlighting
+        # Find entities in AI response for highlighting
         response_entities = []
+        
+        # Find placeholders in masked response
         pattern = r'(person|location|organization|email|phone|url|civilid|passport|creditcard)\d+'
-        for match in re.finditer(pattern, display_response.lower()):
+        for match in re.finditer(pattern, masked_response.lower()):
+            placeholder = match.group()
+            # Get the original value for this placeholder
+            original_value = chatbot.reverse_mappings.get(placeholder.capitalize(), placeholder)
+            if original_value == placeholder:
+                original_value = chatbot.reverse_mappings.get(placeholder.upper(), placeholder)
+            
             response_entities.append({
-                'text': match.group(),
+                'text': original_value,
                 'type': match.group().rstrip('0123456789'),
+                'value': original_value,
+                'placeholder': placeholder,
                 'start': match.start(),
                 'end': match.end()
             })
@@ -448,7 +474,8 @@ async def privacy_chat_api(request: PrivacyChatRequest):
         response_data = {
             "original_message": request.message,
             "masked_message": masked_user,
-            "display_response": display_response,
+            "display_response": masked_response,  # Send masked version
+            "unmasked_response": unmasked_response,  # Send unmasked version
             "user_entities": user_entities,
             "response_entities": response_entities
         }
