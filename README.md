@@ -1,401 +1,288 @@
-# PII Detector - Advanced Privacy Protection Platform
+# Blot - Advanced PII Detection & Privacy Protection Platform
 
 <div align="center">
   <img src="https://img.shields.io/badge/Python-3.8%2B-blue" alt="Python">
   <img src="https://img.shields.io/badge/FastAPI-0.104%2B-green" alt="FastAPI">
   <img src="https://img.shields.io/badge/PyTorch-2.0%2B-orange" alt="PyTorch">
-  <img src="https://img.shields.io/badge/License-Apache%202.0-red" alt="License">
+  <img src="https://img.shields.io/badge/OpenAI-GPT--4.1-purple" alt="OpenAI">
+  <img src="https://img.shields.io/badge/License-MIT-red" alt="License">
 </div>
 
 ## 🚀 Overview
 
-PII Detector is an advanced AI-powered platform for detecting and protecting personally identifiable information (PII) in text. Built with FastAPI and state-of-the-art NLP models, it provides real-time entity detection with a beautiful, intuitive interface and **bidirectional PII masking** for privacy-preserving LLM interactions.
+**Blot** is an advanced AI-powered platform for detecting and protecting personally identifiable information (PII) in text. Built with FastAPI and state-of-the-art NLP models, it provides real-time entity detection, privacy-preserving chat with GPT-4.1, and comprehensive data masking capabilities.
 
-###  Key Features
+### ✨ Key Features
 
-- **🤖 Advanced AI Models**: PII-NER-v2 model with superior accuracy
-- **🌐 Web Interface**: Modern, responsive UI with dark/light themes  
-- **⚡ Real-time Detection**: Instant PII identification and highlighting
-- **🔒 Privacy Mode**: Automatic masking of sensitive information
-- **🛡️ Bidirectional Masking**: Forward masking (PII → generic labels) and reverse unmasking for LLM workflows
-- **📚 Entity Dictionary**: Smart mapping system maintaining consistent entity numbering (Person1, Person2, etc.)
-- **📊 Entity Statistics**: Detailed breakdown of detected entities
-- **🎯 Multi-language Support**: Optimized for English and Arabic text (including Omani dialect)
-- **🔌 RESTful API**: Full-featured API with comprehensive documentation
-- **🔄 Privacy-Preserving LLM Workflow**: Send masked text to LLMs, receive responses, unmask back to original entities
+- **🤖 Dual AI Integration**: 
+  - Custom PII-Shield model for entity detection
+  - GPT-4.1 integration for privacy-preserving conversations
+- **🌐 Modern Web Interface**: Beautiful dark-themed UI with custom animations
+- **⚡ Real-time Processing**: Instant PII detection with streaming chat responses
+- **🔒 Privacy Mode**: One-click toggle between masked and unmasked views
+- **🎨 Entity Highlighting**: Color-coded visualization for 10+ entity types
+- **💬 Smart Chat**: AI assistant that respects privacy boundaries
+- **📊 Entity Statistics**: Real-time tracking and visualization
+- **🔄 Bidirectional Masking**: Seamless entity replacement and restoration
 
-###  Supported Entity Types
+### 🛡️ Supported Entity Types
 
-- 👤 **Person Names** (PER)
-- 📍 **Locations** (LOC)
-- 🏢 **Organizations** (ORG)
-- 🔗 **URLs**
-- 📧 **Email Addresses**
-- 📱 **Phone Numbers**
-- 🆔 **Civil IDs**
-- 🛂 **Passport Numbers**
-- 💳 **Credit Card Numbers**
+| Entity | Color | Description |
+|--------|-------|-------------|
+| 👤 **Person** | Purple | Personal names |
+| 📍 **Location** | Green | Cities, countries, addresses |
+| 🏢 **Organization** | Pink | Companies, institutions |
+| 📧 **Email** | Blue | Email addresses |
+| 📱 **Phone** | Orange | Phone numbers |
+| 🔗 **URL** | Teal | Web addresses |
+| 🆔 **Civil ID** | Indigo | Civil identification |
+| 🛂 **Passport** | Red | Passport numbers |
+| 💳 **Credit Card** | Gold | Credit card numbers |
+| 💰 **Bank Account** | Cyan | Bank account numbers |
 
-## 📦 Quick Start
+## 📦 Installation
 
 ### Prerequisites
 
-- Python 3.8 or higher
-- pip package manager
+- Python 3.8+
+- OpenAI API key (for chat functionality)
 - 4GB+ RAM recommended
-- Git
+- Modern web browser
 
-### 🔧 Installation
+### 🔧 Setup Instructions
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/Hiida3li/ner-pii-nlp.git
+git clone https://github.com/yourusername/ner-pii-nlp.git
 cd ner-pii-nlp
 ```
 
-2. **Create virtual environment**
-```bash
-# Create virtual environment
-python -m venv venv
-
-# Activate virtual environment
-# On macOS/Linux:
-source venv/bin/activate
-
-# On Windows:
-venv\Scripts\activate
-```
-
-3. **Install dependencies**
+2. **Install dependencies**
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Download model files**
-```bash
-# Create required directories
-mkdir -p checkpoints
-mkdir -p PII-NER-V2
-
-# Download model files (contact repository owner for access)
-# Place pii_shield_002v.pt in checkpoints/
-# Place model.pt in pii_shield_v001/
-```
-
-###  Running the Application
-
-```bash
-# Run the application (from project root)
-python -m uvicorn src.main:app --reload --port 9000
-```
-
-### 🌐 Accessing the Application
-
-Once running, access the application at:
-
-- **Web Interface**: http://localhost:9000
-- **API Documentation**: http://localhost:9000/docs
-- **Alternative API Docs**: http://localhost:9000/redoc
-
-## 🛡️ Privacy-Preserving LLM Workflow
-
-### How Bidirectional Masking Works
-
-1. **🔍 Analysis & Mapping**: Detect entities and create bidirectional mappings
-   - `احمد` ↔ `Person1`
-   - `0501234567` ↔ `Phone1`
-
-2. **🔒 Forward Masking**: Convert original text to masked version
-   - Input: `"مرحبا اسمي احمد ورقمي 0501234567"`
-   - Output: `"مرحبا اسمي Person1 ورقمي Phone1"`
-
-3. **🤖 LLM Interaction**: Send masked text to any LLM service
-   - LLM processes without seeing real PII
-   - Privacy guaranteed: No sensitive data leaves your system
-
-4. **🔓 Reverse Unmasking**: Convert LLM response back to original entities
-   - LLM Response: `"Person1's number Phone1 is valid"`
-   - Final Result: `"احمد's number 0501234567 is valid"`
-
-### Using the Privacy Tools
-
-1. **Analyze Text**: Enter text and click "Analyze" to detect entities
-2. **Copy Masked Text**: Click the "Copy Masked" button in the Entity Dictionary panel
-3. **Send to LLM**: Paste masked text into any LLM service (ChatGPT, Claude, etc.)
-4. **Unmask Response**: Paste LLM response in the unmask field and click "Unmask"
-
-## 🛠️ Configuration
-
-### Environment Variables
-
-Create a `.env` file in the root directory:
-
+3. **Configure environment**
+Create a `.env` file:
 ```env
-# Server Configuration
-HOST=0.0.0.0
-PORT=9000
-
-# Model Configuration  
-DEFAULT_MODEL=v2
-MODEL_CACHE_SIZE=3
-
-# Security
-CORS_ORIGINS=["http://localhost:3000", "http://localhost:9000"]
-
-# Logging
-LOG_LEVEL=INFO
+OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-### Model Configuration
-
-The application now uses a single high-performance model:
-
-```python
-MODELS = {
-    "v2": {
-        "name": "PII-Shield",
-        "checkpoint": "checkpoints/pii_shield_002v.pt",
-        "type": "pii_shield"
-    }
-}
+4. **Verify model checkpoint**
+Ensure the model file exists:
+```
+checkpoints/pii_shield_002v.pt
 ```
 
-##  API Documentation
-
-### Core Endpoints
-
-#### 1. Extract Entities
-```http
-POST /api/extract
-Content-Type: application/json
-
-{
-  "text": "John Doe lives in New York and his email is john@example.com",
-  "model_version": "v2"
-}
-```
-
-**Response:**
-```json
-{
-  "entities": [
-    {
-      "text": "John Doe",
-      "entity_type": "PER",
-      "start": 0,
-      "end": 8,
-      "confidence": 0.98
-    },
-    {
-      "text": "New York",
-      "entity_type": "LOC",
-      "start": 18,
-      "end": 26,
-      "confidence": 0.95
-    }
-  ],
-  "entity_counts": {
-    "PER": 1,
-    "LOC": 1,
-    "EMAIL": 1
-  },
-  "highlighted_text": "<span class='entity-PER'>John Doe</span> lives in..."
-}
-```
-
-#### 2. Get Available Models
-```http
-GET /api/models
-```
-
-**Response:**
-```json
-{
-  "models": {
-    "v2": {
-      "name": "PII-Shield",
-      "checkpoint": "checkpoints/pii_shield_002v.pt",
-      "type": "pii_shield"
-    }
-  }
-}
-```
-
-#### 3. Privacy Features
-
-The application includes built-in privacy tools for secure LLM interactions:
-
-- **Entity Dictionary Management**: Automatic mapping of PII to generic labels
-- **Bidirectional Masking**: Forward and reverse text transformation
-- **Session Isolation**: Mappings clear between analyses for privacy
-- **Export/Import**: Save and restore entity dictionaries
-
-## 🧪 Testing
-
-### Running Tests
+5. **Launch the application**
 ```bash
-# Run all tests
-pytest tests/
-
-# Run with coverage
-pytest --cov=src tests/
-
-# Run specific test file
-pytest tests/test_api.py
+python src/main.py --port 8001
 ```
 
-### Manual Testing
+Access the application at `http://localhost:9000`
 
-1. **Test with sample text:**
-```bash
-curl -X POST "http://localhost:9000/api/extract" \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Contact Sarah at sarah@email.com or 555-0123", "model_version": "v2"}'
-```
+## 🏗️ Architecture
 
-2. **Test Arabic text with PII:**
-```bash
-curl -X POST "http://localhost:9000/api/extract" \
-  -H "Content-Type: application/json" \
-  -d '{"text": "مرحبا اسمي احمد ورقمي 0501234567", "model_version": "v2"}'
-```
-
-3. **Test bidirectional masking workflow:**
-```bash
-# 1. Analyze text to create mappings
-curl -X POST "http://localhost:9000/api/extract" \
-  -H "Content-Type: application/json" \
-  -d '{"text": "احمد يعمل في Microsoft", "model_version": "v2"}'
-
-# 2. Use the web interface to:
-#    - Copy masked version: "Person1 يعمل في Organization1"
-#    - Send to LLM, get response
-#    - Unmask LLM response back to original entities
-```
-
-## 📁 Project Structure
-
+### Project Structure
 ```
 ner-pii-nlp/
 ├── src/
-│   ├── main.py                    # FastAPI application entry point
-│   ├── config.py                   # Application configuration
+│   ├── main.py                 # FastAPI application core
+│   ├── config.py               # Configuration management
 │   ├── models/
-│   │   ├── model_factory.py       # Model creation factory
-│   │   ├── model_config.py        # Model configurations
-│   │   ├── model_interface.py     # Base model interface
-│   │   ├── pii_shield_model.py    # PII Shield implementation
-│   │   ├── entity_processor.py    # Entity processing logic
-│   │   └── entity_config.py       # Entity type configurations
+│   │   ├── pii_shield_model.py # PII detection engine
+│   │   ├── entity_processor.py # Entity processing pipeline
+│   │   ├── entity_config.py    # Entity type definitions
+│   │   ├── model_factory.py    # Model initialization
+│   │   └── model_interface.py  # Model abstractions
 │   ├── static/
 │   │   ├── css/
-│   │   │   └── styles.css         # Application styles
+│   │   │   └── styles.css      # Global styling
 │   │   └── js/
-│   │       ├── app.js             # Main application logic
-│   │       └── entity-dictionary.js # Entity dictionary & masking system
+│   │       ├── app.js          # Main detector app
+│   │       ├── privacy_chat.js # Chat functionality
+│   │       └── entity-dictionary.js # Entity visualization
 │   └── templates/
-│       ├── base.html               # Base template
-│       ├── index.html              # Main application page
-│       └── welcome.html            # Welcome screen
-├── checkpoints/
-│   └── pii_shield_002v.pt         # PII-NER-v2 model
-├── requirements.txt                # Python dependencies
-├── .gitignore                      # Git ignore file
-├── LICENSE                         # Apache 2.0 License
-└── README.md                       # This file
+│       ├── base.html           # Base template with theme
+│       ├── index.html          # PII detector interface
+│       ├── welcome.html        # Landing page
+│       └── privacy_chat.html   # Chat interface
+├── checkpoints/                # Model weights
+├── requirements.txt            # Python dependencies
+├── .env                        # Environment variables
+├── Dockerfile                  # Container configuration
+└── README.md                   # Documentation
 ```
 
-## 🐛 Troubleshooting
+### Core Components
 
-### Common Issues
+#### 1. **PII Detection Engine**
+- Custom BERT-based model (PII-Shield)
+- Real-time entity recognition
+- Multi-language support
+- High accuracy with low latency
 
-#### 1. Model files not found
-```
-Error: Model file not found at path...
-```
-**Solution**: Ensure model files are placed in correct directories:
-- `checkpoints/pii_shield_002v.pt` for PII-NER-v2 model
+#### 2. **Privacy Chat System**
+- GPT-4.1 integration
+- Automatic PII masking before AI processing
+- Entity mapping and restoration
+- Streaming responses via SSE
 
-#### 2. Port already in use
+#### 3. **Frontend Interface**
+- Responsive dark/light themes
+- Custom cursor with magnification
+- Real-time entity highlighting
+- Interactive entity dictionary
+
+## 🔌 API Reference
+
+### Main Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | Landing page redirect |
+| GET | `/app` | PII detector interface |
+| GET | `/privacy-chat` | Chat interface |
+| GET | `/welcome` | Welcome screen |
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/extract` | Extract entities from text |
+| GET | `/api/models` | List available models |
+| POST | `/api/privacy-chat` | Send chat message |
+| POST | `/api/privacy-chat/stream` | Stream chat response |
+| POST | `/api/privacy-chat/reset` | Reset chat session |
+
+### Example API Usage
+
+```python
+import requests
+
+# Extract entities
+response = requests.post('http://localhost:9000/api/extract', 
+    json={'text': 'John Doe lives in New York'})
+entities = response.json()
+
+# Chat with privacy
+response = requests.post('http://localhost:9000/api/privacy-chat',
+    json={'message': 'My email is john@example.com'})
 ```
-Error: [Errno 48] Address already in use
-```
-**Solution**: Change port in command or kill existing process:
+
+## 💻 Usage Guide
+
+### PII Detection
+1. Navigate to `/app`
+2. Enter text containing PII
+3. Click "Extract Entities"
+4. View highlighted entities
+5. Check entity statistics
+
+### Privacy Chat
+1. Go to `/privacy-chat`
+2. Type messages with PII
+3. System auto-masks sensitive data
+4. Toggle privacy mode to view original
+5. Entities remain highlighted
+
+### Privacy Mode
+- **🔒 Locked**: Shows masked placeholders
+- **🔓 Unlocked**: Shows original entities
+- Seamless switching with preserved context
+
+## ⚙️ Configuration
+
+### Model Settings
+Configure in `src/models/model_config.py`:
+- Model architecture
+- Tokenizer settings
+- Entity mappings
+
+### Server Configuration
+Adjust in `src/config.py`:
+- Port: 9000 (default)
+- Host: 0.0.0.0
+- Workers: 1
+
+### Entity Types
+Customize in `src/models/entity_config.py`:
+- Add new entity types
+- Modify color schemes
+- Adjust detection rules
+
+## 🐳 Docker Deployment
+
 ```bash
-# Find process using port 9000
-lsof -i :9000
-# Kill the process
-kill -9 <PID>
+# Build image
+docker build -t blot-pii .
+
+# Run container
+docker run -p 9000:9000 --env-file .env blot-pii
 ```
 
-#### 3. Memory issues with large texts
+### Docker Compose
+```yaml
+version: '3.8'
+services:
+  blot:
+    build: .
+    ports:
+      - "9000:9000"
+    env_file:
+      - .env
+    volumes:
+      - ./checkpoints:/app/checkpoints
 ```
-Error: CUDA out of memory...
-```
-**Solution**: Reduce batch size or text length in model configuration
 
-#### 4. Import errors
-```
-ModuleNotFoundError: No module named 'transformers'
-```
-**Solution**: Reinstall dependencies:
+## 🔐 Security Features
+
+- **No Data Storage**: Zero persistent storage of user data
+- **Secure Masking**: Cryptographically secure placeholders
+- **Session Isolation**: Independent chat sessions
+- **API Key Protection**: Environment variable management
+- **HTTPS Ready**: SSL/TLS support configured
+
+## 🧪 Development
+
+### Running Development Server
 ```bash
-pip install -r requirements.txt --upgrade
+# With auto-reload
+uvicorn src.main:app --reload --port 9000
+
+# With debugging
+PYTHONPATH=. python src/main.py --port 8001
 ```
 
-## 🚀 Deployment
-
-### Docker Deployment
-
-```dockerfile
-# Dockerfile
-FROM python:3.9-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-WORKDIR /app/src
-
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "9000"]
-```
-
-Build and run:
+### Code Quality
 ```bash
-docker build -t pii-detector .
-docker run -p 9000:9000 pii-detector
+# Format code
+black src/
+
+# Lint
+pylint src/
+
+# Type checking
+mypy src/
 ```
 
-### Cloud Deployment (AWS/GCP/Azure)
+## 📝 Requirements
 
-1. **Prepare for production:**
-```bash
-# Set production environment variables
-export ENVIRONMENT=production
-export LOG_LEVEL=WARNING
+```txt
+fastapi==0.104.1
+uvicorn==0.24.0
+torch==2.0.1
+transformers==4.35.2
+python-dotenv==1.0.0
+openai==1.3.0
+pydantic==2.5.0
+jinja2==3.1.2
+python-multipart==0.0.6
 ```
 
-2. **Use production server:**
-```bash
-gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:9000
-```
+## 🤝 Contributing
 
-##  Performance Optimization
-
-### Tips for Better Performance
-
-1. **Enable model caching** in `config.py`
-2. **Use batch processing** for multiple texts
-3. **Implement Redis** for caching results
-4. **Use CDN** for static files
-5. **Enable gzip compression** in nginx/Apache
-
-##  Contributing
-
-Contributions are welcome! Please follow these steps:
+We welcome contributions! Please follow these steps:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
@@ -403,24 +290,40 @@ Contributions are welcome! Please follow these steps:
 4. Push to branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+### Development Guidelines
+- Follow PEP 8 style guide
+- Add unit tests for new features
+- Update documentation
+- Ensure all tests pass
+
 ## 📄 License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-##  Acknowledgments
+## 🙏 Acknowledgments
 
-- [FastAPI](https://fastapi.tiangolo.com/) - Modern web framework
-- [Transformers](https://huggingface.co/transformers) - State-of-the-art NLP
-- [PyTorch](https://pytorch.org/) - Deep learning framework
-- [ArabertV2](https://huggingface.co/aubmindlab/bert-base-arabertv2) - Arabic language model
+- OpenAI for GPT-4.1 API
+- Hugging Face Transformers
+- FastAPI framework
+- PyTorch community
+- All contributors
 
-##  Support
+## 📧 Support
 
 For issues, questions, or suggestions:
-- Open an issue on GitHub
+- Open an issue on [GitHub](https://github.com/yourusername/ner-pii-nlp/issues)
+- Contact: support@example.com
+
+## ⚠️ Disclaimer
+
+This application processes sensitive information. Always ensure:
+- Proper security measures in production
+- Compliance with data protection regulations
+- Regular security audits
+- Encrypted connections (HTTPS)
+
 ---
 
 <div align="center">
-  Made by Orki Team
-  https://orki.ai
+Made with ❤️ by the Blot Team
 </div>
