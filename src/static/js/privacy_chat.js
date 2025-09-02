@@ -509,7 +509,14 @@ class PrivacyChat {
             this.hideTypingIndicator();
             
             // Add assistant message with highlighted entities
-            this.addMessage('assistant', data.display_response, data.response_entities || []);
+            // Store both original and masked responses for toggling
+            const assistantMessageData = {
+                original: data.display_response,
+                masked: data.display_response,
+                entities: data.response_entities || [],
+                isAssistant: true
+            };
+            this.addMessage('assistant', data.display_response, data.response_entities || [], assistantMessageData);
             
             // Show what was sent to AI if in privacy mode
             if (this.privacyMode && data.masked_message) {
@@ -543,9 +550,15 @@ class PrivacyChat {
             if (role === 'user' && messageData && messageData.userMessage) {
                 // For user messages, highlight based on current privacy mode
                 displayContent = this.highlightUserMessage(content, entities, messageData);
-            } else {
-                // For AI responses, use standard highlighting
-                displayContent = this.highlightEntities(content, entities);
+            } else if (role === 'assistant') {
+                // For AI responses, apply privacy mode masking
+                if (this.privacyMode && entities.length > 0) {
+                    // Mask entities in assistant response
+                    displayContent = this.maskAssistantMessage(content, entities);
+                } else {
+                    // Show original with highlighting
+                    displayContent = this.highlightEntities(content, entities);
+                }
             }
         }
         
@@ -553,13 +566,19 @@ class PrivacyChat {
         const textDirection = this.detectTextDirection(content);
         const dirClass = textDirection === 'rtl' ? 'rtl' : 'ltr';
         
-        // Prepare data attributes for user messages with privacy data
+        // Prepare data attributes for messages with privacy data
         let dataAttributes = '';
-        if (messageData && messageData.userMessage) {
-            const escapedOriginal = messageData.original.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-            const escapedMasked = messageData.masked.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-            const entitiesJson = JSON.stringify(messageData.userEntities || []).replace(/"/g, '&quot;');
-            dataAttributes = `data-original="${escapedOriginal}" data-masked="${escapedMasked}" data-entities="${entitiesJson}"`;
+        if (messageData) {
+            if (messageData.userMessage) {
+                const escapedOriginal = messageData.original.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                const escapedMasked = messageData.masked.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                const entitiesJson = JSON.stringify(messageData.userEntities || []).replace(/"/g, '&quot;');
+                dataAttributes = `data-original="${escapedOriginal}" data-masked="${escapedMasked}" data-entities="${entitiesJson}" data-role="user"`;
+            } else if (messageData.isAssistant) {
+                const escapedOriginal = messageData.original.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                const entitiesJson = JSON.stringify(messageData.entities || []).replace(/"/g, '&quot;');
+                dataAttributes = `data-original="${escapedOriginal}" data-entities="${entitiesJson}" data-role="assistant"`;
+            }
         }
         
         const messageHtml = `
@@ -791,18 +810,19 @@ class PrivacyChat {
     }
     
     updateMessagesPrivacyView() {
-        // Find all user message wrappers that have privacy data
-        const userMessages = this.elements.chatMessages.querySelectorAll('.message-wrapper[data-original]');
-        console.log('Found user messages with privacy data:', userMessages.length);
+        // Find all message wrappers that have privacy data
+        const allMessages = this.elements.chatMessages.querySelectorAll('.message-wrapper[data-original]');
+        console.log('Found messages with privacy data:', allMessages.length);
         
-        userMessages.forEach((messageWrapper, index) => {
+        allMessages.forEach((messageWrapper, index) => {
             console.log(`Processing message ${index + 1}`);
+            const role = messageWrapper.getAttribute('data-role');
             const originalMessage = this.unescapeHtml(messageWrapper.getAttribute('data-original'));
             const maskedMessage = this.unescapeHtml(messageWrapper.getAttribute('data-masked'));
             const entitiesData = messageWrapper.getAttribute('data-entities');
             const messageContent = messageWrapper.querySelector('.message-content');
             
-            if (originalMessage && maskedMessage && messageContent) {
+            if (role === 'user' && originalMessage && maskedMessage && messageContent) {
                 // Parse entities data if available
                 let entities = [];
                 try {
@@ -839,6 +859,28 @@ class PrivacyChat {
                 } else {
                     messageContent.innerHTML = `<div class="message-text ${dirClass}">${contentToShow}</div>`;
                 }
+            } else if (role === 'assistant' && originalMessage && messageContent) {
+                // Handle assistant messages
+                let entities = [];
+                try {
+                    entities = entitiesData ? JSON.parse(entitiesData) : [];
+                } catch (e) {
+                    console.warn('Failed to parse entities data:', e);
+                }
+                
+                const textDirection = this.detectTextDirection(originalMessage);
+                const dirClass = textDirection === 'rtl' ? 'rtl' : 'ltr';
+                
+                let displayContent;
+                if (this.privacyMode && entities.length > 0) {
+                    // Mask entities in assistant response
+                    displayContent = this.maskAssistantMessage(originalMessage, entities);
+                } else {
+                    // Show original with highlighting
+                    displayContent = this.highlightEntities(originalMessage, entities);
+                }
+                
+                messageContent.innerHTML = `<div class="message-text ${dirClass}">${displayContent}</div>`;
             }
         });
     }
