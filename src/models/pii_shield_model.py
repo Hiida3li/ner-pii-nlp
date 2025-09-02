@@ -212,6 +212,17 @@ class PIIShieldModel(ModelInterface):
         
         return True
     
+    def _convert_arabic_numerals(self, text: str) -> str:
+        """Convert Arabic numerals to Western digits"""
+        result = text
+        arabic_to_western = {
+            '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+            '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+        }
+        for arabic, western in arabic_to_western.items():
+            result = result.replace(arabic, western)
+        return result
+    
     def _is_valid_civil_id(self, id_text: str) -> bool:
         """Validate Civil ID format
         
@@ -219,8 +230,10 @@ class PIIShieldModel(ModelInterface):
         - 9-12 digits total
         - Must start with: 10, 12, 13, 8, 1, or 9
         """
+        # Convert Arabic numerals to Western
+        converted_text = self._convert_arabic_numerals(id_text)
         # Remove any spaces or dashes
-        clean_id = ''.join(c for c in id_text if c.isdigit())
+        clean_id = ''.join(c for c in converted_text if c.isdigit())
         
         # Check length (9-12 digits)
         if len(clean_id) < 9 or len(clean_id) > 12:
@@ -237,8 +250,10 @@ class PIIShieldModel(ModelInterface):
         - Exactly 16 digits
         - Must start with 4 (Visa) or 5 (Mastercard)
         """
+        # Convert Arabic numerals to Western
+        converted_text = self._convert_arabic_numerals(card_text)
         # Remove any spaces, dashes, or dots
-        clean_card = ''.join(c for c in card_text if c.isdigit())
+        clean_card = ''.join(c for c in converted_text if c.isdigit())
         
         # Must be exactly 16 digits
         if len(clean_card) != 16:
@@ -640,11 +655,11 @@ class PIIShieldModel(ModelInterface):
             
             # Fallback detection for IDs that model might miss
             # IMPORTANT: Check these BEFORE obfuscated detection to avoid phone conflicts
-            # Detect Civil IDs - broader pattern to catch more cases
+            # Detect Civil IDs - broader pattern to catch more cases (including Arabic numerals)
             civil_id_patterns = [
-                r'\b(?:civil\s*(?:id)?|id\s*(?:number)?)[:\s]+(\d{9,12})\b',
-                r'\b(?:civil|id)[:\s]*(\d{9,12})\b',
-                r'\b(\d{9,12})\b'  # Any 9-12 digit number that passes validation
+                r'\b(?:civil\s*(?:id)?|id\s*(?:number)?|حساب)[:\s]+([\d\u0660-\u0669]{9,12})\b',
+                r'\b(?:civil|id|حساب)[:\s]*([\d\u0660-\u0669]{9,12})\b',
+                r'\b([\d\u0660-\u0669]{9,12})\b'  # Any 9-12 digit number that passes validation
             ]
             for pattern in civil_id_patterns:
                 for match in re.finditer(pattern, text, re.IGNORECASE):
