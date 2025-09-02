@@ -18,7 +18,7 @@
         background: #181818 !important;
     }
     .results-container {
-        background: #1a1a1a !important;
+        background: #181818 !important;
     }
     #input-text {
         background: #1a1a1a !important;
@@ -27,6 +27,18 @@
     .form-textarea, .form-input {
         background: #1a1a1a !important;
         color: #e5e7eb !important;
+    }
+    /* Header component */
+    .app-header {
+        background: #181818 !important;
+    }
+    /* Ready to analyze empty state box */
+    .results-empty {
+        background: #181818 !important;
+    }
+    /* Controls bar */
+    .mb-6 {
+        background: #181818 !important;
     }
 </style>
 {% endblock %}
@@ -71,7 +83,7 @@
   <!-- Main Content -->
   <main class="section">
     <!-- Simplified Controls Bar -->
-    <div class="card mb-6" style="padding: 1.5rem; border-radius: 15px;">
+    <div class="card mb-6" style="padding: 1.5rem; border-radius: 15px; background: #181818;">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -100,7 +112,7 @@
     <!-- Main Analysis Area -->
     <div style="display: grid; grid-template-columns: 1fr 1fr 350px; gap: 2rem; margin-bottom: 2rem;">
       <!-- Input Section -->
-      <div class="card input-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease;">
+      <div class="card input-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease; background: #181818;">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
           <div style="background: linear-gradient(135deg, #ff00ff, #00ffff); padding: 8px; border-radius: 8px;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
@@ -136,7 +148,7 @@
       </div>
 
       <!-- Results Section -->
-      <div class="card results-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease;">
+      <div class="card results-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease; background: #181818;">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
           <div style="background: linear-gradient(135deg, #10b981, #06b6d4); padding: 8px; border-radius: 8px;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
@@ -173,7 +185,7 @@
       </div>
 
       <!-- Entity Dictionary Panel -->
-      <div class="card entity-dictionary-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease; max-height: calc(100vh - 200px); overflow-y: auto;">
+      <div class="card entity-dictionary-card" style="border-radius: 15px; padding: 1.5rem; transition: transform 0.3s ease; max-height: calc(100vh - 200px); overflow-y: auto; background: #181818;">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1.25rem;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
             <div style="background: linear-gradient(135deg, #8b5cf6, #ec4899); padding: 8px; border-radius: 8px;">
