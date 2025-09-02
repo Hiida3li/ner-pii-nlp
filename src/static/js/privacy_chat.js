@@ -790,8 +790,10 @@ class PrivacyChat {
     updateMessagesPrivacyView() {
         // Find all user message wrappers that have privacy data
         const userMessages = this.elements.chatMessages.querySelectorAll('.message-wrapper[data-original]');
+        console.log('Found user messages with privacy data:', userMessages.length);
         
-        userMessages.forEach(messageWrapper => {
+        userMessages.forEach((messageWrapper, index) => {
+            console.log(`Processing message ${index + 1}`);
             const originalMessage = this.unescapeHtml(messageWrapper.getAttribute('data-original'));
             const maskedMessage = this.unescapeHtml(messageWrapper.getAttribute('data-masked'));
             const entitiesData = messageWrapper.getAttribute('data-entities');
