@@ -39,56 +39,200 @@
             padding-left: 4rem;
         }
         
-        /* Sidebar Toggle */
+        /* Sidebar Toggle Button - Fixed Position */
         .sidebar-toggle {
             position: fixed;
-            left: 276px;
+            left: 1rem;
             top: 1rem;
-            width: 32px;
-            height: 32px;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 6px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 8px;
             color: #e5e7eb;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: left 0.3s ease;
             z-index: 1002;
+            transition: all 0.2s ease;
         }
         
         .sidebar-toggle:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
         }
         
-        .sidebar.collapsed ~ .sidebar-toggle,
-        .sidebar-toggle.collapsed {
-            left: 16px;
+        .sidebar-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* New Chat Icon Button */
+        .new-chat-icon {
+            position: fixed;
+            left: 1rem;
+            top: 4rem;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 8px;
+            color: #e5e7eb;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+            transition: all 0.2s ease;
+        }
+        
+        .new-chat-icon:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+        
+        .new-chat-icon:active {
+            transform: scale(0.95);
+        }
+        
+        .new-chat-icon svg {
+            width: 20px;
+            height: 20px;
         }
 
-        /* Sidebar - ChatGPT Style */
+        /* Enhanced Sidebar */
         .sidebar {
-            width: 260px;
-            background: #202123;
+            width: 320px;
+            background: #181818;
+            backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             position: relative;
-            transition: transform 0.3s ease;
-            height: 100vh;
+            overflow: visible;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: left center;
         }
         
         .sidebar.collapsed {
-            transform: translateX(-260px);
-        }
-        
-        .sidebar-content {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            padding: 0.75rem;
+            margin-left: -340px;
+            opacity: 0;
         }
 
+        .sidebar-header {
+            padding: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: #181818;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+        }
+        
+        /* Sidebar Robot Logo - Scaled down version */
+        .sidebar-robot-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .sidebar-lightning {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: 11px;
+            height: 18px;
+            background: #00c8ff;
+            clip-path: polygon(
+                65% 0%,
+                20% 48%,
+                40% 48%,
+                25% 100%,
+                70% 52%,
+                50% 52%
+            );
+        }
+        
+        .sidebar-robot-head {
+            width: 60px;
+            height: 46px;
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            border-radius: 20px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .sidebar-robot-head::before,
+        .sidebar-robot-head::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 15px;
+            background: inherit;
+            border-radius: 5px;
+        }
+        
+        .sidebar-robot-head::before {
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .sidebar-robot-head::after {
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .sidebar-robot-face {
+            width: 43px;
+            height: 30px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .sidebar-eyes {
+            display: flex;
+            gap: 13px;
+            margin-top: 3px;
+        }
+        
+        .sidebar-eye {
+            width: 7px;
+            height: 13px;
+            background: #1e2832;
+            border-radius: 4px;
+        }
+        
+        .sidebar-mouth {
+            width: 6px;
+            height: 1.5px;
+            background: #1e2832;
+            border-radius: 0 0 6px 6px;
+            margin-top: 1px;
+        }
         
 
         .logo-text {
@@ -116,22 +260,32 @@
 
         .new-chat-btn {
             width: 100%;
-            padding: 0.75rem;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: #e5e7eb;
-            font-size: 0.875rem;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 16px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 0.75rem;
-            transition: all 0.2s;
-            margin-bottom: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 8px 24px rgba(118, 75, 162, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .new-chat-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+            background: #2a1a52;
+            box-shadow: 0 10px 28px rgba(34, 17, 67, 0.6);
+        }
+
+        .new-chat-btn:active {
+            transform: translateY(0);
         }
 
         .chat-list {
@@ -161,18 +315,31 @@
             background-clip: padding-box;
         }
 
+        .sessions-label {
+            font-size: 0.85rem;
+            color: rgba(156, 163, 175, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.75rem 1.5rem;
+            margin-top: 0.75rem;
+            font-weight: 600;
+        }
 
         .chat-item {
-            padding: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            border-radius: 16px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-size: 0.875rem;
-            color: rgba(255, 255, 255, 0.9);
-            transition: background 0.2s;
-            border-radius: 6px;
-            margin: 0.25rem 0.5rem;
+            justify-content: space-between;
+            margin: 0 1rem 0.75rem 1rem;
+            font-size: 0.95rem;
+            color: #e5e7eb;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            background: rgba(34, 17, 67, 0.2);
+            border: 1px solid rgba(34, 17, 67, 0.3);
         }
 
         .chat-item::before {
@@ -1040,27 +1207,52 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar Controls -->
+    <!-- Toggle Button - Always Visible -->
     <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Sidebar">
         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 12h18M3 6h18M3 18h18"/>
         </svg>
     </button>
     
+    <!-- New Chat Button - Under Toggle -->
+    <button class="new-chat-icon" id="new-chat-icon" aria-label="New Chat" title="New Chat">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+        </svg>
+    </button>
+    
     <div class="container" id="container">
         <!-- Enhanced Sidebar -->
         <div class="sidebar" id="sidebar">
-            <div class="sidebar-content">
-                <!-- New Chat Button -->
-                <button class="new-chat-btn" id="new-chat-icon">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 5v14M5 12h14"/>
-                    </svg>
-                    <span>New chat</span>
-                </button>
-                
-                <div class="chat-list" id="chat-list">
-                    <!-- Chat sessions will be dynamically added here -->
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-robot-wrapper">
+                        <div class="sidebar-lightning"></div>
+                        <div class="sidebar-robot-head">
+                            <div class="sidebar-robot-face">
+                                <div class="sidebar-eyes">
+                                    <div class="sidebar-eye"></div>
+                                    <div class="sidebar-eye"></div>
+                                </div>
+                                <div class="sidebar-mouth"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sessions-label">Recent Chats</div>
+            <div class="chat-list" id="chat-list">
+                <!-- Chat sessions will be dynamically added here -->
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">U</div>
+                    <div class="user-info">
+                        <div class="user-name">You</div>
+                        <div class="user-status">Online</div>
+                    </div>
                 </div>
             </div>
         </div>
