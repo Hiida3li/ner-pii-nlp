@@ -6,7 +6,7 @@
 {% block head %}
     <style>
         body {
-            background: linear-gradient(135deg, #0a0e27 0%, #070b1a 50%, #020408 100%);
+            background: #140a2e;
             min-height: 100vh;
             position: relative;
             cursor: none;
@@ -21,9 +21,9 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 50%, rgba(34, 197, 94, 0.05) 0%, transparent 50%);
+            background: radial-gradient(circle at 20% 80%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 255, 255, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 50%, rgba(0, 200, 255, 0.05) 0%, transparent 50%);
             opacity: 0;
             animation: pulseGlow 6s ease-in-out infinite alternate;
         }
@@ -85,7 +85,7 @@
             align-items: center;
             justify-content: center;
             animation: logoFloat 6s ease-in-out infinite;
-            filter: drop-shadow(0 10px 30px rgba(59, 130, 246, 0.3));
+            filter: drop-shadow(0 10px 30px rgba(255, 0, 255, 0.3));
         }
         
         @keyframes logoFloat {
@@ -93,11 +93,114 @@
             50% { transform: translateY(-15px) scale(1.02); }
         }
         
+        /* Lightning Bolt */
+        .lightning-bolt {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: 20px;
+            height: 32px;
+            background: #00c8ff;
+            clip-path: polygon(
+                65% 0%,
+                20% 48%,
+                40% 48%,
+                25% 100%,
+                70% 52%,
+                50% 52%
+            );
+            animation: lightningPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes lightningPulse {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.8; transform: translateX(-50%) scale(1.1); }
+        }
+        
+        /* Robot Head */
+        .robot-head {
+            width: 120px;
+            height: 95px;
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            border-radius: 40px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 40px rgba(138, 43, 226, 0.3);
+        }
+        
+        .robot-head::before,
+        .robot-head::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 30px;
+            background: inherit;
+            border-radius: 10px;
+        }
+        
+        .robot-head::before {
+            left: -17px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .robot-head::after {
+            right: -17px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .robot-face {
+            width: 85px;
+            height: 60px;
+            background: white;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .eyes {
+            display: flex;
+            gap: 25px;
+            margin-top: 8px;
+        }
+        
+        .eye {
+            width: 14px;
+            height: 24px;
+            background: #1e2025;
+            border-radius: 7px;
+            animation: blink 4s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+        
+        .mouth {
+            width: 12px;
+            height: 3px;
+            background: #1e2025;
+            border-radius: 0 0 12px 12px;
+            margin-top: 2px;
+        }
+        
         .logo-ring {
             position: absolute;
             border-radius: 50%;
             border: 3px solid transparent;
             animation: rotate 20s linear infinite;
+            display: none;
         }
         
         .logo-ring:nth-child(1) {
@@ -324,7 +427,9 @@
         
         .welcome-cta-simple:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 15px 40px rgba(255, 0, 255, 0.3);
+            background: #404040;
+            border-color: rgba(255, 255, 255, 0.2);
         }
         
         .welcome-cta-simple .cta-arrow {
@@ -793,21 +898,35 @@
     <section class="welcome-hero">
         <div class="welcome-content">
             <div class="welcome-branding animate-slide-up">
+                <!-- BOT.AI Logo -->
+                <div class="welcome-logo">
+                    <div class="lightning-bolt"></div>
+                    <div class="robot-head">
+                        <div class="robot-face">
+                            <div class="eyes">
+                                <div class="eye"></div>
+                                <div class="eye"></div>
+                            </div>
+                            <div class="mouth"></div>
+                        </div>
+                    </div>
+                </div>
+                
                 <h1 class="brand-title">
-                    <span class="brand-highlight">PII</span>
-                    <span class="brand-main">Detector</span>
+                    <span class="brand-highlight">BOT.</span>
+                    <span class="brand-main">AI</span>
                 </h1>
                 
-                <div class="brand-mission">Intelligent Privacy Protection</div>
+                <div class="brand-mission">PII Detection & Privacy Protection</div>
                 
-                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
                     <a href="/set-welcome-complete" class="welcome-cta-simple">
-                        <span>Get Started</span>
+                        <span>PII Detector</span>
                         <span class="cta-arrow">→</span>
                     </a>
                     
-                    <a href="/privacy-chat" class="welcome-cta-simple" style="background: linear-gradient(135deg, #10a37f, #059669);">
-                        <span>🛡️ Privacy Chat Demo</span>
+                    <a href="/privacy-chat" class="welcome-cta-simple" style="background: linear-gradient(135deg, #ff00ff, #00ffff);">
+                        <span>🛡️ Privacy Chat</span>
                         <span class="cta-arrow">→</span>
                     </a>
                 </div>
