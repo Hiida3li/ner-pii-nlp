@@ -11,13 +11,13 @@
 
 :root {
   /* Modern Color Palette */
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-light: #dbeafe;
-  --secondary: #64748b;
-  --secondary-hover: #475569;
-  --accent: #10b981;
-  --accent-hover: #059669;
+  --primary: #ff00ff;
+  --primary-hover: #e500e5;
+  --primary-light: rgba(255, 0, 255, 0.1);
+  --secondary: #00ffff;
+  --secondary-hover: #00e5e5;
+  --accent: #00c8ff;
+  --accent-hover: #00a8df;
   --danger: #ef4444;
   --danger-hover: #dc2626;
   --warning: #f59e0b;
@@ -35,15 +35,15 @@
   --gray-800: #1e293b;
   --gray-900: #0f172a;
   
-  /* Semantic Colors */
-  --background: #ffffff;
-  --surface: #f8fafc;
-  --surface-hover: #f1f5f9;
-  --border: #e2e8f0;
-  --border-focus: #2563eb;
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
+  /* Semantic Colors - Dark Theme Default */
+  --background: #140a2e;
+  --surface: #212121;
+  --surface-hover: #303030;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-focus: #ff00ff;
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
   
   /* Spacing Scale */
   --space-1: 0.25rem;   /* 4px */
@@ -112,14 +112,15 @@
 
 /* Dark Theme */
 [data-theme="dark"] {
-  --background: #0f172a;
-  --surface: #1e293b;
-  --surface-hover: #334155;
-  --border: #334155;
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --primary-light: #1e40af;
+  --background: #140a2e;
+  --surface: #212121;
+  --surface-hover: #303030;
+  --border: rgba(255, 255, 255, 0.1);
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --primary-light: rgba(255, 0, 255, 0.1);
+  --border-focus: #ff00ff;
 }
 
 /* Dark theme specific component styles */
@@ -150,8 +151,8 @@ html {
 }
 
 body {
-  background-color: var(--background);
-  color: var(--text-primary);
+  background-color: #140a2e;
+  color: #e5e7eb;
   font-size: var(--text-base);
   line-height: var(--leading-normal);
   min-height: 100vh;
@@ -252,8 +253,8 @@ body {
 /* ===== CARD COMPONENT ===== */
 
 .card {
-  background: var(--background);
-  border: 1px solid var(--border);
+  background: #212121;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
