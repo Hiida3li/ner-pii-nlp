@@ -604,6 +604,27 @@ class PrivacyChat {
         return 'ltr';
     }
     
+    createStreamingMessage() {
+        // Create a placeholder message for streaming content
+        const messageHtml = `
+            <div class="message-wrapper" data-streaming="true">
+                <div class="message assistant">
+                    <div class="message-avatar">AI</div>
+                    <div class="message-content">
+                        <div class="message-text ltr"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        this.elements.chatMessages.insertAdjacentHTML('beforeend', messageHtml);
+        this.scrollToBottom();
+        
+        // Return the created element
+        const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
+        return messages[messages.length - 1];
+    }
+    
     addMessage(role, content, entities = null, messageData = null) {
         // Process content for PII highlighting if entities provided
         let displayContent = content;
