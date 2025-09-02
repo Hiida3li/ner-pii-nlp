@@ -164,8 +164,8 @@ html {
 }
 
 body {
-  background-color: #140a2e;
-  color: #e5e7eb;
+  background-color: var(--background);
+  color: var(--text-primary);
   font-size: var(--text-base);
   line-height: var(--leading-normal);
   min-height: 100vh;
