@@ -612,6 +612,27 @@ class PrivacyChat {
         }
     }
     
+    maskAssistantMessage(text, entities) {
+        // Replace entity values with placeholders in assistant messages
+        let maskedText = text;
+        
+        entities.forEach(entity => {
+            if (entity.value) {
+                const entityRegex = new RegExp(this.escapeRegExp(entity.value), 'gi');
+                const placeholder = entity.type.toUpperCase();
+                maskedText = maskedText.replace(entityRegex, (match) => {
+                    return `<span class="pii-entity ${this.getEntityCssClass(entity.type)}">${placeholder}</span>`;
+                });
+            }
+        });
+        
+        return maskedText;
+    }
+    
+    escapeRegExp(str) {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    
     highlightMaskedEntities(text, entities) {
         let highlightedText = text;
         
