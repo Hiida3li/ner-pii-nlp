@@ -675,8 +675,8 @@ class PIIShieldModel(ModelInterface):
                             merged_entities.append((id_text, 'CIVIL-ID', start, end))
                             break  # Found one, no need to check other patterns
             
-            # Detect Credit Cards
-            credit_card_pattern = r'\b([45]\d{3}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4})\b'
+            # Detect Credit Cards (including Arabic numerals)
+            credit_card_pattern = r'\b([45٤٥][\d\u0660-\u0669]{3}[\s\-]?[\d\u0660-\u0669]{4}[\s\-]?[\d\u0660-\u0669]{4}[\s\-]?[\d\u0660-\u0669]{4})\b'
             for match in re.finditer(credit_card_pattern, text):
                 card_text = match.group(1)
                 if self._is_valid_credit_card(card_text):
