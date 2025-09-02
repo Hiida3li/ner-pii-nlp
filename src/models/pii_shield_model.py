@@ -31,6 +31,88 @@ class PIIShieldModel(ModelInterface):
         self.model_version = model_version
         self.model_info = ModelConfig.get_model_info(model_version)
     
+    def _detect_obfuscated_pii(self, text: str, existing_entities: list) -> list:
+        """Detect obfuscated PII with spaces, dots, emojis, or symbols"""
+        obfuscated_entities = []
+        
+        # Helper function to check if area is already detected
+        def is_already_detected(start, end):
+            return any(
+                (e_start <= start < e_end) or (e_start < end <= e_end)
+                for _, _, e_start, e_end in existing_entities
+            ) or any(
+                (e_start <= start < e_end) or (e_start < end <= e_end)
+                for _, _, e_start, e_end in obfuscated_entities
+            )
+        
+        # 1. Detect obfuscated URLs (e.g., "http : // orki . ai")
+        # Look for patterns with spaces/symbols between URL parts
+        obfuscated_url_pattern = r'(?:https?\s*:\s*/\s*/\s*)?(?:www\s*\.\s*)?([a-zA-Z0-9]+(?:\s*[.\-]\s*[a-zA-Z0-9]+)*\s*\.\s*(?:com|net|org|ai|co|io|dev|app|gov|edu|mil|int|uk|om))'
+        for match in re.finditer(obfuscated_url_pattern, text, re.IGNORECASE):
+            match_text = match.group()
+            # Remove spaces and rejoin
+            clean_url = re.sub(r'\s+', '', match_text)
+            
+            if self._is_valid_url(clean_url):
+                start = match.start()
+                end = match.end()
+                if not is_already_detected(start, end):
+                    obfuscated_entities.append((match_text, 'URL', start, end))
+        
+        # 2. Detect obfuscated emails (e.g., "ahmed @ gmail . com")
+        obfuscated_email_pattern = r'\b([a-zA-Z0-9][a-zA-Z0-9._%-]*)\s*@\s*([a-zA-Z0-9][a-zA-Z0-9.-]*)\s*\.\s*([a-zA-Z]{2,})\b'
+        for match in re.finditer(obfuscated_email_pattern, text, re.IGNORECASE):
+            match_text = match.group()
+            # Remove spaces
+            clean_email = re.sub(r'\s+', '', match_text)
+            
+            if self._is_valid_email(clean_email):
+                start = match.start()
+                end = match.end()
+                if not is_already_detected(start, end):
+                    obfuscated_entities.append((match_text, 'EMAIL', start, end))
+        
+        # 3. Detect obfuscated Omani phone numbers (e.g., "94.21.67.81" or "94 21 67 81")
+        # Pattern for numbers with dots, spaces, or dashes
+        obfuscated_phone_patterns = [
+            # With country code
+            r'(?:\+?\s*9\s*6\s*8\s*)?([97]\s*\d(?:[\s.\-]*\d){6})',  # Mobile
+            r'(?:\+?\s*9\s*6\s*8\s*)?(2\s*\d(?:[\s.\-]*\d){6})',      # Landline
+            # Toll-free
+            r'(8\s*0\s*0?\s*\d(?:[\s.\-]*\d){5})',
+        ]
+        
+        for pattern in obfuscated_phone_patterns:
+            for match in re.finditer(pattern, text):
+                match_text = match.group()
+                # Remove all non-digits
+                clean_phone = re.sub(r'[^\d]', '', match_text)
+                
+                if self._is_valid_omani_phone(clean_phone):
+                    start = match.start()
+                    end = match.end()
+                    if not is_already_detected(start, end):
+                        obfuscated_entities.append((match_text, 'PHONE', start, end))
+        
+        # 4. Detect phone numbers with Arabic numerals mixed with spaces
+        arabic_numeral_pattern = r'[\u0660-\u0669\s\.\-]+'
+        for match in re.finditer(arabic_numeral_pattern, text):
+            match_text = match.group()
+            # Convert Arabic numerals to Western
+            clean_phone = match_text
+            for i, ar in enumerate('٠١٢٣٤٥٦٧٨٩'):
+                clean_phone = clean_phone.replace(ar, str(i))
+            # Remove spaces and symbols
+            clean_phone = re.sub(r'[^\d]', '', clean_phone)
+            
+            if len(clean_phone) >= 7 and self._is_valid_omani_phone(clean_phone):
+                start = match.start()
+                end = match.end()
+                if not is_already_detected(start, end):
+                    obfuscated_entities.append((match_text, 'PHONE', start, end))
+        
+        return obfuscated_entities
+    
     def _is_valid_omani_phone(self, phone_text: str) -> bool:
         """Validate if a phone number is in Omani format
         
