@@ -34,7 +34,6 @@ class PrivacyChat {
             chatList: document.getElementById('chat-list'),
             welcomeScreen: document.getElementById('welcome-screen'),
             privacyToggle: document.getElementById('privacy-toggle'),
-            toggleSwitch: document.getElementById('toggle-switch'),
             sidebarToggle: document.getElementById('sidebar-toggle'),
             sidebar: document.getElementById('sidebar'),
             centeredInput: document.getElementById('centered-input'),
@@ -52,7 +51,6 @@ class PrivacyChat {
             chatList: !!this.elements.chatList,
             welcomeScreen: !!this.elements.welcomeScreen,
             privacyToggle: !!this.elements.privacyToggle,
-            toggleSwitch: !!this.elements.toggleSwitch,
             bottomInput: !!this.elements.bottomInput
         });
     }
@@ -124,9 +122,11 @@ class PrivacyChat {
         }
         
         // Privacy toggle
-        this.elements.privacyToggle.addEventListener('click', () => {
-            this.togglePrivacyMode();
-        });
+        if (this.elements.privacyToggle) {
+            this.elements.privacyToggle.addEventListener('click', () => {
+                this.togglePrivacyMode();
+            });
+        }
         
         // Sidebar toggle
         if (this.elements.sidebarToggle && this.elements.sidebar) {
