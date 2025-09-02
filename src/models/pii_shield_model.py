@@ -434,10 +434,12 @@ class PIIShieldModel(ModelInterface):
                     
                     # Names typically have 20-40% vowels
                     if len(clean_text) > 3:
-                        vowel_ratio = vowel_count / len([c for c in clean_text if c.isalpha()])
-                        if vowel_ratio < 0.15:  # Less than 15% vowels is suspicious
-                            i = j
-                            continue
+                        alpha_chars = [c for c in clean_text if c.isalpha()]
+                        if alpha_chars:
+                            vowel_ratio = vowel_count / len(alpha_chars)
+                            if vowel_ratio < 0.15:  # Less than 15% vowels is suspicious
+                                i = j
+                                continue
                     
                     # Skip if it contains too many consecutive consonants (likely random)
                     if re.search(r'[bcdfghjklmnpqrstvwxyz]{4,}', clean_text.lower()):
