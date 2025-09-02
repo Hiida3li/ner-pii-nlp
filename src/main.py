@@ -336,9 +336,7 @@ CAPABILITIES:
 - Answer questions on any topic (science, technology, history, culture, etc.)
 - Engage in casual conversation and small talk
 - Provide explanations, advice, and recommendations
-- Help with analysis, writing, coding, math, and creative tasks
 - Be curious and ask clarifying questions when needed
-
 Respond naturally as if you were having a conversation with a friend who asked for your help."""
                 }
             ]
