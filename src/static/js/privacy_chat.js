@@ -696,8 +696,9 @@ class PrivacyChat {
     }
     
     highlightPlaceholders(text) {
-        // Highlight placeholders in masked text
-        const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard|bankaccount)\d*/gi;
+        // Highlight ONLY actual placeholders (with numbers), not regular words
+        // Must have a number after the entity type to be a placeholder
+        const placeholderRegex = /\b(Person|Location|Organization|Email|Phone|URL|CivilID|Passport|CreditCard|BankAccount)\d+\b/gi;
         
         return text.replace(placeholderRegex, (match) => {
             const baseType = match.replace(/\d+$/, '').toLowerCase();
