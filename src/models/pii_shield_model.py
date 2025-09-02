@@ -60,7 +60,8 @@ class PIIShieldModel(ModelInterface):
                     obfuscated_entities.append((match_text, 'URL', start, end))
         
         # 2. Detect obfuscated emails (e.g., "ahmed @ gmail . com")
-        obfuscated_email_pattern = r'\b([a-zA-Z0-9][a-zA-Z0-9._%-]*)\s*@\s*([a-zA-Z0-9][a-zA-Z0-9.-]*)\s*\.\s*([a-zA-Z]{2,})\b'
+        # More flexible pattern that handles spaces around @ and dots
+        obfuscated_email_pattern = r'\b([a-zA-Z0-9][a-zA-Z0-9._%-]*(?:\s*\.\s*[a-zA-Z0-9]+)*)\s*@\s*([a-zA-Z0-9][a-zA-Z0-9.-]*(?:\s*\.\s*[a-zA-Z0-9]+)*)\s*\.\s*([a-zA-Z]{2,})\b'
         for match in re.finditer(obfuscated_email_pattern, text, re.IGNORECASE):
             match_text = match.group()
             # Remove spaces
