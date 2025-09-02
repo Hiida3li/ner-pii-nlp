@@ -566,6 +566,9 @@ class PIIShieldModel(ModelInterface):
                 if not already_detected and '@' not in url_text and self._is_valid_url(url_text):
                     merged_entities.append((url_text, 'URL', url_start, url_end))
             
+            # Detect obfuscated PII (with spaces, dots, symbols)
+            merged_entities.extend(self._detect_obfuscated_pii(text, merged_entities))
+            
             # Sort by start position
             merged_entities.sort(key=lambda x: x[2])
             
