@@ -721,6 +721,49 @@ class PIIShieldModel(ModelInterface):
             # Detect obfuscated PII (with spaces, dots, symbols)
             merged_entities.extend(self._detect_obfuscated_pii(text, merged_entities))
             
+            # Fallback detection for IDs that model might miss
+            # Detect Civil IDs
+            civil_id_pattern = r'\b(?:civil\s*(?:id)?|id\s*(?:number)?:?\s*)(\d{9,12})\b'
+            for match in re.finditer(civil_id_pattern, text, re.IGNORECASE):
+                id_text = match.group(1)
+                if self._is_valid_civil_id(id_text):
+                    start = match.start(1)
+                    end = match.end(1)
+                    already_detected = any(
+                        s <= start < e or s < end <= e 
+                        for _, _, s, e in merged_entities
+                    )
+                    if not already_detected:
+                        merged_entities.append((id_text, 'CIVIL-ID', start, end))
+            
+            # Detect Credit Cards
+            credit_card_pattern = r'\b([45]\d{3}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4})\b'
+            for match in re.finditer(credit_card_pattern, text):
+                card_text = match.group(1)
+                if self._is_valid_credit_card(card_text):
+                    start = match.start()
+                    end = match.end()
+                    already_detected = any(
+                        s <= start < e or s < end <= e 
+                        for _, _, s, e in merged_entities
+                    )
+                    if not already_detected:
+                        merged_entities.append((card_text, 'CREDIT-CARD', start, end))
+            
+            # Detect Passport numbers
+            passport_pattern = r'\b([A-Z]{1,2}\d{7,9})\b'
+            for match in re.finditer(passport_pattern, text):
+                passport_text = match.group(1)
+                if self._is_valid_passport(passport_text):
+                    start = match.start()
+                    end = match.end()
+                    already_detected = any(
+                        s <= start < e or s < end <= e 
+                        for _, _, s, e in merged_entities
+                    )
+                    if not already_detected:
+                        merged_entities.append((passport_text, 'PASSPORT', start, end))
+            
             # Sort by start position
             merged_entities.sort(key=lambda x: x[2])
             
