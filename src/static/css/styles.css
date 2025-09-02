@@ -188,9 +188,14 @@ html {
 body {
   background-color: var(--background) !important;
   color: var(--text-primary) !important;
+  font-family: var(--font-sans);
   font-size: var(--text-base);
+  font-weight: var(--weight-normal);
   line-height: var(--leading-normal);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* ===== LAYOUT COMPONENTS ===== */
