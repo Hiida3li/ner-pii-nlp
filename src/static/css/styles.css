@@ -112,7 +112,7 @@
 
 /* Dark Theme */
 [data-theme="dark"] {
-  --background: #212121;
+  --background: #212121 !important;
   --surface: #212121;
   --surface-hover: #303030;
   --border: rgba(255, 255, 255, 0.1);
@@ -125,7 +125,7 @@
 
 /* Light Theme - using same dark colors for consistency */
 [data-theme="light"] {
-  --background: #212121;
+  --background: #212121 !important;
   --surface: #2a2a2a;
   --surface-hover: #303030;
   --border: rgba(255, 255, 255, 0.1);
@@ -164,8 +164,8 @@ html {
 }
 
 body {
-  background-color: var(--background);
-  color: var(--text-primary);
+  background-color: var(--background) !important;
+  color: var(--text-primary) !important;
   font-size: var(--text-base);
   line-height: var(--leading-normal);
   min-height: 100vh;
