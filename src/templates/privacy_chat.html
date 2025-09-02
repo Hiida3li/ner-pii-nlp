@@ -24,7 +24,8 @@
 
         .container {
             display: flex;
-            height: 100vh;
+            height: calc(100vh - 50px);
+            margin-top: 50px;
             padding: 1rem;
             gap: 1rem;
             position: relative;
@@ -613,7 +614,6 @@
             flex: 1;
             overflow-y: auto;
             padding: 2rem;
-            padding-top: 5rem;
             background: rgba(30, 32, 37, 0.5);
             position: relative;
         }
@@ -1261,6 +1261,13 @@
         </svg>
     </button>
     
+    <!-- Global Page Header with Privacy Toggle -->
+    <div class="chat-header">
+        <button type="button" class="privacy-toggle active" id="privacy-toggle" aria-label="Toggle privacy mode" onclick="handlePrivacyToggle(event)">
+            <div class="privacy-toggle-slider">🔒</div>
+        </button>
+    </div>
+    
     <div class="container" id="container">
         <!-- Enhanced Sidebar -->
         <div class="sidebar" id="sidebar">
@@ -1286,13 +1293,6 @@
 
         <!-- Main Chat Area -->
         <div class="main-chat">
-            <!-- Chat Header with Privacy Toggle -->
-            <div class="chat-header">
-                <button type="button" class="privacy-toggle active" id="privacy-toggle" aria-label="Toggle privacy mode" onclick="handlePrivacyToggle(event)">
-                    <div class="privacy-toggle-slider">🔒</div>
-                </button>
-            </div>
-
             <!-- Chat Messages -->
             <div class="chat-messages" id="chat-messages">
                 <div class="welcome-screen" id="welcome-screen">
