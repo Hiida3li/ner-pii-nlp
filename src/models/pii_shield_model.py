@@ -29,6 +29,35 @@ class PIIShieldModel(ModelInterface):
         self.id2label = None
         self.model_version = model_version
         self.model_info = ModelConfig.get_model_info(model_version)
+    
+    def _is_valid_omani_phone(self, phone_text: str) -> bool:
+        """Validate if a phone number is in Omani format
+        
+        Valid formats:
+        - +968XXXXXXXX (with country code)
+        - 968XXXXXXXX (country code without +)
+        - 9XXXXXXX or 7XXXXXXX (mobile)
+        - 2XXXXXXX (landline)
+        - Arabic numerals
+        """
+        import re
+        
+        # Convert Arabic numerals to English
+        arabic_to_english = str.maketrans('٠١٢٣٤٥٦٧٨٩', '0123456789')
+        phone_digits = phone_text.translate(arabic_to_english)
+        
+        # Remove spaces, dashes, parentheses
+        phone_digits = re.sub(r'[\s\-\(\)\.]', '', phone_digits)
+        
+        # Omani phone patterns
+        patterns = [
+            r'^\+?968[97]\d{7}$',  # Mobile with country code
+            r'^\+?9682\d{7}$',      # Landline with country code
+            r'^[97]\d{7}$',         # Mobile without country code
+            r'^2\d{7}$',            # Landline without country code
+        ]
+        
+        return any(re.match(pattern, phone_digits) for pattern in patterns)
 
     def load_model(self) -> bool:
         """Load the PII Shield model based on version
@@ -301,6 +330,13 @@ class PIIShieldModel(ModelInterface):
                         # Might be misclassified, check if it's a phone number
                         if len(digits_only) >= 7 and len(digits_only) <= 15:
                             entity_type = 'PHONE'
+                
+                # Validate Omani phone numbers
+                if entity_type == 'PHONE':
+                    if not self._is_valid_omani_phone(entity_text):
+                        # Skip non-Omani phone numbers
+                        i = j
+                        continue
                 
                 if entity_text:  # Only add non-empty entities
                     merged_entities.append((entity_text, entity_type, start, end))
