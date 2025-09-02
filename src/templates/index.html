@@ -233,12 +233,6 @@
             </div>
           </div>
           
-          <!-- Privacy Toggle -->
-          <button class="privacy-toggle active" aria-label="Toggle privacy mode">
-            <div class="privacy-toggle-slider">🔒</div>
-          </button>
-          <!-- Hidden checkbox for privacy mode compatibility -->
-          <input type="checkbox" id="privacy-mode" checked style="display: none;">
           
           <!-- AI Model -->
           <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -313,7 +307,15 @@
               <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
             </svg>
           </div>
-          <h3 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Analysis Results</h3>
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <h3 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Analysis Results</h3>
+            <!-- Privacy Toggle -->
+            <button class="privacy-toggle active" aria-label="Toggle privacy mode">
+              <div class="privacy-toggle-slider">🔒</div>
+            </button>
+          </div>
+          <!-- Hidden checkbox for privacy mode compatibility -->
+          <input type="checkbox" id="privacy-mode" checked style="display: none;">
         </div>
         <div id="result-text" class="results-container" style="min-height: 300px; padding: 1.5rem; border-radius: 10px; overflow-y: auto; max-height: 400px; direction: ltr; font-size: 1.1rem; line-height: 2; font-family: 'Cairo', 'Segoe UI', 'Arial', sans-serif;">
           <div class="results-empty" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 280px;">
