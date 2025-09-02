@@ -1,6 +1,7 @@
 import torch
 import os
 import logging
+import re
 from transformers import AutoTokenizer, AutoModelForTokenClassification
 from typing import List, Tuple, Dict, Optional
 from src.models.model_interface import ModelInterface
