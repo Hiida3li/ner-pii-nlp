@@ -96,6 +96,17 @@
             100% { background-position: 200% 50%; }
         }
         
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1;
+                transform: scaleX(1);
+            }
+            50% { 
+                opacity: 0.7;
+                transform: scaleX(1.1);
+            }
+        }
+        
         /* Lightning Bolt */
         .lightning-bolt {
             position: absolute;
@@ -242,45 +253,44 @@
         }
         
         .brand-title {
-            font-size: 4.5rem;
-            font-weight: 900;
-            line-height: 0.9;
-            margin: 0 0 1rem 0;
-            letter-spacing: 0.05em;
-            font-family: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            text-transform: uppercase;
+            font-size: 6rem;
+            font-weight: 800;
+            line-height: 1;
+            margin: 0.5rem 0 1rem 0;
+            letter-spacing: -0.03em;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            text-transform: none;
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
+            display: inline-block;
         }
         
         .brand-highlight {
-            background: linear-gradient(90deg, #00d4ff, #0891b2, #06b6d4);
-            background-size: 200% auto;
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 900;
+            color: #06b6d4;
+            font-weight: 800;
             font-style: normal;
             display: inline-block;
-            animation: shimmer 3s linear infinite;
-            text-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+            position: relative;
+        }
+        
+        .brand-highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #06b6d4, #0ea5e9);
+            border-radius: 2px;
+            animation: pulse 2s ease-in-out infinite;
         }
         
         .brand-main {
-            background: linear-gradient(90deg, #e2e8f0, #94a3b8, #e2e8f0);
-            background-size: 200% auto;
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 900;
+            color: #ffffff;
+            font-weight: 200;
             margin-left: 0;
             font-style: normal;
             display: inline-block;
-            animation: shimmer 3s linear infinite;
-            animation-delay: 0.5s;
+            opacity: 0.95;
         }
         
         .brand-tagline {
