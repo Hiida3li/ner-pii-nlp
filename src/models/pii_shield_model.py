@@ -130,7 +130,6 @@ class PIIShieldModel(ModelInterface):
         - 80XXXXXX (toll-free hotlines)
         - Arabic numerals
         """
-        import re
         
         # Convert Arabic numerals to English
         arabic_to_english = str.maketrans('٠١٢٣٤٥٦٧٨٩', '0123456789')
@@ -158,7 +157,6 @@ class PIIShieldModel(ModelInterface):
         - Must have something before and after @
         - Should end with common domain extension
         """
-        import re
         
         # Remove spaces that tokenizer might have added
         email_text = email_text.replace(' @ ', '@').replace(' . ', '.').strip()
@@ -184,7 +182,6 @@ class PIIShieldModel(ModelInterface):
         - Cannot contain @ symbol (that would be email)
         - Should look like a domain/URL
         """
-        import re
         
         # Remove spaces that tokenizer might have added
         url_text = url_text.replace(' . ', '.').replace(' / ', '/').strip().lower()
@@ -257,7 +254,6 @@ class PIIShieldModel(ModelInterface):
         - Starts with 1-2 capital letters
         - Followed by 7-9 digits
         """
-        import re
         
         # Remove spaces
         clean_passport = passport_text.replace(' ', '').replace('-', '')
@@ -686,8 +682,7 @@ class PIIShieldModel(ModelInterface):
             text_lower = text.lower()
             
             # Detect emails with regex if not already found
-            import re
-            email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+                email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
             for match in re.finditer(email_pattern, text):
                 email_text = match.group()
                 email_start = match.start()
