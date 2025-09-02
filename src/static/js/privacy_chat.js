@@ -318,7 +318,7 @@ class PrivacyChat {
                         </div>
                     </div>
                 </div>
-                <h1 class="welcome-title">BOT.AI</h1>
+                <h1 class="welcome-title">Blot</h1>
                 <p class="welcome-subtitle">
                     Good to see you! How can I help?
                 </p>
