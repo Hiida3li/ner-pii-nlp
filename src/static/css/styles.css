@@ -198,6 +198,179 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* ===== TYPOGRAPHY ===== */
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  margin: 0 0 var(--space-4) 0;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-extrabold);
+  letter-spacing: -0.025em;
+}
+
+h2 {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+}
+
+h3 {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.01em;
+}
+
+h4 {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+}
+
+h5 {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+}
+
+h6 {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Text elements */
+p {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  margin: 0 0 var(--space-4) 0;
+  color: var(--text-primary);
+}
+
+small {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-normal);
+}
+
+/* Brand typography */
+.brand-title {
+  font-family: var(--font-display);
+  font-size: var(--text-6xl);
+  font-weight: var(--weight-black);
+  letter-spacing: -0.04em;
+  line-height: var(--leading-tight);
+  background: linear-gradient(135deg, #ff00ff, #00ffff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+}
+
+.welcome-title {
+  font-family: var(--font-display);
+  font-size: var(--text-5xl);
+  font-weight: var(--weight-extrabold);
+  letter-spacing: -0.03em;
+  line-height: var(--leading-tight);
+  background: linear-gradient(135deg, #ff00ff, #00ffff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.welcome-subtitle {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-normal);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
+  margin-top: var(--space-2);
+}
+
+/* Code and monospace */
+code, pre, .code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--surface);
+  padding: 0.125em 0.25em;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+pre {
+  padding: var(--space-4);
+  overflow-x: auto;
+  line-height: var(--leading-relaxed);
+}
+
+/* Interactive text */
+a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: var(--weight-medium);
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* Form text styling */
+label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  display: block;
+}
+
+/* Button typography */
+.btn {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-sm);
+  letter-spacing: 0.025em;
+}
+
+.btn-primary {
+  font-weight: var(--weight-semibold);
+}
+
+/* Utility text classes */
+.text-xs { font-size: var(--text-xs); }
+.text-sm { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-lg { font-size: var(--text-lg); }
+.text-xl { font-size: var(--text-xl); }
+.text-2xl { font-size: var(--text-2xl); }
+.text-3xl { font-size: var(--text-3xl); }
+.text-4xl { font-size: var(--text-4xl); }
+
+.font-light { font-weight: var(--weight-light); }
+.font-normal { font-weight: var(--weight-normal); }
+.font-medium { font-weight: var(--weight-medium); }
+.font-semibold { font-weight: var(--weight-semibold); }
+.font-bold { font-weight: var(--weight-bold); }
+.font-extrabold { font-weight: var(--weight-extrabold); }
+
+.leading-tight { line-height: var(--leading-tight); }
+.leading-normal { line-height: var(--leading-normal); }
+.leading-relaxed { line-height: var(--leading-relaxed); }
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+
 /* ===== LAYOUT COMPONENTS ===== */
 
 .container {
