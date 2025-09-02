@@ -214,6 +214,58 @@ class PIIShieldModel(ModelInterface):
             return False
         
         return True
+    
+    def _is_valid_civil_id(self, id_text: str) -> bool:
+        """Validate Civil ID format
+        
+        Requirements:
+        - 9-12 digits total
+        - Must start with: 10, 12, 13, 8, 1, or 9
+        """
+        # Remove any spaces or dashes
+        clean_id = ''.join(c for c in id_text if c.isdigit())
+        
+        # Check length (9-12 digits)
+        if len(clean_id) < 9 or len(clean_id) > 12:
+            return False
+        
+        # Check starting patterns
+        valid_starts = ['10', '12', '13', '8', '1', '9']
+        return any(clean_id.startswith(start) for start in valid_starts)
+    
+    def _is_valid_credit_card(self, card_text: str) -> bool:
+        """Validate Credit Card format
+        
+        Requirements:
+        - Exactly 16 digits
+        - Must start with 4 (Visa) or 5 (Mastercard)
+        """
+        # Remove any spaces, dashes, or dots
+        clean_card = ''.join(c for c in card_text if c.isdigit())
+        
+        # Must be exactly 16 digits
+        if len(clean_card) != 16:
+            return False
+        
+        # Must start with 4 or 5
+        return clean_card[0] in ['4', '5']
+    
+    def _is_valid_passport(self, passport_text: str) -> bool:
+        """Validate Passport format
+        
+        Requirements:
+        - Starts with 1-2 capital letters
+        - Followed by 7-9 digits
+        """
+        import re
+        
+        # Remove spaces
+        clean_passport = passport_text.replace(' ', '').replace('-', '')
+        
+        # Pattern: 1-2 uppercase letters followed by 7-9 digits
+        passport_pattern = r'^[A-Z]{1,2}\d{7,9}$'
+        
+        return bool(re.match(passport_pattern, clean_passport))
 
     def load_model(self) -> bool:
         """Load the PII Shield model based on version
