@@ -1407,7 +1407,28 @@
                     parent = parent.parentElement;
                 }
                 
-                console.log('Privacy toggle button ready');
+                // Add multiple event listeners as backup
+                button.addEventListener('mousedown', function(e) {
+                    console.log('Mousedown detected on privacy toggle');
+                    handlePrivacyToggle(e);
+                });
+                
+                button.addEventListener('touchstart', function(e) {
+                    console.log('Touch detected on privacy toggle');
+                    handlePrivacyToggle(e);
+                });
+                
+                // Test if button is actually clickable
+                const rect = button.getBoundingClientRect();
+                const styles = window.getComputedStyle(button);
+                console.log('Button position:', rect);
+                console.log('Button z-index:', styles.zIndex);
+                console.log('Button pointer-events:', styles.pointerEvents);
+                console.log('Button cursor:', styles.cursor);
+                
+                console.log('Privacy toggle button ready and clickable');
+            } else {
+                console.error('Privacy toggle button not found!');
             }
         });
     </script>
