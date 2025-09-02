@@ -726,6 +726,21 @@ class PrivacyChat {
         this.isTyping = false;
     }
     
+    initializePrivacyToggle() {
+        // Set initial state of privacy toggle
+        const toggle = this.elements.privacyToggle;
+        if (toggle) {
+            const slider = toggle.querySelector('.privacy-toggle-slider');
+            if (this.privacyMode) {
+                toggle.classList.add('active');
+                if (slider) slider.textContent = '🔒';
+            } else {
+                toggle.classList.remove('active');
+                if (slider) slider.textContent = '🔓';
+            }
+        }
+    }
+    
     togglePrivacyMode() {
         this.privacyMode = !this.privacyMode;
         
