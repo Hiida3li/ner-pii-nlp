@@ -7,7 +7,10 @@ class PrivacyChat {
         this.sessionCounter = 1;
         this.currentSession = 1;
         this.sessions = {};
-        this.privacyMode = true;
+        // Load privacy mode from localStorage or default to true
+        const storedPrivacyMode = localStorage.getItem('privacyMode');
+        this.privacyMode = storedPrivacyMode !== null ? storedPrivacyMode === 'true' : true;
+        console.log('Initialized privacy mode from storage:', this.privacyMode);
         this.isTyping = false;
         
         this.init();
