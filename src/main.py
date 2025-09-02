@@ -335,8 +335,7 @@ PRIVACY INSTRUCTIONS:
             data = {
                 "model": "gpt-3.5-turbo",
                 "messages": messages,
-                "max_tokens": 200,
-                "temperature": 0.7
+                "max_tokens": 200
             }
             
             response = requests.post(
