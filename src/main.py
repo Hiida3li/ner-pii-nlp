@@ -348,8 +348,7 @@ class SimpleChatbot:
             data = {
                 "model": "gpt-5",
                 "messages": messages,
-                "max_completion_tokens": 200,
-                "temperature": 0.7
+                "max_completion_tokens": 200
             }
             
             response = requests.post(
