@@ -77,10 +77,10 @@ class PIIShieldModel(ModelInterface):
         # Pattern for numbers with dots, spaces, or dashes
         obfuscated_phone_patterns = [
             # With country code
-            r'(?:\+?\s*9\s*6\s*8\s*)?([97]\s*\d(?:[\s.\-]*\d){6})',  # Mobile
-            r'(?:\+?\s*9\s*6\s*8\s*)?(2\s*\d(?:[\s.\-]*\d){6})',      # Landline
+            r'(?:\+?\s*9[\s.\-]*6[\s.\-]*8[\s.\-]*)?([97](?:[\s.\-]*\d){7})',  # Mobile
+            r'(?:\+?\s*9[\s.\-]*6[\s.\-]*8[\s.\-]*)?(2(?:[\s.\-]*\d){7})',      # Landline
             # Toll-free
-            r'(8\s*0\s*0?\s*\d(?:[\s.\-]*\d){5})',
+            r'(8[\s.\-]*0(?:[\s.\-]*\d){6})',
         ]
         
         for pattern in obfuscated_phone_patterns:
