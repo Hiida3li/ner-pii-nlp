@@ -162,8 +162,8 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
-            width: 4px;
-            height: 7px;
+            width: 6px;
+            height: 10px;
             background: #00c8ff;
             clip-path: polygon(
                 65% 0%,
@@ -176,71 +176,72 @@
         }
         
         .sidebar-robot-head {
-            width: 25px;
-            height: 20px;
+            width: 30px;
+            height: 24px;
             background: linear-gradient(135deg, #ff00ff, #00ffff);
             border-radius: 10px;
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
+            box-shadow: 0 2px 8px rgba(138, 43, 226, 0.3);
         }
         
         .sidebar-robot-head::before,
         .sidebar-robot-head::after {
             content: '';
             position: absolute;
-            width: 12px;
-            height: 15px;
+            width: 6px;
+            height: 8px;
             background: inherit;
-            border-radius: 5px;
+            border-radius: 3px;
         }
         
         .sidebar-robot-head::before {
-            left: -8px;
+            left: -4px;
             top: 50%;
             transform: translateY(-50%);
         }
         
         .sidebar-robot-head::after {
-            right: -8px;
+            right: -4px;
             top: 50%;
             transform: translateY(-50%);
         }
         
         .sidebar-robot-face {
-            width: 18px;
-            height: 12px;
+            width: 22px;
+            height: 15px;
             background: white;
             border-radius: 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 2px;
             position: relative;
             z-index: 2;
         }
         
         .sidebar-eyes {
             display: flex;
-            gap: 5px;
-            margin-top: 1px;
+            gap: 7px;
+            margin-top: 2px;
         }
         
         .sidebar-eye {
-            width: 3px;
-            height: 5px;
-            background: #181818;
+            width: 4px;
+            height: 6px;
+            background: #1e2832;
             border-radius: 2px;
         }
         
         .sidebar-mouth {
-            width: 6px;
-            height: 1.5px;
+            width: 3px;
+            height: 1px;
             background: #1e2832;
-            border-radius: 0 0 6px 6px;
-            margin-top: 1px;
+            border-radius: 0 0 3px 3px;
+            margin-top: 0;
         }
         
 
@@ -330,7 +331,7 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             padding: 0.75rem 1rem;
-            margin-top: 1rem;
+            margin-top: 12rem;
             font-weight: 600;
         }
 
