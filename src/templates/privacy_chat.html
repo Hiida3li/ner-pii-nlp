@@ -526,12 +526,15 @@
             border: 1px solid #595959;
             border-radius: 15px;
             position: relative;
-            cursor: pointer;
+            cursor: pointer !important;
             transition: all 0.3s ease;
             padding: 0;
             display: block;
-            z-index: 10;
-            pointer-events: auto;
+            z-index: 1000;
+            pointer-events: auto !important;
+            user-select: none;
+            -webkit-user-select: none;
+            outline: none;
         }
         
         .privacy-toggle-slider {
