@@ -125,9 +125,15 @@ class PrivacyChat {
         
         // Privacy toggle
         if (this.elements.privacyToggle) {
-            this.elements.privacyToggle.addEventListener('click', () => {
+            console.log('Privacy toggle element found:', this.elements.privacyToggle);
+            this.elements.privacyToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Privacy toggle clicked');
                 this.togglePrivacyMode();
             });
+        } else {
+            console.error('Privacy toggle element NOT found');
         }
         
         // Sidebar toggle
