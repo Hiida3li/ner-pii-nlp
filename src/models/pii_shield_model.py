@@ -756,11 +756,12 @@ class PIIShieldModel(ModelInterface):
             
             # Detect Passport numbers - look for context or pattern
             passport_patterns = [
-                r'\b(?:passport|pass)[:\s]*([A-Z]{1,2}\d{7,9})\b',  # With "passport" context
-                r'\b([A-Z]{1,2}\d{7,9})\b'  # Just the pattern
+                (r'\b(?:passport|pass)[:\s]*([A-Z]{1,2}\d{7,9})\b', True),  # With "passport" context
+                (r'\b([A-Z]{1,2}\d{7,9})\b', False)  # Just the pattern
             ]
-            for pattern in passport_patterns:
-                for match in re.finditer(pattern, text):
+            for pattern, case_insensitive in passport_patterns:
+                flags = re.IGNORECASE if case_insensitive else 0
+                for match in re.finditer(pattern, text, flags):
                     passport_text = match.group(1) if match.lastindex else match.group()
                     if self._is_valid_passport(passport_text):
                         start = match.start(1) if match.lastindex else match.start()
