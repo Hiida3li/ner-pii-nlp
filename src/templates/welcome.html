@@ -77,8 +77,6 @@
         }
         
         .welcome-logo {
-            width: 220px;
-            height: 220px;
             margin: 0 auto 3rem;
             position: relative;
             display: flex;
@@ -96,12 +94,12 @@
         /* Lightning Bolt */
         .lightning-bolt {
             position: absolute;
-            top: -25px;
+            top: -32px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
-            width: 20px;
-            height: 32px;
+            width: 22px;
+            height: 36px;
             background: #00c8ff;
             clip-path: polygon(
                 65% 0%,
@@ -121,10 +119,10 @@
         
         /* Robot Head */
         .robot-head {
-            width: 120px;
-            height: 95px;
+            width: 180px;
+            height: 140px;
             background: linear-gradient(135deg, #ff00ff, #00ffff);
-            border-radius: 40px;
+            border-radius: 60px;
             position: relative;
             display: flex;
             justify-content: center;
@@ -136,49 +134,49 @@
         .robot-head::after {
             content: '';
             position: absolute;
-            width: 24px;
-            height: 30px;
+            width: 35px;
+            height: 45px;
             background: inherit;
-            border-radius: 10px;
+            border-radius: 15px;
         }
         
         .robot-head::before {
-            left: -17px;
+            left: -25px;
             top: 50%;
             transform: translateY(-50%);
         }
         
         .robot-head::after {
-            right: -17px;
+            right: -25px;
             top: 50%;
             transform: translateY(-50%);
         }
         
         .robot-face {
-            width: 85px;
-            height: 60px;
+            width: 130px;
+            height: 90px;
             background: white;
-            border-radius: 18px;
+            border-radius: 25px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 12px;
             position: relative;
             z-index: 2;
         }
         
         .eyes {
             display: flex;
-            gap: 25px;
-            margin-top: 8px;
+            gap: 40px;
+            margin-top: 10px;
         }
         
         .eye {
-            width: 14px;
-            height: 24px;
-            background: #1e2025;
-            border-radius: 7px;
+            width: 22px;
+            height: 38px;
+            background: #1e2832;
+            border-radius: 11px;
             animation: blink 4s infinite;
         }
         
@@ -188,10 +186,10 @@
         }
         
         .mouth {
-            width: 12px;
-            height: 3px;
-            background: #1e2025;
-            border-radius: 0 0 12px 12px;
+            width: 18px;
+            height: 4px;
+            background: #1e2832;
+            border-radius: 0 0 18px 18px;
             margin-top: 2px;
         }
         
