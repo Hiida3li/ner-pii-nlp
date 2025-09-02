@@ -212,8 +212,8 @@ class PrivacyChatResponse(BaseModel):
     masked_message: str
     display_response: str
     unmasked_response: str  # Response with actual entities
-    user_entities: Optional[List[Dict]] = []
-    response_entities: Optional[List[Dict]] = []
+    user_entities: Optional[List[Dict]] = None
+    response_entities: Optional[List[Dict]] = None
 
 class SimpleChatbot:
     def __init__(self):
