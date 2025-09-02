@@ -39,20 +39,13 @@
             padding-left: 4rem;
         }
         
-        /* Sidebar Controls - ChatGPT Style */
-        .sidebar-controls {
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            z-index: 1002;
-        }
-        
+        /* Sidebar Toggle */
         .sidebar-toggle {
-            width: 40px;
-            height: 40px;
+            position: fixed;
+            left: 1rem;
+            top: 1rem;
+            width: 36px;
+            height: 36px;
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 8px;
@@ -62,35 +55,11 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
+            z-index: 1002;
         }
         
         .sidebar-toggle:hover {
             background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .new-chat-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0.75rem;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: #e5e7eb;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 0.875rem;
-            white-space: nowrap;
-        }
-        
-        .new-chat-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .sidebar-controls svg {
-            width: 18px;
-            height: 18px;
-            flex-shrink: 0;
         }
 
         /* Sidebar - ChatGPT Style */
@@ -1076,25 +1045,36 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar Controls - ChatGPT Style -->
-    <div class="sidebar-controls">
-        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Sidebar">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 12h18M3 6h18M3 18h18"/>
-            </svg>
-        </button>
-        
-        <button class="new-chat-btn" id="new-chat-icon" aria-label="New Chat">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12h14"/>
-            </svg>
-            <span>New chat</span>
-        </button>
-    </div>
+    <!-- Sidebar Controls -->
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Sidebar">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+    </button>
     
     <div class="container" id="container">
         <!-- Enhanced Sidebar -->
         <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- Logo -->
+                <div class="sidebar-logo">
+                    <div class="logo-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <rect width="32" height="32" rx="8" fill="#10a37f"/>
+                            <path d="M16 8L20 12L16 16L12 12L16 8Z" fill="white"/>
+                            <path d="M16 16L20 20L16 24L12 20L16 16Z" fill="white" opacity="0.7"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- New Chat Button -->
+                <button class="new-chat-btn" id="new-chat-icon">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 2v12M2 8h12"/>
+                    </svg>
+                </button>
+            </div>
+            
             <div class="sidebar-content">
                 <div class="chat-list" id="chat-list">
                     <!-- Chat sessions will be dynamically added here -->
