@@ -38,6 +38,7 @@ class PIIShieldModel(ModelInterface):
         - 968XXXXXXXX (country code without +)
         - 9XXXXXXX or 7XXXXXXX (mobile)
         - 2XXXXXXX (landline)
+        - 80XXXXXX (toll-free hotlines)
         - Arabic numerals
         """
         import re
@@ -55,9 +56,75 @@ class PIIShieldModel(ModelInterface):
             r'^\+?9682\d{7}$',      # Landline with country code
             r'^[97]\d{7}$',         # Mobile without country code
             r'^2\d{7}$',            # Landline without country code
+            r'^80\d{6}$',           # Toll-free hotlines (80077444, etc.)
         ]
         
         return any(re.match(pattern, phone_digits) for pattern in patterns)
+    
+    def _is_valid_email(self, email_text: str) -> bool:
+        """Validate if text is a proper email address
+        
+        Requirements:
+        - Must contain @ symbol
+        - Must have something before and after @
+        - Should end with common domain extension
+        """
+        import re
+        
+        # Remove spaces that tokenizer might have added
+        email_text = email_text.replace(' @ ', '@').replace(' . ', '.').strip()
+        
+        # Must have @ symbol
+        if '@' not in email_text:
+            return False
+        
+        # Basic email pattern - more lenient for tokenized text
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        
+        # Also check if it ends with common TLDs
+        valid_tlds = ['com', 'net', 'org', 'ai', 'co', 'io', 'edu', 'gov', 'mil', 'info', 'biz', 'om', 'uk', 'us']
+        has_valid_tld = any(email_text.lower().endswith(f'.{tld}') for tld in valid_tlds)
+        
+        return bool(re.match(email_pattern, email_text, re.IGNORECASE)) or has_valid_tld
+    
+    def _is_valid_url(self, url_text: str) -> bool:
+        """Validate if text is a proper URL
+        
+        Requirements:
+        - Must have valid domain extension
+        - Cannot contain @ symbol (that would be email)
+        - Should look like a domain/URL
+        """
+        import re
+        
+        # Remove spaces that tokenizer might have added
+        url_text = url_text.replace(' . ', '.').replace(' / ', '/').strip().lower()
+        
+        # URLs should NOT contain @ (that's email)
+        if '@' in url_text:
+            return False
+        
+        # Must contain a dot for domain
+        if '.' not in url_text:
+            return False
+        
+        # Check for common TLDs
+        valid_tlds = ['com', 'net', 'org', 'ai', 'co', 'io', 'edu', 'gov', 'mil', 'info', 'biz', 'om', 'uk', 'us']
+        has_valid_tld = any(url_text.endswith(f'.{tld}') or f'.{tld}/' in url_text for tld in valid_tlds)
+        
+        # Also check for URL-like patterns
+        looks_like_url = (
+            url_text.startswith('http://') or 
+            url_text.startswith('https://') or 
+            url_text.startswith('www.') or
+            has_valid_tld
+        )
+        
+        # Filter out obvious non-URLs (random strings with dots)
+        if not looks_like_url and not has_valid_tld:
+            return False
+        
+        return True
 
     def load_model(self) -> bool:
         """Load the PII Shield model based on version
@@ -338,10 +405,63 @@ class PIIShieldModel(ModelInterface):
                         i = j
                         continue
                 
+                # Validate emails
+                if entity_type == 'EMAIL':
+                    if not self._is_valid_email(entity_text):
+                        # Skip invalid emails
+                        i = j
+                        continue
+                
+                # Validate URLs
+                if entity_type == 'URL':
+                    if not self._is_valid_url(entity_text):
+                        # Skip invalid URLs
+                        i = j
+                        continue
+                
                 if entity_text:  # Only add non-empty entities
                     merged_entities.append((entity_text, entity_type, start, end))
                 i = j
 
+            # Fallback: Add regex-based detection for emails and URLs if model missed them
+            text_lower = text.lower()
+            
+            # Detect emails with regex if not already found
+            import re
+            email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+            for match in re.finditer(email_pattern, text):
+                email_text = match.group()
+                email_start = match.start()
+                email_end = match.end()
+                
+                # Check if this email is already detected
+                already_detected = any(
+                    start <= email_start < end or start < email_end <= end 
+                    for _, _, start, end in merged_entities
+                )
+                
+                if not already_detected and self._is_valid_email(email_text):
+                    merged_entities.append((email_text, 'EMAIL', email_start, email_end))
+            
+            # Detect URLs with regex if not already found
+            url_pattern = r'\b(?:https?://)?(?:www\.)?[a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})+(?:/[^\s]*)?\b'
+            for match in re.finditer(url_pattern, text):
+                url_text = match.group()
+                url_start = match.start()
+                url_end = match.end()
+                
+                # Check if this URL is already detected or is an email
+                already_detected = any(
+                    start <= url_start < end or start < url_end <= end 
+                    for _, _, start, end in merged_entities
+                )
+                
+                if not already_detected and '@' not in url_text and self._is_valid_url(url_text):
+                    merged_entities.append((url_text, 'URL', url_start, url_end))
+            
+            # Sort by start position
+            merged_entities.sort(key=lambda x: x[2])
+            
             return merged_entities
             
         except Exception as e:
