@@ -807,20 +807,34 @@ class PrivacyChat {
     }
     
     highlightEntities(text, entities) {
-        // For AI responses with placeholders
+        // For unmasked AI responses - highlight actual entity values
         let highlightedText = text;
         
         console.log('Highlighting AI response entities in text:', text);
         console.log('Available entities:', entities);
         
-        // Find all placeholders in text using comprehensive regex
-        const placeholderRegex = /(person|location|organization|email|phone|url|civilid|passport|creditcard|bankaccount)\d*/gi;
+        // Sort entities by start position in reverse to maintain correct positions
+        const sortedEntities = [...entities].sort((a, b) => {
+            // Use unmasked_start if available, otherwise use start
+            const aStart = a.unmasked_start !== undefined ? a.unmasked_start : a.start;
+            const bStart = b.unmasked_start !== undefined ? b.unmasked_start : b.start;
+            return bStart - aStart;
+        });
         
-        highlightedText = highlightedText.replace(placeholderRegex, (match) => {
-            const baseType = match.replace(/\d+$/, '').toLowerCase().replace(/\s+/g, '');
-            const cssClass = this.getEntityCssClass(baseType);
-            console.log(`Found AI response placeholder: '${match}', baseType: '${baseType}', cssClass: '${cssClass}'`);
-            return `<span class="pii-entity ${cssClass}">${match}</span>`;
+        // Highlight each actual entity value in the unmasked text
+        sortedEntities.forEach(entity => {
+            if (entity.text && entity.text !== entity.placeholder) {
+                const entityValue = entity.text;
+                const entityType = (entity.entity_type || entity.type || '').toLowerCase();
+                const cssClass = this.getEntityCssClass(entityType);
+                
+                // Create regex to find the exact entity value
+                const regex = new RegExp(this.escapeRegExp(entityValue), 'g');
+                highlightedText = highlightedText.replace(regex, (match) => {
+                    console.log(`Highlighting entity: '${match}', type: '${entityType}', cssClass: '${cssClass}'`);
+                    return `<span class="pii-entity ${cssClass}">${match}</span>`;
+                });
+            }
         });
         
         return highlightedText;
