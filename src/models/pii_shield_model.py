@@ -756,7 +756,7 @@ class PIIShieldModel(ModelInterface):
             
             # Detect Passport numbers - look for context or pattern
             passport_patterns = [
-                (r'\b(?:passport|pass)[:\s]*([A-Z]{1,2}\d{7,9})\b', True),  # With "passport" context
+                (r'\b(?:passport|pass|id)[:\s]+([A-Z]{1,2}\d{7,9})\b', True),  # With "passport" context
                 (r'\b([A-Z]{1,2}\d{7,9})\b', False)  # Just the pattern
             ]
             for pattern, case_insensitive in passport_patterns:
