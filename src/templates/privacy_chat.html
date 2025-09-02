@@ -518,43 +518,47 @@
             z-index: 100;
         }
         
-        /* Privacy Toggle */
+        /* Privacy Toggle - matching PII detector design */
         .privacy-toggle {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
+            width: 50px;
+            height: 30px;
             background: #303030;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            color: white;
-            font-size: 0.875rem;
-            font-weight: 500;
+            border: 1px solid #595959;
+            border-radius: 15px;
+            position: relative;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .privacy-toggle:hover {
-            transform: translateY(-2px);
-            background: #404040;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .privacy-toggle.off {
-            background: rgba(220, 38, 38, 0.2);
-            border-color: rgba(220, 38, 38, 0.3);
-            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+            padding: 0;
+            display: block;
         }
         
-        .privacy-toggle.off:hover {
-            background: rgba(220, 38, 38, 0.3);
-            border-color: rgba(220, 38, 38, 0.4);
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        .privacy-toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .privacy-toggle.active .privacy-toggle-slider {
+            transform: translateX(20px);
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+        }
+        
+        .privacy-toggle:hover {
+            background: #404040;
         }
 
         .toggle-switch {
+            display: none;
             width: 36px;
             height: 20px;
             background: rgba(255, 255, 255, 0.2);
@@ -1261,12 +1265,9 @@
         <div class="main-chat">
             <!-- Chat Header with Privacy Toggle -->
             <div class="chat-header">
-                <div class="privacy-toggle" id="privacy-toggle">
-                    <span>Privacy Mode</span>
-                    <div class="toggle-switch" id="toggle-switch">
-                        <div class="toggle-knob"></div>
-                    </div>
-                </div>
+                <button class="privacy-toggle active" id="privacy-toggle" aria-label="Toggle privacy mode">
+                    <div class="privacy-toggle-slider">🔒</div>
+                </button>
             </div>
 
             <!-- Chat Messages -->
