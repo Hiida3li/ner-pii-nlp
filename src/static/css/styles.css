@@ -304,11 +304,11 @@ body {
 .form-textarea {
   width: 100%;
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
   font-size: var(--text-base);
-  background: var(--background);
-  color: var(--text-primary);
+  background: #303030;
+  color: #e5e7eb;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
@@ -316,8 +316,8 @@ body {
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color: #ff00ff;
+  box-shadow: 0 0 0 3px rgba(255, 0, 255, 0.1);
 }
 
 .form-textarea {
@@ -404,7 +404,7 @@ body {
 .form-checkbox {
   width: 16px;
   height: 16px;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-sm);
   cursor: none !important;
   transition: all var(--transition-fast);
@@ -445,20 +445,20 @@ body {
 }
 
 .btn-primary {
-  background: var(--primary);
+  background: linear-gradient(135deg, #ff00ff, #00ffff);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--primary-hover);
+  background: linear-gradient(135deg, #e500e5, #00e5e5);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
 
 .btn-secondary {
-  background: var(--surface);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
+  background: #303030;
+  color: #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .btn-secondary:hover:not(:disabled) {
@@ -499,7 +499,7 @@ body {
 
 .theme-toggle {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-full);
   width: 48px;
   height: 24px;
@@ -539,7 +539,7 @@ body {
 
 .stat-card {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
   text-align: center;
