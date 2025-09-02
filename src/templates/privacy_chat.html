@@ -39,200 +39,82 @@
             padding-left: 4rem;
         }
         
-        /* Sidebar Toggle Button - Fixed Position */
-        .sidebar-toggle {
+        /* Sidebar Controls - ChatGPT Style */
+        .sidebar-controls {
             position: fixed;
-            left: 1rem;
             top: 1rem;
+            left: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 1002;
+        }
+        
+        .sidebar-toggle {
             width: 40px;
             height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: none;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 8px;
             color: #e5e7eb;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1002;
             transition: all 0.2s ease;
         }
         
         .sidebar-toggle:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .sidebar-toggle svg {
-            width: 20px;
-            height: 20px;
-        }
-        
-        /* New Chat Icon Button */
-        .new-chat-icon {
-            position: fixed;
-            left: 1rem;
-            top: 4rem;
-            width: 40px;
-            height: 40px;
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: none;
+        }
+        
+        .new-chat-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 8px;
             color: #e5e7eb;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1002;
             transition: all 0.2s ease;
+            font-size: 0.875rem;
+            white-space: nowrap;
         }
         
-        .new-chat-icon:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: scale(1.05);
+        .new-chat-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
         
-        .new-chat-icon:active {
-            transform: scale(0.95);
-        }
-        
-        .new-chat-icon svg {
-            width: 20px;
-            height: 20px;
+        .sidebar-controls svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
         }
 
-        /* Enhanced Sidebar */
+        /* Sidebar - ChatGPT Style */
         .sidebar {
-            width: 320px;
-            background: #181818;
-            backdrop-filter: blur(10px);
+            width: 260px;
+            background: #202123;
             display: flex;
             flex-direction: column;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             position: relative;
-            overflow: visible;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: left center;
+            transition: transform 0.3s ease;
+            height: 100vh;
         }
         
         .sidebar.collapsed {
-            margin-left: -340px;
-            opacity: 0;
-        }
-
-        .sidebar-header {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            background: #181818;
-            backdrop-filter: blur(10px);
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
+            transform: translateX(-260px);
         }
         
-        /* Sidebar Robot Logo - Scaled down version */
-        .sidebar-robot-wrapper {
-            position: relative;
+        .sidebar-content {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            height: 100%;
+            padding: 0.5rem 0;
         }
-        
-        .sidebar-lightning {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            width: 7px;
-            height: 12px;
-            background: #00c8ff;
-            clip-path: polygon(
-                65% 0%,
-                20% 48%,
-                40% 48%,
-                25% 100%,
-                70% 52%,
-                50% 52%
-            );
-        }
-        
-        .sidebar-robot-head {
-            width: 40px;
-            height: 32px;
-            background: linear-gradient(135deg, #ff00ff, #00ffff);
-            border-radius: 14px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .sidebar-robot-head::before,
-        .sidebar-robot-head::after {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 10px;
-            background: inherit;
-            border-radius: 3px;
-        }
-        
-        .sidebar-robot-head::before {
-            left: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        
-        .sidebar-robot-head::after {
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        
-        .sidebar-robot-face {
-            width: 28px;
-            height: 20px;
-            background: white;
-            border-radius: 6px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .sidebar-eyes {
-            display: flex;
-            gap: 9px;
-            margin-top: 2px;
-        }
-        
-        .sidebar-eye {
-            width: 5px;
-            height: 8px;
-            background: #1e2832;
-            border-radius: 2px;
-        }
-        
-        .sidebar-mouth {
-            width: 4px;
-            height: 1px;
-            background: #1e2832;
-            border-radius: 0 0 4px 4px;
-        }
+
         
 
         .logo-text {
@@ -315,31 +197,18 @@
             background-clip: padding-box;
         }
 
-        .sessions-label {
-            font-size: 0.85rem;
-            color: rgba(156, 163, 175, 0.8);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            padding: 0.75rem 1.5rem;
-            margin-top: 0.75rem;
-            font-weight: 600;
-        }
 
         .chat-item {
-            padding: 1.25rem 1.5rem;
-            border-radius: 16px;
+            padding: 0.75rem;
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin: 0 1rem 0.75rem 1rem;
-            font-size: 0.95rem;
-            color: #e5e7eb;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-            background: rgba(34, 17, 67, 0.2);
-            border: 1px solid rgba(34, 17, 67, 0.3);
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.9);
+            transition: background 0.2s;
+            border-radius: 6px;
+            margin: 0.25rem 0.5rem;
         }
 
         .chat-item::before {
@@ -1207,52 +1076,28 @@
     </style>
 </head>
 <body>
-    <!-- Toggle Button - Always Visible -->
-    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Sidebar">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 12h18M3 6h18M3 18h18"/>
-        </svg>
-    </button>
-    
-    <!-- New Chat Button - Under Toggle -->
-    <button class="new-chat-icon" id="new-chat-icon" aria-label="New Chat" title="New Chat">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 5v14M5 12h14"/>
-        </svg>
-    </button>
+    <!-- Sidebar Controls - ChatGPT Style -->
+    <div class="sidebar-controls">
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Sidebar">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12h18M3 6h18M3 18h18"/>
+            </svg>
+        </button>
+        
+        <button class="new-chat-btn" id="new-chat-icon" aria-label="New Chat">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"/>
+            </svg>
+            <span>New chat</span>
+        </button>
+    </div>
     
     <div class="container" id="container">
         <!-- Enhanced Sidebar -->
         <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <div class="sidebar-robot-wrapper">
-                        <div class="sidebar-lightning"></div>
-                        <div class="sidebar-robot-head">
-                            <div class="sidebar-robot-face">
-                                <div class="sidebar-eyes">
-                                    <div class="sidebar-eye"></div>
-                                    <div class="sidebar-eye"></div>
-                                </div>
-                                <div class="sidebar-mouth"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="sessions-label">Recent Chats</div>
-            <div class="chat-list" id="chat-list">
-                <!-- Chat sessions will be dynamically added here -->
-            </div>
-            
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="user-avatar">U</div>
-                    <div class="user-info">
-                        <div class="user-name">You</div>
-                        <div class="user-status">Online</div>
-                    </div>
+            <div class="sidebar-content">
+                <div class="chat-list" id="chat-list">
+                    <!-- Chat sessions will be dynamically added here -->
                 </div>
             </div>
         </div>
