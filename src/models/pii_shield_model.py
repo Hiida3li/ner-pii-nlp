@@ -60,6 +60,24 @@ class PIIShieldModel(ModelInterface):
                 if not is_already_detected(start, end):
                     obfuscated_entities.append((match_text, 'EMAIL', start, end))
         
+        # 2. Detect obfuscated URLs (e.g., "http : // orki . ai")
+        # Look for patterns with spaces/symbols between URL parts
+        # Check AFTER emails to avoid false positives
+        obfuscated_url_pattern = r'(?:https?\s*:\s*/\s*/\s*)?(?:www\s*\.\s*)?([a-zA-Z0-9]+(?:\s*[.\-]\s*[a-zA-Z0-9]+)*\s*\.\s*(?:com|net|org|ai|co|io|dev|app|gov|edu|mil|int|uk|om))'
+        for match in re.finditer(obfuscated_url_pattern, text, re.IGNORECASE):
+            match_text = match.group()
+            # Skip if it contains @ (likely an email)
+            if '@' in text[max(0, match.start()-20):match.end()+20]:
+                continue
+            # Remove spaces and rejoin
+            clean_url = re.sub(r'\s+', '', match_text)
+            
+            if self._is_valid_url(clean_url):
+                start = match.start()
+                end = match.end()
+                if not is_already_detected(start, end):
+                    obfuscated_entities.append((match_text, 'URL', start, end))
+        
         # 3. Detect obfuscated Omani phone numbers (e.g., "94.21.67.81" or "94 21 67 81")
         # Pattern for numbers with dots, spaces, or dashes
         obfuscated_phone_patterns = [
