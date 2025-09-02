@@ -530,6 +530,8 @@
             transition: all 0.3s ease;
             padding: 0;
             display: block;
+            z-index: 10;
+            pointer-events: auto;
         }
         
         .privacy-toggle-slider {
@@ -546,6 +548,7 @@
             font-size: 14px;
             transition: transform 0.3s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            pointer-events: none;
         }
         
         .privacy-toggle.active .privacy-toggle-slider {
