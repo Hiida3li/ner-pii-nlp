@@ -810,6 +810,10 @@ class PrivacyChat {
                 
                 // Determine which message to show
                 const messageToShow = this.privacyMode ? maskedMessage : originalMessage;
+                console.log('Privacy mode:', this.privacyMode, 'Showing:', this.privacyMode ? 'masked' : 'original');
+                console.log('Original:', originalMessage);
+                console.log('Masked:', maskedMessage);
+                console.log('Entities:', entities);
                 
                 // Detect text direction for the current message
                 const textDirection = this.detectTextDirection(messageToShow);
