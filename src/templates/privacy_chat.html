@@ -24,8 +24,7 @@
 
         .container {
             display: flex;
-            height: calc(100vh - 50px);
-            margin-top: 50px;
+            height: 100vh;
             padding: 1rem;
             gap: 1rem;
             position: relative;
@@ -514,8 +513,8 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Global Page Header */
-        .page-header {
+        /* Chat Header for Privacy Toggle */
+        .chat-header {
             display: flex;
             justify-content: flex-end;
             align-items: center;
@@ -523,12 +522,9 @@
             background: rgba(48, 48, 48, 0.8);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            position: fixed;
+            position: sticky;
             top: 0;
-            right: 0;
-            left: 0;
-            height: 50px;
-            z-index: 1500;
+            z-index: 500;
             pointer-events: auto !important;
         }
         
@@ -1182,7 +1178,7 @@
                 margin-left: 0;
             }
 
-            .page-header {
+            .chat-header {
                 padding: 0.5rem 1rem;
             }
             
@@ -1262,13 +1258,6 @@
         </svg>
     </button>
     
-    <!-- Global Page Header with Privacy Toggle -->
-    <div class="page-header">
-        <button type="button" class="privacy-toggle active" id="privacy-toggle" aria-label="Toggle privacy mode" onclick="handlePrivacyToggle(event)">
-            <div class="privacy-toggle-slider">🔒</div>
-        </button>
-    </div>
-    
     <div class="container" id="container">
         <!-- Enhanced Sidebar -->
         <div class="sidebar" id="sidebar">
@@ -1294,6 +1283,13 @@
 
         <!-- Main Chat Area -->
         <div class="main-chat">
+            <!-- Chat Header with Privacy Toggle -->
+            <div class="chat-header">
+                <button type="button" class="privacy-toggle active" id="privacy-toggle" aria-label="Toggle privacy mode" onclick="handlePrivacyToggle(event)">
+                    <div class="privacy-toggle-slider">🔒</div>
+                </button>
+            </div>
+
             <!-- Chat Messages -->
             <div class="chat-messages" id="chat-messages">
                 <div class="welcome-screen" id="welcome-screen">
