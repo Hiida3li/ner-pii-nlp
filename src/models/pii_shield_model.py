@@ -45,21 +45,8 @@ class PIIShieldModel(ModelInterface):
                 for _, _, e_start, e_end in obfuscated_entities
             )
         
-        # 1. Detect obfuscated URLs (e.g., "http : // orki . ai")
-        # Look for patterns with spaces/symbols between URL parts
-        obfuscated_url_pattern = r'(?:https?\s*:\s*/\s*/\s*)?(?:www\s*\.\s*)?([a-zA-Z0-9]+(?:\s*[.\-]\s*[a-zA-Z0-9]+)*\s*\.\s*(?:com|net|org|ai|co|io|dev|app|gov|edu|mil|int|uk|om))'
-        for match in re.finditer(obfuscated_url_pattern, text, re.IGNORECASE):
-            match_text = match.group()
-            # Remove spaces and rejoin
-            clean_url = re.sub(r'\s+', '', match_text)
-            
-            if self._is_valid_url(clean_url):
-                start = match.start()
-                end = match.end()
-                if not is_already_detected(start, end):
-                    obfuscated_entities.append((match_text, 'URL', start, end))
-        
-        # 2. Detect obfuscated emails (e.g., "ahmed @ gmail . com")
+        # 1. Detect obfuscated emails FIRST (e.g., "ahmed @ gmail . com")
+        # Must check emails before URLs since emails can look like domains
         # More flexible pattern that handles spaces around @ and dots
         obfuscated_email_pattern = r'\b([a-zA-Z0-9][a-zA-Z0-9._%-]*(?:\s*\.\s*[a-zA-Z0-9]+)*)\s*@\s*([a-zA-Z0-9][a-zA-Z0-9.-]*(?:\s*\.\s*[a-zA-Z0-9]+)*)\s*\.\s*([a-zA-Z]{2,})\b'
         for match in re.finditer(obfuscated_email_pattern, text, re.IGNORECASE):
