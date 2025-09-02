@@ -585,23 +585,43 @@ async def privacy_chat_stream(request: PrivacyChatRequest):
                 yield f"data: {json.dumps(chunk_data)}\n\n"
                 await asyncio.sleep(0.03)  # Small delay for streaming effect
             
-            # Send completion signal with entities
+            # Send completion signal with entities using PII detector on unmasked response
             response_entities = []
-            pattern = r'(person|location|organization|email|phone|url|civilid|passport|creditcard)\d+'
-            for match in re.finditer(pattern, ai_response.lower()):
-                placeholder = match.group()
-                original_value = chatbot.reverse_mappings.get(placeholder.capitalize(), placeholder)
-                if original_value == placeholder:
-                    original_value = chatbot.reverse_mappings.get(placeholder.upper(), placeholder)
+            try:
+                # Use PII detector to find entities in the unmasked AI response
+                detected_response_entities = chatbot.detect_pii(unmasked_response)
                 
-                response_entities.append({
-                    'text': original_value,
-                    'type': match.group().rstrip('0123456789'),
-                    'value': original_value,
-                    'placeholder': placeholder,
-                    'start': match.start(),
-                    'end': match.end()
-                })
+                for entity in detected_response_entities:
+                    # Get the placeholder for this entity if it exists
+                    placeholder = chatbot.entity_mappings.get(entity['text'], entity['text'])
+                    
+                    response_entities.append({
+                        'text': entity['text'],
+                        'entity_type': entity['entity_type'],
+                        'start': entity['start'],
+                        'end': entity['end'],
+                        'placeholder': placeholder,
+                        'type': entity['entity_type'].lower(),
+                        'value': entity['text']
+                    })
+            except Exception as e:
+                logger.warning(f"Failed to detect entities in AI response (streaming): {e}")
+                # Fallback to placeholder detection
+                pattern = r'(person|location|organization|email|phone|url|civilid|passport|creditcard)\d+'
+                for match in re.finditer(pattern, ai_response.lower()):
+                    placeholder = match.group()
+                    original_value = chatbot.reverse_mappings.get(placeholder.capitalize(), placeholder)
+                    if original_value == placeholder:
+                        original_value = chatbot.reverse_mappings.get(placeholder.upper(), placeholder)
+                    
+                    response_entities.append({
+                        'text': original_value,
+                        'type': match.group().rstrip('0123456789'),
+                        'value': original_value,
+                        'placeholder': placeholder,
+                        'start': match.start(),
+                        'end': match.end()
+                    })
             
             completion_data = {
                 "type": "complete",
