@@ -750,7 +750,9 @@ class PrivacyChat {
     }
     
     togglePrivacyMode() {
+        console.log('togglePrivacyMode called, current state:', this.privacyMode);
         this.privacyMode = !this.privacyMode;
+        console.log('New privacy mode state:', this.privacyMode);
         
         // Update UI
         const toggle = this.elements.privacyToggle;
@@ -763,16 +765,26 @@ class PrivacyChat {
         
         if (this.privacyMode) {
             toggle.classList.add('active');
-            if (slider) slider.textContent = '🔒';
+            if (slider) {
+                slider.textContent = '🔒';
+                console.log('Set toggle to locked (privacy ON)');
+            }
         } else {
             toggle.classList.remove('active');
-            if (slider) slider.textContent = '🔓';
+            if (slider) {
+                slider.textContent = '🔓';
+                console.log('Set toggle to unlocked (privacy OFF)');
+            }
         }
         
         // Update all user messages to show/hide original data
+        console.log('Updating messages privacy view...');
         this.updateMessagesPrivacyView();
         
         console.log(`Privacy mode: ${this.privacyMode ? 'ON (Masked)' : 'OFF (Original data shown)'}`);
+        
+        // Store the preference
+        localStorage.setItem('privacyMode', this.privacyMode ? 'true' : 'false');
     }
     
     updateMessagesPrivacyView() {
