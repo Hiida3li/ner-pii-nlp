@@ -496,6 +496,90 @@ async def privacy_chat_api(request: PrivacyChatRequest):
             response_entities=[]
         )
 
+@app.post("/api/privacy-chat/stream")
+async def privacy_chat_stream(request: PrivacyChatRequest):
+    """Handle chat messages with streaming response"""
+    session_id = request.session_id
+    
+    # Get or create chatbot
+    if session_id not in chatbot_sessions:
+        chatbot_sessions[session_id] = SimpleChatbot()
+        logger.info(f"Created new chatbot for session {session_id}")
+    
+    chatbot = chatbot_sessions[session_id]
+    
+    async def generate():
+        try:
+            # Process message to get entities and masked version
+            entities = chatbot.detect_pii(request.message)
+            masked_message = chatbot.mask_entities(request.message, entities)
+            
+            # Send initial data with user message info
+            initial_data = {
+                "type": "init",
+                "original_message": request.message,
+                "masked_message": masked_message,
+                "user_entities": [
+                    {
+                        'text': entity['text'],
+                        'entity_type': entity['entity_type'],
+                        'start': entity['start'],
+                        'end': entity['end'],
+                        'placeholder': chatbot.entity_mappings.get(entity['text'], entity['text'])
+                    } for entity in entities
+                ]
+            }
+            yield f"data: {json.dumps(initial_data)}\n\n"
+            
+            # Simulate streaming response (chunked)
+            ai_response = chatbot.chat_with_ai(masked_message)
+            unmasked_response = chatbot.unmask_response(ai_response)
+            
+            # Stream the response in chunks
+            chunk_size = 5  # Characters per chunk
+            for i in range(0, len(ai_response), chunk_size):
+                chunk_masked = ai_response[i:i+chunk_size]
+                chunk_unmasked = unmasked_response[i:i+chunk_size]
+                
+                chunk_data = {
+                    "type": "chunk",
+                    "masked_chunk": chunk_masked,
+                    "unmasked_chunk": chunk_unmasked
+                }
+                yield f"data: {json.dumps(chunk_data)}\n\n"
+                await asyncio.sleep(0.03)  # Small delay for streaming effect
+            
+            # Send completion signal with entities
+            response_entities = []
+            pattern = r'(person|location|organization|email|phone|url|civilid|passport|creditcard)\d+'
+            for match in re.finditer(pattern, ai_response.lower()):
+                placeholder = match.group()
+                original_value = chatbot.reverse_mappings.get(placeholder.capitalize(), placeholder)
+                if original_value == placeholder:
+                    original_value = chatbot.reverse_mappings.get(placeholder.upper(), placeholder)
+                
+                response_entities.append({
+                    'text': original_value,
+                    'type': match.group().rstrip('0123456789'),
+                    'value': original_value,
+                    'placeholder': placeholder,
+                    'start': match.start(),
+                    'end': match.end()
+                })
+            
+            completion_data = {
+                "type": "complete",
+                "response_entities": response_entities
+            }
+            yield f"data: {json.dumps(completion_data)}\n\n"
+            
+        except Exception as e:
+            logger.error(f"Error in streaming: {e}")
+            error_data = {"type": "error", "message": str(e)}
+            yield f"data: {json.dumps(error_data)}\n\n"
+    
+    return StreamingResponse(generate(), media_type="text/event-stream")
+
 @app.post("/api/privacy-chat/reset")
 async def reset_session(request: dict):
     """Reset chat session and clear conversation history"""
