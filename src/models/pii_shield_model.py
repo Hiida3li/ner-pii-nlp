@@ -682,7 +682,7 @@ class PIIShieldModel(ModelInterface):
             text_lower = text.lower()
             
             # Detect emails with regex if not already found
-                email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+            email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
             for match in re.finditer(email_pattern, text):
                 email_text = match.group()
                 email_start = match.start()
