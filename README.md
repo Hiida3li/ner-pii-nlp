@@ -357,5 +357,6 @@ This application processes sensitive information. Always ensure:
 ---
 
 <div align="center">
-Made with ❤️ by the Blot Team
+Made with ❤️ by the Orki Team
+
 </div>
