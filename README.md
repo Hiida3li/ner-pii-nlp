@@ -15,12 +15,18 @@
 ### ✨ Key Features
 
 - **🤖 Dual AI Integration**: 
-  - Custom PII-Shield model for entity detection
+  - Custom PII-Shield BERT model for entity detection
   - GPT-4.1 integration for privacy-preserving conversations
+- **🌍 Multi-Language Support**: Full Arabic and English text processing
 - **🌐 Modern Web Interface**: Beautiful dark-themed UI with custom animations
 - **⚡ Real-time Processing**: Instant PII detection with streaming chat responses
 - **🔒 Privacy Mode**: One-click toggle between masked and unmasked views
 - **🎨 Entity Highlighting**: Color-coded visualization for 10+ entity types
+- **🔍 Advanced Detection**:
+  - Obfuscation detection (spaces, dots, symbols)
+  - Arabic numeral support (١٢٣٤٥٦٧٨٩٠)
+  - Regex fallback for missed entities
+  - Context-aware validation
 - **💬 Smart Chat**: AI assistant that respects privacy boundaries
 - **📊 Entity Statistics**: Real-time tracking and visualization
 - **🔄 Bidirectional Masking**: Seamless entity replacement and restoration
@@ -81,6 +87,18 @@ python src/main.py --port 8001
 
 Access the application at `http://localhost:9000`
 
+## 🆕 Recent Updates
+
+### Version 2.0 Improvements
+- ✅ **Enhanced Arabic Support**: Full detection of Arabic numerals in IDs
+- ✅ **Improved Validation**: Smart filtering to reduce false positives
+- ✅ **Obfuscation Detection**: Catches entities with spaces/dots (e.g., "j.o.h.n@email")
+- ✅ **Passport Detection**: Fixed placeholder mapping (Passport1 instead of Entity1)
+- ✅ **Phone Validation**: Omani-specific patterns with hotline support
+- ✅ **Email/URL Fallback**: Regex detection when model misses entities
+- ✅ **Duplicate Prevention**: Advanced deduplication for clean output
+- ✅ **HTML Safety**: Prevents corruption with overlapping entities
+
 ## 🏗️ Architecture
 
 ### Project Structure
@@ -117,9 +135,14 @@ ner-pii-nlp/
 ### Core Components
 
 #### 1. **PII Detection Engine**
-- Custom BERT-based model (PII-Shield)
+- Custom BERT-based model (PII-Shield v2)
 - Real-time entity recognition
-- Multi-language support
+- Multi-language support (Arabic & English)
+- Advanced validation pipeline:
+  - Entity-specific validation rules
+  - Obfuscation pattern detection
+  - Arabic numeral conversion
+  - Regex fallback mechanisms
 - High accuracy with low latency
 
 #### 2. **Privacy Chat System**
@@ -160,14 +183,20 @@ ner-pii-nlp/
 ```python
 import requests
 
-# Extract entities
+# Extract entities (English)
 response = requests.post('http://localhost:9000/api/extract', 
-    json={'text': 'John Doe lives in New York'})
+    json={'text': 'John Doe lives in New York, email: john@example.com'})
+entities = response.json()
+
+# Extract entities (Arabic)
+response = requests.post('http://localhost:9000/api/extract',
+    json={'text': 'اسمي أحمد الكندي ورقم هاتفي ٩٩٨٨٧٧٦٦'})
 entities = response.json()
 
 # Chat with privacy
 response = requests.post('http://localhost:9000/api/privacy-chat',
-    json={'message': 'My email is john@example.com'})
+    json={'message': 'My passport is AB1234567 and credit card 4532123456789012'})
+# Returns: "My passport is passport1 and credit card creditcard1"
 ```
 
 ## 💻 Usage Guide
@@ -242,6 +271,9 @@ services:
 - **Session Isolation**: Independent chat sessions
 - **API Key Protection**: Environment variable management
 - **HTTPS Ready**: SSL/TLS support configured
+- **Validation Pipeline**: Multi-layer validation to prevent false positives
+- **Obfuscation Detection**: Catches attempts to hide PII with spaces/symbols
+- **Arabic Text Safety**: Proper handling of RTL text and Arabic numerals
 
 ## 🧪 Development
 
