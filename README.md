@@ -27,18 +27,18 @@
 
 ### 🛡️ Supported Entity Types
 
-| Entity | Color | Description |
-|--------|-------|-------------|
-| 👤 **Person** | Purple | Personal names |
-| 📍 **Location** | Green | Cities, countries, addresses |
-| 🏢 **Organization** | Pink | Companies, institutions |
-| 📧 **Email** | Blue | Email addresses |
-| 📱 **Phone** | Orange | Phone numbers |
-| 🔗 **URL** | Teal | Web addresses |
-| 🆔 **Civil ID** | Indigo | Civil identification |
-| 🛂 **Passport** | Red | Passport numbers |
-| 💳 **Credit Card** | Gold | Credit card numbers |
-| 💰 **Bank Account** | Cyan | Bank account numbers |
+| Entity | Color | Description | Validation |
+|--------|-------|-------------|------------|
+| 👤 **Person** | Purple | Personal names | Arabic & English names |
+| 📍 **Location** | Green | Cities, countries, addresses | Multi-language support |
+| 🏢 **Organization** | Pink | Companies, institutions | Business entities |
+| 📧 **Email** | Blue | Email addresses | RFC-compliant validation |
+| 📱 **Phone** | Orange | Omani phone numbers | 9/7/22xxx patterns, hotlines |
+| 🔗 **URL** | Teal | Web addresses | HTTP/HTTPS validation |
+| 🆔 **Civil ID** | Indigo | Civil identification | 9-12 digits, specific patterns |
+| 🛂 **Passport** | Red | Passport numbers | 1-2 letters + 7-9 digits |
+| 💳 **Credit Card** | Gold | Credit card numbers | 16 digits, starts with 4/5 |
+| 💰 **Bank Account** | Cyan | Bank account numbers | Banking format validation |
 
 ## 📦 Installation
 
