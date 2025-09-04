@@ -1,4 +1,5 @@
 from typing import List, Tuple, Dict
+import re
 from src.models.entity_config import EntityConfig
 
 class EntityProcessor:
@@ -7,6 +8,53 @@ class EntityProcessor:
     This class is responsible for entity processing, following the Single
     Responsibility Principle by focusing only on entity processing logic.
     """
+    
+    def split_combined_entities(self, text: str, entities: List[Tuple[str, str, int, int]]) -> List[Tuple[str, str, int, int]]:
+        """Split entities that contain multiple organizations separated by commas
+        
+        Args:
+            text: Original text for position finding
+            entities: List of entity tuples (text, type, start, end)
+            
+        Returns:
+            List of properly split entity tuples
+        """
+        split_entities = []
+        
+        for entity_text, entity_type, start, end in entities:
+            # Check if this is an ORG entity that might contain multiple organizations
+            if entity_type == 'ORG' and ('،' in entity_text or ',' in entity_text or '\n' in entity_text):
+                # Split by Arabic comma, regular comma, or newline
+                parts = re.split(r'[،,\n]\s*', entity_text)
+                
+                # Filter out connecting words and clean up
+                cleaned_parts = []
+                for part in parts:
+                    part = part.strip()
+                    # Skip connecting words like "و" (and) or "أو" (or)
+                    if part and not part in ['و', 'أو', 'and', 'or'] and len(part) > 2:
+                        # Remove leading "و" if present
+                        if part.startswith('و'):
+                            part = part[1:].strip()
+                        if part:
+                            cleaned_parts.append(part)
+                
+                # If we have multiple valid parts, treat each as a separate entity
+                if len(cleaned_parts) > 1:
+                    for part in cleaned_parts:
+                        # Find the actual position of this part in the original text
+                        part_start = text.find(part, start)
+                        if part_start >= 0 and part_start < end:
+                            part_end = part_start + len(part)
+                            split_entities.append((part, entity_type, part_start, part_end))
+                else:
+                    # Single organization or couldn't split properly, keep as is
+                    split_entities.append((entity_text, entity_type, start, end))
+            else:
+                # Not an ORG or doesn't contain separators, keep as is
+                split_entities.append((entity_text, entity_type, start, end))
+        
+        return split_entities
 
     def highlight_entities_in_text(self, text: str, entities: List[Tuple[str, str, int, int]]) -> str:
         """Highlight entities in text with HTML spans
@@ -18,6 +66,9 @@ class EntityProcessor:
         Returns:
             HTML string with highlighted entities
         """
+        # First, split any combined entities
+        entities = self.split_combined_entities(text, entities)
+        
         # Group adjacent entities of the same type
         grouped_entities = []
         current_group = []

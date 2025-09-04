@@ -429,6 +429,47 @@ class PrivacyChat {
         }
     }
     
+    async sendMessageProgrammatically(message) {
+        // Method to send a message programmatically (used by document upload)
+        if (!message || !message.trim() || this.isTyping) return;
+        
+        // Hide welcome screen if visible
+        const welcome = document.getElementById('welcome-screen');
+        if (welcome) {
+            welcome.remove();
+            this.moveInputToBottom();
+        }
+        
+        // Show typing indicator
+        this.showTypingIndicator();
+        
+        try {
+            // Send message using streaming endpoint
+            const response = await fetch('/api/privacy-chat/stream', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: message.trim(),
+                    privacy_mode: this.privacyMode,
+                    session_id: this.currentSession
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to get response');
+            }
+            
+            // Process streaming response
+            await this.processStreamingResponse(response, message.trim());
+            
+        } catch (error) {
+            console.error('Error sending programmatic message:', error);
+            this.hideTypingIndicator();
+        }
+    }
+    
     async sendMessage() {
         console.log('sendMessage called');
         
@@ -550,6 +591,19 @@ class PrivacyChat {
                                     } else {
                                         assistantMessageContent.textContent = displayText;
                                     }
+                                }
+                                
+                            } else if (data.type === 'full_response') {
+                                // Handle full response with proper unmask
+                                maskedResponse = data.masked_response;
+                                unmaskedResponse = data.unmasked_response;
+                                
+                                // Update displayed content based on privacy mode but don't highlight yet
+                                // Wait for complete message with entity positions
+                                const displayText = this.privacyMode ? maskedResponse : unmaskedResponse;
+                                if (assistantMessageContent) {
+                                    // Temporarily show without highlighting - will be updated in 'complete' message
+                                    assistantMessageContent.textContent = displayText;
                                 }
                                 
                             } else if (data.type === 'complete') {
@@ -732,29 +786,50 @@ class PrivacyChat {
     }
     
     highlightOriginalEntities(text, entities) {
-        let highlightedText = text;
+        if (!entities || entities.length === 0) {
+            return text;
+        }
         
         console.log('Highlighting original entities in text:', text);
         console.log('Available entities:', entities);
         
-        // Sort entities by position (reverse) to maintain correct positions when replacing
-        const sortedEntities = [...entities].sort((a, b) => b.start - a.start);
+        // Create array to track which characters should be highlighted
+        const highlights = new Array(text.length).fill(null);
         
-        for (const entity of sortedEntities) {
+        // Mark positions for each entity
+        for (const entity of entities) {
             const cssClass = this.getEntityCssClass(entity.entity_type.toLowerCase());
             const start = entity.start;
             const end = entity.end;
-            const originalText = entity.text;
             
-            console.log(`Highlighting entity: '${originalText}' (${entity.entity_type}) at ${start}-${end} with class '${cssClass}'`);
+            console.log(`Marking entity: '${entity.text}' (${entity.entity_type}) at ${start}-${end} with class '${cssClass}'`);
             
-            highlightedText = 
-                highlightedText.slice(0, start) + 
-                `<span class="pii-entity ${cssClass}">${originalText}</span>` +
-                highlightedText.slice(end);
+            // Mark all positions in this range with the entity info
+            for (let i = start; i < end && i < text.length; i++) {
+                highlights[i] = { cssClass, entityStart: start, entityEnd: end, entityText: entity.text };
+            }
         }
         
-        return highlightedText;
+        // Build the highlighted text
+        let result = '';
+        let i = 0;
+        
+        while (i < text.length) {
+            if (highlights[i]) {
+                // Start of an entity
+                const entityInfo = highlights[i];
+                const entityText = text.substring(entityInfo.entityStart, entityInfo.entityEnd);
+                result += `<span class="pii-entity ${entityInfo.cssClass}">${entityText}</span>`;
+                i = entityInfo.entityEnd; // Skip to end of entity
+            } else {
+                // Regular character
+                result += text[i];
+                i++;
+            }
+        }
+        
+        console.log('Final highlighted text:', result);
+        return result;
     }
     
     getEntityCssClass(entityType) {
@@ -810,36 +885,109 @@ class PrivacyChat {
     
     highlightEntities(text, entities) {
         // For unmasked AI responses - highlight actual entity values
-        let highlightedText = text;
-        
         console.log('Highlighting AI response entities in text:', text);
         console.log('Available entities:', entities);
         
-        // Sort entities by start position in reverse to maintain correct positions
+        if (!entities || entities.length === 0) {
+            return text;
+        }
+        
+        // Create array to track which characters should be highlighted
+        const highlights = new Array(text.length).fill(null);
+        
+        // Sort entities by start position to process them in order
         const sortedEntities = [...entities].sort((a, b) => {
-            // Use unmasked_start if available, otherwise use start
             const aStart = a.unmasked_start !== undefined ? a.unmasked_start : a.start;
             const bStart = b.unmasked_start !== undefined ? b.unmasked_start : b.start;
-            return bStart - aStart;
+            return aStart - bStart;
         });
         
-        // Highlight each actual entity value in the unmasked text
+        // Process each entity
         sortedEntities.forEach(entity => {
             if (entity.text && entity.text !== entity.placeholder) {
-                const entityValue = entity.text;
                 const entityType = (entity.entity_type || entity.type || '').toLowerCase();
                 const cssClass = this.getEntityCssClass(entityType);
                 
-                // Create regex to find the exact entity value
-                const regex = new RegExp(this.escapeRegExp(entityValue), 'g');
-                highlightedText = highlightedText.replace(regex, (match) => {
-                    console.log(`Highlighting entity: '${match}', type: '${entityType}', cssClass: '${cssClass}'`);
-                    return `<span class="pii-entity ${cssClass}">${match}</span>`;
-                });
+                // Use unmasked positions for highlighting
+                const startPos = entity.unmasked_start !== undefined ? entity.unmasked_start : entity.start;
+                const endPos = entity.unmasked_end !== undefined ? entity.unmasked_end : entity.end;
+                
+                // Verify the text matches at this position
+                const actualText = text.substring(startPos, endPos);
+                
+                console.log(`Checking entity at ${startPos}-${endPos}: expected '${entity.text}', found '${actualText}'`);
+                
+                if (actualText === entity.text) {
+                    // Mark all positions in this range with the entity info
+                    // Use priority to handle overlapping entities - later entities take precedence
+                    for (let i = startPos; i < endPos && i < text.length; i++) {
+                        highlights[i] = { 
+                            cssClass, 
+                            entityStart: startPos, 
+                            entityEnd: endPos, 
+                            entityText: entity.text,
+                            priority: Date.now() // Add timestamp for priority
+                        };
+                    }
+                    console.log(`✓ Marked '${entity.text}' at position ${startPos}-${endPos}`);
+                } else {
+                    // Try to find the entity in the text if position is wrong
+                    console.warn(`Position mismatch for '${entity.text}', searching in text`);
+                    let searchStart = 0;
+                    let foundCount = 0;
+                    while (searchStart < text.length) {
+                        const pos = text.indexOf(entity.text, searchStart);
+                        if (pos === -1) break;
+                        
+                        // Check if this position overlaps with an already marked entity
+                        let hasOverlap = false;
+                        for (let i = pos; i < pos + entity.text.length && i < text.length; i++) {
+                            if (highlights[i] && highlights[i].entityText === entity.text) {
+                                hasOverlap = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!hasOverlap) {
+                            // Mark this occurrence
+                            for (let i = pos; i < pos + entity.text.length && i < text.length; i++) {
+                                highlights[i] = { 
+                                    cssClass, 
+                                    entityStart: pos, 
+                                    entityEnd: pos + entity.text.length, 
+                                    entityText: entity.text,
+                                    priority: Date.now()
+                                };
+                            }
+                            foundCount++;
+                            console.log(`✓ Found and marked occurrence ${foundCount} of '${entity.text}' at position ${pos}`);
+                        }
+                        searchStart = pos + 1;
+                    }
+                }
             }
         });
         
-        return highlightedText;
+        // Build the highlighted text
+        let result = '';
+        let i = 0;
+        
+        while (i < text.length) {
+            if (highlights[i]) {
+                // Start of an entity
+                const entityInfo = highlights[i];
+                const entityText = text.substring(entityInfo.entityStart, entityInfo.entityEnd);
+                result += `<span class="pii-entity ${entityInfo.cssClass}">${entityText}</span>`;
+                i = entityInfo.entityEnd; // Skip to end of entity
+            } else {
+                // Regular character
+                result += text[i];
+                i++;
+            }
+        }
+        
+        console.log('Final highlighted text:', result);
+        return result;
     }
     
     showTypingIndicator() {

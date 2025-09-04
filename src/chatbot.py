@@ -8,6 +8,7 @@ import os
 import openai
 import requests
 import json
+import re
 from typing import Dict, List, Tuple
 from dotenv import load_dotenv
 
@@ -109,8 +110,23 @@ Respond naturally as if you were having a conversation with a friend who asked f
         if not entities:
             return text
         
+        # Filter out entities that already contain placeholders to prevent double-masking
+        placeholder_pattern = r'(?:person|location|organization|email|phone|url|civilid|passport|creditcard)\d+'
+        filtered_entities = []
+        
+        for entity in entities:
+            entity_text = entity['text'].lower()
+            # Skip if entity contains an existing placeholder
+            if not re.search(placeholder_pattern, entity_text, re.IGNORECASE):
+                filtered_entities.append(entity)
+            else:
+                print(f"Skipping entity with existing placeholder: {entity['text']}")
+        
+        if not filtered_entities:
+            return text
+        
         # Sort entities by position (reverse) to maintain correct positions
-        entities_sorted = sorted(entities, key=lambda x: x['start'], reverse=True)
+        entities_sorted = sorted(filtered_entities, key=lambda x: x['start'], reverse=True)
         
         masked_text = text
         
@@ -231,7 +247,7 @@ Respond naturally as if you were having a conversation with a friend who asked f
                 data = {
                     "model": "gpt-4.1",
                     "messages": messages,
-                    "max_tokens": 500,
+                    "max_tokens": 1000,
                     "temperature": 0.7
                 }
                 response = requests.post(

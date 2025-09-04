@@ -362,6 +362,162 @@ class PIIShieldModel(ModelInterface):
         """
         return self.model is not None and self.tokenizer is not None and self.id2label is not None
 
+    def _predict_with_chunking(self, text: str, max_tokens: int) -> List[Tuple[str, str, int, int]]:
+        """Process long text by splitting into chunks and merging results
+        
+        Args:
+            text: Input text to analyze
+            max_tokens: Maximum tokens per chunk
+            
+        Returns:
+            List of tuples containing (entity_text, entity_type, start_position, end_position)
+        """
+        all_entities = []
+        
+        # Split text into sentences to avoid cutting entities in half
+        sentences = text.split('. ')
+        current_chunk = ""
+        chunk_start_pos = 0
+        
+        for i, sentence in enumerate(sentences):
+            # Add sentence to current chunk
+            test_chunk = current_chunk + ('. ' if current_chunk else '') + sentence
+            
+            # Check if adding this sentence would exceed token limit
+            test_tokens = self.tokenizer.tokenize(test_chunk)
+            
+            if len(test_tokens) > max_tokens and current_chunk:
+                # Process current chunk
+                chunk_entities = self._predict_chunk(current_chunk, chunk_start_pos)
+                all_entities.extend(chunk_entities)
+                
+                # Update position for next chunk
+                chunk_start_pos += len(current_chunk) + (2 if current_chunk else 0)  # +2 for '. '
+                
+                # Start new chunk with current sentence
+                current_chunk = sentence
+            else:
+                # Add sentence to current chunk
+                current_chunk = test_chunk
+        
+        # Process final chunk
+        if current_chunk:
+            chunk_entities = self._predict_chunk(current_chunk, chunk_start_pos)
+            all_entities.extend(chunk_entities)
+        
+        return all_entities
+
+    def _predict_chunk(self, chunk_text: str, offset: int) -> List[Tuple[str, str, int, int]]:
+        """Process a single chunk of text
+        
+        Args:
+            chunk_text: Text chunk to process
+            offset: Character offset of this chunk in the original text
+            
+        Returns:
+            List of entities with adjusted positions
+        """
+        # Tokenize chunk
+        tokens = self.tokenizer.tokenize(chunk_text)
+        input_ids = self.tokenizer.convert_tokens_to_ids(['[CLS]'] + tokens + ['[SEP]'])
+        attention_mask = [1] * len(input_ids)
+
+        # Convert to tensors
+        input_ids_tensor = torch.tensor([input_ids])
+        attention_mask_tensor = torch.tensor([attention_mask])
+
+        # Get predictions
+        with torch.no_grad():
+            outputs = self.model(input_ids=input_ids_tensor, attention_mask=attention_mask_tensor)
+            predictions = torch.argmax(outputs.logits, dim=2)
+
+        # Get labels (excluding [CLS] and [SEP])
+        pred_labels = [self.id2label[pred.item()] for pred in predictions[0][1:-1]]
+
+        # Create token spans for this chunk
+        token_spans = []
+        token_offset = 0
+        for token in tokens:
+            token_text = token.replace("##", "")
+            idx = chunk_text.find(token_text, token_offset)
+            if idx >= 0:
+                token_spans.append((idx, idx + len(token_text)))
+                token_offset = idx + len(token_text)
+            else:
+                # Fallback if token can't be found exactly
+                token_spans.append((token_offset, token_offset + len(token_text)))
+                token_offset += len(token_text)
+
+        # Process entities (same logic as main predict method)
+        entities = []
+        current_entity = []
+        current_label = None
+        start_pos = None
+
+        for i, (token, label) in enumerate(zip(tokens, pred_labels)):
+            if label == 'O':  # Outside any entity
+                if current_entity:
+                    entity_text = self.tokenizer.convert_tokens_to_string(current_entity).replace(" ##", "")
+                    entity_type = current_label
+                    end_pos = token_spans[i - 1][1]
+                    entities.append((entity_text, entity_type, start_pos, end_pos))
+                    current_entity = []
+                    current_label = None
+                    start_pos = None
+                    
+            elif label.startswith('B-'):  # Beginning of entity
+                if current_entity:
+                    entity_text = self.tokenizer.convert_tokens_to_string(current_entity).replace(" ##", "")
+                    entity_type = current_label
+                    end_pos = token_spans[i - 1][1]
+                    entities.append((entity_text, entity_type, start_pos, end_pos))
+
+                current_entity = [token]
+                current_label = label[2:]  # Remove 'B-' prefix
+                start_pos = token_spans[i][0]
+                
+            elif label.startswith('I-'):  # Inside entity
+                entity_type = label[2:]
+                if current_label == entity_type:
+                    current_entity.append(token)
+                else:
+                    if current_entity:
+                        entity_text = self.tokenizer.convert_tokens_to_string(current_entity).replace(" ##", "")
+                        end_pos = token_spans[i - 1][1]
+                        entities.append((entity_text, current_label, start_pos, end_pos))
+                    
+                    current_entity = [token]
+                    current_label = entity_type
+                    start_pos = token_spans[i][0]
+                    
+            elif label != 'O':  # Handle any other label format
+                if current_entity and current_label == label:
+                    current_entity.append(token)
+                else:
+                    if current_entity:
+                        entity_text = self.tokenizer.convert_tokens_to_string(current_entity).replace(" ##", "")
+                        entity_type = current_label
+                        end_pos = token_spans[i - 1][1]
+                        entities.append((entity_text, entity_type, start_pos, end_pos))
+                    
+                    current_entity = [token]
+                    current_label = label
+                    start_pos = token_spans[i][0]
+
+        # Process remaining entity
+        if current_entity:
+            entity_text = self.tokenizer.convert_tokens_to_string(current_entity).replace(" ##", "")
+            entity_type = current_label
+            end_pos = token_spans[-1][1]
+            entities.append((entity_text, entity_type, start_pos, end_pos))
+
+        # Adjust positions by adding offset and return
+        adjusted_entities = []
+        for entity_text, entity_type, start, end in entities:
+            adjusted_entities.append((entity_text, entity_type, start + offset, end + offset))
+        
+        return adjusted_entities
+
     def predict(self, text: str) -> List[Tuple[str, str, int, int]]:
         """Extract entities from text with their positions
         

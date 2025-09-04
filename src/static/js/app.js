@@ -282,49 +282,119 @@ class PIIShieldApp {
     applyEntityDictionaryReplacement(highlightedText, entities) {
         if (!entities || entities.length === 0 || !this.entityDictionary) return highlightedText;
         
-        // Sort entities by start position (descending) to avoid position shifting during replacement
-        const sortedEntities = [...entities].sort((a, b) => b.start - a.start);
+        // Sort entities by text length (longest first) then by start position (descending)
+        // This ensures that "سلطنة عمان" is replaced before "عمان" to avoid partial replacements
+        const sortedEntities = [...entities].sort((a, b) => {
+            // First sort by text length (longest first)
+            if (a.text.length !== b.text.length) {
+                return b.text.length - a.text.length;
+            }
+            // If same length, sort by start position (descending)
+            return b.start - a.start;
+        });
         
         let result = highlightedText;
         
+        // Pattern to detect existing placeholders
+        const placeholderPattern = /(Person|Location|Organization|Email|Phone|Url|Civilid|Passport|Creditcard)\d+/gi;
+        
+        console.log('Applying entity dictionary replacement. Entities:', entities);
+        console.log('Highlighted text:', highlightedText);
+        console.log('Sorted entities (by length):', sortedEntities.map(e => `"${e.text}" (len: ${e.text.length})`));
+        
         // Replace entities with dictionary-generated labels
-        sortedEntities.forEach(entity => {
+        sortedEntities.forEach((entity, index) => {
             const text = entity.text;
             const entityType = entity.entity_type;
+            let replacement;
             
-            // Get the masked entity name from the dictionary (Person1, Person2, etc.)
-            let replacement = this.entityDictionary.getMappingForEntity(text, entityType);
-            
-            // Fallback to generic label if dictionary mapping not found
-            if (!replacement) {
-                const FALLBACK_LABELS = {
-                    'PER': '[PERSON]',
-                    'LOC': '[LOCATION]', 
-                    'ORG': '[ORGANIZATION]',
-                    'URL': '[URL]',
-                    'EMAIL': '[EMAIL]',
-                    'PHONE': '[PHONE]',
-                    'CIVIL-ID': '[CIVIL-ID]',
-                    'PASSPORT-ID': '[PASSPORT]',
-                    'CREDIT-CARD': '[CREDIT-CARD]'
-                };
-                replacement = FALLBACK_LABELS[entityType] || `[${entityType}]`;
+            // Check if entity text already contains a placeholder
+            const placeholderMatch = text.match(placeholderPattern);
+            if (placeholderMatch) {
+                // Entity already contains a placeholder, extract and use it
+                replacement = placeholderMatch[0];
+                console.log(`Found placeholder in entity "${text}": ${replacement}`);
+            } else {
+                // Get the masked entity name from the dictionary (Person1, Person2, etc.)
+                replacement = this.entityDictionary.getMappingForEntity(text, entityType);
+                
+                // Fallback to generic label if dictionary mapping not found
+                if (!replacement) {
+                    const FALLBACK_LABELS = {
+                        'PER': '[PERSON]',
+                        'LOC': '[LOCATION]', 
+                        'ORG': '[ORGANIZATION]',
+                        'URL': '[URL]',
+                        'EMAIL': '[EMAIL]',
+                        'PHONE': '[PHONE]',
+                        'CIVIL-ID': '[CIVIL-ID]',
+                        'PASSPORT-ID': '[PASSPORT]',
+                        'CREDIT-CARD': '[CREDIT-CARD]'
+                    };
+                    replacement = FALLBACK_LABELS[entityType] || `[${entityType}]`;
+                }
             }
             
             // Escape special regex characters in the entity text
             const escapedText = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             
-            // Create regex to find and replace the entity text within HTML spans
+            // Method 1: Try to replace within HTML spans first
             const entityRegex = new RegExp(
-                `<span[^>]*class="[^"]*entity-highlight[^"]*"[^>]*>([^<]*${escapedText}[^<]*)</span>`,
+                `<span[^>]*class="[^"]*entity-highlight[^"]*"[^>]*>([^<]*)</span>`,
                 'gi'
             );
             
+            let replaced = false;
             result = result.replace(entityRegex, (match, entityContent) => {
-                // Replace the entity text with the masked label while keeping the span structure
-                const newContent = entityContent.replace(new RegExp(escapedText, 'gi'), replacement);
-                return match.replace(entityContent, newContent);
+                // Check if this span contains our entity text
+                if (entityContent.includes(text)) {
+                    // Replace the entity text with the masked label while keeping the span structure
+                    const newContent = entityContent.replace(new RegExp(escapedText, 'gi'), replacement);
+                    replaced = true;
+                    console.log(`Replaced "${text}" with "${replacement}" inside span`);
+                    return match.replace(entityContent, newContent);
+                }
+                return match;
             });
+            
+            // Method 2: If not replaced within spans, try global replacement
+            // This handles cases where the entity might be split across spans or not fully highlighted
+            if (!replaced) {
+                // Create a more flexible pattern that handles both highlighted and non-highlighted text
+                // This pattern looks for the text anywhere in the result, including across span boundaries
+                const globalRegex = new RegExp(escapedText, 'gi');
+                
+                // Count occurrences before replacement
+                const matches = result.match(globalRegex);
+                if (matches && matches.length > 0) {
+                    // Check if the text hasn't been replaced already by a longer entity
+                    // For example, don't replace "عمان" if "سلطنة عمان" was already replaced
+                    const placeholderCheckRegex = /(Person|Location|Organization|Email|Phone|Url|Civilid|Passport|Creditcard)\d+/gi;
+                    let shouldReplace = true;
+                    
+                    // Check if this text is part of an already replaced entity
+                    matches.forEach(match => {
+                        const startIndex = result.indexOf(match);
+                        if (startIndex > 0) {
+                            // Check the surrounding context for placeholders
+                            const contextBefore = result.substring(Math.max(0, startIndex - 20), startIndex);
+                            const contextAfter = result.substring(startIndex + match.length, Math.min(result.length, startIndex + match.length + 20));
+                            if (contextBefore.match(placeholderCheckRegex) || contextAfter.match(placeholderCheckRegex)) {
+                                // This might be part of an already replaced entity
+                                console.log(`Skipping "${text}" as it might be part of an already replaced entity`);
+                                shouldReplace = false;
+                            }
+                        }
+                    });
+                    
+                    if (shouldReplace) {
+                        result = result.replace(globalRegex, replacement);
+                        console.log(`Replaced "${text}" with "${replacement}" globally (${matches.length} occurrences)`);
+                    }
+                } else {
+                    console.log(`Could not find "${text}" for replacement`);
+                }
+            }
         });
         
         return result;
