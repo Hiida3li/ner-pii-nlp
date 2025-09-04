@@ -50,6 +50,15 @@ async def lifespan(app: FastAPI):
     logger.info("Loading models...")
     app.state.model_factory = ModelFactory()
     app.state.document_processor = DocumentProcessor()
+    
+    # Pre-load the v2 model to avoid delay on first upload
+    logger.info("Pre-loading v2 model for faster document uploads...")
+    model = app.state.model_factory.get_model("v2")
+    if model:
+        logger.info("v2 model pre-loaded successfully")
+    else:
+        logger.warning("Failed to pre-load v2 model")
+    
     yield
     # Clean up at shutdown
     app.state.model_factory = None
@@ -760,22 +769,30 @@ chatbot_sessions = {}
 @app.post("/api/document/upload")
 async def upload_document(session_id: int, file: UploadFile = File(...)):
     """Upload and process a document"""
+    import time
+    start_time = time.time()
+    
     try:
         # Validate file
         if not file.filename:
             raise HTTPException(status_code=400, detail="No file provided")
         
         # Read file content
+        read_start = time.time()
         file_content = await file.read()
+        logger.info(f"File read time: {(time.time() - read_start) * 1000:.2f}ms")
         
         # Process document
+        process_start = time.time()
         doc_processor = app.state.document_processor
         result = await doc_processor.process_document(file_content, file.filename)
+        logger.info(f"Document processing time: {(time.time() - process_start) * 1000:.2f}ms")
         
         if not result['success']:
             raise HTTPException(status_code=400, detail=result['error'])
         
         # Analyze document for PII
+        model_start = time.time()
         model_factory = app.state.model_factory
         model = model_factory.get_model("v2")
         
@@ -783,7 +800,9 @@ async def upload_document(session_id: int, file: UploadFile = File(...)):
             raise HTTPException(status_code=500, detail="Model not available")
         
         # Extract entities from document text using the predict method
+        predict_start = time.time()
         entities_tuples = model.predict(result['text'])
+        logger.info(f"Entity prediction time: {(time.time() - predict_start) * 1000:.2f}ms")
         
         # Convert tuples to dictionary format
         entities = []
@@ -810,10 +829,13 @@ async def upload_document(session_id: int, file: UploadFile = File(...)):
             ))
         
         # Process entities for display
+        highlight_start = time.time()
         highlighted_text = entity_processor.highlight_entities_in_text(result['text'], entities_for_processor)
         entity_counts = entity_processor.get_entity_stats(entities_for_processor)
+        logger.info(f"Entity highlighting time: {(time.time() - highlight_start) * 1000:.2f}ms")
         
         # Store document in session
+        storage_start = time.time()
         doc_data = {
             'id': hashlib.md5(f"{session_id}_{file.filename}_{datetime.now().isoformat()}".encode()).hexdigest()[:12],
             'filename': file.filename,
@@ -834,8 +856,10 @@ async def upload_document(session_id: int, file: UploadFile = File(...)):
         # Add document to session
         document_sessions[session_id]['documents'].append(doc_data)
         document_sessions[session_id]['active_doc'] = doc_data['id']
+        logger.info(f"Session storage time: {(time.time() - storage_start) * 1000:.2f}ms")
         
-        logger.info(f"Document uploaded: {file.filename} for session {session_id}")
+        total_time = (time.time() - start_time) * 1000
+        logger.info(f"Total upload time: {total_time:.2f}ms for {file.filename} ({result['word_count']} words)")
         
         return JSONResponse({
             'success': True,

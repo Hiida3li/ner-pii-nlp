@@ -915,9 +915,20 @@ class PrivacyChat {
                 // Verify the text matches at this position
                 const actualText = text.substring(startPos, endPos);
                 
+                // Clean up entity text for comparison (remove markdown artifacts and extra spaces)
+                const cleanEntityText = entity.text
+                    .replace(/\*+/g, '')  // Remove all asterisks
+                    .replace(/\s+/g, ' ')  // Normalize spaces
+                    .trim();
+                const cleanActualText = actualText
+                    .replace(/\*+/g, '')  // Remove all asterisks
+                    .replace(/\s+/g, ' ')  // Normalize spaces
+                    .trim();
+                
                 console.log(`Checking entity at ${startPos}-${endPos}: expected '${entity.text}', found '${actualText}'`);
                 
-                if (actualText === entity.text) {
+                // Accept match if either exact match or clean match
+                if (actualText === entity.text || cleanActualText === cleanEntityText) {
                     // Mark all positions in this range with the entity info
                     // Use priority to handle overlapping entities - later entities take precedence
                     for (let i = startPos; i < endPos && i < text.length; i++) {
@@ -933,36 +944,64 @@ class PrivacyChat {
                 } else {
                     // Try to find the entity in the text if position is wrong
                     console.warn(`Position mismatch for '${entity.text}', searching in text`);
+                    
+                    // Try multiple search strategies for entities with markdown
+                    const baseText = entity.text
+                        .replace(/\s*\*\s*\*/g, '')  // Remove " * *" pattern
+                        .replace(/\*+/g, '')          // Remove all remaining asterisks
+                        .replace(/\s+/g, ' ')         // Normalize spaces
+                        .trim();
+                    
+                    console.log(`Base text after cleanup: '${baseText}'`);
+                    
+                    const searchTerms = [
+                        baseText,                             // Clean base text
+                        baseText + '**',                      // With markdown bold
+                        '**' + baseText + '**',              // Wrapped in bold
+                        entity.text,                          // Original text as fallback
+                        entity.text.replace(/\s*\*\s*\*/g, '**')  // Convert " * *" to "**"
+                    ];
+                    
                     let searchStart = 0;
                     let foundCount = 0;
-                    while (searchStart < text.length) {
-                        const pos = text.indexOf(entity.text, searchStart);
-                        if (pos === -1) break;
-                        
-                        // Check if this position overlaps with an already marked entity
-                        let hasOverlap = false;
-                        for (let i = pos; i < pos + entity.text.length && i < text.length; i++) {
-                            if (highlights[i] && highlights[i].entityText === entity.text) {
-                                hasOverlap = true;
-                                break;
+                    let foundMatch = false;
+                    
+                    // Try each search term
+                    for (const searchTerm of searchTerms) {
+                        searchStart = 0;
+                        while (searchStart < text.length) {
+                            const pos = text.indexOf(searchTerm, searchStart);
+                            if (pos === -1) break;
+                            
+                            // Check if this position overlaps with an already marked entity
+                            let hasOverlap = false;
+                            const entityLength = searchTerm.length;
+                            for (let i = pos; i < pos + entityLength && i < text.length; i++) {
+                                if (highlights[i] && highlights[i].entityText) {
+                                    hasOverlap = true;
+                                    break;
+                                }
                             }
-                        }
-                        
-                        if (!hasOverlap) {
-                            // Mark this occurrence
-                            for (let i = pos; i < pos + entity.text.length && i < text.length; i++) {
-                                highlights[i] = { 
-                                    cssClass, 
-                                    entityStart: pos, 
-                                    entityEnd: pos + entity.text.length, 
-                                    entityText: entity.text,
+                            
+                            if (!hasOverlap) {
+                                // Mark this occurrence
+                                for (let i = pos; i < pos + entityLength && i < text.length; i++) {
+                                    highlights[i] = { 
+                                        cssClass, 
+                                        entityStart: pos, 
+                                        entityEnd: pos + entityLength, 
+                                        entityText: searchTerm,
                                     priority: Date.now()
                                 };
                             }
-                            foundCount++;
-                            console.log(`✓ Found and marked occurrence ${foundCount} of '${entity.text}' at position ${pos}`);
+                                foundCount++;
+                                foundMatch = true;
+                                console.log(`✓ Found and marked occurrence ${foundCount} of '${searchTerm}' at position ${pos}`);
+                                break; // Only mark first occurrence for this term
+                            }
+                            searchStart = pos + 1;
                         }
-                        searchStart = pos + 1;
+                        if (foundMatch) break; // Stop if we found a match
                     }
                 }
             }
