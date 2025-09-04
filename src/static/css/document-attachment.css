@@ -1,0 +1,519 @@
+/* Document Attachment Styles - ChatGPT-like */
+
+/* Upload Button Styles */
+.chat-upload-btn {
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    width: 44px;
+    height: 44px;
+    overflow: hidden;
+}
+
+.chat-upload-btn svg {
+    transition: all 0.3s ease;
+}
+
+.chat-upload-btn:hover {
+    background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3), 0 4px 6px -2px rgba(124, 58, 237, 0.2);
+    transform: translateY(-2px) scale(1.05);
+}
+
+.chat-upload-btn:hover svg {
+    transform: scale(1.1);
+}
+
+.chat-upload-btn:active {
+    transform: scale(0.95) translateY(0);
+    box-shadow: 0 1px 3px 0 rgba(124, 58, 237, 0.2);
+}
+
+.chat-upload-btn.uploading {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.chat-upload-btn .upload-spinner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(139, 92, 246, 0.2);
+    border-top-color: #8b5cf6;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: none;
+}
+
+.chat-upload-btn.uploading .upload-spinner {
+    display: block;
+}
+
+.chat-upload-btn.uploading svg {
+    opacity: 0;
+}
+
+/* Upload Progress Bar */
+.upload-progress {
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: 1px;
+    overflow: hidden;
+    display: none;
+}
+
+.upload-progress.active {
+    display: block;
+}
+
+.upload-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+    width: 0%;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
+}
+
+.document-attachment-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    margin: 8px 0;
+    max-width: 300px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.document-attachment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.document-attachment-card.in-message {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.document-attachment-card.in-message:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.doc-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.document-attachment-card.in-message .doc-icon-wrapper {
+    background: #f9fafb;
+}
+
+.doc-icon-wrapper svg {
+    width: 24px;
+    height: 24px;
+    color: white;
+}
+
+.document-attachment-card.in-message .doc-icon-wrapper svg {
+    color: #6b7280;
+}
+
+.doc-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.doc-filename {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 2px;
+}
+
+.document-attachment-card.in-message .doc-filename {
+    color: #1f2937;
+}
+
+.doc-metadata {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.document-attachment-card.in-message .doc-metadata {
+    color: #6b7280;
+}
+
+.doc-size, .doc-entities {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.remove-doc-btn {
+    width: 24px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.remove-doc-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.document-attachment-card.in-message .remove-doc-btn {
+    background: #f3f4f6;
+}
+
+.document-attachment-card.in-message .remove-doc-btn:hover {
+    background: #e5e7eb;
+}
+
+.remove-doc-btn svg {
+    width: 14px;
+    height: 14px;
+    color: white;
+}
+
+.document-attachment-card.in-message .remove-doc-btn svg {
+    color: #9ca3af;
+}
+
+/* Attachment preview in input area */
+.attachment-preview {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.attachment-preview .document-attachment-card {
+    margin: 0;
+}
+
+/* Message with attachment */
+.message-with-attachment {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.message-attachments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+/* Upload zone styling */
+.upload-zone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(139, 92, 246, 0.1);
+    border: 2px dashed #8b5cf6;
+    border-radius: 12px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.upload-zone.active {
+    display: flex;
+}
+
+.upload-zone-content {
+    text-align: center;
+    color: #8b5cf6;
+    font-weight: 500;
+}
+
+.upload-zone-content svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+    opacity: 0.8;
+}
+
+/* Drag and drop states */
+.dragging .input-wrapper {
+    position: relative;
+}
+
+.dragging .upload-zone {
+    display: flex;
+}
+
+/* File type icons */
+.file-type-pdf { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.file-type-doc { background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%); }
+.file-type-txt { background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); }
+.file-type-csv { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
+
+/* Animation for attachment appearance */
+@keyframes slideInFromBottom {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.document-attachment-card {
+    animation: slideInFromBottom 0.3s ease;
+}
+
+/* Loading state for document upload */
+.document-uploading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.document-uploading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid white;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Tooltip for upload button */
+.chat-upload-btn::before {
+    content: 'Upload document (PDF, DOCX, TXT, CSV)';
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9) translateY(5px);
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 10000;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.chat-upload-btn::after {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    border: 5px solid transparent;
+    border-top-color: #1e293b;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 10000;
+}
+
+.chat-upload-btn:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) scale(1) translateY(0);
+}
+
+.chat-upload-btn:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+}
+
+.chat-upload-btn.uploading::before {
+    content: 'Processing...';
+    background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+}
+
+/* Pulse animation for better visibility */
+@keyframes pulse-upload {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(139, 92, 246, 0);
+    }
+}
+
+.chat-upload-btn:not(.uploading):hover {
+    animation: pulse-upload 2s infinite;
+}
+
+/* Success animation */
+@keyframes upload-success {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.chat-upload-btn.success {
+    animation: upload-success 0.5s ease;
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3), 0 4px 6px -2px rgba(16, 185, 129, 0.2);
+}
+
+.chat-upload-btn.success svg {
+    animation: checkmark 0.5s ease;
+}
+
+@keyframes checkmark {
+    0% {
+        transform: scale(0) rotate(-45deg);
+    }
+    50% {
+        transform: scale(1.2) rotate(10deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* Drag and Drop Zone */
+.upload-drop-zone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(139, 92, 246, 0.95);
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.upload-drop-zone.active {
+    display: flex;
+    pointer-events: all;
+    animation: fadeIn 0.2s ease;
+}
+
+.upload-drop-content {
+    text-align: center;
+    color: white;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    border: 3px dashed rgba(255, 255, 255, 0.5);
+    animation: slideUp 0.3s ease;
+}
+
+.upload-drop-content svg {
+    margin-bottom: 20px;
+    animation: bounce-down 1s ease infinite;
+}
+
+.drop-text {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 16px 0 8px 0;
+}
+
+.drop-subtext {
+    font-size: 14px;
+    opacity: 0.9;
+    margin: 0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes bounce-down {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(10px);
+    }
+}
+
+/* Darken chat container when dragging */
+.chat-container.dragging {
+    filter: brightness(0.3);
+    transition: filter 0.3s ease;
+}
