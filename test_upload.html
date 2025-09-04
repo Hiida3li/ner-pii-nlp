@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Document Upload</title>
+</head>
+<body>
+    <h1>Test Document Upload</h1>
+    
+    <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.md,.xlsx,.csv">
+    <button onclick="uploadFile()">Upload File</button>
+    
+    <div id="result"></div>
+
+    <script>
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('session_id', '1');
+            
+            try {
+                const response = await fetch('http://localhost:9000/api/document/upload?session_id=1', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+                
+                if (result.success) {
+                    // Get document content
+                    const docResponse = await fetch('http://localhost:9000/api/document/1/' + result.document.id);
+                    const docData = await docResponse.json();
+                    
+                    console.log('Document text:', docData.original_text);
+                    alert('Upload successful! Check console for document text.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Upload failed: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

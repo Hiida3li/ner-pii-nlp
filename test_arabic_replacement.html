@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Arabic Entity Replacement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            direction: rtl;
+            text-align: right;
+        }
+        .test-case {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .original {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .result {
+            background-color: #e8f4e8;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        h2 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>اختبار استبدال الكيانات العربية</h1>
+    
+    <div class="test-case">
+        <h2>حالة الاختبار 1: سلطنة عمان</h2>
+        <div class="original">
+            <strong>النص الأصلي:</strong><br>
+            توجد في سلطنة عمان العديد من الجمعيات الخيرية والمؤسسات التي تهدف إلى تقديم الرعاية الاجتماعية
+        </div>
+        <div class="result">
+            <strong>النتيجة المتوقعة:</strong><br>
+            توجد في Location1 العديد من الجمعيات الخيرية والمؤسسات التي تهدف إلى تقديم الرعاية الاجتماعية
+        </div>
+    </div>
+
+    <div class="test-case">
+        <h2>حالة الاختبار 2: كيانات متعددة</h2>
+        <div class="original">
+            <strong>النص الأصلي:</strong><br>
+            تتنوع هذه الجمعيات في اختصاصاتها وتشمل جمعية دار العطاء، جمعية النور للمكفوفين، والهيئة العمانية للأعمال الخيرية
+        </div>
+        <div class="result">
+            <strong>النتيجة المتوقعة:</strong><br>
+            تتنوع هذه الجمعيات في اختصاصاتها وتشمل Organization1، Organization2، وOrganization3
+        </div>
+    </div>
+
+    <div class="test-case">
+        <h2>حالة الاختبار 3: كلمات مفردة</h2>
+        <div class="original">
+            <strong>النص الأصلي:</strong><br>
+            أمثلة على الجمعيات الخيرية في عمان والسلطنة
+        </div>
+        <div class="result">
+            <strong>النتيجة المتوقعة:</strong><br>
+            أمثلة على الجمعيات الخيرية في Location2 وLocation3
+        </div>
+    </div>
+
+    <script>
+        // Test the replacement logic
+        console.log('Testing Arabic entity replacement...');
+        
+        // Simulated test data
+        const testEntities = [
+            { text: 'سلطنة عمان', entity_type: 'LOC', start: 8, end: 19 },
+            { text: 'عمان', entity_type: 'LOC', start: 14, end: 19 },
+            { text: 'السلطنة', entity_type: 'LOC', start: 45, end: 52 }
+        ];
+        
+        console.log('Test entities:', testEntities);
+        
+        // Test the replacement function
+        function testReplacement(text, entity) {
+            console.log(`Testing replacement of "${entity.text}" in text...`);
+            const escaped = entity.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(escaped, 'gi');
+            const matches = text.match(regex);
+            console.log(`Found ${matches ? matches.length : 0} matches`);
+            return matches;
+        }
+        
+        const sampleText = "توجد في سلطنة عمان العديد من الجمعيات";
+        testEntities.forEach(entity => {
+            testReplacement(sampleText, entity);
+        });
+    </script>
+</body>
+</html>

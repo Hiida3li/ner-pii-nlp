@@ -1,0 +1,4 @@
+Hello, my name is John Smith and I work at Microsoft Corporation. 
+My email is john.smith@microsoft.com and my phone number is +1-555-123-4567.
+I live in Seattle, Washington and my office is at 1 Microsoft Way, Redmond, WA 98052.
+Please contact me if you need any assistance with the project.

@@ -1,0 +1,25 @@
+Test Document for PII Detection
+
+This is a test document to verify the document upload functionality works correctly.
+
+Personal Information:
+Name: John Smith
+Email: john.smith@example.com
+Phone: +1-555-123-4567
+Address: 123 Main Street, New York, NY 10001
+
+Company Information:
+Organization: Acme Corporation
+Website: https://www.acme-corp.com
+
+Sensitive IDs:
+Passport: AB1234567
+Civil ID: 123456789
+Credit Card: 4532-1234-5678-9012
+
+This document contains various types of PII that should be detected and masked by the system.
+
+Additional test text in Arabic:
+اسمي محمد أحمد وأعمل في شركة التقنية المتقدمة
+رقم هاتفي: ٩٦٨٩١٢٣٤٥٦٧
+البريد الإلكتروني: mohammed@example.com
