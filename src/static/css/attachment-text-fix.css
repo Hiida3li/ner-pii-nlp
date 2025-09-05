@@ -1,0 +1,92 @@
+/* Fix for attachment + text layout */
+
+/* Ensure message content displays children properly */
+.message-content {
+    display: block !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+}
+
+/* When there's both attachment and text */
+.message-content .message-attachments + .message-text,
+.message-content .message-text {
+    display: block !important;
+    margin-top: 12px !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    word-break: normal !important;
+    line-height: 1.5 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    /* Critical fix for vertical text issue */
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    direction: ltr !important;
+    unicode-bidi: normal !important;
+}
+
+/* Ensure text displays horizontally - higher specificity */
+.message-bubble .message-text,
+.user-message .message-text,
+.assistant-message .message-text {
+    display: inline-block !important;
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    hyphens: auto !important;
+    line-height: 1.5 !important;
+    width: 100% !important;
+    /* Prevent flex column layout */
+    flex-direction: row !important;
+}
+
+/* Fix for Arabic/RTL text */
+.message-text[dir="rtl"],
+.message-text.rtl {
+    direction: rtl !important;
+    text-align: right !important;
+    writing-mode: horizontal-tb !important;
+    unicode-bidi: embed !important;
+}
+
+/* Fix for LTR text */
+.message-text[dir="ltr"],
+.message-text.ltr {
+    direction: ltr !important;
+    text-align: left !important;
+    writing-mode: horizontal-tb !important;
+}
+
+/* Ensure attachment cards don't affect text flow */
+.message-attachments {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-bottom: 8px !important;
+}
+
+/* Fix potential flex issues */
+.message-content:not(.streaming) {
+    display: block !important;
+    flex-direction: initial !important;
+}
+
+/* Prevent any parent flex column from affecting text */
+.message-bubble {
+    display: block !important;
+}
+
+/* Force inline display for text spans */
+.message-text span,
+.message-text p {
+    display: inline !important;
+    writing-mode: horizontal-tb !important;
+}
+
+/* Override any conflicting styles */
+.message-text * {
+    writing-mode: inherit !important;
+    text-orientation: inherit !important;
+}
