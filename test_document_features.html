@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Document Features</title>
+    <style>
+        body {
+            background: #202023;
+            padding: 20px;
+            font-family: -apple-system, sans-serif;
+            color: white;
+        }
+        
+        .test-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 2px solid #8b5cf6;
+            border-radius: 12px;
+        }
+        
+        .test-section h2 {
+            color: #a78bfa;
+            margin-top: 0;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-family: monospace;
+        }
+        
+        .success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+        
+        .error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+        
+        .info {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid #3b82f6;
+            color: #60a5fa;
+        }
+        
+        button {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background: #7c3aed;
+        }
+        
+        #console {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 5px;
+        }
+        
+        .log-error { color: #ef4444; }
+        .log-success { color: #10b981; }
+        .log-info { color: #60a5fa; }
+        .log-warn { color: #f59e0b; }
+    </style>
+</head>
+<body>
+    <h1>Document Feature Testing</h1>
+    
+    <div class="test-section">
+        <h2>1. File Loading Test</h2>
+        <button onclick="testFileLoading()">Test File Loading</button>
+        <div id="file-status" class="status info">Click button to test...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Document Upload Simulation</h2>
+        <button onclick="simulateUpload()">Simulate Document Upload</button>
+        <div id="upload-status" class="status info">Click button to simulate...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Modal Test</h2>
+        <button onclick="testModal()">Test Document Modal</button>
+        <div id="modal-status" class="status info">Click button to test modal...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Message Display Test</h2>
+        <button onclick="testMessageDisplay()">Test Message Display</button>
+        <div id="message-test"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Console Output</h2>
+        <div id="console"></div>
+    </div>
+    
+    <script>
+        // Custom console logger
+        const logConsole = document.getElementById('console');
+        
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logConsole.appendChild(entry);
+            logConsole.scrollTop = logConsole.scrollHeight;
+            console.log(message);
+        }
+        
+        // Test 1: File Loading
+        async function testFileLoading() {
+            const statusDiv = document.getElementById('file-status');
+            log('Testing file loading...', 'info');
+            
+            try {
+                // Check if document-attachment-manager.js loads
+                const response = await fetch('/static/js/document-attachment-manager.js?v=6');
+                const text = await response.text();
+                
+                if (text.includes('showDocumentModal')) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ document-attachment-manager.js loaded with modal functions';
+                    log('File contains showDocumentModal function', 'success');
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = '❌ Modal functions not found in file';
+                    log('Modal functions missing!', 'error');
+                }
+                
+                // Check for attachment handling
+                if (text.includes('attachment.userMessage')) {
+                    log('File contains userMessage handling', 'success');
+                } else {
+                    log('userMessage handling missing!', 'warn');
+                }
+                
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Failed to load file: ' + error.message;
+                log('File loading error: ' + error.message, 'error');
+            }
+        }
+        
+        // Test 2: Upload Simulation
+        async function simulateUpload() {
+            const statusDiv = document.getElementById('upload-status');
+            log('Simulating document upload...', 'info');
+            
+            const testDocument = {
+                filename: 'test.pdf',
+                text: 'This is test document content that should NOT appear in the message.',
+                wordCount: 10,
+                entityCount: 2
+            };
+            
+            statusDiv.className = 'status info';
+            statusDiv.textContent = '📤 Uploading test document...';
+            
+            // Simulate upload delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Check if attachment would be processed
+            const docHeader = `[Document: ${testDocument.filename}]`;
+            const combinedMessage = `User message\n\n${docHeader}\n\n${testDocument.text}`;
+            
+            log('Combined message created: ' + combinedMessage.substring(0, 50) + '...', 'info');
+            
+            // Test extraction
+            const docIndex = combinedMessage.indexOf(docHeader);
+            const extractedUserMessage = combinedMessage.substring(0, docIndex).trim();
+            
+            if (extractedUserMessage === 'User message') {
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ Document processing works correctly';
+                log('User message extracted correctly: "' + extractedUserMessage + '"', 'success');
+            } else {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Message extraction failed';
+                log('Extraction failed! Got: "' + extractedUserMessage + '"', 'error');
+            }
+        }
+        
+        // Test 3: Modal
+        function testModal() {
+            const statusDiv = document.getElementById('modal-status');
+            log('Testing modal functionality...', 'info');
+            
+            // Create test modal if it doesn't exist
+            if (!document.getElementById('test-modal')) {
+                const modalHtml = `
+                    <div id="test-modal" style="
+                        display: none;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0,0,0,0.8);
+                        z-index: 10000;
+                        align-items: center;
+                        justify-content: center;
+                    ">
+                        <div style="
+                            background: #2b2b2b;
+                            padding: 20px;
+                            border-radius: 12px;
+                            max-width: 600px;
+                        ">
+                            <h3 style="margin-top: 0; color: #a78bfa;">Test Document Modal</h3>
+                            <pre id="test-modal-content" style="
+                                color: #e5e7eb;
+                                white-space: pre-wrap;
+                                max-height: 400px;
+                                overflow-y: auto;
+                            "></pre>
+                            <button onclick="closeTestModal()">Close</button>
+                        </div>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                log('Created test modal element', 'info');
+            }
+            
+            // Show modal
+            const modal = document.getElementById('test-modal');
+            const content = document.getElementById('test-modal-content');
+            
+            if (modal && content) {
+                content.textContent = 'This is test document content.\nIt should appear in the modal.\n\nNOT in the chat message!';
+                modal.style.display = 'flex';
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ Modal opened successfully';
+                log('Modal displayed', 'success');
+            } else {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Modal elements not found';
+                log('Modal elements missing!', 'error');
+            }
+        }
+        
+        window.closeTestModal = function() {
+            const modal = document.getElementById('test-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                log('Modal closed', 'info');
+            }
+        }
+        
+        // Test 4: Message Display
+        function testMessageDisplay() {
+            const testDiv = document.getElementById('message-test');
+            log('Testing message display...', 'info');
+            
+            // Simulate message with attachment but no document text
+            const messageHtml = `
+                <div style="
+                    background: #303030;
+                    border-radius: 12px;
+                    padding: 1rem;
+                    margin: 10px 0;
+                ">
+                    <!-- Attachment Card (should appear) -->
+                    <div style="
+                        background: rgba(139, 92, 246, 0.1);
+                        border: 1px solid rgba(139, 92, 246, 0.3);
+                        padding: 8px 12px;
+                        border-radius: 8px;
+                        margin-bottom: 8px;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        cursor: pointer;
+                    " onclick="alert('Document clicked! Modal should open here.')">
+                        <div style="
+                            width: 28px;
+                            height: 28px;
+                            background: rgba(139, 92, 246, 0.2);
+                            border-radius: 4px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        ">📄</div>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 500;">test.pdf</div>
+                            <div style="font-size: 11px; opacity: 0.7;">100 words • 5 entities</div>
+                        </div>
+                    </div>
+                    
+                    <!-- User Message (if any) -->
+                    <div style="color: #e5e7eb;">
+                        Analyze this document
+                    </div>
+                </div>
+            `;
+            
+            testDiv.innerHTML = `
+                <div class="status info">Expected: Only attachment card + user message (no document text)</div>
+                ${messageHtml}
+                <div class="status error" style="opacity: 0.5;">
+                    ❌ Wrong: Document text should NOT appear here:<br>
+                    <div style="padding: 10px; background: #1a1a1a; margin-top: 10px;">
+                        [Document: test.pdf] Document content text that should be hidden...
+                    </div>
+                </div>
+            `;
+            
+            log('Message display test rendered', 'success');
+        }
+        
+        // Auto-run tests
+        window.addEventListener('load', () => {
+            log('Test page loaded', 'success');
+            log('Click the buttons to run each test', 'info');
+        });
+    </script>
+</body>
+</html>

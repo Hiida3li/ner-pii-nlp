@@ -581,6 +581,14 @@ class PrivacyChat {
                                             attachment.userMessage = userMessageToShow;
                                         }
                                     }
+                                    
+                                    // If message is just the document, clear the text so only attachment shows
+                                    if (!userMessageToShow || userMessageToShow.trim() === '') {
+                                        // Clear the text from messageData too
+                                        userMessageData.original = '';
+                                        userMessageData.masked = '';
+                                        userMessageToShow = '';
+                                    }
                                 }
                                 
                                 console.log('About to add user message with attachment:', attachment ? attachment.filename : 'none');
@@ -1214,6 +1222,9 @@ class PrivacyChat {
             const entitiesData = messageWrapper.getAttribute('data-entities');
             const messageContent = messageWrapper.querySelector('.message-content');
             
+            // Check if message has attachment card
+            const attachmentElement = messageContent ? messageContent.querySelector('.message-attachments') : null;
+            
             if (role === 'user' && originalMessage && maskedMessage && messageContent) {
                 // Parse entities data if available
                 let entities = [];
@@ -1221,6 +1232,13 @@ class PrivacyChat {
                     entities = entitiesData ? JSON.parse(entitiesData) : [];
                 } catch (e) {
                     console.warn('Failed to parse entities data:', e);
+                }
+                
+                // Preserve attachment card if it exists
+                let attachmentHtml = '';
+                if (attachmentElement) {
+                    attachmentHtml = attachmentElement.outerHTML;
+                    console.log('Preserving attachment card during privacy toggle');
                 }
                 
                 // Determine which message to show
@@ -1245,12 +1263,19 @@ class PrivacyChat {
                 // Show and highlight content based on privacy mode
                 const contentToShow = this.privacyMode ? maskedMessage : originalMessage;
                 
-                if (entities && entities.length > 0) {
-                    const highlightedContent = this.highlightUserMessage(contentToShow, entities, messageData);
-                    messageContent.innerHTML = `<div class="message-text ${dirClass}">${highlightedContent}</div>`;
-                } else {
-                    messageContent.innerHTML = `<div class="message-text ${dirClass}">${contentToShow}</div>`;
+                let textHtml = '';
+                if (contentToShow && contentToShow.trim() !== '') {
+                    if (entities && entities.length > 0) {
+                        const highlightedContent = this.highlightUserMessage(contentToShow, entities, messageData);
+                        textHtml = `<div class="message-text ${dirClass}">${highlightedContent}</div>`;
+                    } else {
+                        textHtml = `<div class="message-text ${dirClass}">${contentToShow}</div>`;
+                    }
                 }
+                
+                // Rebuild message content with both text and attachment
+                messageContent.innerHTML = textHtml + attachmentHtml;
+                
             } else if (role === 'assistant' && originalMessage && messageContent) {
                 // Handle assistant messages
                 const maskedMessage = this.unescapeHtml(messageWrapper.getAttribute('data-masked'));
@@ -1259,6 +1284,12 @@ class PrivacyChat {
                     entities = entitiesData ? JSON.parse(entitiesData) : [];
                 } catch (e) {
                     console.warn('Failed to parse entities data:', e);
+                }
+                
+                // Preserve attachment card if it exists (though less common for assistant)
+                let attachmentHtml = '';
+                if (attachmentElement) {
+                    attachmentHtml = attachmentElement.outerHTML;
                 }
                 
                 // Choose which version to show based on privacy mode
@@ -1275,7 +1306,10 @@ class PrivacyChat {
                     displayContent = this.highlightEntities(originalMessage, entities);
                 }
                 
-                messageContent.innerHTML = `<div class="message-text ${dirClass}">${displayContent}</div>`;
+                let textHtml = `<div class="message-text ${dirClass}">${displayContent}</div>`;
+                
+                // Rebuild message content with both text and attachment
+                messageContent.innerHTML = textHtml + attachmentHtml;
             }
         });
     }

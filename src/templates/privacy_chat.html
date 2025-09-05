@@ -1373,8 +1373,8 @@
     <link rel="stylesheet" href="/static/css/document-manager.css">
     <link rel="stylesheet" href="/static/css/document-attachment.css?v=6">
     <script src="/static/js/entity-dictionary.js"></script>
-    <script src="/static/js/privacy_chat.js?v=8"></script>
-    <script src="/static/js/document-attachment-manager.js?v=8"></script>
+    <script src="/static/js/privacy_chat.js?v=9"></script>
+    <script src="/static/js/document-attachment-manager.js?v=9"></script>
     <script src="/static/js/document-debug.js"></script>
     <script>
         // Global function to close document modal
@@ -1391,20 +1391,48 @@
         document.addEventListener('click', function(e) {
             const card = e.target.closest('.document-attachment-card');
             if (card && !e.target.closest('.remove-doc-btn')) {
-                const documentText = card.dataset.documentText;
+                const originalText = card.dataset.originalText || card.dataset.documentText;
+                const maskedText = card.dataset.maskedText || card.dataset.documentText;
                 const documentName = card.dataset.documentName;
+                const entitiesStr = card.dataset.entities;
                 
-                if (documentText && documentName) {
+                if ((originalText || maskedText) && documentName) {
                     const modal = document.getElementById('document-modal');
                     const titleElement = document.getElementById('document-modal-title');
                     const textElement = document.getElementById('document-modal-text');
                     
                     if (modal && titleElement && textElement) {
                         titleElement.textContent = documentName;
-                        textElement.textContent = documentText;
+                        
+                        // Check privacy mode and use appropriate text
+                        const isPrivacyMode = window.privacyChat && window.privacyChat.privacyMode;
+                        let displayText = isPrivacyMode ? maskedText : originalText;
+                        
+                        // Parse entities if available
+                        let entities = [];
+                        try {
+                            if (entitiesStr) {
+                                entities = JSON.parse(entitiesStr);
+                            }
+                        } catch (e) {
+                            console.error('Error parsing entities:', e);
+                        }
+                        
+                        // Apply appropriate highlighting based on privacy mode
+                        if (isPrivacyMode && window.privacyChat && window.privacyChat.highlightPlaceholders) {
+                            // In privacy mode, highlight the placeholders
+                            const highlightedHTML = window.privacyChat.highlightPlaceholders(displayText);
+                            textElement.innerHTML = highlightedHTML;
+                        } else if (!isPrivacyMode && entities.length > 0 && window.privacyChat && window.privacyChat.highlightEntities) {
+                            // In normal mode, highlight the actual entities
+                            const highlightedHTML = window.privacyChat.highlightEntities(displayText, entities);
+                            textElement.innerHTML = highlightedHTML;
+                        } else {
+                            textElement.textContent = displayText;
+                        }
                         
                         // Detect if text is Arabic/RTL
-                        const isRTL = /[\u0600-\u06FF\u0750-\u077F]/.test(documentText.substring(0, 100));
+                        const isRTL = /[\u0600-\u06FF\u0750-\u077F]/.test(displayText.substring(0, 100));
                         if (isRTL) {
                             textElement.dir = 'rtl';
                             textElement.lang = 'ar';

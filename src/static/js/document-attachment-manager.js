@@ -168,6 +168,9 @@ class DocumentAttachmentManager {
                     id: result.document.id,
                     filename: file.name,
                     text: docData.original_text,
+                    originalText: docData.original_text,
+                    maskedText: docData.masked_text || docData.original_text,
+                    entities: docData.entities || [],
                     wordCount: docData.word_count,
                     entityCount: totalEntities
                 };
@@ -261,10 +264,13 @@ class DocumentAttachmentManager {
         const card = document.createElement('div');
         card.className = 'document-attachment-card';
         
-        // Store document text as data attribute for modal
+        // Store document text and metadata as data attributes for modal
         if (doc.text) {
             card.dataset.documentText = doc.text;
             card.dataset.documentName = doc.filename;
+            card.dataset.originalText = doc.originalText || doc.text;
+            card.dataset.maskedText = doc.maskedText || doc.text;
+            card.dataset.entities = JSON.stringify(doc.entities || []);
             card.style.cursor = 'pointer';
             card.title = 'Click to view document content';
             

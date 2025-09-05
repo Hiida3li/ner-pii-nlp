@@ -834,12 +834,19 @@ async def upload_document(session_id: int, file: UploadFile = File(...)):
         entity_counts = entity_processor.get_entity_stats(entities_for_processor)
         logger.info(f"Entity highlighting time: {(time.time() - highlight_start) * 1000:.2f}ms")
         
+        # Create masked version of text using SimpleChatbot's masking logic
+        mask_start = time.time()
+        chatbot = SimpleChatbot()
+        masked_text = chatbot.mask_entities(result['text'], entities)
+        logger.info(f"Text masking time: {(time.time() - mask_start) * 1000:.2f}ms")
+        
         # Store document in session
         storage_start = time.time()
         doc_data = {
             'id': hashlib.md5(f"{session_id}_{file.filename}_{datetime.now().isoformat()}".encode()).hexdigest()[:12],
             'filename': file.filename,
             'original_text': result['text'],
+            'masked_text': masked_text,
             'highlighted_text': highlighted_text,
             'entities': entities,
             'entity_counts': entity_counts,
@@ -929,6 +936,7 @@ async def get_document_content(session_id: int, doc_id: str):
         'id': document['id'],
         'filename': document['filename'],
         'original_text': document['original_text'],
+        'masked_text': document.get('masked_text', document['original_text']),
         'highlighted_text': document['highlighted_text'],
         'entities': document['entities'],
         'entity_counts': document['entity_counts'],
