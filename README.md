@@ -10,13 +10,13 @@
 
 ## 🚀 Overview
 
-**Blot** is an advanced AI-powered platform for detecting and protecting personally identifiable information (PII) in text and documents. Built with FastAPI and state-of-the-art NLP models, it provides real-time entity detection, privacy-preserving chat with GPT-4, document processing capabilities, and comprehensive data masking features.
+**Blot** is an advanced AI-powered platform for detecting and protecting personally identifiable information (PII) in text and documents. Built with FastAPI and state-of-the-art NLP models, it provides real-time entity detection, privacy-preserving chat with GPT-4.1, document processing capabilities, and comprehensive data masking features.
 
 ### ✨ Key Features
 
 - **🤖 Dual AI Integration**: 
   - Custom PII-Shield BERT model for entity detection
-  - GPT-4 integration for privacy-preserving conversations
+  - GPT-4.1 integration for privacy-preserving conversations
   
 - **📄 Document Processing**:
   - Support for PDF, DOCX, TXT, CSV, and MD files
@@ -197,7 +197,7 @@ ner-pii-nlp/
 - Batch processing capabilities
 
 #### 3. **Privacy Chat System** (`privacy_chat.js`)
-- GPT-4 integration
+- GPT-4.1 integration
 - Automatic PII masking before AI processing
 - Entity mapping and restoration
 - Streaming responses via SSE
