@@ -297,6 +297,8 @@ response = requests.post('http://localhost:9000/api/privacy-chat',
 ### Model Settings
 Configure in `src/models/model_config.py`:
 ```python
+import torch
+
 MODEL_CONFIG = {
     'model_name': 'pii_shield_002v',
     'max_length': 512,
