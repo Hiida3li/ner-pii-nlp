@@ -1,8 +1,0 @@
-This is a test document for the chat attachment feature.
-
-It contains some sample text with a few personal details:
-- John Smith lives in New York
-- His email is john@example.com
-- Phone: +1-555-0123
-
-This document should appear as an attachment inside the message bubble, similar to how ChatGPT displays document attachments.
