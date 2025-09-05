@@ -236,7 +236,7 @@
     color: white;
 }
 
-/* Attachment preview in input area - VERY COMPACT */
+/* Attachment preview in input area - COMPACT SQUARE */
 .attachment-preview {
     position: absolute !important;
     left: 8px !important;
@@ -247,7 +247,7 @@
     padding: 0 !important;
     background: none !important;
     border: none !important;
-    max-width: 100px !important;
+    max-width: 80px !important;
 }
 
 .input-box .attachment-preview {
@@ -260,7 +260,7 @@
     padding: 0 !important;
     background: none !important;
     border: none !important;
-    max-width: 100px !important;
+    max-width: 80px !important;
 }
 
 /* Make input box relative for absolute positioning */
@@ -270,28 +270,29 @@
 
 .input-box .attachment-preview .document-attachment-card,
 .attachment-preview .document-attachment-card {
-    display: inline-flex !important;
+    display: flex !important;
+    flex-direction: column !important;
     margin: 0 !important;
-    padding: 2px 3px !important;
-    background: rgba(139, 92, 246, 0.12) !important;
-    border: 1px solid rgba(139, 92, 246, 0.25) !important;
-    max-width: 90px !important;
-    min-width: auto !important;
-    gap: 2px !important;
-    border-radius: 3px !important;
-    height: 20px !important;
+    padding: 6px !important;
+    background: rgba(139, 92, 246, 0.15) !important;
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+    width: 65px !important;
+    height: 65px !important;
+    gap: 3px !important;
+    border-radius: 8px !important;
     align-items: center !important;
-    box-shadow: none !important;
-    font-size: 8px !important;
+    justify-content: center !important;
+    box-shadow: 0 1px 3px rgba(139, 92, 246, 0.2) !important;
+    font-size: 10px !important;
 }
 
 .input-box .attachment-preview .doc-icon-wrapper,
 .attachment-preview .doc-icon-wrapper {
-    width: 14px !important;
-    height: 14px !important;
-    min-width: 14px !important;
-    background: rgba(139, 92, 246, 0.2) !important;
-    border-radius: 2px !important;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    background: rgba(139, 92, 246, 0.25) !important;
+    border-radius: 4px !important;
     padding: 0 !important;
     display: flex !important;
     align-items: center !important;
@@ -300,50 +301,62 @@
 
 .input-box .attachment-preview .doc-icon-wrapper svg,
 .attachment-preview .doc-icon-wrapper svg {
-    width: 8px !important;
-    height: 8px !important;
+    width: 14px !important;
+    height: 14px !important;
 }
 
 .input-box .attachment-preview .doc-info,
 .attachment-preview .doc-info {
-    flex: 1 !important;
-    min-width: 0 !important;
-    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 2px !important;
+    width: 100% !important;
 }
 
 .input-box .attachment-preview .doc-filename,
 .attachment-preview .doc-filename {
-    font-size: 8px !important;
+    font-size: 9px !important;
     margin-bottom: 0 !important;
-    line-height: 1.2 !important;
+    line-height: 1.1 !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
+    max-width: 55px !important;
+    text-align: center !important;
 }
 
 .input-box .attachment-preview .doc-metadata,
 .attachment-preview .doc-metadata {
-    display: none !important; /* Hide metadata to save space */
+    display: block !important;
+    font-size: 8px !important;
+    color: rgba(139, 92, 246, 0.7) !important;
+    text-align: center !important;
 }
 
 .input-box .attachment-preview .remove-doc-btn,
 .attachment-preview .remove-doc-btn {
-    width: 14px !important;
-    height: 14px !important;
+    position: absolute !important;
+    top: -4px !important;
+    right: -4px !important;
+    width: 16px !important;
+    height: 16px !important;
     padding: 0 !important;
-    background: rgba(255, 255, 255, 0.2) !important;
-    border-radius: 3px !important;
+    background: #ef4444 !important;
+    border: 1px solid white !important;
+    border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    margin-left: 2px !important;
+    cursor: pointer !important;
 }
 
 .input-box .attachment-preview .remove-doc-btn svg,
 .attachment-preview .remove-doc-btn svg {
-    width: 8px !important;
-    height: 8px !important;
+    width: 10px !important;
+    height: 10px !important;
+    color: white !important;
 }
 
 /* Message with attachment */

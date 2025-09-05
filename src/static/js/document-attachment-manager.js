@@ -258,8 +258,8 @@ class DocumentAttachmentManager {
             if (textarea) {
                 // Insert preview inside input box
                 inputBox.appendChild(preview);
-                // Adjust textarea padding to accommodate the small attachment
-                textarea.style.paddingLeft = '100px';
+                // Adjust textarea padding to accommodate the square attachment
+                textarea.style.paddingLeft = '80px';
             }
         });
     }
@@ -309,10 +309,7 @@ class DocumentAttachmentManager {
             </div>
             <div class="doc-info">
                 <div class="doc-filename">${doc.filename}</div>
-                <div class="doc-metadata">
-                    <span class="doc-size">${doc.wordCount} words</span>
-                    ${doc.entityCount > 0 ? `<span class="doc-entities">• ${doc.entityCount} entities</span>` : ''}
-                </div>
+                <div class="doc-metadata">Document</div>
             </div>
             ${canRemove ? `
                 <button class="remove-doc-btn" onclick="window.docAttachmentManager.removeAttachment()">
