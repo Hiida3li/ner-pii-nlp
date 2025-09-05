@@ -572,23 +572,55 @@ class PrivacyChat {
                                 
                                 // If there's an attachment, strip the document content from the display
                                 if (attachment && attachment.filename) {
-                                    const docHeader = `[Document: ${attachment.filename}]`;
-                                    if (userMessageToShow.includes(docHeader)) {
-                                        const docIndex = userMessageToShow.indexOf(docHeader);
-                                        userMessageToShow = userMessageToShow.substring(0, docIndex).trim();
-                                        // Store the user's original message in the attachment
+                                    console.log('Stripping document content, initial message length:', userMessageToShow.length);
+                                    console.log('First 200 chars:', userMessageToShow.substring(0, 200));
+                                    
+                                    // Use regex to find any document header pattern
+                                    const docHeaderPattern = new RegExp(`\\[Doc[^\\]]*${attachment.filename}\\]`, 'i');
+                                    const match = userMessageToShow.match(docHeaderPattern);
+                                    
+                                    if (match) {
+                                        console.log('Found document header:', match[0]);
+                                        const docIndex = userMessageToShow.indexOf(match[0]);
+                                        
+                                        // Extract only the caption before the document header
+                                        const caption = userMessageToShow.substring(0, docIndex).trim();
+                                        console.log('Extracted caption:', caption);
+                                        
+                                        userMessageToShow = caption;
+                                        
+                                        // Store the caption in the attachment
                                         if (attachment) {
-                                            attachment.userMessage = userMessageToShow;
+                                            attachment.userMessage = caption;
                                         }
                                     }
                                     
-                                    // If message is just the document, clear the text so only attachment shows
+                                    // If message is empty after stripping, clear the text data
                                     if (!userMessageToShow || userMessageToShow.trim() === '') {
-                                        // Clear the text from messageData too
+                                        console.log('No caption, clearing text data');
                                         userMessageData.original = '';
                                         userMessageData.masked = '';
                                         userMessageToShow = '';
+                                    } else {
+                                        // Also update the messageData to only contain the caption
+                                        console.log('Updating messageData to only contain caption');
+                                        // Find the document header in the original message too
+                                        const originalMatch = userMessageData.original.match(/\[Document:[^\]]*\]/);
+                                        if (originalMatch) {
+                                            const origIndex = userMessageData.original.indexOf(originalMatch[0]);
+                                            userMessageData.original = userMessageData.original.substring(0, origIndex).trim();
+                                        }
+                                        
+                                        // Do the same for masked message
+                                        const maskedMatch = userMessageData.masked.match(docHeaderPattern);
+                                        if (maskedMatch) {
+                                            const maskIndex = userMessageData.masked.indexOf(maskedMatch[0]);
+                                            userMessageData.masked = userMessageData.masked.substring(0, maskIndex).trim();
+                                        }
                                     }
+                                    
+                                    console.log('Final message to display:', userMessageToShow);
+                                    console.log('Final message length:', userMessageToShow.length);
                                 }
                                 
                                 console.log('About to add user message with attachment:', attachment ? attachment.filename : 'none');
@@ -596,6 +628,11 @@ class PrivacyChat {
                                 
                                 // Hide typing indicator
                                 this.hideTypingIndicator();
+                                
+                                // Clear the attachment display from the message box when AI starts responding
+                                if (window.docAttachmentManager) {
+                                    window.docAttachmentManager.removeAttachment();
+                                }
                                 
                                 // Create assistant message placeholder for streaming
                                 assistantMessageWrapper = this.createStreamingMessage();
@@ -807,6 +844,19 @@ class PrivacyChat {
         // Only include message-text div if there's actual content to display
         const textHtml = displayContent ? `<div class="message-text ${dirClass}">${displayContent}</div>` : '';
         
+        // When there's both attachment and text, structure them properly
+        let contentHtml = '';
+        if (attachmentHtml && textHtml) {
+            // Both attachment and text - ensure proper layout
+            contentHtml = attachmentHtml + '\n' + textHtml;
+        } else if (attachmentHtml) {
+            // Only attachment
+            contentHtml = attachmentHtml;
+        } else if (textHtml) {
+            // Only text
+            contentHtml = textHtml;
+        }
+        
         const messageHtml = `
             <div class="message-wrapper" ${dataAttributes}>
                 <div class="message ${role}">
@@ -814,8 +864,7 @@ class PrivacyChat {
                         ${role === 'user' ? 'U' : 'AI'}
                     </div>
                     <div class="message-content">
-                        ${attachmentHtml}
-                        ${textHtml}
+                        ${contentHtml}
                     </div>
                 </div>
             </div>

@@ -550,13 +550,9 @@ class DocumentAttachmentManager {
                 // console.log('Calling original sendMessage');
                 const result = await originalSendMessage();
                 
-                // DON'T clear the pending attachment here - it's needed for the streaming response
-                // It will be cleared after the streaming response completes
-                
-                // Clear the attachment after sending
-                if (documentToDisplay) {
-                    this.removeAttachment();
-                }
+                // DON'T clear the attachment display immediately
+                // The attachment card should stay visible until the response starts
+                // It will be cleared by privacy_chat.js when appropriate
                 
                 return result;
             };
