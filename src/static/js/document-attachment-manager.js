@@ -65,7 +65,13 @@ class DocumentAttachmentManager {
                 fileInput.click();
             });
             
-            box.insertBefore(uploadBtn, box.firstChild);
+            // Insert button as the first element (before textarea)
+            const textarea = box.querySelector('textarea');
+            if (textarea) {
+                box.insertBefore(uploadBtn, textarea);
+            } else {
+                box.insertBefore(uploadBtn, box.firstChild);
+            }
             // console.log('Added upload button to box', index);
         });
         

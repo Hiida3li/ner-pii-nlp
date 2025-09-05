@@ -1,43 +1,44 @@
-/* Document Attachment Styles - ChatGPT-like */
+/* Document Attachment Styles - Simple Design */
 
 /* Upload Button Styles */
 .chat-upload-btn {
-    background: #ffffff;
-    border: 2px solid #e5e7eb;
-    padding: 0;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    color: #9ca3af;
     cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #6b7280;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 12px;
-    position: relative;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    width: 44px;
-    height: 44px;
-    overflow: hidden;
+    flex-shrink: 0;
+}
+
+/* Ensure proper alignment in input box */
+.input-box .chat-upload-btn {
+    margin-right: 0.5rem;
 }
 
 .chat-upload-btn svg {
     transition: all 0.3s ease;
+    width: 24px;
+    height: 24px;
 }
 
 .chat-upload-btn:hover {
-    background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
-    border-color: transparent;
-    color: white;
-    box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3), 0 4px 6px -2px rgba(124, 58, 237, 0.2);
-    transform: translateY(-2px) scale(1.05);
+    background: rgba(124, 58, 237, 0.1);
+    color: #7c3aed;
 }
 
 .chat-upload-btn:hover svg {
     transform: scale(1.1);
+    filter: drop-shadow(0 2px 4px rgba(124, 58, 237, 0.3));
 }
 
 .chat-upload-btn:active {
-    transform: scale(0.95) translateY(0);
-    box-shadow: 0 1px 3px 0 rgba(124, 58, 237, 0.2);
+    background: rgba(124, 58, 237, 0.2);
 }
 
 .chat-upload-btn.uploading {
@@ -412,14 +413,14 @@
 
 .chat-upload-btn.success {
     animation: upload-success 0.5s ease;
-    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-    border-color: transparent;
-    color: white;
-    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3), 0 4px 6px -2px rgba(16, 185, 129, 0.2);
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
 }
 
 .chat-upload-btn.success svg {
     animation: checkmark 0.5s ease;
+    color: #10b981;
+    filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.3));
 }
 
 @keyframes checkmark {
