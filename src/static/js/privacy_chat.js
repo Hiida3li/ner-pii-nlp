@@ -567,8 +567,23 @@ class PrivacyChat {
                                 }
                                 
                                 // Add user message with attachment if present
-                                const userMessageToShow = this.privacyMode ? data.masked_message : data.original_message;
+                                let userMessageToShow = this.privacyMode ? data.masked_message : data.original_message;
                                 const attachment = this.pendingAttachment || null;
+                                
+                                // If there's an attachment, strip the document content from the display
+                                if (attachment && attachment.filename) {
+                                    const docHeader = `[Document: ${attachment.filename}]`;
+                                    if (userMessageToShow.includes(docHeader)) {
+                                        const docIndex = userMessageToShow.indexOf(docHeader);
+                                        userMessageToShow = userMessageToShow.substring(0, docIndex).trim();
+                                        // Store the user's original message in the attachment
+                                        if (attachment) {
+                                            attachment.userMessage = userMessageToShow;
+                                        }
+                                    }
+                                }
+                                
+                                console.log('About to add user message with attachment:', attachment ? attachment.filename : 'none');
                                 this.addMessage('user', userMessageToShow, userMessageData.userEntities, userMessageData, attachment);
                                 
                                 // Hide typing indicator
@@ -639,10 +654,20 @@ class PrivacyChat {
                 console.log('🔒 Sent to AI (masked):', userMessageData.masked);
             }
             
+            // Clear the pending attachment now that streaming is complete
+            if (this.pendingAttachment) {
+                console.log('Clearing pending attachment after streaming complete');
+                delete this.pendingAttachment;
+            }
+            
         } catch (error) {
             console.error('Error:', error);
             this.hideTypingIndicator();
             this.addMessage('assistant', 'Sorry, I encountered an error. Please try again.');
+            // Also clear pending attachment on error
+            if (this.pendingAttachment) {
+                delete this.pendingAttachment;
+            }
         }
     }
     
@@ -683,7 +708,11 @@ class PrivacyChat {
     addMessage(role, content, entities = null, messageData = null, attachment = null) {
         // Process content for PII highlighting if entities provided
         let displayContent = content;
-        if (entities && entities.length > 0) {
+        
+        // Skip entity highlighting if there's an attachment and no content
+        if (attachment && !content) {
+            displayContent = '';
+        } else if (entities && entities.length > 0) {
             if (role === 'user' && messageData && messageData.userMessage) {
                 // For user messages, highlight based on current privacy mode
                 displayContent = this.highlightUserMessage(content, entities, messageData);
@@ -721,13 +750,54 @@ class PrivacyChat {
         
         // Build attachment HTML if provided
         let attachmentHtml = '';
-        if (attachment && window.docAttachmentManager) {
-            const card = window.docAttachmentManager.createDocumentCard(attachment, false);
-            // Create a temporary div to get the HTML
-            const tempDiv = document.createElement('div');
-            tempDiv.appendChild(card);
-            attachmentHtml = `<div class="message-attachments">${tempDiv.innerHTML}</div>`;
+        if (attachment && attachment.filename) {
+            console.log('Building attachment HTML for:', attachment.filename);
+            console.log('DocAttachmentManager exists:', !!window.docAttachmentManager);
+            console.log('CreateDocumentCard exists:', !!(window.docAttachmentManager && window.docAttachmentManager.createDocumentCard));
+            
+            // Create attachment HTML directly if manager not available
+            if (window.docAttachmentManager && window.docAttachmentManager.createDocumentCard) {
+                console.log('Using docAttachmentManager.createDocumentCard');
+                const card = window.docAttachmentManager.createDocumentCard(attachment, false);
+                const tempDiv = document.createElement('div');
+                tempDiv.appendChild(card);
+                attachmentHtml = `<div class="message-attachments">${tempDiv.innerHTML}</div>`;
+                console.log('Created attachment HTML via manager:', attachmentHtml.substring(0, 100));
+            } else {
+                console.log('Using fallback attachment HTML');
+                // Fallback: create simple attachment card
+                attachmentHtml = `
+                    <div class="message-attachments">
+                        <div class="document-attachment-card" 
+                             data-document-text="${(attachment.text || '').replace(/"/g, '&quot;')}"
+                             data-document-name="${attachment.filename}"
+                             style="cursor: pointer;"
+                             title="Click to view document">
+                            <div class="doc-icon-wrapper">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14,2 14,8 20,8"/>
+                                </svg>
+                            </div>
+                            <div class="doc-info">
+                                <div class="doc-filename">${attachment.filename}</div>
+                                <div class="doc-metadata">
+                                    <span class="doc-size">${attachment.wordCount || 0} words</span>
+                                    <span class="doc-entities">• ${attachment.entityCount || 0} entities</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                console.log('Created fallback attachment HTML');
+            }
+            console.log('Final attachmentHtml length:', attachmentHtml.length);
+        } else {
+            console.log('No attachment to display');
         }
+        
+        // Only include message-text div if there's actual content to display
+        const textHtml = displayContent ? `<div class="message-text ${dirClass}">${displayContent}</div>` : '';
         
         const messageHtml = `
             <div class="message-wrapper" ${dataAttributes}>
@@ -737,11 +807,16 @@ class PrivacyChat {
                     </div>
                     <div class="message-content">
                         ${attachmentHtml}
-                        <div class="message-text ${dirClass}">${displayContent}</div>
+                        ${textHtml}
                     </div>
                 </div>
             </div>
         `;
+        
+        console.log('Inserting message HTML with attachment:', !!attachmentHtml);
+        if (attachmentHtml) {
+            console.log('Message HTML preview:', messageHtml.substring(0, 500));
+        }
         
         this.elements.chatMessages.insertAdjacentHTML('beforeend', messageHtml);
         this.scrollToBottom();

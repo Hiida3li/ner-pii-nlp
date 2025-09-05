@@ -1357,12 +1357,75 @@
         </div>
     </div>
 
+    <!-- Document Preview Modal -->
+    <div id="document-modal" class="document-modal" style="display: none;">
+        <div class="document-modal-content">
+            <div class="document-modal-header">
+                <h3 id="document-modal-title">Document Preview</h3>
+                <button class="document-modal-close" onclick="closeDocumentModal()">×</button>
+            </div>
+            <div class="document-modal-body">
+                <pre id="document-modal-text"></pre>
+            </div>
+        </div>
+    </div>
+
     <link rel="stylesheet" href="/static/css/document-manager.css">
-    <link rel="stylesheet" href="/static/css/document-attachment.css?v=4">
+    <link rel="stylesheet" href="/static/css/document-attachment.css?v=6">
     <script src="/static/js/entity-dictionary.js"></script>
-    <script src="/static/js/privacy_chat.js?v=4"></script>
-    <script src="/static/js/document-attachment-manager.js?v=4"></script>
+    <script src="/static/js/privacy_chat.js?v=8"></script>
+    <script src="/static/js/document-attachment-manager.js?v=8"></script>
+    <script src="/static/js/document-debug.js"></script>
     <script>
+        // Global function to close document modal
+        function closeDocumentModal() {
+            if (window.docAttachmentManager) {
+                window.docAttachmentManager.closeDocumentModal();
+            } else {
+                const modal = document.getElementById('document-modal');
+                if (modal) modal.style.display = 'none';
+            }
+        }
+        
+        // Global click handler for document cards
+        document.addEventListener('click', function(e) {
+            const card = e.target.closest('.document-attachment-card');
+            if (card && !e.target.closest('.remove-doc-btn')) {
+                const documentText = card.dataset.documentText;
+                const documentName = card.dataset.documentName;
+                
+                if (documentText && documentName) {
+                    const modal = document.getElementById('document-modal');
+                    const titleElement = document.getElementById('document-modal-title');
+                    const textElement = document.getElementById('document-modal-text');
+                    
+                    if (modal && titleElement && textElement) {
+                        titleElement.textContent = documentName;
+                        textElement.textContent = documentText;
+                        
+                        // Detect if text is Arabic/RTL
+                        const isRTL = /[\u0600-\u06FF\u0750-\u077F]/.test(documentText.substring(0, 100));
+                        if (isRTL) {
+                            textElement.dir = 'rtl';
+                            textElement.lang = 'ar';
+                        } else {
+                            textElement.dir = 'ltr';
+                            textElement.lang = 'en';
+                        }
+                        
+                        modal.style.display = 'flex';
+                        
+                        // Close on backdrop click
+                        modal.onclick = function(event) {
+                            if (event.target === modal) {
+                                closeDocumentModal();
+                            }
+                        };
+                    }
+                }
+            }
+        });
+        
         // Global function for privacy toggle
         function handlePrivacyToggle(event) {
             if (event) {

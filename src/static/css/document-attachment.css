@@ -561,6 +561,96 @@
     }
 }
 
+/* Document Preview Modal */
+.document-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease;
+}
+
+.document-modal-content {
+    background: #2b2b2b;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 16px;
+    max-width: 80%;
+    max-height: 80%;
+    width: 800px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease;
+}
+
+.document-modal-header {
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.document-modal-header h3 {
+    margin: 0;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.document-modal-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 28px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.document-modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.document-modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+    background: #202023;
+}
+
+#document-modal-text {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: #e5e7eb;
+    font-size: 14px;
+    line-height: 1.6;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+}
+
+/* Arabic text in modal */
+#document-modal-text:lang(ar),
+[dir="rtl"] #document-modal-text {
+    font-family: 'IBM Plex Sans Arabic', 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    text-align: right;
+    direction: rtl;
+}
+
 /* Darken chat container when dragging */
 .chat-container.dragging {
     filter: brightness(0.3);

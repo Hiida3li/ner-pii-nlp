@@ -261,6 +261,22 @@ class DocumentAttachmentManager {
         const card = document.createElement('div');
         card.className = 'document-attachment-card';
         
+        // Store document text as data attribute for modal
+        if (doc.text) {
+            card.dataset.documentText = doc.text;
+            card.dataset.documentName = doc.filename;
+            card.style.cursor = 'pointer';
+            card.title = 'Click to view document content';
+            
+            // Add click handler to show modal
+            card.addEventListener('click', (e) => {
+                // Don't open modal if clicking the remove button
+                if (!e.target.closest('.remove-doc-btn')) {
+                    this.showDocumentModal(doc.filename, doc.text);
+                }
+            });
+        }
+        
         // Determine file extension for icon color
         const ext = doc.filename.split('.').pop().toLowerCase();
         let fileTypeClass = 'file-type-txt';
@@ -407,6 +423,43 @@ class DocumentAttachmentManager {
         });
     }
     
+    showDocumentModal(filename, text) {
+        const modal = document.getElementById('document-modal');
+        const titleElement = document.getElementById('document-modal-title');
+        const textElement = document.getElementById('document-modal-text');
+        
+        if (modal && titleElement && textElement) {
+            titleElement.textContent = filename;
+            textElement.textContent = text;
+            
+            // Detect if text is Arabic/RTL
+            const isRTL = /[\u0600-\u06FF\u0750-\u077F]/.test(text.substring(0, 100));
+            if (isRTL) {
+                textElement.dir = 'rtl';
+                textElement.lang = 'ar';
+            } else {
+                textElement.dir = 'ltr';
+                textElement.lang = 'en';
+            }
+            
+            modal.style.display = 'flex';
+            
+            // Add click handler to close on backdrop click
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    this.closeDocumentModal();
+                }
+            };
+        }
+    }
+    
+    closeDocumentModal() {
+        const modal = document.getElementById('document-modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+    
     overrideSendMessage() {
         // Store the original sendMessage function  
         if (this.privacyChat && this.privacyChat.sendMessage) {
@@ -415,35 +468,24 @@ class DocumentAttachmentManager {
             // Also override the addMessage to handle attachments
             const originalAddMessage = this.privacyChat.addMessage.bind(this.privacyChat);
             this.privacyChat.addMessage = (role, content, entities, messageData, attachment) => {
-                console.log('=== AddMessage Debug ===');
-                console.log('Role:', role);
-                console.log('Content length:', content.length);
-                console.log('Has attachment:', !!attachment);
-                
-                // For user messages with attachment, clean the content
+                // For user messages with attachment, ONLY show the user's message, not document content
                 if (role === 'user' && attachment && attachment.filename) {
-                    console.log('Processing user message with attachment:', attachment.filename);
-                    const docHeader = `[Document: ${attachment.filename}]`;
-                    
-                    // Remove document content from the display
-                    if (content.includes(docHeader)) {
-                        console.log('Found document header in content');
-                        // Extract only the user's message part, not the document content
-                        const docIndex = content.indexOf(docHeader);
-                        const userText = content.substring(0, docIndex).trim();
-                        console.log('Extracted user text:', userText);
-                        
-                        // If user provided a message, use it; otherwise show default
-                        content = userText || `Please analyze this document`;
-                        console.log('Final display content:', content);
+                    // First check if we have the stored user message
+                    if (attachment.userMessage !== undefined) {
+                        content = attachment.userMessage || '';
                     } else {
-                        console.log('Document header NOT found in content');
-                        // If document header not found, check if entire content is document
-                        // and there's no user message
-                        if (content.length > 500) { // Likely document content
-                            content = `Please analyze this document`;
-                            console.log('Content too long, using default message');
+                        // Fallback: Remove document content from display
+                        const docHeader = `[Document: ${attachment.filename}]`;
+                        if (content.includes(docHeader)) {
+                            const docIndex = content.indexOf(docHeader);
+                            content = content.substring(0, docIndex).trim();
                         }
+                    }
+                    
+                    // If no user message was provided, don't show any text
+                    // The attachment card will be sufficient
+                    if (!content) {
+                        content = '';
                     }
                 }
                 return originalAddMessage(role, content, entities, messageData, attachment);
@@ -471,7 +513,10 @@ class DocumentAttachmentManager {
                     this.privacyChat.pendingAttachment = documentToDisplay;
                 }
                 
-                // If there's an attached document, combine it with the message
+                // If there's an attached document, combine it with the message for backend
+                // But store original user message for display
+                let originalUserMessage = userMessage;
+                
                 if (this.attachedDocument && this.attachedDocument.text) {
                     let combinedMessage = '';
                     
@@ -480,14 +525,16 @@ class DocumentAttachmentManager {
                         combinedMessage = userMessage + '\n\n';
                     }
                     
-                    // Add document header and content
+                    // Add document header and content for backend processing
                     combinedMessage += `[Document: ${this.attachedDocument.filename}]\n\n`;
                     combinedMessage += this.attachedDocument.text;
                     
-                    // console.log('Combined message length:', combinedMessage.length);
-                    // console.log('Setting combined message in input');
+                    // Store the original user message to display (not the document content)
+                    if (documentToDisplay) {
+                        documentToDisplay.userMessage = originalUserMessage || '';
+                    }
                     
-                    // Set the combined message in the input
+                    // Set the combined message in the input (for backend)
                     if (input) {
                         input.value = combinedMessage;
                     }
@@ -497,10 +544,8 @@ class DocumentAttachmentManager {
                 // console.log('Calling original sendMessage');
                 const result = await originalSendMessage();
                 
-                // Clear the pending attachment
-                if (this.privacyChat.pendingAttachment) {
-                    delete this.privacyChat.pendingAttachment;
-                }
+                // DON'T clear the pending attachment here - it's needed for the streaming response
+                // It will be cleared after the streaming response completes
                 
                 // Clear the attachment after sending
                 if (documentToDisplay) {
@@ -518,7 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const initDocAttachmentManager = () => {
         if (window.privacyChat && window.privacyChat.sendMessage) {
             window.docAttachmentManager = new DocumentAttachmentManager(window.privacyChat);
-            // console.log('Document attachment manager initialized');
+            console.log('Document attachment manager initialized and overrides applied');
         } else {
             setTimeout(initDocAttachmentManager, 100);
         }
