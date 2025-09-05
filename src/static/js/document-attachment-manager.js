@@ -245,17 +245,21 @@ class DocumentAttachmentManager {
         // Add indicator inside both input boxes
         const inputBoxes = document.querySelectorAll('.input-box');
         inputBoxes.forEach(inputBox => {
-            const preview = document.createElement('div');
+            const preview = document.createElement('span'); // Use span for inline
             preview.className = 'attachment-preview';
             
             // Create the document attachment card
             const card = this.createDocumentCard(this.attachedDocument, true);
+            card.style.display = 'inline-flex'; // Force inline display
             preview.appendChild(card);
             
-            // Insert at the beginning of input box (before the textarea)
+            // Insert inside the input box directly
             const textarea = inputBox.querySelector('.chat-input');
             if (textarea) {
-                inputBox.insertBefore(preview, textarea);
+                // Insert preview inside input box
+                inputBox.appendChild(preview);
+                // Adjust textarea padding to accommodate the small attachment
+                textarea.style.paddingLeft = '100px';
             }
         });
     }
@@ -420,11 +424,12 @@ class DocumentAttachmentManager {
         this.attachedDocument = null;
         document.querySelectorAll('.attachment-preview').forEach(el => el.remove());
         
-        // Reset input placeholder
+        // Reset input placeholder and padding
         const inputs = [document.getElementById('chat-input'), document.getElementById('chat-input-bottom')];
         inputs.forEach(input => {
             if (input) {
                 input.placeholder = 'Type your message...';
+                input.style.paddingLeft = ''; // Reset padding
             }
         });
     }
