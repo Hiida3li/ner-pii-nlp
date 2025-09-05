@@ -10,37 +10,37 @@
 }
 
 :root {
-  /* Modern Color Palette */
-  --primary: #ff00ff;
-  --primary-hover: #e500e5;
-  --primary-light: rgba(255, 0, 255, 0.1);
-  --secondary: #00ffff;
-  --secondary-hover: #00e5e5;
-  --accent: #00c8ff;
-  --accent-hover: #00a8df;
+  /* Modern Color Palette - Updated */
+  --primary: #9810fa;
+  --primary-hover: #7a0dcc;
+  --primary-light: rgba(152, 16, 250, 0.15);
+  --secondary: #4c8bca;
+  --secondary-hover: #3a6da2;
+  --accent: #4c8bca;
+  --accent-hover: #3a6da2;
   --danger: #ef4444;
   --danger-hover: #dc2626;
   --warning: #f59e0b;
   --warning-hover: #d97706;
   
-  /* Neutral Colors */
+  /* Neutral Colors - Updated */
   --gray-50: #f8fafc;
   --gray-100: #f1f5f9;
   --gray-200: #e2e8f0;
   --gray-300: #cbd5e1;
   --gray-400: #94a3b8;
   --gray-500: #64748b;
-  --gray-600: #475569;
-  --gray-700: #334155;
-  --gray-800: #181818;
-  --gray-900: #181818;
+  --gray-600: #3a4050;
+  --gray-700: #2f3f57;
+  --gray-800: #201f27;
+  --gray-900: #1a1920;
   
   /* Semantic Colors - Dark Theme Default */
-  --background: #212121;
-  --surface: #181818;
-  --surface-hover: #303030;
-  --border: rgba(255, 255, 255, 0.1);
-  --border-focus: #ff00ff;
+  --background: #201f27;
+  --surface: #2f3f57;
+  --surface-hover: #3a4050;
+  --border: rgba(76, 139, 202, 0.2);
+  --border-focus: #9810fa;
   --text-primary: #e5e7eb;
   --text-secondary: #9ca3af;
   --text-muted: #6b7280;
@@ -120,15 +120,15 @@
 
 /* Dark Theme */
 [data-theme="dark"] {
-  --background: #212121 !important;
-  --surface: #181818;
-  --surface-hover: #303030;
-  --border: rgba(255, 255, 255, 0.1);
+  --background: #201f27 !important;
+  --surface: #2f3f57;
+  --surface-hover: #3a4050;
+  --border: rgba(76, 139, 202, 0.2);
   --text-primary: #e5e7eb;
   --text-secondary: #9ca3af;
   --text-muted: #6b7280;
-  --primary-light: rgba(255, 0, 255, 0.1);
-  --border-focus: #ff00ff;
+  --primary-light: rgba(152, 16, 250, 0.15);
+  --border-focus: #9810fa;
 }
 
 /* Light Theme */
@@ -147,8 +147,8 @@
 /* Theme-specific body backgrounds */
 [data-theme="dark"] body,
 html[data-theme="dark"] body {
-  background-color: #212121 !important;
-  background: #212121 !important;
+  background-color: #201f27 !important;
+  background: #201f27 !important;
 }
 
 [data-theme="light"] body,
@@ -265,7 +265,7 @@ small {
   font-weight: var(--weight-black);
   letter-spacing: -0.04em;
   line-height: var(--leading-tight);
-  background: linear-gradient(135deg, #ff00ff, #00ffff);
+  background: linear-gradient(135deg, #9810fa, #4c8bca);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -278,7 +278,7 @@ small {
   font-weight: var(--weight-extrabold);
   letter-spacing: -0.03em;
   line-height: var(--leading-tight);
-  background: linear-gradient(135deg, #ff00ff, #00ffff);
+  background: linear-gradient(135deg, #9810fa, #4c8bca);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -466,12 +466,12 @@ label {
 /* ===== CARD COMPONENT ===== */
 
 .card {
-  background: #212121;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   overflow: hidden;
-  transition: box-shadow var(--transition-normal);
+  transition: all var(--transition-normal);
 }
 
 .card:hover {
@@ -517,11 +517,11 @@ label {
 .form-textarea {
   width: 100%;
   padding: var(--space-3) var(--space-4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   font-size: var(--text-base);
-  background: #303030;
-  color: #e5e7eb;
+  background: var(--surface);
+  color: var(--text-primary);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
@@ -529,8 +529,8 @@ label {
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: #ff00ff;
-  box-shadow: 0 0 0 3px rgba(255, 0, 255, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
 }
 
 .form-textarea {
@@ -658,20 +658,20 @@ label {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #ff00ff, #00ffff);
+  background: linear-gradient(135deg, #9810fa, #4c8bca);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #e500e5, #00e5e5);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, #7a0dcc, #3a6da2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(152, 16, 250, 0.4);
 }
 
 .btn-secondary {
-  background: #303030;
-  color: #e5e7eb;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--surface-hover);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
 }
 
 .btn-secondary:hover:not(:disabled) {
@@ -1086,13 +1086,13 @@ label {
 /* ===== COUNTER COMPONENT ===== */
 
 .total-counter {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: linear-gradient(135deg, #9810fa, #4c8bca);
   color: white;
   padding: var(--space-6);
   border-radius: var(--radius-xl);
   text-align: center;
   margin-bottom: var(--space-8);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 10px 30px rgba(152, 16, 250, 0.3);
 }
 
 .total-counter-label {
