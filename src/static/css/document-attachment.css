@@ -109,15 +109,31 @@
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-.document-attachment-card.in-message {
-    background: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+/* Card styling when inside a message bubble */
+.message-content .document-attachment-card {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 12px;
+    max-width: 100%;
+    margin: 0;
+    box-shadow: none;
 }
 
-.document-attachment-card.in-message:hover {
-    background: #f9fafb;
-    border-color: #d1d5db;
+.message-content .document-attachment-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: none;
+    box-shadow: none;
+}
+
+/* For assistant messages */
+.assistant .message-content .document-attachment-card {
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.assistant .message-content .document-attachment-card:hover {
+    background: rgba(0, 0, 0, 0.15);
 }
 
 .doc-icon-wrapper {
@@ -131,8 +147,11 @@
     flex-shrink: 0;
 }
 
-.document-attachment-card.in-message .doc-icon-wrapper {
-    background: #f9fafb;
+/* Smaller icon for attachments inside messages */
+.message-content .doc-icon-wrapper {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .doc-icon-wrapper svg {
@@ -141,8 +160,10 @@
     color: white;
 }
 
-.document-attachment-card.in-message .doc-icon-wrapper svg {
-    color: #6b7280;
+.message-content .doc-icon-wrapper svg {
+    width: 20px;
+    height: 20px;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .doc-info {
@@ -160,8 +181,10 @@
     margin-bottom: 2px;
 }
 
-.document-attachment-card.in-message .doc-filename {
-    color: #1f2937;
+/* Filename styling inside messages */
+.message-content .doc-filename {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.95);
 }
 
 .doc-metadata {
@@ -172,8 +195,10 @@
     align-items: center;
 }
 
-.document-attachment-card.in-message .doc-metadata {
-    color: #6b7280;
+/* Metadata styling inside messages */
+.message-content .doc-metadata {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .doc-size, .doc-entities {
@@ -200,12 +225,9 @@
     background: rgba(255, 255, 255, 0.3);
 }
 
-.document-attachment-card.in-message .remove-doc-btn {
-    background: #f3f4f6;
-}
-
-.document-attachment-card.in-message .remove-doc-btn:hover {
-    background: #e5e7eb;
+/* Hide remove button for attachments inside messages */
+.message-content .remove-doc-btn {
+    display: none;
 }
 
 .remove-doc-btn svg {
@@ -214,22 +236,39 @@
     color: white;
 }
 
-.document-attachment-card.in-message .remove-doc-btn svg {
-    color: #9ca3af;
-}
-
 /* Attachment preview in input area */
-.attachment-preview {
+.input-box .attachment-preview {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 0;
-    margin-bottom: 8px;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 8px 12px;
+    margin: 8px;
+    background: rgba(139, 92, 246, 0.05);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 8px;
 }
 
-.attachment-preview .document-attachment-card {
+.input-box .attachment-preview .document-attachment-card {
     margin: 0;
+    padding: 6px 10px;
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    max-width: 100%;
+    flex: 1;
+}
+
+.input-box .attachment-preview .doc-icon-wrapper {
+    width: 28px;
+    height: 28px;
+    background: rgba(139, 92, 246, 0.2);
+}
+
+.input-box .attachment-preview .doc-filename {
+    font-size: 12px;
+}
+
+.input-box .attachment-preview .doc-metadata {
+    font-size: 10px;
 }
 
 /* Message with attachment */
@@ -239,11 +278,20 @@
     gap: 8px;
 }
 
-.message-attachments {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 8px;
+/* Attachment container INSIDE message bubble */
+.message-content .message-attachments {
+    display: block;
+    margin: -0.5rem -0.75rem 0.75rem -0.75rem;
+    padding: 0.75rem;
+    background: rgba(139, 92, 246, 0.08);
+    border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+    border-radius: 12px 12px 0 0;
+}
+
+/* For assistant messages */
+.assistant .message-content .message-attachments {
+    background: rgba(139, 92, 246, 0.05);
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
 }
 
 /* Upload zone styling */

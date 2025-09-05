@@ -239,9 +239,9 @@ class DocumentAttachmentManager {
         // Remove any existing attachment indicators
         document.querySelectorAll('.attachment-preview').forEach(el => el.remove());
         
-        // Add indicator to both input areas
-        const inputContainers = document.querySelectorAll('.input-container');
-        inputContainers.forEach(container => {
+        // Add indicator inside both input boxes
+        const inputBoxes = document.querySelectorAll('.input-box');
+        inputBoxes.forEach(inputBox => {
             const preview = document.createElement('div');
             preview.className = 'attachment-preview';
             
@@ -249,13 +249,10 @@ class DocumentAttachmentManager {
             const card = this.createDocumentCard(this.attachedDocument, true);
             preview.appendChild(card);
             
-            // Insert before the input wrapper
-            const inputWrapper = container.querySelector('.input-wrapper');
-            if (inputWrapper) {
-                container.insertBefore(preview, inputWrapper);
-            } else {
-                // Fallback: append to container if wrapper not found
-                container.appendChild(preview);
+            // Insert at the beginning of input box (before the textarea)
+            const textarea = inputBox.querySelector('.chat-input');
+            if (textarea) {
+                inputBox.insertBefore(preview, textarea);
             }
         });
     }
@@ -269,7 +266,10 @@ class DocumentAttachmentManager {
         let fileTypeClass = 'file-type-txt';
         if (ext === 'pdf') fileTypeClass = 'file-type-pdf';
         else if (['doc', 'docx'].includes(ext)) fileTypeClass = 'file-type-doc';
-        else if (['csv', 'xlsx'].includes(ext)) fileTypeClass = 'file-type-csv';
+        else if (['csv', 'xlsx', 'xls'].includes(ext)) fileTypeClass = 'file-type-csv';
+        
+        // Add file type class to the card for styling
+        card.classList.add(fileTypeClass);
         
         card.innerHTML = `
             <div class="doc-icon-wrapper ${fileTypeClass}">
@@ -408,9 +408,46 @@ class DocumentAttachmentManager {
     }
     
     overrideSendMessage() {
-        // Store the original sendMessage function
+        // Store the original sendMessage function  
         if (this.privacyChat && this.privacyChat.sendMessage) {
             const originalSendMessage = this.privacyChat.sendMessage.bind(this.privacyChat);
+            
+            // Also override the addMessage to handle attachments
+            const originalAddMessage = this.privacyChat.addMessage.bind(this.privacyChat);
+            this.privacyChat.addMessage = (role, content, entities, messageData, attachment) => {
+                console.log('=== AddMessage Debug ===');
+                console.log('Role:', role);
+                console.log('Content length:', content.length);
+                console.log('Has attachment:', !!attachment);
+                
+                // For user messages with attachment, clean the content
+                if (role === 'user' && attachment && attachment.filename) {
+                    console.log('Processing user message with attachment:', attachment.filename);
+                    const docHeader = `[Document: ${attachment.filename}]`;
+                    
+                    // Remove document content from the display
+                    if (content.includes(docHeader)) {
+                        console.log('Found document header in content');
+                        // Extract only the user's message part, not the document content
+                        const docIndex = content.indexOf(docHeader);
+                        const userText = content.substring(0, docIndex).trim();
+                        console.log('Extracted user text:', userText);
+                        
+                        // If user provided a message, use it; otherwise show default
+                        content = userText || `Please analyze this document`;
+                        console.log('Final display content:', content);
+                    } else {
+                        console.log('Document header NOT found in content');
+                        // If document header not found, check if entire content is document
+                        // and there's no user message
+                        if (content.length > 500) { // Likely document content
+                            content = `Please analyze this document`;
+                            console.log('Content too long, using default message');
+                        }
+                    }
+                }
+                return originalAddMessage(role, content, entities, messageData, attachment);
+            };
             
             // Override sendMessage to include document
             this.privacyChat.sendMessage = async () => {
@@ -426,8 +463,13 @@ class DocumentAttachmentManager {
                 const userMessage = input ? input.value.trim() : '';
                 // console.log('User message:', userMessage);
                 
-                // Store document for display after sending
+                // Store document for display
                 const documentToDisplay = this.attachedDocument;
+                
+                // Store the attachment in privacy chat for use in addMessage
+                if (documentToDisplay) {
+                    this.privacyChat.pendingAttachment = documentToDisplay;
+                }
                 
                 // If there's an attached document, combine it with the message
                 if (this.attachedDocument && this.attachedDocument.text) {
@@ -455,45 +497,13 @@ class DocumentAttachmentManager {
                 // console.log('Calling original sendMessage');
                 const result = await originalSendMessage();
                 
-                // Add document card to the last user message if there was an attachment
+                // Clear the pending attachment
+                if (this.privacyChat.pendingAttachment) {
+                    delete this.privacyChat.pendingAttachment;
+                }
+                
+                // Clear the attachment after sending
                 if (documentToDisplay) {
-                    setTimeout(() => {
-                        const messages = document.querySelectorAll('.message.user');
-                        const lastMessage = messages[messages.length - 1];
-                        if (lastMessage) {
-                            // Check if card already exists
-                            if (!lastMessage.querySelector('.message-attachments')) {
-                                // Create the document card
-                                const attachmentContainer = document.createElement('div');
-                                attachmentContainer.className = 'message-attachments';
-                                const card = this.createDocumentCard(documentToDisplay, false);
-                                card.classList.add('in-message');
-                                attachmentContainer.appendChild(card);
-                                
-                                // Find the message content container
-                                const messageContent = lastMessage.querySelector('.message-content');
-                                if (messageContent) {
-                                    // Insert the attachment card at the beginning of message content
-                                    const messageText = messageContent.querySelector('.message-text');
-                                    if (messageText) {
-                                        // Remove document text from display
-                                        const text = messageText.textContent;
-                                        const docHeader = `[Document: ${documentToDisplay.filename}]`;
-                                        if (text.includes(docHeader)) {
-                                            const cleanText = text.split(docHeader)[0].trim();
-                                            messageText.textContent = cleanText || `Analyzing ${documentToDisplay.filename}...`;
-                                        }
-                                        messageContent.insertBefore(attachmentContainer, messageText);
-                                    } else {
-                                        // If no message-text found, just append to content
-                                        messageContent.appendChild(attachmentContainer);
-                                    }
-                                }
-                            }
-                        }
-                    }, 100);
-                    
-                    // Clear the attachment after sending
                     this.removeAttachment();
                 }
                 

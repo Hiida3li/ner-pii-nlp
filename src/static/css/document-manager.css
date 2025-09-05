@@ -812,39 +812,5 @@
     }
 }
 
-/* Document Attachment in Chat Messages */
-.document-attachment {
-    background: rgba(139, 92, 246, 0.1);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.attachment-icon {
-    font-size: 24px;
-    flex-shrink: 0;
-}
-
-.attachment-info {
-    flex: 1;
-}
-
-.attachment-name {
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 4px;
-}
-
-.attachment-size {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
-
-.user-message .document-attachment {
-    background: rgba(59, 130, 246, 0.1);
-    border-color: rgba(59, 130, 246, 0.3);
-}
+/* Document Attachment in Chat Messages - REMOVED TO AVOID CONFLICTS */
+/* Using document-attachment-card from document-attachment-inline.css instead */

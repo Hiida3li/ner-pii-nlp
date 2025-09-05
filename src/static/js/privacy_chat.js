@@ -566,9 +566,10 @@ class PrivacyChat {
                                     this.updateSessionList();
                                 }
                                 
-                                // Add user message
+                                // Add user message with attachment if present
                                 const userMessageToShow = this.privacyMode ? data.masked_message : data.original_message;
-                                this.addMessage('user', userMessageToShow, userMessageData.userEntities, userMessageData);
+                                const attachment = this.pendingAttachment || null;
+                                this.addMessage('user', userMessageToShow, userMessageData.userEntities, userMessageData, attachment);
                                 
                                 // Hide typing indicator
                                 this.hideTypingIndicator();
@@ -679,7 +680,7 @@ class PrivacyChat {
         return messages[messages.length - 1];
     }
     
-    addMessage(role, content, entities = null, messageData = null) {
+    addMessage(role, content, entities = null, messageData = null, attachment = null) {
         // Process content for PII highlighting if entities provided
         let displayContent = content;
         if (entities && entities.length > 0) {
@@ -718,6 +719,16 @@ class PrivacyChat {
             }
         }
         
+        // Build attachment HTML if provided
+        let attachmentHtml = '';
+        if (attachment && window.docAttachmentManager) {
+            const card = window.docAttachmentManager.createDocumentCard(attachment, false);
+            // Create a temporary div to get the HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.appendChild(card);
+            attachmentHtml = `<div class="message-attachments">${tempDiv.innerHTML}</div>`;
+        }
+        
         const messageHtml = `
             <div class="message-wrapper" ${dataAttributes}>
                 <div class="message ${role}">
@@ -725,6 +736,7 @@ class PrivacyChat {
                         ${role === 'user' ? 'U' : 'AI'}
                     </div>
                     <div class="message-content">
+                        ${attachmentHtml}
                         <div class="message-text ${dirClass}">${displayContent}</div>
                     </div>
                 </div>
@@ -733,6 +745,10 @@ class PrivacyChat {
         
         this.elements.chatMessages.insertAdjacentHTML('beforeend', messageHtml);
         this.scrollToBottom();
+        
+        // Return the added message element for further manipulation if needed
+        const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
+        return messages[messages.length - 1];
     }
     
     highlightUserMessage(text, entities, messageData) {
