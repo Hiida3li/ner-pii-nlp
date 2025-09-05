@@ -1240,14 +1240,45 @@ async def privacy_chat_stream(request: PrivacyChatRequest):
                 ai_response = "عذراً، حدث خطأ أثناء معالجة رسالتك. يرجى المحاولة مرة أخرى."
                 unmasked_response = ai_response
             
-            # Stream the response in chunks - send full responses for proper replacement
-            # The frontend will handle the streaming display
-            chunk_data = {
+            # Stream the response word by word for better UX
+            masked_words = ai_response.split()
+            unmasked_words = unmasked_response.split()
+            
+            # Ensure both have same number of words (they should after proper masking)
+            max_words = max(len(masked_words), len(unmasked_words))
+            
+            masked_streamed = ""
+            unmasked_streamed = ""
+            
+            for i in range(max_words):
+                # Get the next word from each version
+                masked_word = masked_words[i] if i < len(masked_words) else ""
+                unmasked_word = unmasked_words[i] if i < len(unmasked_words) else ""
+                
+                # Add word with space
+                if masked_word:
+                    masked_streamed += masked_word + " "
+                if unmasked_word:
+                    unmasked_streamed += unmasked_word + " "
+                
+                # Send chunk update
+                chunk_data = {
+                    "type": "chunk",
+                    "masked_chunk": masked_word + " " if masked_word else "",
+                    "unmasked_chunk": unmasked_word + " " if unmasked_word else ""
+                }
+                yield f"data: {json.dumps(chunk_data)}\n\n"
+                
+                # Small delay for streaming effect (25ms per word)
+                await asyncio.sleep(0.025)
+            
+            # Send final complete response for entity highlighting
+            final_data = {
                 "type": "full_response",
                 "masked_response": ai_response,
                 "unmasked_response": unmasked_response
             }
-            yield f"data: {json.dumps(chunk_data)}\n\n"
+            yield f"data: {json.dumps(final_data)}\n\n"
             
             # Send completion signal with entities
             response_entities = []
