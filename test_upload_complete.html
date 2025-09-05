@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complete Upload Test</title>
+    <style>
+        body {
+            background: #202023;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: white;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .upload-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #303030;
+            border-radius: 10px;
+        }
+        
+        .chat-messages {
+            margin-top: 20px;
+        }
+        
+        .message-wrapper {
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #4a4a4a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        
+        /* This is the key - message-content is the bubble */
+        .message-content {
+            background: #303030;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.25rem;
+            border-radius: 18px;
+            max-width: 70%;
+        }
+        
+        /* Attachment INSIDE the bubble */
+        .message-attachments {
+            display: block;
+            margin: 0 0 10px 0;
+        }
+        
+        .document-attachment-card {
+            display: inline-block;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+        
+        .doc-icon-wrapper {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 4px;
+            text-align: center;
+            line-height: 20px;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        
+        .doc-info {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        .doc-filename {
+            font-weight: 500;
+        }
+        
+        .doc-metadata {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+        
+        .message-text {
+            line-height: 1.5;
+        }
+        
+        button {
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            background: #6d28d9;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h2>Document Attachment Test</h2>
+        
+        <div class="upload-section">
+            <h3>Test Controls:</h3>
+            <button onclick="addMessageWithoutAttachment()">Add Message (No Attachment)</button>
+            <button onclick="addMessageWithAttachment()">Add Message WITH Attachment</button>
+            <button onclick="clearMessages()">Clear All</button>
+        </div>
+        
+        <div class="chat-messages" id="messages">
+            <!-- Messages will appear here -->
+        </div>
+    </div>
+    
+    <script>
+        function addMessageWithoutAttachment() {
+            const messagesDiv = document.getElementById('messages');
+            const messageHTML = `
+                <div class="message-wrapper">
+                    <div class="message user">
+                        <div class="message-avatar">U</div>
+                        <div class="message-content">
+                            <div class="message-text">
+                                This is a regular message without any attachment
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            messagesDiv.insertAdjacentHTML('beforeend', messageHTML);
+        }
+        
+        function addMessageWithAttachment() {
+            const messagesDiv = document.getElementById('messages');
+            const messageHTML = `
+                <div class="message-wrapper">
+                    <div class="message user">
+                        <div class="message-avatar">U</div>
+                        <div class="message-content">
+                            <div class="message-attachments">
+                                <div class="document-attachment-card">
+                                    <span class="doc-icon-wrapper">📄</span>
+                                    <div class="doc-info">
+                                        <div class="doc-filename">document.txt</div>
+                                        <div class="doc-metadata">150 words • 5 entities</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="message-text">
+                                Analyze this document for me
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            messagesDiv.insertAdjacentHTML('beforeend', messageHTML);
+            
+            // Show that attachment is INSIDE the bubble
+            const lastMessage = messagesDiv.lastElementChild;
+            const content = lastMessage.querySelector('.message-content');
+            content.style.border = '2px solid #22c55e';
+            setTimeout(() => {
+                content.style.border = '1px solid rgba(255, 255, 255, 0.1)';
+            }, 2000);
+        }
+        
+        function clearMessages() {
+            document.getElementById('messages').innerHTML = '';
+        }
+        
+        // Add initial example
+        addMessageWithAttachment();
+    </script>
+</body>
+</html>
