@@ -402,6 +402,15 @@ class PrivacyChat {
         if (activeInput) {
             activeInput.style.height = 'auto';
             activeInput.style.height = Math.min(activeInput.scrollHeight, 200) + 'px';
+            
+            // Auto-detect and set text direction for input field
+            const text = activeInput.value;
+            if (text) {
+                const direction = this.detectTextDirection(text);
+                activeInput.dir = direction;
+                activeInput.style.textAlign = direction === 'rtl' ? 'right' : 'left';
+                activeInput.style.direction = direction;
+            }
         }
     }
     
