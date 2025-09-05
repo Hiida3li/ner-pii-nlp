@@ -347,7 +347,12 @@ class SimpleChatbot:
         # Filter out overlapping entities first
         filtered_entities = self.filter_overlapping_entities(entities)
         
-        # Sort by position (reverse) for replacement
+        # First pass: Create all placeholders in forward order to assign numbers correctly
+        entities_forward = sorted(filtered_entities, key=lambda x: x['start'])
+        for entity in entities_forward:
+            _ = self.get_or_create_placeholder(entity['text'], entity['entity_type'])
+        
+        # Second pass: Replace in reverse order to maintain positions
         entities_sorted = sorted(filtered_entities, key=lambda x: x['start'], reverse=True)
         masked_text = text
         
@@ -827,6 +832,21 @@ async def upload_document(session_id: int, file: UploadFile = File(...)):
                 entity['start'],
                 entity['end']
             ))
+        
+        # Split combined entities BEFORE processing
+        split_start = time.time()
+        entities_for_processor = entity_processor.split_combined_entities(result['text'], entities_for_processor)
+        logger.info(f"Entity splitting time: {(time.time() - split_start) * 1000:.2f}ms")
+        
+        # Update the entities list with split entities for frontend
+        entities = []
+        for entity_tuple in entities_for_processor:
+            entities.append({
+                'text': entity_tuple[0],
+                'entity_type': entity_tuple[1],
+                'start': entity_tuple[2],
+                'end': entity_tuple[3]
+            })
         
         # Process entities for display
         highlight_start = time.time()

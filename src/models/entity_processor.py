@@ -23,18 +23,24 @@ class EntityProcessor:
         
         for entity_text, entity_type, start, end in entities:
             # Check if this is an ORG entity that might contain multiple organizations
-            if entity_type == 'ORG' and ('،' in entity_text or ',' in entity_text or '\n' in entity_text):
-                # Split by Arabic comma, regular comma, or newline
-                parts = re.split(r'[،,\n]\s*', entity_text)
+            if entity_type == 'ORG' and ('،' in entity_text or ',' in entity_text or '\n' in entity_text or '.' in entity_text):
+                # First remove periods at the end
+                cleaned_text = entity_text.rstrip('.')
+                
+                # Split by Arabic comma, regular comma, period, or newline
+                # Also handle cases where period is followed by newline
+                parts = re.split(r'[،,]\s*|\.?\n+|\.\s+', cleaned_text)
                 
                 # Filter out connecting words and clean up
                 cleaned_parts = []
                 for part in parts:
-                    part = part.strip()
+                    part = part.strip().rstrip('.')  # Remove trailing periods
                     # Skip connecting words like "و" (and) or "أو" (or)
-                    if part and not part in ['و', 'أو', 'and', 'or'] and len(part) > 2:
-                        # Remove leading "و" if present
-                        if part.startswith('و'):
+                    if part and not part in ['و', 'أو', 'and', 'or', ''] and len(part) > 2:
+                        # Remove leading "و" or "وال" if present
+                        if part.startswith('وال'):
+                            part = 'ال' + part[3:]  # Keep 'ال' but remove 'و'
+                        elif part.startswith('و'):
                             part = part[1:].strip()
                         if part:
                             cleaned_parts.append(part)
