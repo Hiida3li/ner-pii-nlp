@@ -310,6 +310,11 @@ class DocumentAttachmentManager {
                 uploadBtn.insertAdjacentElement('afterend', preview);
             }
         });
+        
+        // Toggle send button visibility
+        if (window.privacyChat && window.privacyChat.toggleSendButton) {
+            window.privacyChat.toggleSendButton();
+        }
     }
     
     createDocumentCard(doc, canRemove = false) {
@@ -498,6 +503,11 @@ class DocumentAttachmentManager {
                 input.placeholder = 'Ask anything';
             }
         });
+        
+        // Toggle send button visibility
+        if (window.privacyChat && window.privacyChat.toggleSendButton) {
+            window.privacyChat.toggleSendButton();
+        }
     }
     
     showDocumentModal(filename, text) {

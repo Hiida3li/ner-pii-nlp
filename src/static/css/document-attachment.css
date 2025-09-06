@@ -41,7 +41,6 @@
 .input-box .chat-input {
     flex: 1;
     min-width: 200px;
-    padding-left: 12px;
 }
 
 /* Ensure send button is properly positioned */

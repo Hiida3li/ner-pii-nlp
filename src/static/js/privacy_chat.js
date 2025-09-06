@@ -127,10 +127,11 @@ class PrivacyChat {
             });
         }
         
-        // Auto-resize textarea - both inputs
+        // Auto-resize textarea and toggle send button - both inputs
         if (this.elements.chatInput) {
             this.elements.chatInput.addEventListener('input', () => {
                 this.autoResizeTextarea();
+                this.toggleSendButton();
             });
             // Also trigger on paste and cut events
             this.elements.chatInput.addEventListener('paste', () => {
@@ -144,6 +145,7 @@ class PrivacyChat {
         if (this.elements.chatInputBottom) {
             this.elements.chatInputBottom.addEventListener('input', () => {
                 this.autoResizeTextarea();
+                this.toggleSendButton();
             });
             // Also trigger on paste and cut events
             this.elements.chatInputBottom.addEventListener('paste', () => {
@@ -502,6 +504,28 @@ class PrivacyChat {
                 activeInput.dir = direction;
                 activeInput.style.textAlign = direction === 'rtl' ? 'right' : 'left';
                 activeInput.style.direction = direction;
+            }
+        }
+    }
+    
+    toggleSendButton() {
+        // Get active input and send button
+        let input = this.elements.chatInput;
+        let sendBtn = this.elements.sendBtn;
+        
+        if (!input || input.style.display === 'none' || input.offsetParent === null) {
+            input = this.elements.chatInputBottom;
+            sendBtn = this.elements.sendBtnBottom;
+        }
+        
+        if (input && sendBtn) {
+            const hasText = input.value.trim().length > 0;
+            const hasAttachment = document.querySelector('.attachment-preview') !== null;
+            
+            if (hasText || hasAttachment) {
+                sendBtn.classList.add('show');
+            } else {
+                sendBtn.classList.remove('show');
             }
         }
     }
