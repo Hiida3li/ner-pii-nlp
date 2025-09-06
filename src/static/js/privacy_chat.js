@@ -7,10 +7,9 @@ class PrivacyChat {
         this.sessionCounter = 1;
         this.currentSession = 1;
         this.sessions = {};
-        // Load privacy mode from localStorage or default to true
-        const storedPrivacyMode = localStorage.getItem('privacyMode');
-        this.privacyMode = storedPrivacyMode !== null ? storedPrivacyMode === 'true' : true;
-        console.log('Initialized privacy mode from storage:', this.privacyMode);
+        // Always start with privacy mode enabled (no localStorage)
+        this.privacyMode = true;
+        console.log('Initialized privacy mode:', this.privacyMode);
         this.isTyping = false;
         
         this.init();
@@ -430,6 +429,13 @@ class PrivacyChat {
                 this.autoResizeTextarea();
             }, 100);
         }
+        
+        // Refresh upload buttons after DOM changes
+        if (window.docAttachmentManager && window.docAttachmentManager.refreshUploadButtons) {
+            setTimeout(() => {
+                window.docAttachmentManager.refreshUploadButtons();
+            }, 150);
+        }
     }
     
     autoResizeTextarea() {
@@ -710,47 +716,79 @@ class PrivacyChat {
                                 maskedResponse += data.masked_chunk;
                                 unmaskedResponse += data.unmasked_chunk;
                                 
+                                // Store current entities if provided with chunk
+                                if (data.current_entities) {
+                                    responseEntities = data.current_entities;
+                                }
+                                
                                 // Update displayed content based on privacy mode
                                 const displayText = this.privacyMode ? maskedResponse : unmaskedResponse;
                                 if (assistantMessageContent) {
-                                    // Apply highlighting to placeholders if in privacy mode
+                                    // Apply highlighting during streaming for both modes
                                     if (this.privacyMode) {
+                                        // Highlight placeholders in masked mode
                                         assistantMessageContent.innerHTML = this.highlightPlaceholders(displayText);
                                     } else {
-                                        assistantMessageContent.textContent = displayText;
+                                        // Apply real-time highlighting for unmasked mode during streaming
+                                        assistantMessageContent.innerHTML = this.highlightStreamingEntities(displayText);
                                     }
                                 }
+                            
                                 
                             } else if (data.type === 'full_response') {
                                 // Handle full response with proper unmask
                                 maskedResponse = data.masked_response;
                                 unmaskedResponse = data.unmasked_response;
                                 
-                                // Update displayed content based on privacy mode but don't highlight yet
-                                // Wait for complete message with entity positions
+                                // Continue showing highlighted version during transition
                                 const displayText = this.privacyMode ? maskedResponse : unmaskedResponse;
                                 if (assistantMessageContent) {
-                                    // Temporarily show without highlighting - will be updated in 'complete' message
-                                    assistantMessageContent.textContent = displayText;
+                                    if (this.privacyMode) {
+                                        assistantMessageContent.innerHTML = this.highlightPlaceholders(displayText);
+                                    } else {
+                                        // Keep streaming highlights active
+                                        assistantMessageContent.innerHTML = this.highlightStreamingEntities(displayText);
+                                    }
                                 }
                                 
                             } else if (data.type === 'complete') {
                                 // Store response entities for later use
                                 responseEntities = data.response_entities || [];
+                                console.log('Complete message received with entities:', responseEntities);
+                                console.log('Number of entities:', responseEntities.length);
+                                console.log('Entities have unmasked positions?', responseEntities.length > 0 && responseEntities[0].unmasked_start !== undefined);
                                 
                                 // Add data attributes to assistant message for privacy toggle
                                 if (assistantMessageWrapper) {
+                                    // Store the plain text versions without HTML
+                                    // Use a safer approach to store entities - encode them first
+                                    const entitiesString = JSON.stringify(responseEntities);
+                                    
                                     assistantMessageWrapper.setAttribute('data-original', unmaskedResponse);
                                     assistantMessageWrapper.setAttribute('data-masked', maskedResponse);
-                                    assistantMessageWrapper.setAttribute('data-entities', JSON.stringify(responseEntities));
+                                    assistantMessageWrapper.setAttribute('data-entities', entitiesString);
                                     assistantMessageWrapper.setAttribute('data-role', 'assistant');
+                                    
+                                    // Verify what was stored
+                                    const storedEntities = assistantMessageWrapper.getAttribute('data-entities');
+                                    console.log('Entities string stored:', entitiesString);
+                                    console.log('Entities string retrieved:', storedEntities);
+                                    console.log('Are they equal?', entitiesString === storedEntities);
+                                    
+                                    console.log('Stored entities in DOM:', JSON.stringify(responseEntities));
+                                    console.log('Stored original text:', unmaskedResponse);
+                                    console.log('Stored masked text:', maskedResponse);
                                     
                                     // Final highlighting
                                     const finalDisplay = this.privacyMode ? maskedResponse : unmaskedResponse;
                                     if (this.privacyMode) {
+                                        console.log('Initial display: masked with placeholders');
                                         assistantMessageContent.innerHTML = this.highlightPlaceholders(finalDisplay);
                                     } else {
-                                        assistantMessageContent.innerHTML = this.highlightEntities(finalDisplay, responseEntities);
+                                        console.log('Initial display: unmasked with entity highlighting');
+                                        const highlightedContent = this.highlightEntities(finalDisplay, responseEntities);
+                                        console.log('Highlighted content sample:', highlightedContent ? highlightedContent.substring(0, 200) : 'empty');
+                                        assistantMessageContent.innerHTML = highlightedContent;
                                     }
                                 }
                             }
@@ -969,11 +1007,152 @@ class PrivacyChat {
         // Must have a number after the entity type to be a placeholder
         const placeholderRegex = /\b(Person|Location|Organization|Email|Phone|URL|CivilID|Passport|CreditCard|BankAccount)\d+\b/gi;
         
-        return text.replace(placeholderRegex, (match) => {
-            const baseType = match.replace(/\d+$/, '').toLowerCase();
-            const cssClass = this.getEntityCssClass(baseType);
-            return `<span class="pii-entity ${cssClass}">${match}</span>`;
+        // Use a map to track replacements to avoid double replacement
+        let highlightedText = text;
+        const matches = [];
+        let match;
+        
+        // First, collect all matches
+        while ((match = placeholderRegex.exec(text)) !== null) {
+            matches.push({
+                text: match[0],
+                index: match.index,
+                type: match[1].toLowerCase()
+            });
+        }
+        
+        // Sort matches by index in reverse order to replace from end to start
+        matches.sort((a, b) => b.index - a.index);
+        
+        // Replace each match
+        matches.forEach(m => {
+            const cssClass = this.getEntityCssClass(m.type);
+            const replacement = `<span class="pii-entity ${cssClass}">${m.text}</span>`;
+            highlightedText = highlightedText.substring(0, m.index) + 
+                            replacement + 
+                            highlightedText.substring(m.index + m.text.length);
         });
+        
+        return highlightedText;
+    }
+    
+    highlightStreamingEntities(text) {
+        // Provide real-time highlighting during streaming for common PII patterns
+        console.log('highlightStreamingEntities called with:', text);
+        
+        // Avoid processing if text already contains HTML spans to prevent double-highlighting
+        if (text.includes('<span class="pii-entity')) {
+            console.log('Text already contains highlights, skipping');
+            return text;
+        }
+        
+        let highlightedText = text;
+        
+        // Email pattern - most reliable
+        highlightedText = highlightedText.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, (match) => {
+            console.log('Highlighting email:', match);
+            return `<span class="pii-entity pii-email">${match}</span>`;
+        });
+        
+        // URL pattern
+        highlightedText = highlightedText.replace(/https?:\/\/[^\s]+/g, (match) => {
+            console.log('Highlighting URL:', match);
+            return `<span class="pii-entity pii-url">${match}</span>`;
+        });
+        
+        // Phone patterns - be more specific
+        highlightedText = highlightedText.replace(/\b(?:\+?1[-.]?)?\(?[2-9]\d{2}\)?[-.]?\d{3}[-.]?\d{4}\b/g, (match) => {
+            console.log('Highlighting US phone:', match);
+            return `<span class="pii-entity pii-phone">${match}</span>`;
+        });
+        
+        // International phone (more restrictive)
+        highlightedText = highlightedText.replace(/\+\d{1,3}[-\s]?\d{3,4}[-\s]?\d{3,4}[-\s]?\d{3,4}/g, (match) => {
+            console.log('Highlighting intl phone:', match);
+            return `<span class="pii-entity pii-phone">${match}</span>`;
+        });
+        
+        // Credit card pattern - be very specific
+        highlightedText = highlightedText.replace(/\b(?:4\d{3}|5[1-5]\d{2}|3[47]\d{2}|6011)[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b/g, (match) => {
+            console.log('Highlighting credit card:', match);
+            return `<span class="pii-entity pii-creditcard">${match}</span>`;
+        });
+        
+        // Names - VERY restrictive approach: only highlight when we're confident it's a name
+        // Look for patterns that are clearly First Name + Last Name with specific contexts
+        const namePatterns = [
+            // After contact/call/email context words
+            /\b(?:contact|call|email|reach|meet)\s+([A-Z][a-z]{2,}\s+[A-Z][a-z]{2,})\b/gi,
+            // After "I am" or "My name is"
+            /\b(?:I am|my name is|this is)\s+([A-Z][a-z]{2,}\s+[A-Z][a-z]{2,})\b/gi,
+            // After "Dear" in formal contexts
+            /\bDear\s+([A-Z][a-z]{2,}\s+[A-Z][a-z]{2,})\b/gi,
+            // Standalone names that are clearly in name context (very restrictive)
+            /\b([A-Z][a-z]{2,}\s+[A-Z][a-z]{2,})\s+(?:said|wrote|called|emailed|works|lives)\b/gi
+        ];
+        
+        namePatterns.forEach(pattern => {
+            highlightedText = highlightedText.replace(pattern, (fullMatch, nameMatch) => {
+                console.log('Highlighting contextual name:', nameMatch);
+                return fullMatch.replace(nameMatch, `<span class="pii-entity pii-person">${nameMatch}</span>`);
+            });
+        });
+        
+        // For standalone "FirstName LastName" patterns, be extremely careful
+        // Only if it's clearly isolated and follows name conventions
+        highlightedText = highlightedText.replace(/\b([A-Z][a-z]{2,}\s+[A-Z][a-z]{2,})(?=\s*[.!,]|\s*$|\s+(?:at|from|in|on|with)\b)/g, (match) => {
+            // Exclude common false positives
+            const excludeList = [
+                'New York', 'Los Angeles', 'San Francisco', 'Las Vegas', 'Salt Lake',
+                'Dear Sir', 'Thank You', 'Best Regards', 'Good Morning', 'Good Evening',
+                'Hello There', 'Nice Meeting', 'Great Job', 'Contact Us', 'Call Us',
+                'Email Us', 'Visit Us', 'Join Us', 'Follow Us', 'See You'
+            ];
+            
+            if (!excludeList.includes(match)) {
+                // Additional check: both words should be likely names (not common verbs/nouns)
+                const words = match.split(' ');
+                const commonNonNames = ['Contact', 'Email', 'Call', 'Visit', 'Hello', 'Thank', 'Best', 'Good', 'Nice', 'Great', 'Please', 'Can', 'Will', 'Should', 'Must', 'Have', 'Need'];
+                
+                if (!commonNonNames.includes(words[0])) {
+                    console.log('Highlighting standalone name:', match);
+                    return `<span class="pii-entity pii-person">${match}</span>`;
+                }
+            }
+            return match;
+        });
+        
+        // Arabic names - specific known names only
+        const arabicNames = ['محمد', 'أحمد', 'علي', 'حسن', 'حسين', 'فاطمة', 'عائشة', 'زينب', 'خالد', 'سعيد', 'عمر', 'يوسف', 'إبراهيم', 'مريم', 'نور', 'سارة'];
+        arabicNames.forEach(name => {
+            const regex = new RegExp(`\\b${name}\\b`, 'g');
+            highlightedText = highlightedText.replace(regex, (match) => {
+                console.log('Highlighting Arabic name:', match);
+                return `<span class="pii-entity pii-person">${match}</span>`;
+            });
+        });
+        
+        // Arabic locations
+        const arabicLocations = ['عمان', 'مسقط', 'صلالة', 'نزوى', 'صحار', 'السلطنة', 'الإمارات', 'السعودية', 'الكويت', 'البحرين', 'قطر'];
+        arabicLocations.forEach(location => {
+            const regex = new RegExp(`\\b${location}\\b`, 'g');
+            highlightedText = highlightedText.replace(regex, (match) => {
+                console.log('Highlighting Arabic location:', match);
+                return `<span class="pii-entity pii-location">${match}</span>`;
+            });
+        });
+        
+        // Arabic organizations
+        highlightedText = highlightedText.replace(/جمعية\s+[\u0600-\u06FF\s]+/g, (match) => {
+            console.log('Highlighting Arabic organization:', match);
+            return `<span class="pii-entity pii-organization">${match.trim()}</span>`;
+        });
+        
+        if (highlightedText !== text) {
+            console.log('Highlighting applied. Result:', highlightedText);
+        }
+        
+        return highlightedText;
     }
     
     escapeRegExp(str) {
@@ -1028,6 +1207,11 @@ class PrivacyChat {
         // Build the highlighted text - improved to handle entity boundaries
         let result = '';
         let i = 0;
+        let highlightCount = 0;
+        
+        console.log('Building highlighted text from highlights array');
+        console.log('Text length:', text.length);
+        console.log('Highlights array length:', highlights.length);
         
         while (i < text.length) {
             if (highlights[i]) {
@@ -1045,6 +1229,8 @@ class PrivacyChat {
                 
                 // Add the highlighted entity with direction class
                 result += `<span class="pii-entity ${entityInfo.cssClass} ${dirClass}">${entityText}</span>`;
+                highlightCount++;
+                console.log(`Added highlight #${highlightCount}: '${entityText}' with class '${entityInfo.cssClass}'`);
                 
                 // Skip to the end of this entity
                 i = entityEnd;
@@ -1063,7 +1249,8 @@ class PrivacyChat {
             }
         }
         
-        console.log('Final highlighted text:', result);
+        console.log('Final highlighted text with', highlightCount, 'highlights');
+        console.log('Result sample:', result.substring(0, 200));
         return result;
     }
     
@@ -1120,14 +1307,47 @@ class PrivacyChat {
     
     highlightEntities(text, entities) {
         // For unmasked AI responses - highlight actual entity values
-        console.log('Highlighting AI response entities in text:', text);
-        console.log('Available entities:', entities);
+        console.log('=== highlightEntities called ===');
+        console.log('Text to highlight:', text);
+        console.log('Number of entities:', entities ? entities.length : 0);
+        console.log('Entities:', JSON.stringify(entities, null, 2));
         
         if (!entities || entities.length === 0) {
+            console.log('No entities to highlight, returning plain text');
             return text;
         }
         
-        // Detect if the text is primarily RTL
+        // Use a more robust approach: replace all occurrences of each entity text
+        let highlightedText = text;
+        const replacements = new Map();
+        
+        // Process entities and create unique placeholders to avoid double replacement
+        entities.forEach((entity, index) => {
+            if (entity.text && entity.text !== entity.placeholder) {
+                const entityType = (entity.entity_type || entity.type || '').toLowerCase();
+                const cssClass = this.getEntityCssClass(entityType);
+                const placeholder = `__ENTITY_PLACEHOLDER_${index}__`;
+                replacements.set(placeholder, `<span class="pii-entity ${cssClass}">${entity.text}</span>`);
+                
+                // Replace all occurrences of this entity text with the placeholder
+                const regex = new RegExp(this.escapeRegExp(entity.text), 'g');
+                highlightedText = highlightedText.replace(regex, placeholder);
+                console.log(`Replaced all occurrences of '${entity.text}' with placeholder`);
+            }
+        });
+        
+        // Now replace all placeholders with highlighted spans
+        replacements.forEach((highlightedSpan, placeholder) => {
+            highlightedText = highlightedText.replace(new RegExp(placeholder, 'g'), highlightedSpan);
+        });
+        
+        console.log('Highlighting complete');
+        return highlightedText;
+    }
+    
+    // Simplified highlightEntities backup (removed complex position-based logic)
+    highlightEntitiesOld(text, entities) {
+        // Old implementation kept for reference but not used
         const isRTL = this.detectTextDirection(text) === 'rtl';
         
         // Create array to track which characters should be highlighted
@@ -1140,8 +1360,13 @@ class PrivacyChat {
             return aStart - bStart;
         });
         
+        console.log('Sorted entities by position:', sortedEntities);
+        
         // Process each entity
-        sortedEntities.forEach(entity => {
+        sortedEntities.forEach((entity, idx) => {
+            console.log(`\n--- Processing entity ${idx + 1}/${sortedEntities.length} ---`);
+            console.log('Entity:', entity);
+            
             if (entity.text && entity.text !== entity.placeholder) {
                 const entityType = (entity.entity_type || entity.type || '').toLowerCase();
                 const cssClass = this.getEntityCssClass(entityType);
@@ -1150,133 +1375,143 @@ class PrivacyChat {
                 const startPos = entity.unmasked_start !== undefined ? entity.unmasked_start : entity.start;
                 const endPos = entity.unmasked_end !== undefined ? entity.unmasked_end : entity.end;
                 
-                // Verify the text matches at this position
-                const actualText = text.substring(startPos, endPos);
+                console.log(`Using positions: start=${startPos}, end=${endPos}`);
+                console.log(`Text length: ${text.length}`);
                 
-                // Clean up entity text for comparison (remove markdown artifacts and extra spaces)
-                const cleanEntityText = entity.text
-                    .replace(/\*+/g, '')  // Remove all asterisks
-                    .replace(/\s+/g, ' ')  // Normalize spaces
-                    .trim();
-                const cleanActualText = actualText
-                    .replace(/\*+/g, '')  // Remove all asterisks
-                    .replace(/\s+/g, ' ')  // Normalize spaces
-                    .trim();
-                
-                console.log(`Checking entity at ${startPos}-${endPos}: expected '${entity.text}', found '${actualText}'`);
-                
-                // Accept match if either exact match or clean match
-                if (actualText === entity.text || cleanActualText === cleanEntityText) {
-                    // Mark all positions in this range with the entity info
-                    // Use priority to handle overlapping entities - later entities take precedence
-                    for (let i = startPos; i < endPos && i < text.length; i++) {
-                        highlights[i] = { 
-                            cssClass, 
-                            entityStart: startPos, 
-                            entityEnd: endPos, 
-                            entityText: entity.text,
-                            priority: Date.now() // Add timestamp for priority
-                        };
-                    }
-                    console.log(`✓ Marked '${entity.text}' at position ${startPos}-${endPos}`);
+                // Check if positions are within bounds
+                if (startPos < 0 || endPos > text.length || startPos >= endPos) {
+                    console.warn(`Invalid positions for entity '${entity.text}': start=${startPos}, end=${endPos}, text.length=${text.length}`);
+                    // Fall through to search logic below
                 } else {
-                    // Try to find the entity in the text if position is wrong
-                    console.warn(`Position mismatch for '${entity.text}', searching in text`);
+                    // Verify the text matches at this position
+                    const actualText = text.substring(startPos, endPos);
                     
-                    // Try multiple search strategies for entities with markdown
-                    const baseText = entity.text
-                        .replace(/\s*\*\s*\*/g, '')  // Remove " * *" pattern
-                        .replace(/\*+/g, '')          // Remove all remaining asterisks
-                        .replace(/\s+/g, ' ')         // Normalize spaces
+                    // Clean up entity text for comparison (remove markdown artifacts and extra spaces)
+                    const cleanEntityText = entity.text
+                        .replace(/\*+/g, '')  // Remove all asterisks
+                        .replace(/\s+/g, ' ')  // Normalize spaces
+                        .trim();
+                    const cleanActualText = actualText
+                        .replace(/\*+/g, '')  // Remove all asterisks
+                        .replace(/\s+/g, ' ')  // Normalize spaces
                         .trim();
                     
-                    console.log(`Base text after cleanup: '${baseText}'`);
+                    console.log(`Checking entity at ${startPos}-${endPos}: expected '${entity.text}', found '${actualText}'`);
                     
-                    const searchTerms = [
-                        baseText,                             // Clean base text
-                        baseText + '**',                      // With markdown bold
-                        '**' + baseText + '**',              // Wrapped in bold
-                        entity.text,                          // Original text as fallback
-                        entity.text.replace(/\s*\*\s*\*/g, '**')  // Convert " * *" to "**"
-                    ];
-                    
-                    let searchStart = 0;
-                    let foundCount = 0;
-                    let foundMatch = false;
-                    
-                    // Try each search term
-                    for (const searchTerm of searchTerms) {
-                        searchStart = 0;
-                        while (searchStart < text.length) {
-                            const pos = text.indexOf(searchTerm, searchStart);
-                            if (pos === -1) break;
-                            
-                            // Check word boundaries to avoid partial matches
-                            // This is especially important for Arabic text
-                            const beforeChar = pos > 0 ? text[pos - 1] : ' ';
-                            const afterChar = pos + searchTerm.length < text.length ? 
-                                text[pos + searchTerm.length] : ' ';
-                            
-                            // Check if this is a word boundary (space, punctuation, or different script)
-                            const isWordBoundary = (char) => {
-                                return /[\s\.,!?;:\-\"'()\[\]{}\/\\]/.test(char) || 
-                                       char === '\u200F' || // RTL mark
-                                       char === '\u200E' || // LTR mark
-                                       char === '\u061F' || // Arabic question mark
-                                       char === '\u060C' || // Arabic comma
-                                       char === '\u061B';   // Arabic semicolon
+                    // Accept match if either exact match or clean match
+                    if (actualText === entity.text || cleanActualText === cleanEntityText) {
+                        // Mark all positions in this range with the entity info
+                        // Use priority to handle overlapping entities - later entities take precedence
+                        for (let i = startPos; i < endPos && i < text.length; i++) {
+                            highlights[i] = { 
+                                cssClass, 
+                                entityStart: startPos, 
+                                entityEnd: endPos, 
+                                entityText: entity.text,
+                                priority: Date.now() // Add timestamp for priority
                             };
-                            
-                            // Only proceed if we have proper word boundaries
-                            // or if the characters before/after are from a different script
-                            const hasProperBoundaries = isWordBoundary(beforeChar) || isWordBoundary(afterChar) ||
-                                (this.detectTextDirection(beforeChar) !== this.detectTextDirection(searchTerm[0])) ||
-                                (this.detectTextDirection(afterChar) !== this.detectTextDirection(searchTerm[searchTerm.length - 1]));
-                            
-                            if (!hasProperBoundaries) {
-                                searchStart = pos + 1;
-                                continue;
-                            }
-                            
-                            // Check if this position overlaps with an already marked entity
-                            let hasOverlap = false;
-                            const entityLength = searchTerm.length;
-                            
-                            // More strict overlap checking - don't merge adjacent entities
-                            for (let i = pos; i < pos + entityLength && i < text.length; i++) {
-                                if (highlights[i] && highlights[i].entityText) {
-                                    // Check if this is truly the same entity or a different one
-                                    const existingEntity = highlights[i];
-                                    // If the new entity would extend beyond the existing one's boundaries,
-                                    // or if they have different start positions, they're different entities
-                                    if (existingEntity.entityStart !== pos || 
-                                        existingEntity.entityEnd !== pos + entityLength) {
-                                        hasOverlap = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            
-                            if (!hasOverlap) {
-                                // Mark this occurrence
-                                for (let i = pos; i < pos + entityLength && i < text.length; i++) {
-                                    highlights[i] = { 
-                                        cssClass, 
-                                        entityStart: pos, 
-                                        entityEnd: pos + entityLength, 
-                                        entityText: searchTerm,
-                                        priority: Date.now()
-                                    };
-                                }
-                                foundCount++;
-                                foundMatch = true;
-                                console.log(`✓ Found and marked occurrence ${foundCount} of '${searchTerm}' at position ${pos}`);
-                                break; // Only mark first occurrence for this term
-                            }
-                            searchStart = pos + searchTerm.length; // Skip past this occurrence instead of just +1
                         }
-                        if (foundMatch) break; // Stop if we found a match
+                        console.log(`✓ Marked '${entity.text}' at position ${startPos}-${endPos}`);
+                        return; // Continue to next entity
                     }
+                }
+                
+                // If we get here, position was wrong or out of bounds - try to find the entity in the text
+                console.warn(`Position mismatch or invalid for '${entity.text}', searching in text`);
+                
+                // Try multiple search strategies for entities with markdown
+                const baseText = entity.text
+                    .replace(/\s*\*\s*\*/g, '')  // Remove " * *" pattern
+                    .replace(/\*+/g, '')          // Remove all remaining asterisks
+                    .replace(/\s+/g, ' ')         // Normalize spaces
+                    .trim();
+                
+                console.log(`Base text after cleanup: '${baseText}'`);
+                
+                const searchTerms = [
+                    baseText,                             // Clean base text
+                    baseText + '**',                      // With markdown bold
+                    '**' + baseText + '**',              // Wrapped in bold
+                    entity.text,                          // Original text as fallback
+                    entity.text.replace(/\s*\*\s*\*/g, '**')  // Convert " * *" to "**"
+                ];
+                
+                let searchStart = 0;
+                let foundCount = 0;
+                let foundMatch = false;
+                
+                // Try each search term
+                for (const searchTerm of searchTerms) {
+                    searchStart = 0;
+                    while (searchStart < text.length) {
+                        const pos = text.indexOf(searchTerm, searchStart);
+                        if (pos === -1) break;
+                        
+                        // Check word boundaries to avoid partial matches
+                        // This is especially important for Arabic text
+                        const beforeChar = pos > 0 ? text[pos - 1] : ' ';
+                        const afterChar = pos + searchTerm.length < text.length ? 
+                            text[pos + searchTerm.length] : ' ';
+                        
+                        // Check if this is a word boundary (space, punctuation, or different script)
+                        const isWordBoundary = (char) => {
+                            return /[\s\.,!?;:\-\"'()\[\]{}\/\\]/.test(char) || 
+                                   char === '\u200F' || // RTL mark
+                                   char === '\u200E' || // LTR mark
+                                   char === '\u061F' || // Arabic question mark
+                                   char === '\u060C' || // Arabic comma
+                                   char === '\u061B';   // Arabic semicolon
+                        };
+                        
+                        // Only proceed if we have proper word boundaries
+                        // or if the characters before/after are from a different script
+                        const hasProperBoundaries = isWordBoundary(beforeChar) || isWordBoundary(afterChar) ||
+                            (this.detectTextDirection(beforeChar) !== this.detectTextDirection(searchTerm[0])) ||
+                            (this.detectTextDirection(afterChar) !== this.detectTextDirection(searchTerm[searchTerm.length - 1]));
+                        
+                        if (!hasProperBoundaries) {
+                            searchStart = pos + 1;
+                            continue;
+                        }
+                        
+                        // Check if this position overlaps with an already marked entity
+                        let hasOverlap = false;
+                        const entityLength = searchTerm.length;
+                        
+                        // More strict overlap checking - don't merge adjacent entities
+                        for (let i = pos; i < pos + entityLength && i < text.length; i++) {
+                            if (highlights[i] && highlights[i].entityText) {
+                                // Check if this is truly the same entity or a different one
+                                const existingEntity = highlights[i];
+                                // If the new entity would extend beyond the existing one's boundaries,
+                                // or if they have different start positions, they're different entities
+                                if (existingEntity.entityStart !== pos || 
+                                    existingEntity.entityEnd !== pos + entityLength) {
+                                    hasOverlap = true;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if (!hasOverlap) {
+                            // Mark this occurrence
+                            for (let i = pos; i < pos + entityLength && i < text.length; i++) {
+                                highlights[i] = { 
+                                    cssClass, 
+                                    entityStart: pos, 
+                                    entityEnd: pos + entityLength, 
+                                    entityText: searchTerm,
+                                    priority: Date.now()
+                                };
+                            }
+                            foundCount++;
+                            foundMatch = true;
+                            console.log(`✓ Found and marked occurrence ${foundCount} of '${searchTerm}' at position ${pos}`);
+                            break; // Only mark first occurrence for this term
+                        }
+                        searchStart = pos + searchTerm.length; // Skip past this occurrence instead of just +1
+                    }
+                    if (foundMatch) break; // Stop if we found a match
                 }
             }
         });
@@ -1284,6 +1519,11 @@ class PrivacyChat {
         // Build the highlighted text - improved to handle entity boundaries
         let result = '';
         let i = 0;
+        let highlightCount = 0;
+        
+        console.log('Building highlighted text from highlights array');
+        console.log('Text length:', text.length);
+        console.log('Highlights array length:', highlights.length);
         
         while (i < text.length) {
             if (highlights[i]) {
@@ -1301,6 +1541,8 @@ class PrivacyChat {
                 
                 // Add the highlighted entity with direction class
                 result += `<span class="pii-entity ${entityInfo.cssClass} ${dirClass}">${entityText}</span>`;
+                highlightCount++;
+                console.log(`Added highlight #${highlightCount}: '${entityText}' with class '${entityInfo.cssClass}'`);
                 
                 // Skip to the end of this entity
                 i = entityEnd;
@@ -1319,7 +1561,8 @@ class PrivacyChat {
             }
         }
         
-        console.log('Final highlighted text:', result);
+        console.log('Final highlighted text with', highlightCount, 'highlights');
+        console.log('Result sample:', result.substring(0, 200));
         return result;
     }
     
@@ -1418,122 +1661,111 @@ class PrivacyChat {
         
         // Update all user messages to show/hide original data
         console.log('Updating messages privacy view...');
+        
+        // Add no-animation class to prevent flicker during toggle
+        this.elements.chatMessages.classList.add('no-animation');
+        
+        // Update messages directly without delays or re-highlighting
         this.updateMessagesPrivacyView();
+        
+        // Remove no-animation class after a brief delay to re-enable animations for future highlights
+        setTimeout(() => {
+            this.elements.chatMessages.classList.remove('no-animation');
+        }, 50);
         
         console.log(`Privacy mode: ${this.privacyMode ? 'ON (Masked)' : 'OFF (Original data shown)'}`);
         
-        // Store the preference
-        localStorage.setItem('privacyMode', this.privacyMode ? 'true' : 'false');
+        // Removed localStorage to prevent caching issues
     }
     
+    
     updateMessagesPrivacyView() {
+        console.log('=== updateMessagesPrivacyView called, privacyMode:', this.privacyMode);
+        
         // Find all message wrappers that have privacy data
         const allMessages = this.elements.chatMessages.querySelectorAll('.message-wrapper[data-original]');
-        console.log('Found messages with privacy data:', allMessages.length);
+        console.log('Found', allMessages.length, 'messages to update');
         
-        allMessages.forEach((messageWrapper, index) => {
-            console.log(`Processing message ${index + 1}`);
+        allMessages.forEach((messageWrapper, idx) => {
             const role = messageWrapper.getAttribute('data-role');
-            const originalMessage = this.unescapeHtml(messageWrapper.getAttribute('data-original'));
-            const maskedMessage = this.unescapeHtml(messageWrapper.getAttribute('data-masked'));
-            const entitiesData = messageWrapper.getAttribute('data-entities');
             const messageContent = messageWrapper.querySelector('.message-content');
+            if (!messageContent) return;
             
-            // Check if message has attachment card
-            const attachmentElement = messageContent ? messageContent.querySelector('.message-attachments') : null;
+            const originalMessage = messageWrapper.getAttribute('data-original');
+            const maskedMessage = messageWrapper.getAttribute('data-masked');
+            const entitiesData = messageWrapper.getAttribute('data-entities');
             
-            if (role === 'user' && originalMessage && maskedMessage && messageContent) {
-                // Parse entities data if available
-                let entities = [];
+            console.log(`Processing message ${idx + 1}, role: ${role}`);
+            
+            // Get or create message-text element
+            let messageText = messageContent.querySelector('.message-text');
+            if (!messageText) {
+                messageText = document.createElement('div');
+                messageText.className = 'message-text';
+                messageContent.insertBefore(messageText, messageContent.firstChild);
+            }
+            
+            // Parse entities fresh every time (no caching)
+            let entities = [];
+            if (entitiesData && entitiesData !== 'undefined' && entitiesData !== 'null') {
                 try {
-                    entities = entitiesData ? JSON.parse(entitiesData) : [];
+                    entities = JSON.parse(entitiesData);
+                    console.log(`Message ${idx + 1} has ${entities.length} entities`);
                 } catch (e) {
-                    console.warn('Failed to parse entities data:', e);
+                    console.error('Error parsing entities for message', idx + 1, ':', e);
+                    console.error('Entity data was:', entitiesData);
+                    entities = [];
                 }
-                
-                // Preserve attachment card if it exists
-                let attachmentHtml = '';
-                if (attachmentElement) {
-                    attachmentHtml = attachmentElement.outerHTML;
-                    console.log('Preserving attachment card during privacy toggle');
-                }
-                
-                // Determine which message to show
-                const messageToShow = this.privacyMode ? maskedMessage : originalMessage;
-                console.log('Privacy mode:', this.privacyMode, 'Showing:', this.privacyMode ? 'masked' : 'original');
-                console.log('Original:', originalMessage);
-                console.log('Masked:', maskedMessage);
-                console.log('Entities:', entities);
-                
-                // Detect text direction for the current message
-                const textDirection = this.detectTextDirection(messageToShow);
-                const dirClass = textDirection === 'rtl' ? 'rtl' : 'ltr';
-                
-                // Create message data for highlighting
-                const messageData = {
-                    original: originalMessage,
-                    masked: maskedMessage,
-                    userMessage: true,
-                    userEntities: entities
-                };
-                
-                // Show and highlight content based on privacy mode
-                const contentToShow = this.privacyMode ? maskedMessage : originalMessage;
-                
-                let textHtml = '';
-                if (contentToShow && contentToShow.trim() !== '') {
+            }
+            
+            // Determine content to show based on privacy mode
+            const contentToShow = this.privacyMode ? maskedMessage : originalMessage;
+            
+            // Update text direction class
+            const textDirection = this.detectTextDirection(contentToShow);
+            messageText.className = `message-text ${textDirection === 'rtl' ? 'rtl' : 'ltr'}`;
+            
+            // Apply highlighting based on role and mode
+            if (role === 'assistant') {
+                if (this.privacyMode) {
+                    // Show masked version with placeholder highlighting
+                    console.log('Highlighting placeholders for masked assistant message');
+                    messageText.innerHTML = this.highlightPlaceholders(maskedMessage);
+                } else {
+                    // Show unmasked version with entity highlighting
+                    console.log('Highlighting entities for unmasked assistant message');
                     if (entities && entities.length > 0) {
-                        const highlightedContent = this.highlightUserMessage(contentToShow, entities, messageData);
-                        textHtml = `<div class="message-text ${dirClass}">${highlightedContent}</div>`;
+                        messageText.innerHTML = this.highlightEntities(originalMessage, entities);
                     } else {
-                        textHtml = `<div class="message-text ${dirClass}">${contentToShow}</div>`;
+                        console.log('No entities to highlight, showing plain text');
+                        messageText.textContent = originalMessage;
                     }
                 }
-                
-                // Rebuild message content with both text and attachment
-                messageContent.innerHTML = textHtml + attachmentHtml;
-                
-            } else if (role === 'assistant' && originalMessage && messageContent) {
-                // Handle assistant messages
-                const maskedMessage = this.unescapeHtml(messageWrapper.getAttribute('data-masked'));
-                let entities = [];
-                try {
-                    entities = entitiesData ? JSON.parse(entitiesData) : [];
-                } catch (e) {
-                    console.warn('Failed to parse entities data:', e);
-                }
-                
-                // Preserve attachment card if it exists (though less common for assistant)
-                let attachmentHtml = '';
-                if (attachmentElement) {
-                    attachmentHtml = attachmentElement.outerHTML;
-                }
-                
-                // Choose which version to show based on privacy mode
-                const messageToShow = this.privacyMode ? maskedMessage : originalMessage;
-                const textDirection = this.detectTextDirection(messageToShow);
-                const dirClass = textDirection === 'rtl' ? 'rtl' : 'ltr';
-                
-                let displayContent;
-                if (this.privacyMode) {
-                    // Show masked version with placeholders highlighted
-                    displayContent = this.highlightPlaceholders(maskedMessage);
+            } else if (role === 'user') {
+                // For user messages, highlight based on current mode
+                if (entities && entities.length > 0) {
+                    const messageData = {
+                        original: originalMessage,
+                        masked: maskedMessage,
+                        userMessage: true,
+                        userEntities: entities
+                    };
+                    messageText.innerHTML = this.highlightUserMessage(contentToShow, entities, messageData);
                 } else {
-                    // Show original with entities highlighted
-                    displayContent = this.highlightEntities(originalMessage, entities);
+                    messageText.textContent = contentToShow;
                 }
-                
-                let textHtml = `<div class="message-text ${dirClass}">${displayContent}</div>`;
-                
-                // Rebuild message content with both text and attachment
-                messageContent.innerHTML = textHtml + attachmentHtml;
+            } else {
+                // Unknown role, just show text
+                messageText.textContent = contentToShow;
             }
         });
+        
+        console.log('=== updateMessagesPrivacyView complete');
     }
     
     unescapeHtml(text) {
         if (!text) return text;
-        return text.replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+        return text.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
     }
     
     async resetChatEndpoint() {

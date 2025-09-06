@@ -471,54 +471,8 @@
     to { transform: rotate(360deg); }
 }
 
-/* Tooltip for upload button */
-.chat-upload-btn::before {
-    content: 'Upload document (PDF, DOCX, TXT, CSV)';
-    position: absolute;
-    bottom: calc(100% + 10px);
-    left: 50%;
-    transform: translateX(-50%) scale(0.9) translateY(5px);
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    z-index: 10000;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-}
-
-.chat-upload-btn::after {
-    content: '';
-    position: absolute;
-    bottom: calc(100% + 5px);
-    left: 50%;
-    transform: translateX(-50%) scale(0.9);
-    border: 5px solid transparent;
-    border-top-color: #1e293b;
-    opacity: 0;
-    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    z-index: 10000;
-}
-
-.chat-upload-btn:hover::before {
-    opacity: 1;
-    transform: translateX(-50%) scale(1) translateY(0);
-}
-
-.chat-upload-btn:hover::after {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-}
-
-.chat-upload-btn.uploading::before {
-    content: 'Processing...';
-    background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
-}
+/* Removed tooltip pseudo-elements to fix hover black line issue */
+/* Using native title attribute for better UX instead */
 
 /* Pulse animation for better visibility */
 @keyframes pulse-upload {
@@ -530,9 +484,7 @@
     }
 }
 
-.chat-upload-btn:not(.uploading):hover {
-    animation: pulse-upload 2s infinite;
-}
+/* Removed pulse animation on hover for cleaner UX */
 
 /* Success animation */
 @keyframes upload-success {

@@ -391,28 +391,17 @@
             border: 1px solid rgba(76, 139, 202, 0.2);
         }
 
-        .chat-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: #06b6d4;
-            transform: translateX(-100%);
-            transition: transform 0.2s;
-        }
+        /* Removed chat-item::before to prevent overlay issues */
 
         .chat-item:hover {
-            background: #3a4050;
-            transform: translateX(4px);
-            border-color: #505050;
+            background: rgba(76, 139, 202, 0.1);
+            border-color: rgba(76, 139, 202, 0.3);
         }
 
         .chat-item.active {
-            background: #3a4050;
+            background: rgba(76, 139, 202, 0.15);
             border-left: 4px solid #06b6d4;
-            border-color: #505050;
+            border-color: #06b6d4;
         }
 
 
@@ -883,6 +872,25 @@
             display: inline-block;
             vertical-align: baseline;
             line-height: inherit;
+            animation: fadeInHighlight 0.3s ease-in-out forwards;
+            opacity: 1; /* Ensure entities are visible by default */
+        }
+        
+        @keyframes fadeInHighlight {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Suppress animations during privacy toggle */
+        .no-animation .pii-entity {
+            animation: none !important;
+            transition: none !important;
         }
         
         /* Prevent text selection issues in mixed direction content */
@@ -923,13 +931,13 @@
             opacity: 0.7;
         }
 
-        /* PII Highlighting - Softer, more subtle styling */
+        /* PII Highlighting - Modern, elegant design */
         .pii-entity {
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 500;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
             display: inline-block;
-            margin: 0 2px;
+            margin: 0 3px;
             transition: all 0.2s ease;
             position: relative;
             background-clip: padding-box;
@@ -937,6 +945,10 @@
             white-space: nowrap;
             unicode-bidi: embed;
             direction: inherit;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            letter-spacing: 0.3px;
+            opacity: 1 !important; /* Force opacity to prevent disappearing */
         }
         
         /* RTL-specific adjustments for PII entities */
@@ -959,26 +971,14 @@
         }
         
         .pii-entity:hover {
-            transform: translateY(-1px);
-            filter: brightness(1.15);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px) scale(1.02);
+            filter: brightness(1.1) saturate(1.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10;
         }
         
-        /* Add subtle animation on first render */
-        @keyframes highlightFade {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        .pii-entity {
-            animation: highlightFade 0.3s ease-out;
-        }
+        /* Animation keyframe is already defined above as fadeInHighlight */
+        /* Removed duplicate animation and keyframe definition */
         
         /* Ensure good contrast in both light and dark contexts */
         .message.user .pii-entity {
@@ -989,142 +989,169 @@
             filter: brightness(0.95);
         }
 
-        /* Person entities - Soft Purple */
+        /* Person entities - Gradient Purple */
         .pii-person {
-            background: rgba(139, 92, 246, 0.2);
-            color: #8b5cf6;
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            font-weight: 500;
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.25), rgba(139, 92, 246, 0.15));
+            color: #9333ea;
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            font-weight: 600;
+            text-shadow: 0 0 1px rgba(147, 51, 234, 0.2);
         }
         
         .assistant .pii-person {
-            background: rgba(139, 92, 246, 0.15);
-            color: #a78bfa;
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.18), rgba(139, 92, 246, 0.1));
+            color: #a855f7;
+            border: 1px solid rgba(168, 85, 247, 0.15);
         }
 
-        /* Location entities - Soft Green */
+        /* Location entities - Gradient Emerald */
         .pii-location {
-            background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            font-weight: 500;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(34, 197, 94, 0.15));
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            font-weight: 600;
+            text-shadow: 0 0 1px rgba(16, 185, 129, 0.2);
         }
         
         .assistant .pii-location {
-            background: rgba(34, 197, 94, 0.15);
-            color: #4ade80;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(34, 197, 94, 0.1));
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.15);
         }
 
-        /* Organization entities - Soft Pink */
+        /* Organization entities - Gradient Rose */
         .pii-organization {
-            background: rgba(244, 114, 182, 0.2);
-            color: #ec4899;
-            border: 1px solid rgba(244, 114, 182, 0.3);
-            font-weight: 500;
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.25), rgba(251, 113, 133, 0.15));
+            color: #f43f5e;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            font-weight: 600;
+            text-shadow: 0 0 1px rgba(244, 63, 94, 0.2);
         }
         
         .assistant .pii-organization {
-            background: rgba(244, 114, 182, 0.15);
-            color: #f9a8d4;
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.18), rgba(251, 113, 133, 0.1));
+            color: #fb7185;
+            border: 1px solid rgba(251, 113, 133, 0.15);
         }
 
-        /* Email entities - Soft Blue */
+        /* Email entities - Gradient Sky Blue */
         .pii-email {
-            background: rgba(59, 130, 246, 0.2);
-            color: #3b82f6;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            font-weight: 500;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.25), rgba(56, 189, 248, 0.15));
+            color: #0ea5e9;
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            font-weight: 600;
+            text-shadow: 0 0 1px rgba(14, 165, 233, 0.2);
         }
         
         .assistant .pii-email {
-            background: rgba(59, 130, 246, 0.15);
-            color: #60a5fa;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(56, 189, 248, 0.1));
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.15);
         }
 
-        /* Phone entities - Soft Orange */
+        /* Phone entities - Gradient Amber */
         .pii-phone {
-            background: rgba(251, 146, 60, 0.2);
-            color: #fb923c;
-            border: 1px solid rgba(251, 146, 60, 0.3);
-            font-weight: 500;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(251, 191, 36, 0.15));
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            font-weight: 600;
+            text-shadow: 0 0 1px rgba(245, 158, 11, 0.2);
         }
         
         .assistant .pii-phone {
-            background: rgba(251, 146, 60, 0.15);
-            color: #fdba74;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(251, 191, 36, 0.1));
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.15);
         }
 
-        /* URL entities - Soft Teal */
+        /* URL entities - Gradient Indigo */
         .pii-url {
-            background: rgba(20, 184, 166, 0.2);
-            color: #14b8a6;
-            border: 1px solid rgba(20, 184, 166, 0.3);
-            font-weight: 500;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.25), rgba(99, 102, 241, 0.15));
+            color: #6366f1;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            font-weight: 600;
+            text-shadow: 0 0 1px rgba(79, 70, 229, 0.2);
         }
         
         .assistant .pii-url {
-            background: rgba(20, 184, 166, 0.15);
-            color: #2dd4bf;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.18), rgba(99, 102, 241, 0.1));
+            color: #818cf8;
+            border: 1px solid rgba(129, 140, 248, 0.15);
         }
 
-        /* Civil ID entities - Soft Indigo */
+        /* Civil ID entities - Gradient Teal */
         .pii-civilid {
-            background: rgba(99, 102, 241, 0.2);
-            color: #6366f1;
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            font-weight: 500;
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.25), rgba(20, 184, 166, 0.15));
+            color: #14b8a6;
+            border: 1px solid rgba(13, 148, 136, 0.2);
+            font-weight: 600;
+            text-shadow: 0 0 1px rgba(13, 148, 136, 0.2);
         }
         
         .assistant .pii-civilid {
-            background: rgba(99, 102, 241, 0.15);
-            color: #818cf8;
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.18), rgba(20, 184, 166, 0.1));
+            color: #2dd4bf;
+            border: 1px solid rgba(45, 212, 191, 0.15);
         }
 
-        /* Passport entities - Soft Red */
+        /* Passport entities - Gradient Crimson */
         .pii-passport {
-            background: rgba(248, 113, 113, 0.2);
-            color: #f87171;
-            border: 1px solid rgba(248, 113, 113, 0.3);
-            font-weight: 500;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.25), rgba(239, 68, 68, 0.15));
+            color: #dc2626;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            font-weight: 600;
+            text-shadow: 0 0 1px rgba(220, 38, 38, 0.2);
         }
         
         .assistant .pii-passport {
-            background: rgba(248, 113, 113, 0.15);
-            color: #fca5a5;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.18), rgba(239, 68, 68, 0.1));
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.15);
         }
 
-        /* Credit Card entities - Soft Yellow */
+        /* Credit Card entities - Gradient Gold */
         .pii-creditcard {
-            background: rgba(250, 204, 21, 0.2);
-            color: #eab308;
-            border: 1px solid rgba(250, 204, 21, 0.3);
-            font-weight: 500;
+            background: linear-gradient(135deg, rgba(217, 119, 6, 0.25), rgba(245, 158, 11, 0.15));
+            color: #d97706;
+            border: 1px solid rgba(217, 119, 6, 0.2);
+            font-weight: 600;
+            text-shadow: 0 0 1px rgba(217, 119, 6, 0.2);
         }
         
         .assistant .pii-creditcard {
-            background: rgba(250, 204, 21, 0.15);
-            color: #facc15;
+            background: linear-gradient(135deg, rgba(217, 119, 6, 0.18), rgba(245, 158, 11, 0.1));
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.15);
         }
 
-        /* Bank Account entities - Soft Cyan */
+        /* Bank Account entities - Gradient Slate */
         .pii-bankaccount {
-            background: rgba(6, 182, 212, 0.2);
-            color: #06b6d4;
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            font-weight: 500;
+            background: linear-gradient(135deg, rgba(71, 85, 105, 0.25), rgba(100, 116, 139, 0.15));
+            color: #475569;
+            border: 1px solid rgba(71, 85, 105, 0.2);
+            font-weight: 600;
+            text-shadow: 0 0 1px rgba(71, 85, 105, 0.2);
         }
         
         .assistant .pii-bankaccount {
-            background: rgba(6, 182, 212, 0.15);
-            color: #22d3ee;
+            background: linear-gradient(135deg, rgba(71, 85, 105, 0.18), rgba(100, 116, 139, 0.1));
+            color: #64748b;
+            border: 1px solid rgba(100, 116, 139, 0.15);
         }
 
+        /* Masked/Unknown entities - Gradient Violet */
         .pii-masked {
-            background: rgba(156, 163, 175, 0.15);
-            color: #9ca3af;
-            border: 1px solid rgba(156, 163, 175, 0.25);
-            font-style: italic;
-            font-weight: 400;
+            background: linear-gradient(135deg, rgba(109, 40, 217, 0.25), rgba(124, 58, 237, 0.15));
+            color: #7c3aed;
+            border: 1px solid rgba(109, 40, 217, 0.2);
+            font-weight: 600;
+            text-shadow: 0 0 1px rgba(109, 40, 217, 0.2);
+        }
+        
+        .assistant .pii-masked {
+            background: linear-gradient(135deg, rgba(109, 40, 217, 0.18), rgba(124, 58, 237, 0.1));
+            color: #8b5cf6;
+            border: 1px solid rgba(139, 92, 246, 0.15);
         }
 
         /* Input Area */
@@ -1537,27 +1564,8 @@
             animation: slideIn 0.3s ease;
         }
 
-        /* Tooltip */
-        [title] {
-            position: relative;
-        }
-
-        [title]:hover::after {
-            content: attr(title);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 0.25rem 0.5rem;
-            background: rgba(0,0,0,0.9);
-            color: #fff;
-            font-size: 0.75rem;
-            border-radius: 4px;
-            white-space: nowrap;
-            pointer-events: none;
-            z-index: 1000;
-            margin-bottom: 0.5rem;
-        }
+        /* Removed global tooltip to fix black overlay issues */
+        /* Using native browser tooltips instead */
         
         /* Additional icon improvements */
         .user-avatar {
@@ -1616,27 +1624,10 @@
         }
         
         /* Better hover effects for all interactive elements */
+        /* Removed button ripple effect to fix overlay issues */
         button {
             position: relative;
             overflow: hidden;
-        }
-        
-        button::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s;
-        }
-        
-        button:active::after {
-            width: 300px;
-            height: 300px;
         }
         
         /* Smooth icon transitions */
@@ -1740,7 +1731,7 @@
         <div class="main-chat">
             <!-- Chat Header with Privacy Toggle -->
             <div class="chat-header">
-                <button type="button" class="privacy-toggle active" id="privacy-toggle" aria-label="Toggle privacy mode" onclick="handlePrivacyToggle(event)">
+                <button type="button" class="privacy-toggle active" id="privacy-toggle" aria-label="Toggle privacy mode">
                     <div class="privacy-toggle-slider">
                         <svg class="lock-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
                             <rect class="lock-body" x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/>
@@ -1836,7 +1827,7 @@
     <link rel="stylesheet" href="/static/css/document-attachment.css?v=6">
     <link rel="stylesheet" href="/static/css/attachment-text-fix.css?v=1">
     <script src="/static/js/entity-dictionary.js"></script>
-    <script src="/static/js/privacy_chat.js?v=9"></script>
+    <script src="/static/js/privacy_chat.js?v=18"></script>
     <script src="/static/js/document-attachment-manager.js?v=9"></script>
     <script>
         // Global function to close document modal
@@ -1916,59 +1907,6 @@
             }
         });
         
-        // Global function for privacy toggle
-        function handlePrivacyToggle(event) {
-            if (event) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            
-            console.log('=== Privacy Toggle Clicked (Direct onclick) ===');
-            
-            const button = document.getElementById('privacy-toggle');
-            const lockIcon = button ? button.querySelector('.lock-icon') : null;
-            const unlockIcon = button ? button.querySelector('.unlock-icon') : null;
-            
-            // Try to use the app's toggle function
-            if (window.privacyChat && typeof window.privacyChat.togglePrivacyMode === 'function') {
-                console.log('Using app togglePrivacyMode');
-                window.privacyChat.togglePrivacyMode();
-            } else {
-                console.log('Using manual toggle');
-                // Manual toggle
-                if (button) {
-                    const isActive = button.classList.contains('active');
-                    
-                    if (isActive) {
-                        button.classList.remove('active');
-                        if (lockIcon) lockIcon.style.display = 'none';
-                        if (unlockIcon) unlockIcon.style.display = 'block';
-                        localStorage.setItem('privacyMode', 'false');
-                        console.log('Privacy mode OFF');
-                    } else {
-                        button.classList.add('active');
-                        if (lockIcon) lockIcon.style.display = 'block';
-                        if (unlockIcon) unlockIcon.style.display = 'none';
-                        localStorage.setItem('privacyMode', 'true');
-                        console.log('Privacy mode ON');
-                    }
-                    
-                    // Update all messages if they exist
-                    const messages = document.querySelectorAll('.message-wrapper[data-original]');
-                    messages.forEach(msg => {
-                        const original = msg.getAttribute('data-original');
-                        const masked = msg.getAttribute('data-masked');
-                        const content = msg.querySelector('.message-text');
-                        
-                        if (content && original && masked) {
-                            const shouldMask = button.classList.contains('active');
-                            content.textContent = shouldMask ? masked : original;
-                        }
-                    });
-                }
-            }
-        }
-        
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Privacy toggle setup complete');
@@ -1985,16 +1923,6 @@
                     parent = parent.parentElement;
                 }
                 
-                // Add multiple event listeners as backup
-                button.addEventListener('mousedown', function(e) {
-                    console.log('Mousedown detected on privacy toggle');
-                    handlePrivacyToggle(e);
-                });
-                
-                button.addEventListener('touchstart', function(e) {
-                    console.log('Touch detected on privacy toggle');
-                    handlePrivacyToggle(e);
-                });
                 
                 // Test if button is actually clickable
                 const rect = button.getBoundingClientRect();

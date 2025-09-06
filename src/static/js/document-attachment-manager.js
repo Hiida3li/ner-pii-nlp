@@ -30,12 +30,12 @@ class DocumentAttachmentManager {
         
         // Add upload button to both input areas
         const inputBoxes = document.querySelectorAll('.input-box');
-        // console.log('Found input boxes:', inputBoxes.length);
+        console.log('Found input boxes:', inputBoxes.length);
         
         inputBoxes.forEach((box, index) => {
             // Check if button already exists
             if (box.querySelector('.chat-upload-btn')) {
-                // console.log('Upload button already exists in box', index);
+                console.log('Upload button already exists in box', index);
                 return;
             }
             
@@ -81,6 +81,50 @@ class DocumentAttachmentManager {
                 await this.attachDocument(e.target.files[0]);
                 e.target.value = ''; // Reset
             }
+        });
+    }
+    
+    // Method to refresh upload buttons (useful after DOM changes like clearing chat)
+    refreshUploadButtons() {
+        console.log('Refreshing upload buttons...');
+        const inputBoxes = document.querySelectorAll('.input-box');
+        console.log('Found input boxes for refresh:', inputBoxes.length);
+        
+        inputBoxes.forEach((box, index) => {
+            // Check if button already exists
+            if (box.querySelector('.chat-upload-btn')) {
+                console.log('Upload button already exists in box', index);
+                return;
+            }
+            
+            const uploadBtn = document.createElement('button');
+            uploadBtn.className = 'chat-upload-btn';
+            uploadBtn.type = 'button';
+            uploadBtn.title = 'Upload a document';
+            uploadBtn.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 18C4.79086 18 3 16.2091 3 14C3 11.7909 4.79086 10 7 10C7.16652 10 7.33073 10.0106 7.49173 10.0311M16.4917 10.0311C16.6607 10.0106 16.8335 10 17 10C19.2091 10 21 11.7909 21 14C21 16.2091 19.2091 18 17 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 14V7M12 7L9 10M12 7L15 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="14" r="7" stroke="currentColor" stroke-width="0.5" stroke-dasharray="1 1" opacity="0.3"/>
+                </svg>
+                <div class="upload-progress"></div>
+            `;
+            
+            uploadBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Upload button clicked (refreshed)');
+                document.getElementById('doc-upload').click();
+            });
+            
+            // Insert button as the first element (before textarea)
+            const textarea = box.querySelector('textarea');
+            if (textarea) {
+                box.insertBefore(uploadBtn, textarea);
+            } else {
+                box.insertBefore(uploadBtn, box.firstChild);
+            }
+            console.log('Added upload button to box', index, 'during refresh');
         });
     }
     
