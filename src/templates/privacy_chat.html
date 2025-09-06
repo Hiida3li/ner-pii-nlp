@@ -1312,18 +1312,18 @@
         }
 
         .send-btn {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: #3a4050;
             border: none;
             color: white;
             cursor: pointer;
-            border-radius: 12px;
+            border-radius: 10px;
             transition: all 0.3s ease;
             display: none;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             flex-shrink: 0;
             align-self: center;
             margin: 0 0 0 0.5rem;
@@ -1354,7 +1354,7 @@
         }
         
         .send-btn:hover .send-icon {
-            transform: translateX(2px);
+            transform: rotate(-90deg) scale(1.05);
         }
         
         .send-btn:hover .send-arrow {
@@ -1374,7 +1374,7 @@
         }
         
         .send-btn:active .send-icon {
-            transform: translateX(4px) scale(0.95);
+            transform: rotate(-90deg) scale(0.95);
         }
         
         .send-btn:active {
@@ -1844,9 +1844,8 @@
                                     rows="1"
                                 ></textarea>
                                 <button class="send-btn" id="send-btn">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="send-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="send-icon" style="transform: rotate(-90deg);">
                                         <path class="send-arrow" d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor"/>
-                                        <path class="send-trail" d="M2 21L23 12L2 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
                                     </svg>
                                 </button>
                             </div>
@@ -1866,9 +1865,8 @@
                             rows="1"
                         ></textarea>
                         <button class="send-btn" id="send-btn-bottom">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="send-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="send-icon" style="transform: rotate(-90deg);">
                                 <path class="send-arrow" d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor"/>
-                                <path class="send-trail" d="M2 21L23 12L2 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
                             </svg>
                         </button>
                     </div>
