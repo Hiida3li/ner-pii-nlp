@@ -387,7 +387,7 @@ class PrivacyChat {
                             <textarea 
                                 class="chat-input" 
                                 id="chat-input" 
-                                placeholder="Send a message..."
+                                placeholder="Ask anything"
                                 rows="1"
                             ></textarea>
                             <button class="send-btn" id="send-btn">

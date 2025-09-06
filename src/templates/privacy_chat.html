@@ -793,26 +793,28 @@
         .message-content {
             max-width: 100%;
             word-wrap: break-word;
+            position: relative;
+            transition: all 0.3s ease;
         }
         
         .user .message-content {
-            background: #3a4050;
+            background: linear-gradient(135deg, #3a4050 0%, #444a5e 100%);
             color: white;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(76, 139, 202, 0.3);
             padding: 1.25rem 1.5rem;
-            border-radius: 18px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), 0 0 20px rgba(76, 139, 202, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
         }
         
         .assistant .message-content {
-            background: #2b2b2b;
+            background: linear-gradient(135deg, #2b2b2b 0%, #323636 100%);
             color: #e5e7eb;
             padding: 1.25rem 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 18px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(132, 109, 206, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), 0 0 20px rgba(132, 109, 206, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
         }
         
         .message-text {
@@ -1231,23 +1233,25 @@
         }
 
         .input-box {
-            background: #3a4050;
-            border: 2px solid rgba(76, 139, 202, 0.2);
-            border-radius: 16px;
-            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #3a4050 0%, #434859 100%);
+            border: 2px solid rgba(76, 139, 202, 0.25);
+            border-radius: 20px;
+            padding: 0.75rem 1.25rem;
             display: flex;
             align-items: flex-end;
             gap: 0.75rem;
-            transition: all 0.2s;
-            backdrop-filter: blur(10px);
-            min-height: 56px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(15px);
+            min-height: 60px;
             position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
         .input-box:focus-within {
-            border-color: rgba(76, 139, 202, 0.3);
-            background: #3a4050;
-            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+            border-color: rgba(76, 139, 202, 0.4);
+            background: linear-gradient(135deg, #3e4456 0%, #474d5f 100%);
+            box-shadow: 0 6px 25px rgba(76, 139, 202, 0.2), 0 0 40px rgba(76, 139, 202, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transform: translateY(-1px);
         }
 
         .chat-input {
@@ -1820,7 +1824,7 @@
                                 <textarea 
                                     class="chat-input" 
                                     id="chat-input" 
-                                    placeholder="Send a message..."
+                                    placeholder="Ask anything"
                                     rows="1"
                                 ></textarea>
                                 <button class="send-btn" id="send-btn">
@@ -1842,7 +1846,7 @@
                         <textarea 
                             class="chat-input" 
                             id="chat-input-bottom" 
-                            placeholder="Send a message..."
+                            placeholder="Ask anything"
                             rows="1"
                         ></textarea>
                         <button class="send-btn" id="send-btn-bottom">

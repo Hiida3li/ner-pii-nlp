@@ -302,8 +302,8 @@ class DocumentAttachmentManager {
             if (textarea) {
                 // Insert preview inside input box
                 inputBox.appendChild(preview);
-                // Adjust textarea padding to accommodate the square attachment
-                textarea.style.paddingLeft = '80px';
+                // Adjust textarea padding to accommodate the attachment beside upload button
+                textarea.style.paddingLeft = '150px';
             }
         });
     }

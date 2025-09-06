@@ -1,19 +1,21 @@
 /* Document Attachment Styles - Simple Design */
 
-/* Upload Button Styles */
+/* Upload Button Styles - Enhanced Design */
 .chat-upload-btn {
-    width: 40px;
-    height: 40px;
-    background: transparent;
-    border: none;
-    color: #9ca3af;
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
+    border: 1.5px solid rgba(139, 92, 246, 0.2);
+    color: #a78bfa;
     cursor: pointer;
-    border-radius: 12px;
-    transition: all 0.2s;
+    border-radius: 14px;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.1);
 }
 
 /* Ensure proper alignment in input box */
@@ -28,17 +30,22 @@
 }
 
 .chat-upload-btn:hover {
-    background: rgba(124, 58, 237, 0.1);
-    color: #7c3aed;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(124, 58, 237, 0.15) 100%);
+    border-color: rgba(139, 92, 246, 0.35);
+    color: #8b5cf6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25), 0 0 20px rgba(139, 92, 246, 0.15);
 }
 
 .chat-upload-btn:hover svg {
-    transform: scale(1.1);
-    filter: drop-shadow(0 2px 4px rgba(124, 58, 237, 0.3));
+    transform: scale(1.15) rotate(5deg);
+    filter: drop-shadow(0 3px 6px rgba(124, 58, 237, 0.4));
 }
 
 .chat-upload-btn:active {
-    background: rgba(124, 58, 237, 0.2);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(124, 58, 237, 0.2) 100%);
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
 }
 
 .chat-upload-btn.uploading {
@@ -93,20 +100,22 @@
 .document-attachment-card {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
+    gap: 10px;
+    padding: 8px 12px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 10px;
-    margin: 6px 0;
-    max-width: 220px;
+    border-radius: 14px;
+    margin: 8px 0;
+    max-width: 240px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.15);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .document-attachment-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35), 0 0 25px rgba(102, 126, 234, 0.15);
+    background: linear-gradient(135deg, #7389ef 0%, #8054a7 100%);
 }
 
 /* Card styling when inside a message bubble */
@@ -137,14 +146,15 @@
 }
 
 .doc-icon-wrapper {
-    width: 32px;
-    height: 32px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Smaller icon for attachments inside messages */
@@ -172,13 +182,14 @@
 }
 
 .doc-filename {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     color: white;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    margin-bottom: 1px;
+    margin-bottom: 2px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* Filename styling inside messages */
@@ -208,21 +219,25 @@
 }
 
 .remove-doc-btn {
-    width: 24px;
-    height: 24px;
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    border-radius: 6px;
+    width: 26px;
+    height: 26px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 .remove-doc-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.8) 0%, rgba(220, 38, 38, 0.6) 100%);
+    border-color: rgba(239, 68, 68, 0.5);
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
 
 /* Hide remove button for attachments inside messages */
@@ -236,12 +251,12 @@
     color: white;
 }
 
-/* Attachment preview in input area - COMPACT SQUARE */
+/* Attachment preview in input area - Positioned beside upload button */
 .attachment-preview {
     position: absolute !important;
-    left: 8px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
+    left: 60px !important;
+    bottom: 8px !important;
+    transform: none !important;
     z-index: 10 !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -252,9 +267,9 @@
 
 .input-box .attachment-preview {
     position: absolute !important;
-    left: 8px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
+    left: 60px !important;
+    bottom: 8px !important;
+    transform: none !important;
     z-index: 10 !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -274,25 +289,26 @@
     flex-direction: column !important;
     margin: 0 !important;
     padding: 6px !important;
-    background: rgba(139, 92, 246, 0.15) !important;
-    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(124, 58, 237, 0.1) 100%) !important;
+    border: 1.5px solid rgba(139, 92, 246, 0.35) !important;
     width: 65px !important;
-    height: 65px !important;
-    gap: 3px !important;
-    border-radius: 8px !important;
+    height: 44px !important;
+    gap: 2px !important;
+    border-radius: 10px !important;
     align-items: center !important;
     justify-content: center !important;
-    box-shadow: 0 1px 3px rgba(139, 92, 246, 0.2) !important;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
     font-size: 10px !important;
+    transition: all 0.3s ease !important;
 }
 
 .input-box .attachment-preview .doc-icon-wrapper,
 .attachment-preview .doc-icon-wrapper {
-    width: 24px !important;
-    height: 24px !important;
-    min-width: 24px !important;
-    background: rgba(139, 92, 246, 0.25) !important;
-    border-radius: 4px !important;
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    background: rgba(139, 92, 246, 0.3) !important;
+    border-radius: 6px !important;
     padding: 0 !important;
     display: flex !important;
     align-items: center !important;
@@ -301,8 +317,9 @@
 
 .input-box .attachment-preview .doc-icon-wrapper svg,
 .attachment-preview .doc-icon-wrapper svg {
-    width: 14px !important;
-    height: 14px !important;
+    width: 12px !important;
+    height: 12px !important;
+    color: #8b5cf6 !important;
 }
 
 .input-box .attachment-preview .doc-info,
@@ -443,8 +460,23 @@
     }
 }
 
+@keyframes slideInFromLeft {
+    from {
+        transform: translateX(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
 .document-attachment-card {
     animation: slideInFromBottom 0.3s ease;
+}
+
+.attachment-preview .document-attachment-card {
+    animation: slideInFromLeft 0.4s ease !important;
 }
 
 /* Loading state for document upload */
