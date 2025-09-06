@@ -1039,8 +1039,12 @@ class PrivacyChat {
                 // Extract the exact entity text
                 const entityText = text.substring(entityStart, entityEnd);
                 
-                // Add the highlighted entity
-                result += `<span class="pii-entity ${entityInfo.cssClass}">${entityText}</span>`;
+                // Detect direction of the entity text itself
+                const entityDirection = this.detectTextDirection(entityText);
+                const dirClass = entityDirection === 'rtl' ? 'rtl-entity' : 'ltr-entity';
+                
+                // Add the highlighted entity with direction class
+                result += `<span class="pii-entity ${entityInfo.cssClass} ${dirClass}">${entityText}</span>`;
                 
                 // Skip to the end of this entity
                 i = entityEnd;
@@ -1123,6 +1127,9 @@ class PrivacyChat {
             return text;
         }
         
+        // Detect if the text is primarily RTL
+        const isRTL = this.detectTextDirection(text) === 'rtl';
+        
         // Create array to track which characters should be highlighted
         const highlights = new Array(text.length).fill(null);
         
@@ -1204,6 +1211,33 @@ class PrivacyChat {
                             const pos = text.indexOf(searchTerm, searchStart);
                             if (pos === -1) break;
                             
+                            // Check word boundaries to avoid partial matches
+                            // This is especially important for Arabic text
+                            const beforeChar = pos > 0 ? text[pos - 1] : ' ';
+                            const afterChar = pos + searchTerm.length < text.length ? 
+                                text[pos + searchTerm.length] : ' ';
+                            
+                            // Check if this is a word boundary (space, punctuation, or different script)
+                            const isWordBoundary = (char) => {
+                                return /[\s\.,!?;:\-\"'()\[\]{}\/\\]/.test(char) || 
+                                       char === '\u200F' || // RTL mark
+                                       char === '\u200E' || // LTR mark
+                                       char === '\u061F' || // Arabic question mark
+                                       char === '\u060C' || // Arabic comma
+                                       char === '\u061B';   // Arabic semicolon
+                            };
+                            
+                            // Only proceed if we have proper word boundaries
+                            // or if the characters before/after are from a different script
+                            const hasProperBoundaries = isWordBoundary(beforeChar) || isWordBoundary(afterChar) ||
+                                (this.detectTextDirection(beforeChar) !== this.detectTextDirection(searchTerm[0])) ||
+                                (this.detectTextDirection(afterChar) !== this.detectTextDirection(searchTerm[searchTerm.length - 1]));
+                            
+                            if (!hasProperBoundaries) {
+                                searchStart = pos + 1;
+                                continue;
+                            }
+                            
                             // Check if this position overlaps with an already marked entity
                             let hasOverlap = false;
                             const entityLength = searchTerm.length;
@@ -1261,8 +1295,12 @@ class PrivacyChat {
                 // Extract the exact entity text
                 const entityText = text.substring(entityStart, entityEnd);
                 
-                // Add the highlighted entity
-                result += `<span class="pii-entity ${entityInfo.cssClass}">${entityText}</span>`;
+                // Detect direction of the entity text itself
+                const entityDirection = this.detectTextDirection(entityText);
+                const dirClass = entityDirection === 'rtl' ? 'rtl-entity' : 'ltr-entity';
+                
+                // Add the highlighted entity with direction class
+                result += `<span class="pii-entity ${entityInfo.cssClass} ${dirClass}">${entityText}</span>`;
                 
                 // Skip to the end of this entity
                 i = entityEnd;
