@@ -12,6 +12,17 @@ class PrivacyChat {
         console.log('Initialized privacy mode:', this.privacyMode);
         this.isTyping = false;
         
+        // Array of creative greeting messages
+        this.greetings = [
+            "What's today's adventure? Shall we make some magic happen?",
+            "Tell me, what's the mission briefing?",
+            "Who's in charge today—you or me?",
+            "What puzzle are we solving first?",
+            "What's the headline of your day?",
+            "Ready to dive in, or should we just float around?",
+            "Should we start with brilliance or chaos?"
+        ];
+        
         this.init();
     }
     
@@ -328,7 +339,16 @@ class PrivacyChat {
         this.updateSessionList();
     }
     
+    getRandomGreeting() {
+        // Select a random greeting from the array
+        const randomIndex = Math.floor(Math.random() * this.greetings.length);
+        return this.greetings[randomIndex];
+    }
+    
     clearChat() {
+        // Get a random greeting for this session
+        const greeting = this.getRandomGreeting();
+        
         this.elements.chatMessages.innerHTML = `
             <div class="welcome-screen" id="welcome-screen">
                 <div class="robot-wrapper">
@@ -344,7 +364,7 @@ class PrivacyChat {
                     </div>
                 </div>
                 <p class="welcome-subtitle">
-                    Good to see you! How can I help?
+                    ${greeting}
                 </p>
                 
                 <!-- Centered Input Area -->
