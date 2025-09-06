@@ -1317,32 +1317,53 @@ class PrivacyChat {
             return text;
         }
         
-        // Use a more robust approach: replace all occurrences of each entity text
-        let highlightedText = text;
-        const replacements = new Map();
+        // Sort entities by length (longest first) to prevent substring issues
+        const sortedEntities = [...entities].sort((a, b) => {
+            const aLen = (a.text || '').length;
+            const bLen = (b.text || '').length;
+            return bLen - aLen;
+        });
         
-        // Process entities and create unique placeholders to avoid double replacement
-        entities.forEach((entity, index) => {
+        // Create a map to track replacements
+        const replacementMap = new Map();
+        let workingText = text;
+        
+        // Process each entity
+        sortedEntities.forEach((entity, index) => {
             if (entity.text && entity.text !== entity.placeholder) {
                 const entityType = (entity.entity_type || entity.type || '').toLowerCase();
                 const cssClass = this.getEntityCssClass(entityType);
-                const placeholder = `__ENTITY_PLACEHOLDER_${index}__`;
-                replacements.set(placeholder, `<span class="pii-entity ${cssClass}">${entity.text}</span>`);
+                const tempMarker = `__ENTITY_${index}_${Date.now()}__`;
                 
-                // Replace all occurrences of this entity text with the placeholder
-                const regex = new RegExp(this.escapeRegExp(entity.text), 'g');
-                highlightedText = highlightedText.replace(regex, placeholder);
-                console.log(`Replaced all occurrences of '${entity.text}' with placeholder`);
+                // Create regex with word boundaries for Arabic and English
+                // Arabic doesn't use \b word boundaries, so we use lookahead/lookbehind
+                const escapedText = this.escapeRegExp(entity.text);
+                
+                // Pattern that works for both Arabic and English with proper boundaries
+                const pattern = `(?<![\\u0600-\\u06FF\\u0750-\\u077F\\w])${escapedText}(?![\\u0600-\\u06FF\\u0750-\\u077F\\w])`;
+                const regex = new RegExp(pattern, 'gu');
+                
+                // Store the replacement
+                replacementMap.set(tempMarker, `<span class="pii-entity ${cssClass}">${entity.text}</span>`);
+                
+                // Replace with temporary marker
+                const matches = workingText.match(regex);
+                if (matches) {
+                    workingText = workingText.replace(regex, tempMarker);
+                    console.log(`Replaced ${matches.length} occurrence(s) of '${entity.text}' with marker ${tempMarker}`);
+                } else {
+                    console.log(`No matches found for '${entity.text}'`);
+                }
             }
         });
         
-        // Now replace all placeholders with highlighted spans
-        replacements.forEach((highlightedSpan, placeholder) => {
-            highlightedText = highlightedText.replace(new RegExp(placeholder, 'g'), highlightedSpan);
+        // Replace all temporary markers with actual highlighted spans
+        replacementMap.forEach((highlightedSpan, marker) => {
+            workingText = workingText.replace(new RegExp(marker, 'g'), highlightedSpan);
         });
         
         console.log('Highlighting complete');
-        return highlightedText;
+        return workingText;
     }
     
     // Simplified highlightEntities backup (removed complex position-based logic)

@@ -1027,7 +1027,12 @@ async def get_supported_formats():
 async def privacy_chat_page(request: Request):
     """Privacy chat interface"""
     logger.info("Privacy chat page accessed")
-    return templates.TemplateResponse("privacy_chat.html", {"request": request})
+    response = templates.TemplateResponse("privacy_chat.html", {"request": request})
+    # Add no-cache headers to prevent browser caching
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 
 @app.post("/api/privacy-chat", response_model=PrivacyChatResponse)
