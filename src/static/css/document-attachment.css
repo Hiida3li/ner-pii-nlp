@@ -15,6 +15,8 @@
     justify-content: center;
     flex-shrink: 0;
     position: relative;
+    align-self: center;
+    margin-bottom: 0;
 }
 
 /* Upload button when document is attached */
@@ -26,22 +28,27 @@
 /* Ensure proper alignment in input box */
 .input-box .chat-upload-btn {
     flex-shrink: 0;
+    align-self: center;
+    margin: 0 8px 0 0;
 }
 
 .input-box .attachment-preview {
     flex-shrink: 0;
+    align-self: center;
 }
 
 /* Ensure textarea is properly positioned */
 .input-box .chat-input {
     flex: 1;
     min-width: 200px;
+    padding-left: 12px;
 }
 
 /* Ensure send button is properly positioned */
 .input-box .send-btn {
     flex-shrink: 0;
     margin-left: 0.5rem;
+    align-self: center;
 }
 
 /* Input box with attachment - dynamic width */
@@ -276,8 +283,9 @@
 .attachment-preview {
     display: inline-flex;
     align-items: center;
-    margin: 0 8px;
+    margin: 0 8px 0 0;
     animation: fadeIn 0.3s ease;
+    align-self: center;
 }
 
 @keyframes fadeIn {
