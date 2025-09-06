@@ -79,6 +79,24 @@
         .sidebar-toggle svg {
             width: 20px;
             height: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-toggle.active svg {
+            transform: rotate(90deg);
+        }
+        
+        .sidebar-toggle .menu-bar {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
+        }
+        
+        .sidebar-toggle:hover .menu-bar-1 {
+            transform: translateY(-2px);
+        }
+        
+        .sidebar-toggle:hover .menu-bar-3 {
+            transform: translateY(2px);
         }
         
         /* New Chat Icon Button */
@@ -113,6 +131,26 @@
         .new-chat-icon svg {
             width: 20px;
             height: 20px;
+            transition: transform 0.2s ease;
+        }
+        
+        .new-chat-icon:hover svg {
+            transform: rotate(90deg) scale(1.1);
+        }
+        
+        .new-chat-icon .new-indicator {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
         }
 
         /* Enhanced Sidebar */
@@ -391,6 +429,17 @@
             height: 24px;
             flex-shrink: 0;
             opacity: 0.8;
+            transition: all 0.2s ease;
+        }
+        
+        .chat-item:hover .chat-icon {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        
+        .chat-item.active .chat-icon {
+            opacity: 1;
+            color: #06b6d4;
         }
 
         .chat-name {
@@ -426,11 +475,31 @@
         .chat-action-btn:hover {
             background: rgba(255,255,255,0.1);
             color: #fff;
+            transform: scale(1.1);
+        }
+        
+        .chat-action-btn svg {
+            transition: all 0.2s ease;
+        }
+        
+        .chat-action-btn:hover svg {
+            transform: rotate(-5deg);
         }
 
         .chat-action-btn.delete:hover {
             background: rgba(255, 69, 69, 0.2);
             color: #ff4545;
+        }
+        
+        .chat-action-btn.delete:hover svg {
+            transform: rotate(-10deg) scale(1.1);
+            animation: shake 0.3s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: rotate(-10deg) scale(1.1); }
+            25% { transform: rotate(-15deg) scale(1.1); }
+            75% { transform: rotate(-5deg) scale(1.1); }
         }
 
         /* Sidebar Footer */
@@ -561,9 +630,55 @@
             align-items: center;
             justify-content: center;
             font-size: 14px;
-            transition: transform 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             pointer-events: none;
+        }
+        
+        .privacy-toggle .lock-icon,
+        .privacy-toggle .unlock-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .privacy-toggle.active .lock-icon {
+            display: block;
+            animation: lockAnimation 0.3s ease;
+        }
+        
+        .privacy-toggle.active .unlock-icon {
+            display: none;
+        }
+        
+        .privacy-toggle:not(.active) .lock-icon {
+            display: none;
+        }
+        
+        .privacy-toggle:not(.active) .unlock-icon {
+            display: block;
+            animation: unlockAnimation 0.3s ease;
+        }
+        
+        @keyframes lockAnimation {
+            0% {
+                transform: scale(0.8) rotate(-10deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1) rotate(5deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes unlockAnimation {
+            0% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
         
         .privacy-toggle.active .privacy-toggle-slider {
@@ -956,6 +1071,34 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
         }
         
+        .send-btn .send-icon {
+            transition: all 0.2s ease;
+        }
+        
+        .send-btn:hover .send-icon {
+            transform: translateX(2px);
+        }
+        
+        .send-btn:hover .send-arrow {
+            animation: fly 0.4s ease;
+        }
+        
+        @keyframes fly {
+            0% {
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(3px) translateY(-2px);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+        
+        .send-btn:active .send-icon {
+            transform: translateX(4px) scale(0.95);
+        }
+        
         .send-btn:active {
             transform: scale(0.95);
         }
@@ -1231,6 +1374,124 @@
             z-index: 1000;
             margin-bottom: 0.5rem;
         }
+        
+        /* Additional icon improvements */
+        .user-avatar {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .user-avatar::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+        
+        /* Enhance robot icon animations */
+        .robot-wrapper:hover .lightning {
+            animation: lightning-strike 0.5s ease;
+        }
+        
+        @keyframes lightning-strike {
+            0%, 100% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+            50% {
+                opacity: 0.3;
+                transform: translateX(-50%) scale(1.2);
+            }
+        }
+        
+        .robot-wrapper:hover .eye {
+            animation: wink 0.5s ease;
+        }
+        
+        @keyframes wink {
+            0%, 100% {
+                transform: scaleY(1);
+            }
+            50% {
+                transform: scaleY(0.2);
+            }
+        }
+        
+        /* Better hover effects for all interactive elements */
+        button {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+        
+        button:active::after {
+            width: 300px;
+            height: 300px;
+        }
+        
+        /* Smooth icon transitions */
+        svg path, svg rect, svg circle {
+            transition: all 0.3s ease;
+        }
+        
+        /* Message avatar improvements */
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-left: 12px;
+            margin-right: 0;
+        }
+        
+        .message.assistant .message-avatar {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        /* Display message avatars */
+        .message-avatar {
+            display: flex !important;
+        }
     </style>
 </head>
 <body>
@@ -1252,15 +1513,19 @@
     </div>
     
     <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Sidebar">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 12h18M3 6h18M3 18h18"/>
+        <svg class="sidebar-toggle-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect class="menu-bar menu-bar-1" x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
+            <rect class="menu-bar menu-bar-2" x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
+            <rect class="menu-bar menu-bar-3" x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
         </svg>
     </button>
     
     <!-- New Chat Button - Under Toggle -->
     <button class="new-chat-icon" id="new-chat-icon" aria-label="New Chat" title="New Chat">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 5v14M5 12h14"/>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+            <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="18" cy="6" r="3" fill="#10b981" class="new-indicator"/>
         </svg>
     </button>
     
@@ -1292,7 +1557,18 @@
             <!-- Chat Header with Privacy Toggle -->
             <div class="chat-header">
                 <button type="button" class="privacy-toggle active" id="privacy-toggle" aria-label="Toggle privacy mode" onclick="handlePrivacyToggle(event)">
-                    <div class="privacy-toggle-slider">🔒</div>
+                    <div class="privacy-toggle-slider">
+                        <svg class="lock-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <rect class="lock-body" x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/>
+                            <path class="lock-shackle" d="M7 11V7C7 4.24 9.24 2 12 2C14.76 2 17 4.24 17 7V11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="12" cy="16" r="1.5" fill="white" opacity="0.9"/>
+                        </svg>
+                        <svg class="unlock-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: none;">
+                            <rect class="lock-body" x="5" y="11" width="14" height="10" rx="2" fill="currentColor" opacity="0.5"/>
+                            <path class="lock-shackle-open" d="M7 11V7C7 4.24 9.24 2 12 2C13.7 2 15.2 2.78 16.2 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="12" cy="16" r="1.5" fill="#666" opacity="0.7"/>
+                        </svg>
+                    </div>
                 </button>
             </div>
 
@@ -1326,8 +1602,9 @@
                                     rows="1"
                                 ></textarea>
                                 <button class="send-btn" id="send-btn">
-                                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="send-icon">
+                                        <path class="send-arrow" d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor"/>
+                                        <path class="send-trail" d="M2 21L23 12L2 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
                                     </svg>
                                 </button>
                             </div>
@@ -1347,8 +1624,9 @@
                             rows="1"
                         ></textarea>
                         <button class="send-btn" id="send-btn-bottom">
-                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="send-icon">
+                                <path class="send-arrow" d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor"/>
+                                <path class="send-trail" d="M2 21L23 12L2 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
                             </svg>
                         </button>
                     </div>
@@ -1464,7 +1742,8 @@
             console.log('=== Privacy Toggle Clicked (Direct onclick) ===');
             
             const button = document.getElementById('privacy-toggle');
-            const slider = button ? button.querySelector('.privacy-toggle-slider') : null;
+            const lockIcon = button ? button.querySelector('.lock-icon') : null;
+            const unlockIcon = button ? button.querySelector('.unlock-icon') : null;
             
             // Try to use the app's toggle function
             if (window.privacyChat && typeof window.privacyChat.togglePrivacyMode === 'function') {
@@ -1478,12 +1757,14 @@
                     
                     if (isActive) {
                         button.classList.remove('active');
-                        if (slider) slider.textContent = '🔓';
+                        if (lockIcon) lockIcon.style.display = 'none';
+                        if (unlockIcon) unlockIcon.style.display = 'block';
                         localStorage.setItem('privacyMode', 'false');
                         console.log('Privacy mode OFF');
                     } else {
                         button.classList.add('active');
-                        if (slider) slider.textContent = '🔒';
+                        if (lockIcon) lockIcon.style.display = 'block';
+                        if (unlockIcon) unlockIcon.style.display = 'none';
                         localStorage.setItem('privacyMode', 'true');
                         console.log('Privacy mode ON');
                     }

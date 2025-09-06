@@ -203,20 +203,27 @@ class PrivacyChat {
                 return `
                     <div class="chat-item ${id == this.currentSession ? 'active' : ''}" data-session="${id}">
                         <div class="chat-item-content">
-                            <svg class="chat-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            <svg class="chat-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 11.5C21 16.75 16.75 21 11.5 21C9.8 21 8.21 20.53 6.84 19.71L3 21L4.29 17.16C3.47 15.79 3 14.2 3 12.5C3 7.25 7.25 3 12.5 3C16.06 3 19.11 5.04 20.5 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+                                <circle cx="8" cy="12" r="1" fill="currentColor" opacity="0.6"/>
+                                <circle cx="12" cy="12" r="1" fill="currentColor" opacity="0.6"/>
+                                <circle cx="16" cy="12" r="1" fill="currentColor" opacity="0.6"/>
                             </svg>
                             <span class="chat-name" title="${displayName}">${displayName}</span>
                         </div>
                         <div class="chat-actions">
                             <button class="chat-action-btn rename" data-session="${id}" title="Rename">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor" opacity="0.3"/>
+                                    <path d="M20.71 5.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </button>
                             <button class="chat-action-btn delete" data-session="${id}" title="Delete">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6"/>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                    <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19Z" fill="currentColor" opacity="0.3"/>
+                                    <path d="M19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z" fill="currentColor" opacity="0.5"/>
+                                    <path d="M10 9V17M14 9V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                                 </svg>
                             </button>
                         </div>
@@ -336,8 +343,9 @@ class PrivacyChat {
                                 rows="1"
                             ></textarea>
                             <button class="send-btn" id="send-btn">
-                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="send-icon">
+                                    <path class="send-arrow" d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor"/>
+                                    <path class="send-trail" d="M2 21L23 12L2 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
                                 </svg>
                             </button>
                         </div>
@@ -1218,13 +1226,16 @@ class PrivacyChat {
         // Set initial state of privacy toggle
         const toggle = this.elements.privacyToggle;
         if (toggle) {
-            const slider = toggle.querySelector('.privacy-toggle-slider');
+            const lockIcon = toggle.querySelector('.lock-icon');
+            const unlockIcon = toggle.querySelector('.unlock-icon');
             if (this.privacyMode) {
                 toggle.classList.add('active');
-                if (slider) slider.textContent = '🔒';
+                if (lockIcon) lockIcon.style.display = 'block';
+                if (unlockIcon) unlockIcon.style.display = 'none';
             } else {
                 toggle.classList.remove('active');
-                if (slider) slider.textContent = '🔓';
+                if (lockIcon) lockIcon.style.display = 'none';
+                if (unlockIcon) unlockIcon.style.display = 'block';
             }
         }
     }
@@ -1241,18 +1252,25 @@ class PrivacyChat {
             return;
         }
         
-        const slider = toggle.querySelector('.privacy-toggle-slider');
+        const lockIcon = toggle.querySelector('.lock-icon');
+        const unlockIcon = toggle.querySelector('.unlock-icon');
         
         if (this.privacyMode) {
             toggle.classList.add('active');
-            if (slider) {
-                slider.textContent = '🔒';
+            if (lockIcon) {
+                lockIcon.style.display = 'block';
                 console.log('Set toggle to locked (privacy ON)');
+            }
+            if (unlockIcon) {
+                unlockIcon.style.display = 'none';
             }
         } else {
             toggle.classList.remove('active');
-            if (slider) {
-                slider.textContent = '🔓';
+            if (lockIcon) {
+                lockIcon.style.display = 'none';
+            }
+            if (unlockIcon) {
+                unlockIcon.style.display = 'block';
                 console.log('Set toggle to unlocked (privacy OFF)');
             }
         }
