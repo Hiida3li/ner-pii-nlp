@@ -14,7 +14,8 @@ class PrivacyChat {
         
         // Array of creative greeting messages
         this.greetings = [
-            "What's today's adventure? Shall we make some magic happen?",
+            "What's today's adventure?",
+            "Shall we make some magic happen?",
             "Tell me, what's the mission briefing?",
             "Who's in charge today—you or me?",
             "What puzzle are we solving first?",
@@ -31,12 +32,24 @@ class PrivacyChat {
         this.setupEventListeners();
         this.initSession();
         this.updateSessionList();
+        
+        // Set random greeting on page load
+        this.setInitialGreeting();
+        
         // Reset backend session on page load to clear entity mappings
         this.resetChatEndpoint();
         // Initialize privacy toggle state
         this.initializePrivacyToggle();
         // Initialize textarea heights
         this.initializeTextareas();
+    }
+    
+    setInitialGreeting() {
+        // Set a random greeting on the initial welcome screen
+        const greetingElement = document.getElementById('welcome-greeting');
+        if (greetingElement) {
+            greetingElement.textContent = this.getRandomGreeting();
+        }
     }
     
     cacheElements() {
