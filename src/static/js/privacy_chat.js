@@ -25,6 +25,8 @@ class PrivacyChat {
         this.resetChatEndpoint();
         // Initialize privacy toggle state
         this.initializePrivacyToggle();
+        // Initialize textarea heights
+        this.initializeTextareas();
     }
     
     cacheElements() {
@@ -107,11 +109,25 @@ class PrivacyChat {
             this.elements.chatInput.addEventListener('input', () => {
                 this.autoResizeTextarea();
             });
+            // Also trigger on paste and cut events
+            this.elements.chatInput.addEventListener('paste', () => {
+                setTimeout(() => this.autoResizeTextarea(), 0);
+            });
+            this.elements.chatInput.addEventListener('cut', () => {
+                setTimeout(() => this.autoResizeTextarea(), 0);
+            });
         }
         
         if (this.elements.chatInputBottom) {
             this.elements.chatInputBottom.addEventListener('input', () => {
                 this.autoResizeTextarea();
+            });
+            // Also trigger on paste and cut events
+            this.elements.chatInputBottom.addEventListener('paste', () => {
+                setTimeout(() => this.autoResizeTextarea(), 0);
+            });
+            this.elements.chatInputBottom.addEventListener('cut', () => {
+                setTimeout(() => this.autoResizeTextarea(), 0);
             });
         }
         
@@ -380,6 +396,14 @@ class PrivacyChat {
             this.elements.chatInput.addEventListener('input', () => {
                 this.autoResizeTextarea();
             });
+            
+            // Also trigger on paste and cut events for dynamic resizing
+            this.elements.chatInput.addEventListener('paste', () => {
+                setTimeout(() => this.autoResizeTextarea(), 0);
+            });
+            this.elements.chatInput.addEventListener('cut', () => {
+                setTimeout(() => this.autoResizeTextarea(), 0);
+            });
         }
         
         // Always ensure centered input is visible for new chat
@@ -399,7 +423,12 @@ class PrivacyChat {
         
         // Re-focus the input for better UX
         if (this.elements.chatInput) {
-            setTimeout(() => this.elements.chatInput.focus(), 100);
+            setTimeout(() => {
+                this.elements.chatInput.focus();
+                // Reset height for new chat
+                this.elements.chatInput.style.height = 'auto';
+                this.autoResizeTextarea();
+            }, 100);
         }
     }
     
@@ -408,8 +437,24 @@ class PrivacyChat {
         const activeInput = this.elements.welcomeScreen && this.elements.welcomeScreen.style.display !== 'none' ? 
             this.elements.chatInput : this.elements.chatInputBottom;
         if (activeInput) {
+            // Reset height to auto to get the correct scrollHeight
             activeInput.style.height = 'auto';
-            activeInput.style.height = Math.min(activeInput.scrollHeight, 200) + 'px';
+            
+            // Calculate new height based on content
+            const newHeight = activeInput.scrollHeight;
+            const minHeight = 40; // Minimum height in pixels
+            const maxHeight = 200; // Maximum height in pixels
+            
+            // Apply the calculated height within min/max bounds
+            const finalHeight = Math.min(Math.max(newHeight, minHeight), maxHeight);
+            activeInput.style.height = finalHeight + 'px';
+            
+            // Add or remove scrollbar based on content
+            if (newHeight > maxHeight) {
+                activeInput.style.overflowY = 'auto';
+            } else {
+                activeInput.style.overflowY = 'hidden';
+            }
             
             // Auto-detect and set text direction for input field
             const text = activeInput.value;
@@ -442,6 +487,9 @@ class PrivacyChat {
         if (this.elements.chatInputBottom) {
             setTimeout(() => {
                 this.elements.chatInputBottom.focus();
+                // Ensure proper initial height
+                this.elements.chatInputBottom.style.height = '40px';
+                this.autoResizeTextarea();
             }, 100);
         }
     }
@@ -518,6 +566,8 @@ class PrivacyChat {
         // Clear the appropriate input
         if (this.elements.chatInputBottom) {
             this.elements.chatInputBottom.value = '';
+            // Reset height after clearing
+            this.elements.chatInputBottom.style.height = 'auto';
         }
         this.autoResizeTextarea();
         
@@ -975,7 +1025,7 @@ class PrivacyChat {
             }
         }
         
-        // Build the highlighted text
+        // Build the highlighted text - improved to handle entity boundaries
         let result = '';
         let i = 0;
         
@@ -983,9 +1033,25 @@ class PrivacyChat {
             if (highlights[i]) {
                 // Start of an entity
                 const entityInfo = highlights[i];
-                const entityText = text.substring(entityInfo.entityStart, entityInfo.entityEnd);
+                const entityStart = entityInfo.entityStart;
+                const entityEnd = entityInfo.entityEnd;
+                
+                // Extract the exact entity text
+                const entityText = text.substring(entityStart, entityEnd);
+                
+                // Add the highlighted entity
                 result += `<span class="pii-entity ${entityInfo.cssClass}">${entityText}</span>`;
-                i = entityInfo.entityEnd; // Skip to end of entity
+                
+                // Skip to the end of this entity
+                i = entityEnd;
+                
+                // Important: Check if the next position starts a new entity
+                // This prevents merging adjacent entities
+                if (i < text.length && highlights[i] && 
+                    highlights[i].entityStart === i) {
+                    // Next entity starts immediately, continue to handle it
+                    continue;
+                }
             } else {
                 // Regular character
                 result += text[i];
@@ -1141,10 +1207,19 @@ class PrivacyChat {
                             // Check if this position overlaps with an already marked entity
                             let hasOverlap = false;
                             const entityLength = searchTerm.length;
+                            
+                            // More strict overlap checking - don't merge adjacent entities
                             for (let i = pos; i < pos + entityLength && i < text.length; i++) {
                                 if (highlights[i] && highlights[i].entityText) {
-                                    hasOverlap = true;
-                                    break;
+                                    // Check if this is truly the same entity or a different one
+                                    const existingEntity = highlights[i];
+                                    // If the new entity would extend beyond the existing one's boundaries,
+                                    // or if they have different start positions, they're different entities
+                                    if (existingEntity.entityStart !== pos || 
+                                        existingEntity.entityEnd !== pos + entityLength) {
+                                        hasOverlap = true;
+                                        break;
+                                    }
                                 }
                             }
                             
@@ -1156,15 +1231,15 @@ class PrivacyChat {
                                         entityStart: pos, 
                                         entityEnd: pos + entityLength, 
                                         entityText: searchTerm,
-                                    priority: Date.now()
-                                };
-                            }
+                                        priority: Date.now()
+                                    };
+                                }
                                 foundCount++;
                                 foundMatch = true;
                                 console.log(`✓ Found and marked occurrence ${foundCount} of '${searchTerm}' at position ${pos}`);
                                 break; // Only mark first occurrence for this term
                             }
-                            searchStart = pos + 1;
+                            searchStart = pos + searchTerm.length; // Skip past this occurrence instead of just +1
                         }
                         if (foundMatch) break; // Stop if we found a match
                     }
@@ -1172,7 +1247,7 @@ class PrivacyChat {
             }
         });
         
-        // Build the highlighted text
+        // Build the highlighted text - improved to handle entity boundaries
         let result = '';
         let i = 0;
         
@@ -1180,9 +1255,25 @@ class PrivacyChat {
             if (highlights[i]) {
                 // Start of an entity
                 const entityInfo = highlights[i];
-                const entityText = text.substring(entityInfo.entityStart, entityInfo.entityEnd);
+                const entityStart = entityInfo.entityStart;
+                const entityEnd = entityInfo.entityEnd;
+                
+                // Extract the exact entity text
+                const entityText = text.substring(entityStart, entityEnd);
+                
+                // Add the highlighted entity
                 result += `<span class="pii-entity ${entityInfo.cssClass}">${entityText}</span>`;
-                i = entityInfo.entityEnd; // Skip to end of entity
+                
+                // Skip to the end of this entity
+                i = entityEnd;
+                
+                // Important: Check if the next position starts a new entity
+                // This prevents merging adjacent entities
+                if (i < text.length && highlights[i] && 
+                    highlights[i].entityStart === i) {
+                    // Next entity starts immediately, continue to handle it
+                    continue;
+                }
             } else {
                 // Regular character
                 result += text[i];
@@ -1237,6 +1328,18 @@ class PrivacyChat {
                 if (lockIcon) lockIcon.style.display = 'none';
                 if (unlockIcon) unlockIcon.style.display = 'block';
             }
+        }
+    }
+    
+    initializeTextareas() {
+        // Initialize textareas with proper height
+        if (this.elements.chatInput) {
+            this.elements.chatInput.style.height = '40px';
+            this.elements.chatInput.style.overflowY = 'hidden';
+        }
+        if (this.elements.chatInputBottom) {
+            this.elements.chatInputBottom.style.height = '40px';
+            this.elements.chatInputBottom.style.overflowY = 'hidden';
         }
     }
     
