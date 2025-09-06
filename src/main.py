@@ -1029,11 +1029,6 @@ async def privacy_chat_page(request: Request):
     logger.info("Privacy chat page accessed")
     return templates.TemplateResponse("privacy_chat.html", {"request": request})
 
-@app.get("/privacy-chat-modern", response_class=HTMLResponse)
-async def privacy_chat_modern_page(request: Request):
-    """Modern purple-themed privacy chat interface"""
-    logger.info("Modern privacy chat page accessed")
-    return templates.TemplateResponse("privacy_chat_modern.html", {"request": request})
 
 @app.post("/api/privacy-chat", response_model=PrivacyChatResponse)
 async def privacy_chat_api(request: PrivacyChatRequest):
