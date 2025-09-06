@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Highlighting Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #2b2b3d; 
+            color: white; 
+        }
+        .test-result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            background: #1a1a2e; 
+            border-radius: 4px; 
+        }
+        .pii-entity { 
+            padding: 2px 4px; 
+            border-radius: 3px; 
+            font-weight: bold; 
+        }
+        .pii-email { background: rgba(168, 85, 247, 0.3); color: #d8b4fe; }
+        .pii-person { background: rgba(59, 130, 246, 0.3); color: #93c5fd; }
+    </style>
+</head>
+<body>
+    <h1>Highlighting Accuracy Test</h1>
+    <button onclick="runTests()">Run Tests</button>
+    <div id="results"></div>
+    
+    <script>
+        function highlightStreamingEntities(text) {
+            console.log('Testing:', text);
+            
+            if (text.includes('<span class="pii-entity')) {
+                return text;
+            }
+            
+            let result = text;
+            
+            // Email pattern
+            result = result.replace(/\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b/g, (match) => {
+                return `<span class="pii-entity pii-email">${match}</span>`;
+            });
+            
+            // Context-based name highlighting
+            result = result.replace(/\\b(?:contact|call|email|reach|meet)\\s+([A-Z][a-z]{2,}\\s+[A-Z][a-z]{2,})\\b/gi, (fullMatch, nameMatch) => {
+                return fullMatch.replace(nameMatch, `<span class="pii-entity pii-person">${nameMatch}</span>`);
+            });
+            
+            result = result.replace(/\\b(?:I am|my name is|this is)\\s+([A-Z][a-z]{2,}\\s+[A-Z][a-z]{2,})\\b/gi, (fullMatch, nameMatch) => {
+                return fullMatch.replace(nameMatch, `<span class="pii-entity pii-person">${nameMatch}</span>`);
+            });
+            
+            // Simple standalone names (very conservative)
+            result = result.replace(/\\b([A-Z][a-z]{2,}\\s+[A-Z][a-z]{2,})\\s+(?:said|wrote|called|works|lives|at)\\b/g, (fullMatch, nameMatch) => {
+                return fullMatch.replace(nameMatch, `<span class="pii-entity pii-person">${nameMatch}</span>`);
+            });
+            
+            return result;
+        }
+        
+        function runTests() {
+            const tests = [
+                'My email is john@test.com',
+                'Hello John',
+                'Contact John Smith for details',
+                'Meet Sarah Johnson at 2pm',
+                'I am David Brown',
+                'Nice to meet you',
+                'John Smith works here',
+                'Thank You Very Much',
+                'Visit New York',
+                'My name is Lisa Wilson and email lisa@test.com'
+            ];
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<h3>Test Results:</h3>';
+            
+            tests.forEach((test, i) => {
+                const result = highlightStreamingEntities(test);
+                const hasHighlight = result !== test;
+                
+                resultsDiv.innerHTML += `
+                    <div class="test-result">
+                        <strong>Test ${i+1}:</strong> "${test}"<br>
+                        <strong>Result:</strong> ${result}<br>
+                        <strong>Status:</strong> ${hasHighlight ? '✅ Highlighted' : '❌ No highlight'}
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>

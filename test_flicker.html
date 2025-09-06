@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Highlight Flicker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #2b2b3d;
+            color: white;
+        }
+        .test-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #1a1a2e;
+            border-radius: 8px;
+        }
+        .message-wrapper {
+            margin: 10px 0;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+        }
+        .message-text {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .pii-entity {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+            display: inline-block;
+            margin: 0 2px;
+        }
+        .pii-location {
+            background: rgba(168, 85, 247, 0.3);
+            color: #d8b4fe;
+        }
+        button {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #7c3aed;
+        }
+        #status {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Highlight Flicker Issue</h1>
+    
+    <div class="test-container">
+        <h3>Privacy Mode Toggle Test</h3>
+        <button onclick="toggleMode()">Toggle Privacy Mode</button>
+        <div id="status">Privacy Mode: OFF</div>
+        
+        <div class="message-wrapper" 
+             data-original="مرحبا انا من مسقط"
+             data-masked="مرحبا انا من Location4"
+             data-entities='[{"text":"مسقط","type":"loc","placeholder":"Location4"}]'>
+            <div class="message-content">
+                <div class="message-text">مرحبا انا من مسقط</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h3>Method 1: Direct innerHTML Replace (Current)</h3>
+        <button onclick="testMethod1()">Test Method 1</button>
+        <div id="method1" class="message-text">مرحبا انا من مسقط</div>
+    </div>
+    
+    <div class="test-container">
+        <h3>Method 2: Create New Element</h3>
+        <button onclick="testMethod2()">Test Method 2</button>
+        <div id="method2-container">
+            <div id="method2" class="message-text">مرحبا انا من مسقط</div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h3>Method 3: Clone and Replace</h3>
+        <button onclick="testMethod3()">Test Method 3</button>
+        <div id="method3-container">
+            <div id="method3" class="message-text">مرحبا انا من مسقط</div>
+        </div>
+    </div>
+
+    <script>
+        let privacyMode = false;
+        let toggleCount = 0;
+        
+        function highlightEntity(text) {
+            return text.replace(/مسقط/g, '<span class="pii-entity pii-location">مسقط</span>');
+        }
+        
+        function maskEntity(text) {
+            return text.replace(/مسقط/g, '<span class="pii-entity pii-location">Location4</span>');
+        }
+        
+        function toggleMode() {
+            privacyMode = !privacyMode;
+            document.getElementById('status').textContent = `Privacy Mode: ${privacyMode ? 'ON' : 'OFF'} (Toggle #${++toggleCount})`;
+            
+            const wrapper = document.querySelector('.message-wrapper');
+            const messageText = wrapper.querySelector('.message-text');
+            const original = wrapper.getAttribute('data-original');
+            const masked = wrapper.getAttribute('data-masked');
+            
+            if (privacyMode) {
+                messageText.innerHTML = maskEntity(masked);
+            } else {
+                messageText.innerHTML = highlightEntity(original);
+            }
+            
+            console.log(`Toggle #${toggleCount}: Mode is now ${privacyMode ? 'ON' : 'OFF'}`);
+            console.log('Content:', messageText.innerHTML);
+        }
+        
+        function testMethod1() {
+            const elem = document.getElementById('method1');
+            const original = 'مرحبا انا من مسقط';
+            
+            // Simulate toggle
+            if (elem.innerHTML.includes('Location4')) {
+                elem.innerHTML = highlightEntity(original);
+            } else {
+                elem.innerHTML = maskEntity(original);
+            }
+        }
+        
+        function testMethod2() {
+            const container = document.getElementById('method2-container');
+            const original = 'مرحبا انا من مسقط';
+            
+            // Create new element
+            const newElem = document.createElement('div');
+            newElem.className = 'message-text';
+            
+            if (container.querySelector('.message-text').innerHTML.includes('Location4')) {
+                newElem.innerHTML = highlightEntity(original);
+            } else {
+                newElem.innerHTML = maskEntity(original);
+            }
+            
+            container.innerHTML = '';
+            container.appendChild(newElem);
+        }
+        
+        function testMethod3() {
+            const container = document.getElementById('method3-container');
+            const elem = document.getElementById('method3');
+            const original = 'مرحبا انا من مسقط';
+            
+            const clone = elem.cloneNode(false);
+            
+            if (elem.innerHTML.includes('Location4')) {
+                clone.innerHTML = highlightEntity(original);
+            } else {
+                clone.innerHTML = maskEntity(original);
+            }
+            
+            elem.replaceWith(clone);
+            clone.id = 'method3';
+        }
+        
+        // Auto-toggle every 2 seconds for testing
+        let autoToggle = false;
+        function startAutoToggle() {
+            autoToggle = !autoToggle;
+            if (autoToggle) {
+                const interval = setInterval(() => {
+                    if (!autoToggle) {
+                        clearInterval(interval);
+                        return;
+                    }
+                    toggleMode();
+                }, 2000);
+            }
+        }
+    </script>
+    
+    <div class="test-container">
+        <button onclick="startAutoToggle()">Start/Stop Auto Toggle</button>
+    </div>
+</body>
+</html>
