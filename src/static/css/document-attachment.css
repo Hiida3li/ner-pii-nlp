@@ -1,26 +1,52 @@
 /* Document Attachment Styles - Simple Design */
 
-/* Upload Button Styles - Enhanced Design */
+/* Upload Button Styles - Original Design */
 .chat-upload-btn {
-    width: 42px;
-    height: 42px;
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
-    border: 1.5px solid rgba(139, 92, 246, 0.2);
-    color: #a78bfa;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    color: #9ca3af;
     cursor: pointer;
-    border-radius: 14px;
-    transition: all 0.3s ease;
+    border-radius: 12px;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     position: relative;
-    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.1);
+}
+
+/* Upload button when document is attached */
+.chat-upload-btn.has-attachment {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
 }
 
 /* Ensure proper alignment in input box */
 .input-box .chat-upload-btn {
-    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+.input-box .attachment-preview {
+    flex-shrink: 0;
+}
+
+/* Ensure textarea is properly positioned */
+.input-box .chat-input {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Ensure send button is properly positioned */
+.input-box .send-btn {
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+}
+
+/* Input box with attachment - dynamic width */
+.input-box.has-attachment {
+    transition: all 0.3s ease;
 }
 
 .chat-upload-btn svg {
@@ -30,22 +56,17 @@
 }
 
 .chat-upload-btn:hover {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(124, 58, 237, 0.15) 100%);
-    border-color: rgba(139, 92, 246, 0.35);
-    color: #8b5cf6;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25), 0 0 20px rgba(139, 92, 246, 0.15);
+    background: rgba(124, 58, 237, 0.1);
+    color: #7c3aed;
 }
 
 .chat-upload-btn:hover svg {
-    transform: scale(1.15) rotate(5deg);
-    filter: drop-shadow(0 3px 6px rgba(124, 58, 237, 0.4));
+    transform: scale(1.1);
+    filter: drop-shadow(0 2px 4px rgba(124, 58, 237, 0.3));
 }
 
 .chat-upload-btn:active {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(124, 58, 237, 0.2) 100%);
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+    background: rgba(124, 58, 237, 0.2);
 }
 
 .chat-upload-btn.uploading {
@@ -251,129 +272,121 @@
     color: white;
 }
 
-/* Attachment preview in input area - Positioned beside upload button */
+/* Attachment preview inside input box */
 .attachment-preview {
-    position: absolute !important;
-    left: 60px !important;
-    bottom: 8px !important;
-    transform: none !important;
-    z-index: 10 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: none !important;
-    border: none !important;
-    max-width: 80px !important;
+    display: inline-flex;
+    align-items: center;
+    margin: 0 8px;
+    animation: fadeIn 0.3s ease;
 }
 
-.input-box .attachment-preview {
-    position: absolute !important;
-    left: 60px !important;
-    bottom: 8px !important;
-    transform: none !important;
-    z-index: 10 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: none !important;
-    border: none !important;
-    max-width: 80px !important;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
-/* Make input box relative for absolute positioning */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
+/* Input wrapper styling */
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
 .input-box {
-    position: relative !important;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
-.input-box .attachment-preview .document-attachment-card,
 .attachment-preview .document-attachment-card {
-    display: flex !important;
-    flex-direction: column !important;
-    margin: 0 !important;
-    padding: 6px !important;
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(124, 58, 237, 0.1) 100%) !important;
-    border: 1.5px solid rgba(139, 92, 246, 0.35) !important;
-    width: 65px !important;
-    height: 44px !important;
-    gap: 2px !important;
-    border-radius: 10px !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-    font-size: 10px !important;
-    transition: all 0.3s ease !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px;
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 10px;
+    max-width: 200px;
 }
 
-.input-box .attachment-preview .doc-icon-wrapper,
 .attachment-preview .doc-icon-wrapper {
-    width: 20px !important;
-    height: 20px !important;
-    min-width: 20px !important;
-    background: rgba(139, 92, 246, 0.3) !important;
-    border-radius: 6px !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    background: rgba(139, 92, 246, 0.2);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
-.input-box .attachment-preview .doc-icon-wrapper svg,
 .attachment-preview .doc-icon-wrapper svg {
-    width: 12px !important;
-    height: 12px !important;
-    color: #8b5cf6 !important;
+    width: 14px;
+    height: 14px;
+    color: #8b5cf6;
 }
 
-.input-box .attachment-preview .doc-info,
 .attachment-preview .doc-info {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 2px !important;
-    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
 }
 
-.input-box .attachment-preview .doc-filename,
 .attachment-preview .doc-filename {
-    font-size: 9px !important;
-    margin-bottom: 0 !important;
-    line-height: 1.1 !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-    font-weight: 600 !important;
-    max-width: 55px !important;
-    text-align: center !important;
+    font-size: 12px;
+    font-weight: 600;
+    color: #a78bfa;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 120px;
 }
 
-.input-box .attachment-preview .doc-metadata,
-.attachment-preview .doc-metadata {
-    display: block !important;
-    font-size: 8px !important;
-    color: rgba(139, 92, 246, 0.7) !important;
-    text-align: center !important;
+.attachment-preview .doc-size {
+    font-size: 10px;
+    color: #9ca3af;
 }
 
-.input-box .attachment-preview .remove-doc-btn,
 .attachment-preview .remove-doc-btn {
-    position: absolute !important;
-    top: -4px !important;
-    right: -4px !important;
-    width: 16px !important;
-    height: 16px !important;
-    padding: 0 !important;
-    background: #ef4444 !important;
-    border: 1px solid white !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    background: rgba(239, 68, 68, 0.1);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
-.input-box .attachment-preview .remove-doc-btn svg,
 .attachment-preview .remove-doc-btn svg {
-    width: 10px !important;
-    height: 10px !important;
-    color: white !important;
+    width: 12px;
+    height: 12px;
+    color: #ef4444;
 }
 
 /* Message with attachment */
@@ -475,8 +488,37 @@
     animation: slideInFromBottom 0.3s ease;
 }
 
-.attachment-preview .document-attachment-card {
-    animation: slideInFromLeft 0.4s ease !important;
+.attachment-preview .remove-doc-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+/* Hover effects */
+.attachment-preview .document-attachment-card:hover {
+    background: rgba(139, 92, 246, 0.15);
+    border-color: rgba(139, 92, 246, 0.3);
 }
 
 /* Loading state for document upload */

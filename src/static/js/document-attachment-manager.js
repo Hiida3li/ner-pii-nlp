@@ -255,7 +255,7 @@ class DocumentAttachmentManager {
                             document.getElementById('chat-input-bottom');
                 if (input) {
                     input.focus();
-                    input.placeholder = `Message about ${file.name}...`;
+                    input.placeholder = `Ask about ${file.name}...`;
                 }
             } else {
                 console.error('Upload result indicates failure:', result);
@@ -286,24 +286,28 @@ class DocumentAttachmentManager {
         // Remove any existing attachment indicators
         document.querySelectorAll('.attachment-preview').forEach(el => el.remove());
         
-        // Add indicator inside both input boxes
+        // Add indicator inside input boxes
         const inputBoxes = document.querySelectorAll('.input-box');
         inputBoxes.forEach(inputBox => {
-            const preview = document.createElement('span'); // Use span for inline
+            // Create attachment preview element
+            const preview = document.createElement('div');
             preview.className = 'attachment-preview';
             
             // Create the document attachment card
             const card = this.createDocumentCard(this.attachedDocument, true);
-            card.style.display = 'inline-flex'; // Force inline display
             preview.appendChild(card);
             
-            // Insert inside the input box directly
+            // Find the upload button and textarea
+            const uploadBtn = inputBox.querySelector('.chat-upload-btn');
             const textarea = inputBox.querySelector('.chat-input');
-            if (textarea) {
-                // Insert preview inside input box
-                inputBox.appendChild(preview);
-                // Adjust textarea padding to accommodate the attachment beside upload button
-                textarea.style.paddingLeft = '150px';
+            
+            if (uploadBtn && textarea) {
+                // Add visual indicators
+                uploadBtn.classList.add('has-attachment');
+                inputBox.classList.add('has-attachment');
+                
+                // Insert the preview after the upload button
+                uploadBtn.insertAdjacentElement('afterend', preview);
             }
         });
     }
@@ -319,16 +323,6 @@ class DocumentAttachmentManager {
             card.dataset.originalText = doc.originalText || doc.text;
             card.dataset.maskedText = doc.maskedText || doc.text;
             card.dataset.entities = JSON.stringify(doc.entities || []);
-            card.style.cursor = 'pointer';
-            card.title = 'Click to view document content';
-            
-            // Add click handler to show modal
-            card.addEventListener('click', (e) => {
-                // Don't open modal if clicking the remove button
-                if (!e.target.closest('.remove-doc-btn')) {
-                    this.showDocumentModal(doc.filename, doc.text);
-                }
-            });
         }
         
         // Determine file extension for icon color
@@ -338,11 +332,11 @@ class DocumentAttachmentManager {
         else if (['doc', 'docx'].includes(ext)) fileTypeClass = 'file-type-doc';
         else if (['csv', 'xlsx', 'xls'].includes(ext)) fileTypeClass = 'file-type-csv';
         
-        // Add file type class to the card for styling
-        card.classList.add(fileTypeClass);
+        // Calculate file size display
+        const fileSize = doc.fileSize ? this.formatFileSize(doc.fileSize) : 'Document';
         
         card.innerHTML = `
-            <div class="doc-icon-wrapper ${fileTypeClass}">
+            <div class="doc-icon-wrapper">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                     <polyline points="14,2 14,8 20,8"/>
@@ -353,7 +347,7 @@ class DocumentAttachmentManager {
             </div>
             <div class="doc-info">
                 <div class="doc-filename">${doc.filename}</div>
-                <div class="doc-metadata">Document</div>
+                <div class="doc-size">${fileSize}</div>
             </div>
             ${canRemove ? `
                 <button class="remove-doc-btn" onclick="window.docAttachmentManager.removeAttachment()">
@@ -365,7 +359,27 @@ class DocumentAttachmentManager {
             ` : ''}
         `;
         
+        // Add click handler to show modal on icon/info click
+        const iconWrapper = card.querySelector('.doc-icon-wrapper');
+        const docInfo = card.querySelector('.doc-info');
+        
+        if (doc.text && iconWrapper && docInfo) {
+            [iconWrapper, docInfo].forEach(element => {
+                element.style.cursor = 'pointer';
+                element.addEventListener('click', () => {
+                    this.showDocumentModal(doc.filename, doc.text);
+                });
+            });
+        }
+        
         return card;
+    }
+    
+    formatFileSize(bytes) {
+        if (!bytes) return 'Document';
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(1024));
+        return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
     }
     
     addDragAndDropSupport() {
@@ -463,14 +477,25 @@ class DocumentAttachmentManager {
     
     removeAttachment() {
         this.attachedDocument = null;
-        document.querySelectorAll('.attachment-preview').forEach(el => el.remove());
+        document.querySelectorAll('.attachment-preview').forEach(el => {
+            // Add fade out animation before removing
+            el.style.animation = 'fadeOut 0.2s ease';
+            setTimeout(() => el.remove(), 200);
+        });
         
-        // Reset input placeholder and padding
+        // Remove has-attachment classes
+        document.querySelectorAll('.chat-upload-btn').forEach(btn => {
+            btn.classList.remove('has-attachment');
+        });
+        document.querySelectorAll('.input-box').forEach(box => {
+            box.classList.remove('has-attachment');
+        });
+        
+        // Reset input placeholder
         const inputs = [document.getElementById('chat-input'), document.getElementById('chat-input-bottom')];
         inputs.forEach(input => {
             if (input) {
-                input.placeholder = 'Type your message...';
-                input.style.paddingLeft = ''; // Reset padding
+                input.placeholder = 'Ask anything';
             }
         });
     }
