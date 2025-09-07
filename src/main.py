@@ -794,8 +794,6 @@ Respond naturally as if you were having a conversation with a friend who asked f
         import random
         return random.choice(fallback_responses)
 
-# Store chatbot sessions
-chatbot_sessions = {}
 
 # Document processing endpoints
 @app.post("/api/document/upload")
