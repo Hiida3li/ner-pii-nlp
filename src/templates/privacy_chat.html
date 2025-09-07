@@ -352,14 +352,14 @@
         }
 
         .chat-list::-webkit-scrollbar-thumb {
-            background: #221143;
+            background: #c1c1c1;
             border-radius: 10px;
             border: 2px solid transparent;
             background-clip: padding-box;
         }
 
         .chat-list::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #7a0dcc, #3a6da2);
+            background: #a1a1a1;
             background-clip: padding-box;
         }
 
@@ -755,14 +755,14 @@
         }
         
         .chat-messages::-webkit-scrollbar-thumb {
-            background: #221143;
+            background: #c1c1c1;
             border-radius: 10px;
             border: 2px solid transparent;
             background-clip: padding-box;
         }
         
         .chat-messages::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #7a0dcc, #3a6da2);
+            background: #a1a1a1;
             background-clip: padding-box;
         }
 
@@ -1842,9 +1842,11 @@
                 <!-- Logo moved to floating position above toggle -->
             </div>
             
-            <div class="sessions-label">Recent Chats</div>
-            <div class="chat-list" id="chat-list">
-                <!-- Chat sessions will be dynamically added here -->
+            <div class="chat-sessions-container" id="chat-sessions-container" style="display: none;">
+                <div class="sessions-label">Recent Chats</div>
+                <div class="chat-list" id="chat-list">
+                    <!-- Chat sessions will be dynamically added here -->
+                </div>
             </div>
             
         </div>

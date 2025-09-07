@@ -215,6 +215,9 @@ class PrivacyChat {
     }
     
     createNewSession() {
+        // Show chat sessions container when creating new session
+        this.showChatSessionsContainer();
+        
         // Save current session
         const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
         this.sessions[this.currentSession].messages = Array.from(messages).map(m => m.outerHTML);
@@ -917,6 +920,11 @@ class PrivacyChat {
     }
     
     addMessage(role, content, entities = null, messageData = null, attachment = null) {
+        // Show chat sessions container when first message is added
+        if (role === 'user') {
+            this.showChatSessionsContainer();
+        }
+        
         // Process content for PII highlighting if entities provided
         let displayContent = content;
         
