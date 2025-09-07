@@ -531,14 +531,19 @@ class PIIShieldModel(ModelInterface):
             return []
 
         try:
-            # Tokenize text
-            tokens = self.tokenizer.tokenize(text)
-            input_ids = self.tokenizer.convert_tokens_to_ids(['[CLS]'] + tokens + ['[SEP]'])
-            attention_mask = [1] * len(input_ids)
-
-            # Convert to tensors
-            input_ids_tensor = torch.tensor([input_ids])
-            attention_mask_tensor = torch.tensor([attention_mask])
+            # Tokenize text with proper truncation and padding
+            encoding = self.tokenizer(
+                text,
+                padding=True,
+                truncation=True,
+                max_length=512,  # BERT's maximum sequence length
+                return_tensors="pt",
+                return_offsets_mapping=True
+            )
+            
+            input_ids_tensor = encoding['input_ids']
+            attention_mask_tensor = encoding['attention_mask']
+            offset_mapping = encoding['offset_mapping'][0]  # Get the offset mapping for position tracking
 
             # Get predictions
             with torch.no_grad():
@@ -547,106 +552,77 @@ class PIIShieldModel(ModelInterface):
 
             # Get labels (excluding [CLS] and [SEP])
             pred_labels = [self.id2label[pred.item()] for pred in predictions[0][1:-1]]
-
-            # Create a mapping from tokens to positions in original text
-            token_spans = []
-            offset = 0
-            for token in tokens:
-                token_text = token.replace("##", "")
-                idx = text.find(token_text, offset)
-                if idx >= 0:
-                    token_spans.append((idx, idx + len(token_text)))
-                    offset = idx + len(token_text)
-                else:
-                    # Fallback if token can't be found exactly
-                    token_spans.append((offset, offset + len(token_text)))
-                    offset += len(token_text)
+            
+            # Use offset mapping for accurate token positions (excluding [CLS] and [SEP])
+            token_spans = [(start.item(), end.item()) for start, end in offset_mapping[1:-1]]
 
             # Process entities with improved subtoken merging
             entities = []
-            current_entity = []
+            current_entity_spans = []
             current_label = None
-            start_pos = None
 
-            # Extract entities based on BIO tagging scheme with subtoken handling
-            for i, (token, label) in enumerate(zip(tokens, pred_labels)):
+            # Extract entities based on BIO tagging scheme with offset mapping
+            for i, (span, label) in enumerate(zip(token_spans, pred_labels)):
+                start_pos, end_pos = span
+                
                 if label == 'O':  # Outside any entity
-                    if current_entity:
-                        # End of entity - create entity from accumulated tokens
-                        entity_text = self.tokenizer.convert_tokens_to_string(current_entity).replace(" ##", "")
-                        entity_type = current_label
-                        end_pos = token_spans[i - 1][1]
+                    if current_entity_spans:
+                        # End of entity - merge spans
+                        entity_start = current_entity_spans[0][0]
+                        entity_end = current_entity_spans[-1][1]
+                        entity_text = text[entity_start:entity_end].strip()
                         
-                        # Apply confidence threshold if available
-                        confidence = 1.0  # Default high confidence
-                        if hasattr(Config, 'CONFIDENCE_THRESHOLD') and confidence < Config.CONFIDENCE_THRESHOLD:
-                            # Skip low-confidence entity
-                            pass
-                        else:
-                            entities.append((entity_text, entity_type, start_pos, end_pos))
+                        if entity_text and current_label:  # Only add non-empty entities
+                            entities.append((entity_text, current_label, entity_start, entity_end))
                             
                         # Reset entity tracking
-                        current_entity = []
+                        current_entity_spans = []
                         current_label = None
-                        start_pos = None
                         
                 elif label.startswith('B-'):  # Beginning of entity
-                    if current_entity:
+                    if current_entity_spans:
                         # End previous entity if exists
-                        entity_text = self.tokenizer.convert_tokens_to_string(current_entity).replace(" ##", "")
-                        entity_type = current_label
-                        end_pos = token_spans[i - 1][1]
-                        entities.append((entity_text, entity_type, start_pos, end_pos))
+                        entity_start = current_entity_spans[0][0]
+                        entity_end = current_entity_spans[-1][1]
+                        entity_text = text[entity_start:entity_end].strip()
+                        
+                        if entity_text and current_label:
+                            entities.append((entity_text, current_label, entity_start, entity_end))
 
                     # Start new entity
-                    current_entity = [token]
+                    current_entity_spans = [span]
                     current_label = label[2:]  # Remove 'B-' prefix
-                    start_pos = token_spans[i][0]
                     
                 elif label.startswith('I-'):  # Inside entity
                     # For I- tags, check if we should continue or start new
                     entity_type = label[2:]
                     
-                    if current_label == entity_type:
+                    if current_label == entity_type and current_entity_spans:
                         # Continue current entity
-                        current_entity.append(token)
+                        current_entity_spans.append(span)
                     else:
                         # Different entity type or no current entity
-                        if current_entity:
+                        if current_entity_spans and current_label:
                             # Save previous entity
-                            entity_text = self.tokenizer.convert_tokens_to_string(current_entity).replace(" ##", "")
-                            end_pos = token_spans[i - 1][1]
-                            entities.append((entity_text, current_label, start_pos, end_pos))
+                            entity_start = current_entity_spans[0][0]
+                            entity_end = current_entity_spans[-1][1]
+                            entity_text = text[entity_start:entity_end].strip()
+                            
+                            if entity_text:
+                                entities.append((entity_text, current_label, entity_start, entity_end))
                         
-                        # Start new entity with I- tag (common for subtokens)
-                        current_entity = [token]
+                        # Start new entity with I- tag
+                        current_entity_spans = [span]
                         current_label = entity_type
-                        start_pos = token_spans[i][0]
-                    
-                elif label != 'O':  # Handle any other label format
-                    # Check if it's just the entity type without B-/I- prefix
-                    if current_entity and current_label == label:
-                        # Continue current entity
-                        current_entity.append(token)
-                    else:
-                        if current_entity:
-                            # Save previous entity
-                            entity_text = self.tokenizer.convert_tokens_to_string(current_entity).replace(" ##", "")
-                            entity_type = current_label
-                            end_pos = token_spans[i - 1][1]
-                            entities.append((entity_text, entity_type, start_pos, end_pos))
-                        
-                        # Start new entity
-                        current_entity = [token]
-                        current_label = label
-                        start_pos = token_spans[i][0]
 
             # Process any remaining entity
-            if current_entity:
-                entity_text = self.tokenizer.convert_tokens_to_string(current_entity).replace(" ##", "")
-                entity_type = current_label
-                end_pos = token_spans[-1][1]
-                entities.append((entity_text, entity_type, start_pos, end_pos))
+            if current_entity_spans and current_label:
+                entity_start = current_entity_spans[0][0]
+                entity_end = current_entity_spans[-1][1]
+                entity_text = text[entity_start:entity_end].strip()
+                
+                if entity_text:
+                    entities.append((entity_text, current_label, entity_start, entity_end))
 
             # Post-process to merge adjacent entities of same type (for handling subtokens)
             # Also merge entities that are credit cards, phone numbers, or IDs split by separators
@@ -747,19 +723,20 @@ class PIIShieldModel(ModelInterface):
                         i = j
                         continue
                 
-                # Validate ORGANIZATION entities - only filter extreme cases
+                # Validate ORGANIZATION entities - filter short false positives
                 if entity_type == 'ORGANIZATION' or entity_type == 'ORG':
                     clean_text = entity_text.strip()
-                    # Only skip single character detections
-                    if len(clean_text) <= 1:
+                    # Skip organizations shorter than 3 characters to avoid false positives like "um"
+                    if len(clean_text) <= 2:
                         i = j
                         continue
                 
-                # Validate LOCATION entities - only filter extreme cases
+                # Validate LOCATION entities - filter short false positives
                 if entity_type == 'LOCATION' or entity_type == 'LOC':
                     clean_text = entity_text.strip()
-                    # Only skip single character locations
-                    if len(clean_text) <= 1:
+                    # Skip locations shorter than 3 characters to avoid false positives like "ال" (the article)
+                    # Common Arabic articles and prepositions should not be detected as locations
+                    if len(clean_text) <= 2 or clean_text in ['ال', 'في', 'من', 'إلى', 'على', 'عن', 'مع']:
                         i = j
                         continue
                 

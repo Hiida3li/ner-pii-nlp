@@ -2108,16 +2108,36 @@ class PrivacyChat {
     }
     
     scrollToNewestMessage() {
-        // Scroll to position newest message at top of visible area
-        // This pushes ALL old content above into invisible area
+        // Find the newest user message and scroll to position it at the very top
+        // This pushes ALL previous content (including previous conversations) 
+        // completely out of the visible area above
         requestAnimationFrame(() => {
             if (this.elements.chatMessages) {
                 const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
                 if (messages.length > 0) {
-                    const newestMessage = messages[messages.length - 1];
-                    const messageTop = newestMessage.offsetTop;
-                    // Position newest message at top of visible area
-                    this.elements.chatMessages.scrollTop = messageTop;
+                    // Find the last user message (newest conversation start)
+                    let newestUserMessage = null;
+                    for (let i = messages.length - 1; i >= 0; i--) {
+                        const message = messages[i];
+                        const isUserMessage = message.querySelector('.message.user');
+                        if (isUserMessage) {
+                            newestUserMessage = message;
+                            break;
+                        }
+                    }
+                    
+                    if (newestUserMessage) {
+                        // Calculate scroll position to put this message at the very top
+                        const messageTop = newestUserMessage.offsetTop;
+                        const containerRect = this.elements.chatMessages.getBoundingClientRect();
+                        const paddingTop = parseInt(getComputedStyle(this.elements.chatMessages).paddingTop) || 0;
+                        
+                        // Set scroll to position the message at the very top of the visible area
+                        // Subtract padding to account for container styling
+                        this.elements.chatMessages.scrollTop = messageTop - paddingTop;
+                        
+                        console.log('Scrolled to newest user message at position:', messageTop - paddingTop);
+                    }
                 }
             }
         });

@@ -382,7 +382,7 @@ class SimpleChatbot:
             messages = [
                 {
                     "role": "system", 
-                    "content": """You are Blot, an intelligent, knowledgeable, and helpful AI assistant. You can discuss any topic, provide information, help with problems, engage in casual conversation. You should be conversational, friendly, and naturally helpful.
+                    "content": """You are Blot, or 'بلوت' an intelligent, knowledgeable, and helpful AI assistant. You can discuss any topic, provide information, help with problems, engage in casual conversation. You should be conversational, friendly, and naturally helpful.
 
 PRIVACY PROTECTION MODE:
 - Some user inputs contain placeholders (Person1, Location1, Organization1, Email1, Phone1, etc.) that replace sensitive information
@@ -578,7 +578,8 @@ Respond naturally as if you were having a conversation with a friend who asked f
             # Look for placeholder with Arabic prefixes like و (and), ال (the), ب (with), ل (for), etc.
             arabic_pattern = re.compile(r'([وفبكلم]?)' + re.escape(placeholder) + r'\b', re.IGNORECASE)
             before = unmasked
-            unmasked = arabic_pattern.sub(r'\1' + original, unmasked)
+            # Use lambda to avoid regex group reference issues with original text containing numbers
+            unmasked = arabic_pattern.sub(lambda m: m.group(1) + original, unmasked)
             if before != unmasked:
                 logger.info(f"Successfully replaced {placeholder} with {original} (arabic pattern)")
                 replaced = True
