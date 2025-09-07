@@ -216,48 +216,48 @@ class ColorCustomizer {
                         <div class="preset-grid">
                             <div class="preset-card" data-preset="default">
                                 <div class="preset-preview">
-                                    <span style="background: #a78bfa"></span>
-                                    <span style="background: #34d399"></span>
-                                    <span style="background: #fb923c"></span>
-                                    <span style="background: #f472b6"></span>
+                                    <span style="--color: #a78bfa"></span>
+                                    <span style="--color: #34d399"></span>
+                                    <span style="--color: #fb923c"></span>
+                                    <span style="--color: #f472b6"></span>
                                 </div>
-                                <div class="preset-name">Default</div>
+                                <div class="preset-name">Default Palette</div>
                             </div>
                             <div class="preset-card" data-preset="highContrast">
                                 <div class="preset-preview">
-                                    <span style="background: #ff00ff"></span>
-                                    <span style="background: #00ff00"></span>
-                                    <span style="background: #ffff00"></span>
-                                    <span style="background: #ff00aa"></span>
+                                    <span style="--color: #ff00ff"></span>
+                                    <span style="--color: #00ff00"></span>
+                                    <span style="--color: #ffff00"></span>
+                                    <span style="--color: #ff00aa"></span>
                                 </div>
                                 <div class="preset-name">High Contrast</div>
                             </div>
                             <div class="preset-card" data-preset="colorblindSafe">
                                 <div class="preset-preview">
-                                    <span style="background: #648FFF"></span>
-                                    <span style="background: #785EF0"></span>
-                                    <span style="background: #DC267F"></span>
-                                    <span style="background: #FFB000"></span>
+                                    <span style="--color: #648FFF"></span>
+                                    <span style="--color: #785EF0"></span>
+                                    <span style="--color: #DC267F"></span>
+                                    <span style="--color: #FFB000"></span>
                                 </div>
-                                <div class="preset-name">Colorblind Safe</div>
+                                <div class="preset-name">Accessible Colors</div>
                             </div>
                             <div class="preset-card" data-preset="darkMode">
                                 <div class="preset-preview">
-                                    <span style="background: #9333ea"></span>
-                                    <span style="background: #059669"></span>
-                                    <span style="background: #ea580c"></span>
-                                    <span style="background: #db2777"></span>
+                                    <span style="--color: #9333ea"></span>
+                                    <span style="--color: #059669"></span>
+                                    <span style="--color: #ea580c"></span>
+                                    <span style="--color: #db2777"></span>
                                 </div>
-                                <div class="preset-name">Dark Mode</div>
+                                <div class="preset-name">Dark Theme</div>
                             </div>
                             <div class="preset-card" data-preset="pastel">
                                 <div class="preset-preview">
-                                    <span style="background: #e9d5ff"></span>
-                                    <span style="background: #bbf7d0"></span>
-                                    <span style="background: #fed7aa"></span>
-                                    <span style="background: #fce7f3"></span>
+                                    <span style="--color: #e9d5ff"></span>
+                                    <span style="--color: #bbf7d0"></span>
+                                    <span style="--color: #fed7aa"></span>
+                                    <span style="--color: #fce7f3"></span>
                                 </div>
-                                <div class="preset-name">Pastel</div>
+                                <div class="preset-name">Soft Pastels</div>
                             </div>
                         </div>
                     </div>
@@ -550,30 +550,53 @@ class ColorCustomizer {
             }
 
             .color-items {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-                padding: 0 1.5rem 1.5rem;
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 0 1.5rem 2rem;
             }
 
             .color-item {
                 display: flex;
                 align-items: center;
-                gap: 1rem;
-                padding: 1rem;
-                background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-                border: 1px solid rgba(167, 139, 250, 0.1);
-                border-radius: 16px;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                gap: 1.25rem;
+                padding: 1.5rem;
+                background: 
+                    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+                    radial-gradient(circle at 20% 80%, rgba(167, 139, 250, 0.05), transparent 50%);
+                border: 1px solid rgba(167, 139, 250, 0.15);
+                border-radius: 20px;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 position: relative;
-                backdrop-filter: blur(10px);
+                backdrop-filter: blur(15px);
+                overflow: hidden;
+            }
+            
+            .color-item::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+                transition: left 0.6s ease;
             }
 
             .color-item:hover {
-                background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(167, 139, 250, 0.05));
-                border-color: rgba(167, 139, 250, 0.3);
-                transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+                background: 
+                    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(167, 139, 250, 0.08)),
+                    radial-gradient(circle at 20% 80%, rgba(167, 139, 250, 0.1), transparent 50%);
+                border-color: rgba(167, 139, 250, 0.4);
+                transform: translateY(-3px) scale(1.02);
+                box-shadow: 
+                    0 12px 40px rgba(0, 0, 0, 0.2),
+                    0 0 0 1px rgba(167, 139, 250, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+            
+            .color-item:hover::before {
+                left: 100%;
             }
 
             .color-item.hidden {
@@ -581,30 +604,76 @@ class ColorCustomizer {
             }
 
             .color-preview {
-                width: 40px;
-                height: 40px;
-                border-radius: 12px;
-                border: 3px solid rgba(255, 255, 255, 0.2);
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
                 cursor: pointer;
                 position: relative;
-                overflow: hidden;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 
-                    0 4px 15px rgba(0, 0, 0, 0.2),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                overflow: visible;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                background: conic-gradient(from 0deg, var(--preview-color, #a78bfa), var(--preview-color, #a78bfa));
+                border: none;
+            }
+            
+            .color-preview::before {
+                content: '';
+                position: absolute;
+                top: -3px;
+                left: -3px;
+                right: -3px;
+                bottom: -3px;
+                border-radius: 50%;
+                background: conic-gradient(
+                    from 0deg,
+                    rgba(167, 139, 250, 0.8),
+                    rgba(59, 130, 246, 0.8),
+                    rgba(16, 185, 129, 0.8),
+                    rgba(245, 158, 11, 0.8),
+                    rgba(239, 68, 68, 0.8),
+                    rgba(236, 72, 153, 0.8),
+                    rgba(167, 139, 250, 0.8)
+                );
+                opacity: 0;
+                transition: all 0.4s ease;
+                z-index: -1;
+            }
+            
+            .color-preview::after {
+                content: '';
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                right: 2px;
+                bottom: 2px;
+                border-radius: 50%;
+                background: 
+                    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent 50%),
+                    radial-gradient(circle at 70% 70%, rgba(0, 0, 0, 0.1), transparent 50%),
+                    var(--preview-color, #a78bfa);
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(10px);
+                transition: all 0.4s ease;
+            }
+
+            .color-preview:hover::before {
+                opacity: 1;
+                transform: rotate(180deg) scale(1.1);
             }
 
             .color-preview:hover {
-                transform: scale(1.15) rotate(5deg);
-                border-color: rgba(255, 255, 255, 0.5);
+                transform: scale(1.1) translateY(-2px);
+                filter: drop-shadow(0 10px 30px var(--preview-color, rgba(167, 139, 250, 0.4)));
+            }
+            
+            .color-preview:hover::after {
+                border-color: rgba(255, 255, 255, 0.6);
                 box-shadow: 
-                    0 8px 25px rgba(0, 0, 0, 0.3),
-                    0 0 20px var(--preview-color, currentColor),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+                    inset 0 0 20px rgba(255, 255, 255, 0.2),
+                    0 0 30px var(--preview-color, rgba(167, 139, 250, 0.3));
             }
 
             .color-preview:active {
-                transform: scale(1.05);
+                transform: scale(1.05) translateY(0);
             }
 
             .color-input {
@@ -616,14 +685,43 @@ class ColorCustomizer {
             }
 
             .color-label {
-                color: #f1f5f9;
-                font-size: 0.9rem;
-                font-weight: 600;
+                color: #f8fafc;
+                font-size: 1rem;
+                font-weight: 700;
                 flex: 1;
                 display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            
+            .color-label-name {
+                font-size: 1rem;
+                font-weight: 700;
+                letter-spacing: 0.025em;
+            }
+            
+            .color-label-type {
+                font-size: 0.8rem;
+                font-weight: 500;
+                color: #cbd5e1;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                opacity: 0.8;
+            }
+            
+            .entity-icon {
+                width: 24px;
+                height: 24px;
+                margin-right: 0.75rem;
+                background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(147, 51, 234, 0.1));
+                border-radius: 8px;
+                display: flex;
                 align-items: center;
-                gap: 0.5rem;
-                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+                justify-content: center;
+                font-size: 14px;
+                border: 1px solid rgba(167, 139, 250, 0.3);
+                backdrop-filter: blur(10px);
             }
 
             .reset-color-btn {
@@ -704,14 +802,29 @@ class ColorCustomizer {
             }
             
             .preset-preview span {
-                width: 28px;
-                height: 28px;
-                border-radius: 8px;
-                border: 2px solid rgba(255, 255, 255, 0.2);
-                box-shadow: 
-                    0 4px 10px rgba(0, 0, 0, 0.2),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                border: none;
+                position: relative;
                 transition: all 0.3s ease;
+                background: conic-gradient(from 0deg, var(--color), var(--color));
+            }
+            
+            .preset-preview span::after {
+                content: '';
+                position: absolute;
+                top: 1px;
+                left: 1px;
+                right: 1px;
+                bottom: 1px;
+                border-radius: 50%;
+                background: 
+                    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent 50%),
+                    radial-gradient(circle at 70% 70%, rgba(0, 0, 0, 0.1), transparent 50%),
+                    var(--color);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(5px);
             }
             
             .preset-card:hover .preset-preview span {
@@ -836,34 +949,38 @@ class ColorCustomizer {
         container.innerHTML = '';
         
         const entityTypes = [
-            { key: 'person', label: 'Person' },
-            { key: 'location', label: 'Location' },
-            { key: 'organization', label: 'Org' },
-            { key: 'email', label: 'Email' },
-            { key: 'phone', label: 'Phone' },
-            { key: 'url', label: 'URL' },
-            { key: 'civilid', label: 'Civil ID' },
-            { key: 'passport', label: 'Passport' },
-            { key: 'creditcard', label: 'Card' }
+            { key: 'person', label: 'Person', type: 'Individual Identity', icon: '👤' },
+            { key: 'location', label: 'Location', type: 'Geographic Data', icon: '📍' },
+            { key: 'organization', label: 'Organization', type: 'Corporate Entity', icon: '🏢' },
+            { key: 'email', label: 'Email Address', type: 'Contact Information', icon: '✉️' },
+            { key: 'phone', label: 'Phone Number', type: 'Contact Information', icon: '📞' },
+            { key: 'url', label: 'Web Address', type: 'Digital Resource', icon: '🔗' },
+            { key: 'civilid', label: 'Civil ID', type: 'Government Identifier', icon: '🆔' },
+            { key: 'passport', label: 'Passport', type: 'Travel Document', icon: '📘' },
+            { key: 'creditcard', label: 'Credit Card', type: 'Financial Information', icon: '💳' }
         ];
 
-        entityTypes.forEach(({ key, label }) => {
+        entityTypes.forEach(({ key, label, type, icon }) => {
             const item = document.createElement('div');
             item.className = 'color-item';
             item.dataset.entityType = key;
             
             const colorValue = this.activeColors[key];
             item.innerHTML = `
+                <div class="entity-icon">${icon}</div>
                 <div class="color-preview" 
-                     style="background-color: ${colorValue}; --preview-color: ${colorValue};">
+                     style="--preview-color: ${colorValue};">
                     <input type="color" class="color-input" 
                            id="color-${key}" 
                            value="${colorValue}"
                            data-entity="${key}">
                 </div>
-                <span class="color-label">${label}</span>
+                <div class="color-label">
+                    <div class="color-label-name">${label}</div>
+                    <div class="color-label-type">${type}</div>
+                </div>
                 <button class="reset-color-btn" data-entity="${key}" title="Reset to default">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
                         <path d="M3 3v5h5"/>
                     </svg>
