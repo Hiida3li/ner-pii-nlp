@@ -1379,6 +1379,9 @@ class PrivacyChat {
             'org': 'pii-organization',
             'organization': 'pii-organization',
             
+            // Date entities
+            'date': 'pii-date',
+            
             // Email entities
             'email': 'pii-email',
             
