@@ -354,58 +354,39 @@ class ColorCustomizer {
                 transform: rotate(45deg);
             }
             
-            /* Floating Panel */
+            /* Side Panel */
             .color-customizer-panel {
                 position: fixed;
                 top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: 9999;
-                pointer-events: none;
-                opacity: 0;
-                transition: opacity 0.3s ease;
+                right: -400px;
+                width: 380px;
+                height: 100vh;
+                z-index: 1001;
+                transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
             
             .color-customizer-panel.open {
-                pointer-events: auto;
-                opacity: 1;
+                right: 0;
             }
             
             .color-panel-backdrop {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                backdrop-filter: blur(4px);
+                display: none; /* Remove backdrop since we don't want to block the chat */
             }
             
             .color-panel-container {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) scale(0.85);
-                width: 90%;
-                max-width: 520px;
-                max-height: 650px;
+                width: 100%;
+                height: 100%;
                 background: linear-gradient(145deg, #2d2b3a, #252331);
                 border: 1px solid rgba(167, 139, 250, 0.1);
-                border-radius: 20px;
+                border-right: none;
+                border-radius: 20px 0 0 20px;
                 box-shadow: 
-                    0 25px 80px rgba(0, 0, 0, 0.6),
+                    -10px 0 40px rgba(0, 0, 0, 0.3),
                     0 0 0 1px rgba(255, 255, 255, 0.05),
                     inset 0 1px 0 rgba(255, 255, 255, 0.1);
                 display: flex;
                 flex-direction: column;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                opacity: 0;
-            }
-            
-            .color-customizer-panel.open .color-panel-container {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
+                backdrop-filter: blur(20px);
             }
 
             .color-panel-header {
@@ -415,7 +396,7 @@ class ColorCustomizer {
                 padding: 1.5rem;
                 background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
                 border-bottom: 1px solid rgba(167, 139, 250, 0.2);
-                border-radius: 20px 20px 0 0;
+                border-radius: 20px 0 0 0;
                 position: relative;
             }
 
@@ -983,8 +964,10 @@ class ColorCustomizer {
                 const color = e.target.value;
                 this.activeColors[entityType] = color;
                 
-                // Update preview
-                e.target.parentElement.style.backgroundColor = color;
+                // Update preview with glow effect
+                const preview = e.target.parentElement;
+                preview.style.backgroundColor = color;
+                preview.style.setProperty('--preview-color', color);
                 
                 // Save and apply
                 this.saveColors();
