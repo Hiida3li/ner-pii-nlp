@@ -1920,6 +1920,7 @@ class PrivacyChat {
         const indicator = document.getElementById('typing-indicator');
         if (indicator) indicator.remove();
         this.isTyping = false;
+        this.updateSendButtonState();
     }
     
     initializePrivacyToggle() {
