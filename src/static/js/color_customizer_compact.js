@@ -148,7 +148,7 @@ class CompactColorCustomizer {
         iconContainer.className = 'compact-color-container';
         iconContainer.innerHTML = `
             <button class="compact-color-icon" id="compact-color-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/>
                 </svg>
@@ -207,8 +207,8 @@ class CompactColorCustomizer {
             }
             
             .compact-color-icon {
-                width: 40px;
-                height: 40px;
+                width: 42px;
+                height: 42px;
                 background: rgba(255, 255, 255, 0.1);
                 border: none;
                 border-radius: 8px;
