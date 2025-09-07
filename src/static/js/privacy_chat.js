@@ -872,6 +872,11 @@ class PrivacyChat {
                                 // Update displayed content based on privacy mode
                                 const displayText = this.privacyMode ? maskedResponse : unmaskedResponse;
                                 if (assistantMessageContent) {
+                                    // Detect and set text direction
+                                    const textDirection = this.detectTextDirection(displayText);
+                                    assistantMessageContent.classList.remove('ltr', 'rtl');
+                                    assistantMessageContent.classList.add(textDirection);
+                                    
                                     // Apply highlighting during streaming for both modes
                                     if (this.privacyMode) {
                                         // Highlight placeholders in masked mode
@@ -1012,7 +1017,7 @@ class PrivacyChat {
                 <div class="message assistant">
                     <div class="message-avatar">AI</div>
                     <div class="message-content">
-                        <div class="message-text ltr"></div>
+                        <div class="message-text"></div>
                     </div>
                 </div>
             </div>
