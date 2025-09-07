@@ -292,13 +292,23 @@ class ColorCustomizer {
         this.isPanelOpen = !this.isPanelOpen;
         const panel = document.getElementById('color-customizer-panel');
         const icon = document.getElementById('color-customizer-icon');
+        const mainChat = document.querySelector('.main-chat');
         
         if (this.isPanelOpen) {
             panel.classList.add('open');
             icon.classList.add('active');
+            // Adjust main chat to make room for panel
+            if (mainChat) {
+                mainChat.style.marginRight = '400px';
+                mainChat.style.transition = 'margin-right 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            }
         } else {
             panel.classList.remove('open');
             icon.classList.remove('active');
+            // Restore main chat layout
+            if (mainChat) {
+                mainChat.style.marginRight = '0';
+            }
         }
     }
 
@@ -552,23 +562,23 @@ class ColorCustomizer {
             .color-items {
                 display: flex;
                 flex-direction: column;
-                gap: 1.5rem;
-                padding: 0 1.5rem 2rem;
+                gap: 0.75rem;
+                padding: 0 1.5rem 1.5rem;
             }
 
             .color-item {
                 display: flex;
                 align-items: center;
-                gap: 1.25rem;
-                padding: 1.5rem;
+                gap: 0.75rem;
+                padding: 0.75rem;
                 background: 
-                    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
-                    radial-gradient(circle at 20% 80%, rgba(167, 139, 250, 0.05), transparent 50%);
-                border: 1px solid rgba(167, 139, 250, 0.15);
-                border-radius: 20px;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+                    radial-gradient(circle at 20% 80%, rgba(167, 139, 250, 0.03), transparent 50%);
+                border: 1px solid rgba(167, 139, 250, 0.1);
+                border-radius: 12px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 position: relative;
-                backdrop-filter: blur(15px);
+                backdrop-filter: blur(10px);
                 overflow: hidden;
             }
             
@@ -604,76 +614,31 @@ class ColorCustomizer {
             }
 
             .color-preview {
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
+                width: 28px;
+                height: 28px;
+                border-radius: 6px;
                 cursor: pointer;
                 position: relative;
-                overflow: visible;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                background: conic-gradient(from 0deg, var(--preview-color, #a78bfa), var(--preview-color, #a78bfa));
-                border: none;
-            }
-            
-            .color-preview::before {
-                content: '';
-                position: absolute;
-                top: -3px;
-                left: -3px;
-                right: -3px;
-                bottom: -3px;
-                border-radius: 50%;
-                background: conic-gradient(
-                    from 0deg,
-                    rgba(167, 139, 250, 0.8),
-                    rgba(59, 130, 246, 0.8),
-                    rgba(16, 185, 129, 0.8),
-                    rgba(245, 158, 11, 0.8),
-                    rgba(239, 68, 68, 0.8),
-                    rgba(236, 72, 153, 0.8),
-                    rgba(167, 139, 250, 0.8)
-                );
-                opacity: 0;
-                transition: all 0.4s ease;
-                z-index: -1;
-            }
-            
-            .color-preview::after {
-                content: '';
-                position: absolute;
-                top: 2px;
-                left: 2px;
-                right: 2px;
-                bottom: 2px;
-                border-radius: 50%;
-                background: 
-                    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent 50%),
-                    radial-gradient(circle at 70% 70%, rgba(0, 0, 0, 0.1), transparent 50%),
-                    var(--preview-color, #a78bfa);
+                overflow: hidden;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                background: var(--preview-color, #a78bfa);
                 border: 2px solid rgba(255, 255, 255, 0.2);
-                backdrop-filter: blur(10px);
-                transition: all 0.4s ease;
-            }
-
-            .color-preview:hover::before {
-                opacity: 1;
-                transform: rotate(180deg) scale(1.1);
+                box-shadow: 
+                    0 2px 8px rgba(0, 0, 0, 0.15),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
             }
 
             .color-preview:hover {
-                transform: scale(1.1) translateY(-2px);
-                filter: drop-shadow(0 10px 30px var(--preview-color, rgba(167, 139, 250, 0.4)));
-            }
-            
-            .color-preview:hover::after {
-                border-color: rgba(255, 255, 255, 0.6);
+                transform: scale(1.1);
+                border-color: rgba(255, 255, 255, 0.4);
                 box-shadow: 
-                    inset 0 0 20px rgba(255, 255, 255, 0.2),
-                    0 0 30px var(--preview-color, rgba(167, 139, 250, 0.3));
+                    0 4px 15px rgba(0, 0, 0, 0.2),
+                    0 0 15px var(--preview-color, rgba(167, 139, 250, 0.4)),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3);
             }
 
             .color-preview:active {
-                transform: scale(1.05) translateY(0);
+                transform: scale(1.05);
             }
 
             .color-input {
@@ -685,43 +650,25 @@ class ColorCustomizer {
             }
 
             .color-label {
-                color: #f8fafc;
-                font-size: 1rem;
-                font-weight: 700;
+                color: #f1f5f9;
+                font-size: 0.85rem;
+                font-weight: 600;
                 flex: 1;
-                display: flex;
-                flex-direction: column;
-                gap: 0.25rem;
-                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            }
-            
-            .color-label-name {
-                font-size: 1rem;
-                font-weight: 700;
-                letter-spacing: 0.025em;
-            }
-            
-            .color-label-type {
-                font-size: 0.8rem;
-                font-weight: 500;
-                color: #cbd5e1;
-                text-transform: uppercase;
-                letter-spacing: 0.1em;
-                opacity: 0.8;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
             }
             
             .entity-icon {
-                width: 24px;
-                height: 24px;
-                margin-right: 0.75rem;
-                background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(147, 51, 234, 0.1));
-                border-radius: 8px;
+                width: 20px;
+                height: 20px;
+                background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(147, 51, 234, 0.08));
+                border-radius: 6px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 14px;
-                border: 1px solid rgba(167, 139, 250, 0.3);
-                backdrop-filter: blur(10px);
+                font-size: 12px;
+                border: 1px solid rgba(167, 139, 250, 0.2);
+                backdrop-filter: blur(5px);
+                flex-shrink: 0;
             }
 
             .reset-color-btn {
@@ -802,29 +749,15 @@ class ColorCustomizer {
             }
             
             .preset-preview span {
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
-                border: none;
-                position: relative;
-                transition: all 0.3s ease;
-                background: conic-gradient(from 0deg, var(--color), var(--color));
-            }
-            
-            .preset-preview span::after {
-                content: '';
-                position: absolute;
-                top: 1px;
-                left: 1px;
-                right: 1px;
-                bottom: 1px;
-                border-radius: 50%;
-                background: 
-                    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent 50%),
-                    radial-gradient(circle at 70% 70%, rgba(0, 0, 0, 0.1), transparent 50%),
-                    var(--color);
+                width: 20px;
+                height: 20px;
+                border-radius: 4px;
                 border: 1px solid rgba(255, 255, 255, 0.2);
-                backdrop-filter: blur(5px);
+                transition: all 0.3s ease;
+                background: var(--color);
+                box-shadow: 
+                    0 2px 6px rgba(0, 0, 0, 0.15),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
             }
             
             .preset-card:hover .preset-preview span {
@@ -975,10 +908,7 @@ class ColorCustomizer {
                            value="${colorValue}"
                            data-entity="${key}">
                 </div>
-                <div class="color-label">
-                    <div class="color-label-name">${label}</div>
-                    <div class="color-label-type">${type}</div>
-                </div>
+                <div class="color-label">${label}</div>
                 <button class="reset-color-btn" data-entity="${key}" title="Reset to default">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>

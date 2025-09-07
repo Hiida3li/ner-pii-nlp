@@ -614,12 +614,43 @@ class PrivacyChat {
             const hasText = input.value.trim().length > 0;
             const hasAttachment = document.querySelector('.attachment-preview') !== null;
             
-            if (hasText || hasAttachment) {
+            if (hasText || hasAttachment || this.isTyping) {
                 sendBtn.classList.add('show');
             } else {
                 sendBtn.classList.remove('show');
             }
         }
+    }
+    
+    updateSendButtonState() {
+        // Update both send buttons to reflect current state
+        const buttons = [this.elements.sendBtn, this.elements.sendBtnBottom].filter(Boolean);
+        
+        buttons.forEach(btn => {
+            if (!btn) return;
+            
+            const sendIcon = btn.querySelector('.send-icon');
+            if (!sendIcon) return;
+            
+            if (this.isTyping) {
+                // Show interrupt/stop icon
+                sendIcon.innerHTML = `
+                    <rect x="6" y="6" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="currentColor"/>
+                `;
+                btn.classList.add('interrupt-mode');
+                btn.title = 'Stop response';
+            } else {
+                // Show send arrow
+                sendIcon.innerHTML = `
+                    <path class="send-arrow" d="M12 5L12 19M12 5L7 10M12 5L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                `;
+                btn.classList.remove('interrupt-mode');
+                btn.title = 'Send message';
+            }
+        });
+        
+        // Also update button visibility
+        this.toggleSendButton();
     }
     
     moveInputToBottom() {
@@ -673,9 +704,11 @@ class PrivacyChat {
     async sendMessage() {
         console.log('sendMessage called');
         
-        // Only abort if there's an active stream for the CURRENT session
-        if (this.activeStreamSession === this.currentSession) {
+        // If currently typing, this becomes an interrupt action
+        if (this.isTyping) {
+            console.log('Interrupting current response...');
             this.abortCurrentStream();
+            return;
         }
         
         // Determine which input is active
@@ -691,7 +724,7 @@ class PrivacyChat {
         }
         
         console.log('Message:', message, 'IsTyping:', this.isTyping);
-        if (!message || this.isTyping) return;
+        if (!message) return;
         
         // If on welcome screen, move input to bottom first
         if (isWelcomeVisible) {
