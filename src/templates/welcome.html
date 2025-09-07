@@ -941,52 +941,10 @@
                 element.style.animationDelay = `${index * 0.2 + 0.3}s`;
             });
             
-            // Add floating particles effect
-            createFloatingParticles();
+            // Removed particles for clean design
         });
         
-        function createFloatingParticles() {
-            const hero = document.querySelector('.welcome-hero');
-            const particleCount = 10;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.style.cssText = `
-                    position: absolute;
-                    width: ${Math.random() * 4 + 2}px;
-                    height: ${Math.random() * 4 + 2}px;
-                    background: radial-gradient(circle, rgba(152, 16, 250, ${Math.random() * 0.5 + 0.3}), transparent);
-                    border-radius: 50%;
-                    left: ${Math.random() * 100}%;
-                    top: ${Math.random() * 100}%;
-                    animation: float ${Math.random() * 20 + 10}s infinite ease-in-out;
-                    animation-delay: ${Math.random() * 10}s;
-                    pointer-events: none;
-                `;
-                hero.appendChild(particle);
-            }
-            
-            // Add CSS animation for floating
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes float {
-                    0%, 100% {
-                        transform: translateY(0) translateX(0);
-                        opacity: 0;
-                    }
-                    10% {
-                        opacity: 1;
-                    }
-                    90% {
-                        opacity: 1;
-                    }
-                    50% {
-                        transform: translateY(-100vh) translateX(${Math.random() * 200 - 100}px);
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-        }
+        // Removed particle function for plain background
     </script>
     
     <!-- Powered by Footer -->

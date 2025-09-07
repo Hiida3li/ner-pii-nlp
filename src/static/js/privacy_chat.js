@@ -634,8 +634,7 @@ class PrivacyChat {
         }
         this.autoResizeTextarea();
         
-        // Show typing indicator (don't show user message yet)
-        this.showTypingIndicator();
+        // Don't show typing indicator yet - will show after user message
         
         try {
             // Use streaming endpoint
@@ -756,8 +755,8 @@ class PrivacyChat {
                                 console.log('About to add user message with attachment:', attachment ? attachment.filename : 'none');
                                 this.addMessage('user', userMessageToShow, userMessageData.userEntities, userMessageData, attachment);
                                 
-                                // Keep typing indicator visible for now
-                                // Don't hide it yet - wait for first chunk
+                                // Now show typing indicator AFTER user message
+                                this.showTypingIndicator();
                                 
                                 // Clear the attachment display from the message box when AI starts responding
                                 if (window.docAttachmentManager) {
