@@ -1178,43 +1178,9 @@ class PrivacyChat {
         }
     }
     
-    formatResponseText(text) {
-        // Preserve formatting: convert line breaks and format lists
-        let formatted = text;
-        
-        // Convert markdown-style headers to HTML
-        formatted = formatted.replace(/^### (.+)$/gm, '<h4>$1</h4>');
-        formatted = formatted.replace(/^## (.+)$/gm, '<h3>$1</h3>');
-        formatted = formatted.replace(/^# (.+)$/gm, '<h2>$1</h2>');
-        
-        // Convert markdown bold to HTML
-        formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-        
-        // Convert bullet points to proper list items
-        formatted = formatted.replace(/^- (.+)$/gm, '<li>$1</li>');
-        
-        // Wrap consecutive list items in <ul> tags
-        formatted = formatted.replace(/(<li>.*<\/li>\n?)+/g, (match) => {
-            return '<ul>' + match + '</ul>';
-        });
-        
-        // Convert double line breaks to paragraphs
-        formatted = formatted.split('\n\n').map(para => {
-            if (para.trim() && !para.startsWith('<h') && !para.startsWith('<ul>')) {
-                return '<p>' + para.replace(/\n/g, '<br>') + '</p>';
-            }
-            return para;
-        }).join('');
-        
-        // Handle single line breaks
-        formatted = formatted.replace(/([^>])\n([^<])/g, '$1<br>$2');
-        
-        return formatted;
-    }
-
     highlightPlaceholders(text) {
-        // First format the text to preserve structure
-        let formattedText = this.formatResponseText(text);
+        // Convert newlines to <br> tags for basic line break preservation
+        let formattedText = text.replace(/\n/g, '<br>');
         
         // Highlight ONLY actual placeholders (with numbers), not regular words
         // Must have a number after the entity type to be a placeholder
@@ -1254,8 +1220,8 @@ class PrivacyChat {
         // Provide real-time highlighting during streaming for common PII patterns
         console.log('highlightStreamingEntities called with:', text);
         
-        // First format the text to preserve structure
-        let highlightedText = this.formatResponseText(text);
+        // Convert newlines to <br> tags for basic line break preservation
+        let highlightedText = text.replace(/\n/g, '<br>');
         
         // Avoid processing if text already contains HTML spans to prevent double-highlighting
         if (highlightedText.includes('<span class="pii-entity')) {
@@ -1846,12 +1812,17 @@ class PrivacyChat {
     showTypingIndicator() {
         this.isTyping = true;
         
+        // Create typing indicator in the same position as assistant messages
         const typingHtml = `
             <div class="message-wrapper" id="typing-indicator">
-                <div class="typing-indicator-standalone">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
+                <div class="message assistant">
+                    <div class="message-content">
+                        <div class="typing-indicator-standalone">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
