@@ -1684,15 +1684,10 @@ class PrivacyChat {
         
         const typingHtml = `
             <div class="message-wrapper" id="typing-indicator">
-                <div class="message assistant">
-                    <div class="message-avatar">AI</div>
-                    <div class="message-content">
-                        <div class="typing-indicator">
-                            <div class="typing-dot"></div>
-                            <div class="typing-dot"></div>
-                            <div class="typing-dot"></div>
-                        </div>
-                    </div>
+                <div class="typing-indicator-standalone">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
                 </div>
             </div>
         `;
