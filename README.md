@@ -418,12 +418,6 @@ We welcome contributions! Please follow these steps:
 4. Push to branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-### Development Guidelines
-- Follow PEP 8 style guide
-- Add unit tests for new features
-- Update documentation
-- Ensure all tests pass
-- Test with both Arabic and English content
 
 ## 📄 License
 
