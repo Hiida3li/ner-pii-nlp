@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Customizer Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #201f27;
+            color: #e5e7eb;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #f3f4f6;
+            margin-bottom: 2rem;
+        }
+        
+        .test-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .entity-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .entity-example {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .entity-type {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        
+        .sample-text {
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+        
+        /* Default entity colors */
+        .pii-person { color: #a78bfa; }
+        .pii-location { color: #34d399; }
+        .pii-organization { color: #fb923c; }
+        .pii-date { color: #60a5fa; }
+        .pii-email { color: #f472b6; }
+        .pii-phone { color: #facc15; }
+        .pii-url { color: #2dd4bf; }
+        .pii-civilid { color: #c084fc; }
+        .pii-passport { color: #f87171; }
+        .pii-creditcard { color: #818cf8; }
+        .pii-bankaccount { color: #a3e635; }
+        
+        #sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 320px;
+            height: 100vh;
+            background: #2a2937;
+            overflow-y: auto;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .main-content {
+            margin-right: 340px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature-list li::before {
+            content: "✓";
+            color: #34d399;
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <h1>🎨 PII Entity Color Customizer Demo</h1>
+        
+        <div class="test-section">
+            <h2>Entity Examples</h2>
+            <p>These examples demonstrate how different entity types are highlighted with customizable colors:</p>
+            
+            <div class="entity-examples">
+                <div class="entity-example">
+                    <div class="entity-type">Person</div>
+                    <div class="sample-text">
+                        Hello, my name is <span class="pii-person">John Smith</span> and I work with <span class="pii-person">Sarah Johnson</span>.
+                    </div>
+                </div>
+                
+                <div class="entity-example">
+                    <div class="entity-type">Location</div>
+                    <div class="sample-text">
+                        I live in <span class="pii-location">New York City</span> but often visit <span class="pii-location">San Francisco</span>.
+                    </div>
+                </div>
+                
+                <div class="entity-example">
+                    <div class="entity-type">Organization</div>
+                    <div class="sample-text">
+                        I work at <span class="pii-organization">Google</span> and previously worked at <span class="pii-organization">Microsoft</span>.
+                    </div>
+                </div>
+                
+                <div class="entity-example">
+                    <div class="entity-type">Email</div>
+                    <div class="sample-text">
+                        Contact me at <span class="pii-email">john@example.com</span> for more information.
+                    </div>
+                </div>
+                
+                <div class="entity-example">
+                    <div class="entity-type">Phone</div>
+                    <div class="sample-text">
+                        Call me at <span class="pii-phone">+1 (555) 123-4567</span> during business hours.
+                    </div>
+                </div>
+                
+                <div class="entity-example">
+                    <div class="entity-type">Date</div>
+                    <div class="sample-text">
+                        The meeting is scheduled for <span class="pii-date">March 15, 2024</span>.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Features</h2>
+            <ul class="feature-list">
+                <li>Customizable colors for each entity type</li>
+                <li>5 preset color schemes (Default, High Contrast, Colorblind Safe, Dark Mode, Pastel)</li>
+                <li>Individual color reset buttons</li>
+                <li>Export/Import color configurations</li>
+                <li>Colors saved in localStorage for persistence</li>
+                <li>Real-time color updates</li>
+                <li>Accessibility-focused design</li>
+                <li>Collapsible panel to save space</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h2>Arabic Text Example</h2>
+            <div class="sample-text" dir="rtl" lang="ar">
+                مرحباً، اسمي <span class="pii-person">أحمد الكندي</span> وأعمل في <span class="pii-organization">شركة عُمان للاتصالات</span> في <span class="pii-location">مسقط</span>.
+                يمكنك التواصل معي على <span class="pii-email">ahmad@example.om</span> أو الاتصال على <span class="pii-phone">+968 9123 4567</span>.
+            </div>
+        </div>
+    </div>
+    
+    <div id="sidebar">
+        <!-- Color customizer panel will be added here -->
+    </div>
+    
+    <!-- Load the color customizer script -->
+    <script src="/static/js/color_customizer.js"></script>
+    
+    <script>
+        // Additional demo functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Color Customizer Demo loaded');
+            console.log('Color Customizer instance:', window.colorCustomizer);
+            
+            // Log when colors are changed
+            const originalApplyColors = window.colorCustomizer.applyColors.bind(window.colorCustomizer);
+            window.colorCustomizer.applyColors = function() {
+                originalApplyColors();
+                console.log('Colors updated:', this.getColors());
+            };
+        });
+    </script>
+</body>
+</html>
