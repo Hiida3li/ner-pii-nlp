@@ -852,7 +852,7 @@
             background: rgba(43, 43, 50, 0.6);  /* #2b2b32 with transparency */
             color: #e5e7eb;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 0.3rem 0.9rem;  /* Minimal padding for tight fit */
+            padding: 0.5rem 1rem;  /* Balanced padding for centering */
             border-radius: 18px;  /* Circular/pill-shaped design */
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: inline-block;  /* Changed to inline-block for better sizing */
@@ -863,15 +863,15 @@
             word-wrap: break-word;
             white-space: pre-wrap;
             font-size: 1rem;
-            line-height: 1;  /* Tighter line height */
+            line-height: 1.4;  /* Normal line height for proper vertical centering */
         }
         
         /* Text alignment for user messages */
         .user .message-text {
             text-align: right;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
+            display: block;  /* Block display for proper text rendering */
+            margin: 0;
+            padding: 0;
         }
         
         /* RTL support for user messages with Arabic text */
