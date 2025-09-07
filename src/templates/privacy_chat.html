@@ -785,12 +785,19 @@
             display: flex;
             flex-direction: column;
             align-items: stretch;
-            padding-left: 10%;
-            padding-right: 10%;
+            padding-left: 5%;
+            padding-right: 5%;
         }
         
         .sidebar-closed .message-wrapper {
             width: 100%;
+        }
+        
+        /* Keep assistant messages in fixed position regardless of sidebar state */
+        .sidebar-closed .message.assistant {
+            margin-left: auto;
+            margin-right: 2rem;
+            padding-left: 0;
         }
 
         .message {
@@ -813,7 +820,7 @@
         }
 
         .message.user {
-            max-width: 50%;
+            max-width: 60%;
             margin-left: auto;
             margin-right: 2rem;
             flex-direction: row-reverse;
@@ -822,10 +829,11 @@
         }
 
         .message.assistant {
-            max-width: 50%;
-            margin-right: auto;
-            margin-left: 2rem;
-            align-self: flex-start;
+            max-width: 58%;
+            margin-right: 2rem;
+            margin-left: auto;
+            align-self: flex-end;
+            padding-left: 0;
         }
 
         .message-avatar {
@@ -857,14 +865,15 @@
         }
         
         .assistant .message-content {
-            background: rgba(255, 255, 255, 0.03);
+            background: transparent;
             color: #e5e7eb;
-            padding: 0.45rem 0.85rem;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            padding: 0.5rem 0;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            max-width: 100%;
         }
         
         .message-text {
@@ -928,10 +937,11 @@
         }
         
         .assistant .message-text {
-            font-size: 0.85rem;
-            line-height: 1.65;
+            font-size: 0.88rem;
+            line-height: 1.7;
             letter-spacing: 0.01em;
-            color: #f0f0f0;
+            color: #d1d5db;
+            font-weight: 400;
         }
         
         /* Better spacing for Arabic in assistant messages */
