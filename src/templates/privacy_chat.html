@@ -1864,6 +1864,24 @@
         </div>
     </div>
 
+    <!-- Rename Chat Modal -->
+    <div id="rename-modal" class="rename-modal" style="display: none;">
+        <div class="rename-modal-content">
+            <div class="rename-modal-header">
+                <h3>Rename Chat</h3>
+                <button class="rename-modal-close" onclick="closeRenameModal()">×</button>
+            </div>
+            <div class="rename-modal-body">
+                <label for="chat-name-input">Enter new name for this chat:</label>
+                <input type="text" id="chat-name-input" class="chat-name-input" placeholder="Chat name" maxlength="50">
+                <div class="rename-modal-actions">
+                    <button class="rename-cancel-btn" onclick="closeRenameModal()">Cancel</button>
+                    <button class="rename-save-btn" onclick="saveRename()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <link rel="stylesheet" href="/static/css/document-manager.css">
     <link rel="stylesheet" href="/static/css/document-attachment.css?v=19">
     <link rel="stylesheet" href="/static/css/attachment-text-fix.css?v=1">
