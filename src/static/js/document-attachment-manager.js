@@ -25,8 +25,10 @@ class DocumentAttachmentManager {
         fileInput.type = 'file';
         fileInput.id = 'doc-upload';
         fileInput.accept = '.pdf,.docx,.txt,.md,.xlsx,.csv';
+        fileInput.multiple = true;
         fileInput.style.display = 'none';
         document.body.appendChild(fileInput);
+        console.log('File input created with multiple:', fileInput.multiple);
         
         // Add upload button to both input areas
         const inputBoxes = document.querySelectorAll('.input-box');
@@ -75,8 +77,15 @@ class DocumentAttachmentManager {
         
         // Handle file selection
         fileInput.addEventListener('change', async (e) => {
+            console.log('File selection changed, files count:', e.target.files.length);
             if (e.target.files.length > 0) {
-                await this.attachDocument(e.target.files[0]);
+                // Process all selected files
+                const files = Array.from(e.target.files);
+                console.log('Processing files:', files.map(f => f.name));
+                for (const file of files) {
+                    console.log('Attaching file:', file.name);
+                    await this.attachDocument(file);
+                }
                 e.target.value = ''; // Reset
             }
         });
@@ -464,13 +473,16 @@ class DocumentAttachmentManager {
                 chatContainer.classList.remove('dragging');
                 
                 const files = Array.from(e.dataTransfer.files);
-                const validFile = files.find(file => {
+                const validFiles = files.filter(file => {
                     const ext = file.name.split('.').pop().toLowerCase();
                     return ['pdf', 'docx', 'txt', 'md', 'xlsx', 'csv'].includes(ext);
                 });
                 
-                if (validFile) {
-                    await this.attachDocument(validFile);
+                if (validFiles.length > 0) {
+                    // Process all valid files
+                    for (const file of validFiles) {
+                        await this.attachDocument(file);
+                    }
                 } else if (files.length > 0) {
                     alert('Please upload a supported document format: PDF, DOCX, TXT, MD, XLSX, or CSV');
                 }

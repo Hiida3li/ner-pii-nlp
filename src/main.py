@@ -933,6 +933,165 @@ async def upload_document(session_id: int, file: UploadFile = File(...)):
         logger.error(f"Document upload error: {str(e)}\n{error_details}")
         raise HTTPException(status_code=500, detail=f"Document processing failed: {str(e)}")
 
+@app.post("/api/document/upload-multiple")
+async def upload_multiple_documents(session_id: int, files: List[UploadFile] = File(...)):
+    """Upload and process multiple documents sequentially"""
+    import time
+    start_time = time.time()
+    
+    try:
+        if not files:
+            raise HTTPException(status_code=400, detail="No files provided")
+        
+        results = []
+        
+        # Initialize session if needed
+        if session_id not in document_sessions:
+            document_sessions[session_id] = {'documents': [], 'active_doc': None}
+        
+        # Process each document sequentially
+        for file_index, file in enumerate(files):
+            logger.info(f"Processing document {file_index + 1}/{len(files)}: {file.filename}")
+            
+            if not file.filename:
+                logger.warning(f"Skipping file {file_index + 1}: No filename provided")
+                continue
+            
+            try:
+                # Read file content
+                read_start = time.time()
+                file_content = await file.read()
+                logger.info(f"File {file_index + 1} read time: {(time.time() - read_start) * 1000:.2f}ms")
+                
+                # Process document
+                process_start = time.time()
+                doc_processor = app.state.document_processor
+                result = await doc_processor.process_document(file_content, file.filename)
+                logger.info(f"Document {file_index + 1} processing time: {(time.time() - process_start) * 1000:.2f}ms")
+                
+                if not result['success']:
+                    logger.error(f"Failed to process document {file_index + 1}: {result['error']}")
+                    continue
+                
+                # Analyze document for PII
+                model_start = time.time()
+                model_factory = app.state.model_factory
+                model = model_factory.get_model("v2")
+                
+                if not model:
+                    logger.error(f"Model not available for document {file_index + 1}")
+                    continue
+                
+                # Extract entities from document text
+                predict_start = time.time()
+                entities_tuples = model.predict(result['text'])
+                logger.info(f"Document {file_index + 1} entity prediction time: {(time.time() - predict_start) * 1000:.2f}ms")
+                
+                # Convert tuples to dictionary format
+                entities = []
+                if entities_tuples:
+                    for entity_tuple in entities_tuples:
+                        if len(entity_tuple) >= 4:
+                            entities.append({
+                                'text': entity_tuple[0],
+                                'entity_type': entity_tuple[1],
+                                'start': entity_tuple[2],
+                                'end': entity_tuple[3]
+                            })
+                
+                entity_processor = EntityProcessor()
+                
+                # Convert entities back to tuple format for entity_processor
+                entities_for_processor = []
+                for entity in entities:
+                    entities_for_processor.append((
+                        entity['text'],
+                        entity['entity_type'],
+                        entity['start'],
+                        entity['end']
+                    ))
+                
+                # Split combined entities BEFORE processing
+                split_start = time.time()
+                entities_for_processor = entity_processor.split_combined_entities(result['text'], entities_for_processor)
+                logger.info(f"Document {file_index + 1} entity splitting time: {(time.time() - split_start) * 1000:.2f}ms")
+                
+                # Update the entities list with split entities
+                entities = []
+                for entity_tuple in entities_for_processor:
+                    entities.append({
+                        'text': entity_tuple[0],
+                        'entity_type': entity_tuple[1],
+                        'start': entity_tuple[2],
+                        'end': entity_tuple[3]
+                    })
+                
+                # Process entities for display
+                highlight_start = time.time()
+                highlighted_text = entity_processor.highlight_entities_in_text(result['text'], entities_for_processor)
+                entity_counts = entity_processor.get_entity_stats(entities_for_processor)
+                logger.info(f"Document {file_index + 1} highlighting time: {(time.time() - highlight_start) * 1000:.2f}ms")
+                
+                # Create masked version of text
+                mask_start = time.time()
+                chatbot = SimpleChatbot()
+                masked_text = chatbot.mask_entities(result['text'], entities)
+                logger.info(f"Document {file_index + 1} masking time: {(time.time() - mask_start) * 1000:.2f}ms")
+                
+                # Store document data
+                doc_data = {
+                    'id': hashlib.md5(f"{session_id}_{file.filename}_{datetime.now().isoformat()}".encode()).hexdigest()[:12],
+                    'filename': file.filename,
+                    'original_text': result['text'],
+                    'masked_text': masked_text,
+                    'highlighted_text': highlighted_text,
+                    'entities': entities,
+                    'entity_counts': entity_counts,
+                    'file_info': result['file_info'],
+                    'uploaded_at': datetime.now().isoformat(),
+                    'word_count': result['word_count'],
+                    'text_length': result['text_length']
+                }
+                
+                # Add document to session
+                document_sessions[session_id]['documents'].append(doc_data)
+                
+                # Set the last processed document as active
+                document_sessions[session_id]['active_doc'] = doc_data['id']
+                
+                # Add to results
+                results.append({
+                    'id': doc_data['id'],
+                    'filename': doc_data['filename'],
+                    'text_length': doc_data['text_length'],
+                    'word_count': doc_data['word_count'],
+                    'entity_count': sum(entity_counts.values()) if entity_counts else 0,
+                    'entity_types': list(entity_counts.keys()) if entity_counts else [],
+                    'file_info': doc_data['file_info']
+                })
+                
+                logger.info(f"Successfully processed document {file_index + 1}: {file.filename}")
+                
+            except Exception as doc_error:
+                logger.error(f"Error processing document {file_index + 1} ({file.filename}): {str(doc_error)}")
+                continue
+        
+        total_time = (time.time() - start_time) * 1000
+        logger.info(f"Total multi-document upload time: {total_time:.2f}ms for {len(results)} documents")
+        
+        return JSONResponse({
+            'success': True,
+            'processed_count': len(results),
+            'total_count': len(files),
+            'documents': results
+        })
+        
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        logger.error(f"Multi-document upload error: {str(e)}\n{error_details}")
+        raise HTTPException(status_code=500, detail=f"Multi-document processing failed: {str(e)}")
+
 @app.get("/api/document/{session_id}")
 async def get_documents(session_id: int):
     """Get all documents for a session"""

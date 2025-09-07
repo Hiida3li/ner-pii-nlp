@@ -360,6 +360,7 @@
 }
 
 .attachment-preview .remove-doc-btn {
+    display: flex;
     width: 14px;
     height: 14px;
     cursor: pointer;
@@ -368,6 +369,8 @@
     background: transparent;
     border: none;
     padding: 0;
+    align-items: center;
+    justify-content: center;
 }
 
 .attachment-preview .remove-doc-btn:hover {
