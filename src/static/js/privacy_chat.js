@@ -314,6 +314,33 @@ class PrivacyChat {
                 this.deleteSession(btn.dataset.session);
             });
         });
+        
+        // Animate new chat names with streaming effect
+        document.querySelectorAll('.streaming-text').forEach(element => {
+            const text = element.dataset.text;
+            if (text) {
+                this.streamText(element, text, 30); // 30ms per character
+            }
+        });
+    }
+    
+    streamText(element, text, speed = 50) {
+        element.textContent = '';
+        let index = 0;
+        
+        const typeCharacter = () => {
+            if (index < text.length) {
+                element.textContent += text[index];
+                index++;
+                setTimeout(typeCharacter, speed);
+            } else {
+                // Remove streaming class after animation completes
+                element.classList.remove('streaming-text');
+                element.closest('.chat-item').classList.remove('new-chat');
+            }
+        };
+        
+        typeCharacter();
     }
     
     truncateText(text, maxLength) {
