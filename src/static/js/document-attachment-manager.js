@@ -215,7 +215,7 @@ class DocumentAttachmentManager {
                 }
                 // console.log('Total entities calculated:', totalEntities);
                 
-                const document = {
+                const attachedDocument = {
                     id: result.document.id,
                     filename: file.name,
                     text: docData.original_text,
@@ -227,7 +227,7 @@ class DocumentAttachmentManager {
                 };
                 
                 // Add to documents array
-                this.attachedDocuments.push(document);
+                this.attachedDocuments.push(attachedDocument);
                 
                 // Update progress to 100%
                 uploadButtons.forEach(btn => {
