@@ -820,18 +820,20 @@
         }
 
         .message.user {
-            max-width: 60%;
+            max-width: 65%;
             margin-left: auto;
             margin-right: 2rem;
+            margin-bottom: 0.5rem;
             flex-direction: row-reverse;
             align-items: flex-end;
             justify-content: flex-start;
         }
 
         .message.assistant {
-            max-width: 58%;
+            max-width: 65%;
             margin-right: 2rem;
             margin-left: auto;
+            margin-bottom: 1rem;
             align-self: flex-end;
             padding-left: 0;
         }
@@ -1555,7 +1557,7 @@
             justify-content: flex-start;
             margin-left: auto;
             margin-right: 2rem;
-            max-width: 58%;
+            max-width: 65%;
         }
 
         .typing-dot {
@@ -1589,7 +1591,13 @@
             }
         }
         
-        /* Ensure typing indicator is visible */
+        /* Ensure typing indicator is properly positioned */
+        #typing-indicator {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+        }
+        
         #typing-indicator .message-content {
             background: transparent !important;
             border: none !important;
