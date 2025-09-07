@@ -855,15 +855,17 @@
             padding: 0.5rem 1rem;  /* Balanced padding for centering */
             border-radius: 18px;  /* Circular/pill-shaped design */
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: inline-block;  /* Changed to inline-block for better sizing */
-            max-width: 70%;  /* Limit maximum width */
-            width: auto;  /* Auto width based on content */
-            min-width: fit-content;  /* Ensure minimum width fits content */
+            display: inline-block;  /* Inline-block for dynamic width */
+            min-width: 60px;  /* Minimum width for very short messages */
+            max-width: 65%;  /* Increased maximum width before wrapping */
+            width: fit-content;  /* Adapt width to content */
             margin-left: auto;  /* Align to right side */
             word-wrap: break-word;
+            word-break: break-word;  /* Force word breaking for long content */
             white-space: pre-wrap;
             font-size: 1rem;
             line-height: 1.4;  /* Normal line height for proper vertical centering */
+            overflow-wrap: break-word;  /* Ensure content wraps within bounds */
         }
         
         /* Text alignment for user messages */
