@@ -1546,14 +1546,16 @@
             justify-content: flex-start;
         }
         
-        /* Standalone typing indicator - just dots, no box */
+        /* Standalone typing indicator - aligned with assistant messages */
         .typing-indicator-standalone {
             display: inline-flex;
             gap: 0.35rem;
-            padding: 1.25rem 1.5rem;
+            padding: 0.5rem 0;
             align-items: center;
             justify-content: flex-start;
-            margin-left: 2rem;
+            margin-left: auto;
+            margin-right: 2rem;
+            max-width: 58%;
         }
 
         .typing-dot {
