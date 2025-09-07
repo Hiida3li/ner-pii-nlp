@@ -1175,29 +1175,35 @@ class PrivacyChat {
             }
         }
         
-        // Build attachment HTML if provided
+        // Build attachment HTML if provided (can be single attachment or array of attachments)
         let attachmentHtml = '';
-        if (attachment && attachment.filename) {
-            console.log('Building attachment HTML for:', attachment.filename);
+        const attachments = Array.isArray(attachment) ? attachment : (attachment ? [attachment] : []);
+        
+        if (attachments.length > 0) {
+            console.log('Building attachment HTML for', attachments.length, 'attachments');
             console.log('DocAttachmentManager exists:', !!window.docAttachmentManager);
             console.log('CreateDocumentCard exists:', !!(window.docAttachmentManager && window.docAttachmentManager.createDocumentCard));
             
-            // Create attachment HTML directly if manager not available
-            if (window.docAttachmentManager && window.docAttachmentManager.createDocumentCard) {
-                console.log('Using docAttachmentManager.createDocumentCard');
-                const card = window.docAttachmentManager.createDocumentCard(attachment, false);
-                const tempDiv = document.createElement('div');
-                tempDiv.appendChild(card);
-                attachmentHtml = `<div class="message-attachments">${tempDiv.innerHTML}</div>`;
-                console.log('Created attachment HTML via manager:', attachmentHtml.substring(0, 100));
-            } else {
-                console.log('Using fallback attachment HTML');
-                // Fallback: create simple attachment card
-                attachmentHtml = `
-                    <div class="message-attachments">
+            const attachmentCards = [];
+            
+            for (const att of attachments) {
+                if (!att || !att.filename) continue;
+                
+                let cardHtml = '';
+                // Create attachment HTML directly if manager not available
+                if (window.docAttachmentManager && window.docAttachmentManager.createDocumentCard) {
+                    console.log('Using docAttachmentManager.createDocumentCard for:', att.filename);
+                    const card = window.docAttachmentManager.createDocumentCard(att, false);
+                    const tempDiv = document.createElement('div');
+                    tempDiv.appendChild(card);
+                    cardHtml = tempDiv.innerHTML;
+                } else {
+                    console.log('Using fallback attachment HTML for:', att.filename);
+                    // Fallback: create simple attachment card
+                    cardHtml = `
                         <div class="document-attachment-card" 
-                             data-document-text="${(attachment.text || '').replace(/"/g, '&quot;')}"
-                             data-document-name="${attachment.filename}"
+                             data-document-text="${(att.text || '').replace(/"/g, '&quot;')}"
+                             data-document-name="${att.filename}"
                              style="cursor: pointer;"
                              title="Click to view document">
                             <div class="doc-icon-wrapper">
@@ -1207,20 +1213,26 @@ class PrivacyChat {
                                 </svg>
                             </div>
                             <div class="doc-info">
-                                <div class="doc-filename">${attachment.filename}</div>
+                                <div class="doc-filename">${att.filename}</div>
                                 <div class="doc-metadata">
-                                    <span class="doc-size">${attachment.wordCount || 0} words</span>
-                                    <span class="doc-entities">• ${attachment.entityCount || 0} entities</span>
+                                    <span class="doc-size">${att.wordCount || 0} words</span>
+                                    <span class="doc-entities">• ${att.entityCount || 0} entities</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                `;
-                console.log('Created fallback attachment HTML');
+                    `;
+                }
+                if (cardHtml) {
+                    attachmentCards.push(cardHtml);
+                }
             }
-            console.log('Final attachmentHtml length:', attachmentHtml.length);
+            
+            if (attachmentCards.length > 0) {
+                attachmentHtml = `<div class="message-attachments">${attachmentCards.join('')}</div>`;
+                console.log('Created combined attachment HTML for', attachmentCards.length, 'cards');
+            }
         } else {
-            console.log('No attachment to display');
+            console.log('No attachments to display');
         }
         
         // Only include message-text div if there's actual content to display
@@ -2072,7 +2084,15 @@ class PrivacyChat {
             if (!messageText) {
                 messageText = document.createElement('div');
                 messageText.className = 'message-text';
-                messageContent.insertBefore(messageText, messageContent.firstChild);
+                // Check if there are message attachments and position text after them
+                const attachments = messageContent.querySelector('.message-attachments');
+                if (attachments) {
+                    // Insert after attachments
+                    attachments.insertAdjacentElement('afterend', messageText);
+                } else {
+                    // No attachments, append to end
+                    messageContent.appendChild(messageText);
+                }
             }
             
             // Parse entities fresh every time (no caching)
@@ -2088,48 +2108,65 @@ class PrivacyChat {
                 }
             }
             
+            // Check if this message has attachments
+            const hasAttachments = messageContent.querySelector('.message-attachments');
+            
             // Determine content to show based on privacy mode
             const contentToShow = this.privacyMode ? maskedMessage : originalMessage;
             
-            // Update text direction class while preserving existing classes
-            const textDirection = this.detectTextDirection(contentToShow);
+            // For messages with attachments but no actual user text (document-only messages),
+            // don't show any text content in the message-text element
+            const isDocumentOnlyMessage = hasAttachments && (!contentToShow || contentToShow.trim() === '');
             
-            // Preserve existing classes, only update direction
-            messageText.classList.remove('ltr', 'rtl');
-            messageText.classList.add(textDirection === 'rtl' ? 'rtl' : 'ltr');
-            
-            // Apply highlighting based on role and mode
-            if (role === 'assistant') {
-                if (this.privacyMode) {
-                    // Show masked version with placeholder highlighting
-                    console.log('Highlighting placeholders for masked assistant message');
-                    messageText.innerHTML = this.highlightPlaceholders(maskedMessage);
-                } else {
-                    // Show unmasked version with entity highlighting
-                    console.log('Highlighting entities for unmasked assistant message');
-                    if (entities && entities.length > 0) {
-                        messageText.innerHTML = this.highlightEntities(originalMessage, entities);
+            if (isDocumentOnlyMessage) {
+                // Hide the message-text element for document-only messages
+                messageText.style.display = 'none';
+                messageText.innerHTML = '';
+                console.log(`Message ${idx + 1} is document-only, hiding text content`);
+            } else {
+                // Show the message-text element and update its content
+                messageText.style.display = '';
+                
+                // Update text direction class while preserving existing classes
+                const textDirection = this.detectTextDirection(contentToShow);
+                
+                // Preserve existing classes, only update direction
+                messageText.classList.remove('ltr', 'rtl');
+                messageText.classList.add(textDirection === 'rtl' ? 'rtl' : 'ltr');
+                
+                // Apply highlighting based on role and mode
+                if (role === 'assistant') {
+                    if (this.privacyMode) {
+                        // Show masked version with placeholder highlighting
+                        console.log('Highlighting placeholders for masked assistant message');
+                        messageText.innerHTML = this.highlightPlaceholders(maskedMessage);
                     } else {
-                        console.log('No entities to highlight, showing plain text');
-                        messageText.textContent = originalMessage;
+                        // Show unmasked version with entity highlighting
+                        console.log('Highlighting entities for unmasked assistant message');
+                        if (entities && entities.length > 0) {
+                            messageText.innerHTML = this.highlightEntities(originalMessage, entities);
+                        } else {
+                            console.log('No entities to highlight, showing plain text');
+                            messageText.textContent = originalMessage;
+                        }
                     }
-                }
-            } else if (role === 'user') {
-                // For user messages, highlight based on current mode
-                if (entities && entities.length > 0) {
-                    const messageData = {
-                        original: originalMessage,
-                        masked: maskedMessage,
-                        userMessage: true,
-                        userEntities: entities
-                    };
-                    messageText.innerHTML = this.highlightUserMessage(contentToShow, entities, messageData);
+                } else if (role === 'user') {
+                    // For user messages, highlight based on current mode
+                    if (entities && entities.length > 0) {
+                        const messageData = {
+                            original: originalMessage,
+                            masked: maskedMessage,
+                            userMessage: true,
+                            userEntities: entities
+                        };
+                        messageText.innerHTML = this.highlightUserMessage(contentToShow, entities, messageData);
+                    } else {
+                        messageText.textContent = contentToShow;
+                    }
                 } else {
+                    // Unknown role, just show text
                     messageText.textContent = contentToShow;
                 }
-            } else {
-                // Unknown role, just show text
-                messageText.textContent = contentToShow;
             }
         });
         
