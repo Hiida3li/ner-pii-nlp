@@ -921,13 +921,13 @@
         
         /* Better spacing for consecutive entities in RTL */
         .message-text.rtl .pii-entity + .pii-entity {
-            margin-right: 4px;
-            margin-left: 2px;
+            margin-right: 6px;
+            margin-left: 5px;
         }
         
         .message-text.ltr .pii-entity + .pii-entity {
-            margin-left: 4px;
-            margin-right: 2px;
+            margin-left: 6px;
+            margin-right: 5px;
         }
         
         /* Ensure entities don't break awkwardly */
@@ -1033,11 +1033,11 @@
 
         /* PII Highlighting - Modern, elegant design */
         .pii-entity {
-            padding: 2px 6px;
+            padding: 3px 8px;
             border-radius: 10px;
             font-weight: 500;
             display: inline-block;
-            margin: 0 3px;
+            margin: 2px 5px;
             font-size: 0.92rem;
             transition: all 0.2s ease;
             position: relative;
@@ -1049,7 +1049,9 @@
             backdrop-filter: blur(10px);
             box-shadow: none !important;
             letter-spacing: 0.3px;
-            opacity: 1 !important; /* Force opacity to prevent disappearing */
+            opacity: 1 !important;
+            line-height: 1.6;
+            vertical-align: baseline;
         }
         
         /* RTL-specific adjustments for PII entities */
@@ -1057,7 +1059,7 @@
         [dir="rtl"] .pii-entity {
             unicode-bidi: embed;
             display: inline-block;
-            margin: 0 2px;
+            margin: 2px 5px;
         }
         
         /* Ensure proper text direction within entities */
@@ -1402,7 +1404,6 @@
         .send-btn svg {
             width: 16px;
             height: 16px;
-            transform: rotate(-90deg);
         }
 
         .send-btn:disabled {
