@@ -437,25 +437,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - PyTorch community
 - Contributors and testers
 
-## 📧 Support
-
-For issues, questions, or suggestions:
-- Open an issue on [GitHub](https://github.com/yourusername/ner-pii-nlp/issues)
-- Email: support@orki.ai
-
-## ⚠️ Disclaimer
-
-This application processes sensitive information. Always ensure:
-- Proper security measures in production environments
-- Compliance with data protection regulations (GDPR, CCPA, etc.)
-- Regular security audits
-- Encrypted connections (HTTPS) in production
-- Secure handling of uploaded documents
-
----
-
 <div align="center">
-<strong>Built with ❤️ by the Orki Team</strong>
+<strong>Built by the Orki Team</strong>
 </div>
 <div align="center">
 <a href="https://orki.ai">https://orki.ai</a>
