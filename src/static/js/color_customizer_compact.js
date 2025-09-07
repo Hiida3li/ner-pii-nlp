@@ -503,9 +503,23 @@ class CompactColorCustomizer {
                     
                     // Method 3: Modern showPicker API
                     if (colorInput.showPicker) {
-                        colorInput.showPicker().catch(err => {
-                            console.log('showPicker failed:', err);
-                        });
+                        try {
+                            const pickerResult = colorInput.showPicker();
+                            if (pickerResult && typeof pickerResult.catch === 'function') {
+                                pickerResult.catch(err => {
+                                    console.log('showPicker failed:', err);
+                                    // Fallback to palette on showPicker failure
+                                    this.showColorPalette(preview, entityType, color);
+                                });
+                            }
+                        } catch (pickerError) {
+                            console.log('showPicker not supported:', pickerError);
+                            // Fallback to palette if showPicker throws
+                            this.showColorPalette(preview, entityType, color);
+                        }
+                    } else {
+                        // showPicker not available, use palette
+                        this.showColorPalette(preview, entityType, color);
                     }
                 } catch (error) {
                     console.error('Error triggering color picker:', error);
