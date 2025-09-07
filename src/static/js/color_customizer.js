@@ -676,69 +676,154 @@ class ColorCustomizer {
             .preset-grid {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
+                gap: 1.25rem;
+                padding: 0 1.5rem 1.5rem;
             }
             
             .preset-card {
-                background: rgba(255, 255, 255, 0.03);
-                border: 2px solid rgba(255, 255, 255, 0.08);
-                border-radius: 12px;
-                padding: 1rem;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+                border: 2px solid rgba(167, 139, 250, 0.1);
+                border-radius: 16px;
+                padding: 1.25rem;
                 cursor: pointer;
-                transition: all 0.2s ease;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                backdrop-filter: blur(10px);
+                overflow: hidden;
+            }
+            
+            .preset-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, rgba(167, 139, 250, 0.1), transparent);
+                opacity: 0;
+                transition: opacity 0.3s ease;
             }
             
             .preset-card:hover {
-                background: rgba(255, 255, 255, 0.06);
-                border-color: #a78bfa;
-                transform: translateY(-2px);
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(167, 139, 250, 0.05));
+                border-color: rgba(167, 139, 250, 0.4);
+                transform: translateY(-4px) scale(1.02);
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            }
+            
+            .preset-card:hover::before {
+                opacity: 1;
             }
             
             .preset-preview {
                 display: flex;
-                gap: 0.25rem;
-                margin-bottom: 0.75rem;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+                justify-content: center;
             }
             
             .preset-preview span {
-                width: 24px;
-                height: 24px;
-                border-radius: 4px;
+                width: 28px;
+                height: 28px;
+                border-radius: 8px;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 
+                    0 4px 10px rgba(0, 0, 0, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                transition: all 0.3s ease;
+            }
+            
+            .preset-card:hover .preset-preview span {
+                transform: scale(1.1) rotate(-5deg);
+                border-color: rgba(255, 255, 255, 0.4);
+            }
+            
+            .preset-preview span:nth-child(2) {
+                transform: translateY(-2px);
+            }
+            
+            .preset-preview span:nth-child(3) {
+                transform: translateY(-4px);
+            }
+            
+            .preset-preview span:nth-child(4) {
+                transform: translateY(-2px);
             }
             
             .preset-name {
-                color: #e5e7eb;
-                font-size: 0.9rem;
-                font-weight: 500;
+                color: #f1f5f9;
+                font-size: 1rem;
+                font-weight: 600;
                 text-align: center;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+                z-index: 1;
+                position: relative;
             }
             
             /* Footer */
             .color-panel-footer {
-                padding: 1.25rem;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 1.5rem;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.1));
+                border-top: 1px solid rgba(167, 139, 250, 0.2);
+                border-radius: 0 0 20px 20px;
                 display: flex;
                 justify-content: center;
+                position: relative;
+            }
+
+            .color-panel-footer::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.3), transparent);
             }
 
             .footer-btn {
-                padding: 0.6rem 1.5rem;
-                background: rgba(239, 68, 68, 0.2);
-                border: 1px solid rgba(239, 68, 68, 0.3);
-                color: #f87171;
-                border-radius: 8px;
-                font-size: 0.9rem;
+                padding: 0.75rem 2rem;
+                background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1));
+                border: 2px solid rgba(239, 68, 68, 0.3);
+                color: #fca5a5;
+                border-radius: 12px;
+                font-size: 0.95rem;
+                font-weight: 600;
                 cursor: pointer;
-                transition: all 0.2s ease;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 display: flex;
                 align-items: center;
-                gap: 0.5rem;
+                gap: 0.75rem;
+                backdrop-filter: blur(10px);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .footer-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                transition: left 0.5s ease;
             }
 
             .footer-btn:hover {
-                background: rgba(239, 68, 68, 0.3);
+                background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.2));
                 border-color: rgba(239, 68, 68, 0.5);
-                transform: scale(1.02);
+                color: #f87171;
+                transform: translateY(-2px) scale(1.05);
+                box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+            }
+
+            .footer-btn:hover::before {
+                left: 100%;
+            }
+
+            .footer-btn:active {
+                transform: translateY(0) scale(1.02);
             }
 
             /* Scrollbar styling for color panel */
@@ -785,15 +870,18 @@ class ColorCustomizer {
             const item = document.createElement('div');
             item.className = 'color-item';
             item.dataset.entityType = key;
+            
+            const colorValue = this.activeColors[key];
             item.innerHTML = `
-                <div class="color-preview" style="background-color: ${this.activeColors[key]}">
+                <div class="color-preview" 
+                     style="background-color: ${colorValue}; --preview-color: ${colorValue};">
                     <input type="color" class="color-input" 
                            id="color-${key}" 
-                           value="${this.activeColors[key]}"
+                           value="${colorValue}"
                            data-entity="${key}">
                 </div>
                 <span class="color-label">${label}</span>
-                <button class="reset-color-btn" data-entity="${key}" title="Reset">
+                <button class="reset-color-btn" data-entity="${key}" title="Reset to default">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
                         <path d="M3 3v5h5"/>
