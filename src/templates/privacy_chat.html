@@ -2031,20 +2031,22 @@
     <div class="powered-by-footer">
         <span class="powered-text">Powered by</span>
         <img src="/static/icons/orki-logo.png" alt="Orki" class="orki-logo">
+        <div class="powered-underline"></div>
     </div>
     
     <style>
         .powered-by-footer {
             position: fixed;
-            bottom: 20px;
-            left: 35px;
+            bottom: 30px;
+            left: 25px;
             display: flex;
             align-items: center;
             gap: 8px;
-            z-index: 50;
+            z-index: 1000;
             opacity: 0.5;
             transition: opacity 0.2s ease;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            position: relative;
         }
         
         .powered-by-footer:hover {
@@ -2066,6 +2068,16 @@
             object-fit: contain;
             border-radius: 50%;
             opacity: 0.85;
+        }
+        
+        .powered-underline {
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #4c8bca;
+            opacity: 0.6;
         }
         
         /* Mobile responsive */
