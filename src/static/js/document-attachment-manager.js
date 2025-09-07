@@ -617,6 +617,33 @@ class DocumentAttachmentManager {
                     // Clean up the content - get user message from first document
                     content = this.privacyChat.pendingAttachments[0].userMessage || cleanContent.trim();
                     
+                    // Also clean the messageData to prevent document text from showing in privacy toggle
+                    if (messageData && messageData.original) {
+                        // Remove document content from messageData.original
+                        let cleanOriginal = messageData.original;
+                        this.privacyChat.pendingAttachments.forEach((doc, index) => {
+                            const docHeader = `[Document ${index + 1}: ${doc.filename}]`;
+                            if (cleanOriginal.includes(docHeader)) {
+                                const docStartIndex = cleanOriginal.indexOf(docHeader);
+                                cleanOriginal = cleanOriginal.substring(0, docStartIndex).trim();
+                            }
+                        });
+                        messageData.original = cleanOriginal;
+                    }
+                    
+                    if (messageData && messageData.masked) {
+                        // Remove document content from messageData.masked
+                        let cleanMasked = messageData.masked;
+                        this.privacyChat.pendingAttachments.forEach((doc, index) => {
+                            const docHeader = `[Document ${index + 1}: ${doc.filename}]`;
+                            if (cleanMasked.includes(docHeader)) {
+                                const docStartIndex = cleanMasked.indexOf(docHeader);
+                                cleanMasked = cleanMasked.substring(0, docStartIndex).trim();
+                            }
+                        });
+                        messageData.masked = cleanMasked;
+                    }
+                    
                     // Pass the first document as attachment for display
                     attachment = this.privacyChat.pendingAttachments[0];
                 }
