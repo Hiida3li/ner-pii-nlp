@@ -519,14 +519,14 @@
             width: 45px;
             height: 45px;
             border-radius: 50%;
-            background: #221143;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
             font-weight: bold;
             color: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .user-info {
@@ -551,12 +551,29 @@
         
         .user-status::before {
             content: '';
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             background: #10b981;
             border-radius: 50%;
             display: inline-block;
             animation: pulse 2s infinite;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            position: relative;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+                transform: scale(1);
+            }
+            70% {
+                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+                transform: scale(1.05);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+                transform: scale(1);
+            }
         }
 
         /* Main Chat Area */
@@ -1637,7 +1654,20 @@
         /* Additional icon improvements */
         .user-avatar {
             position: relative;
-            overflow: hidden;
+            overflow: visible;
+        }
+        
+        .user-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 14px;
+            height: 14px;
+            background: #10b981;
+            border: 2.5px solid #201f27;
+            border-radius: 50%;
+            z-index: 1;
         }
         
         .user-avatar::before {
@@ -1783,15 +1813,6 @@
                 <!-- Chat sessions will be dynamically added here -->
             </div>
             
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="user-avatar">U</div>
-                    <div class="user-info">
-                        <div class="user-name">You</div>
-                        <div class="user-status">Online</div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Main Chat Area -->
@@ -2014,7 +2035,7 @@
         .powered-by-footer {
             position: fixed;
             bottom: 10px;
-            right: 20px;
+            left: 20px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -2055,7 +2076,7 @@
         @media (max-width: 768px) {
             .powered-by-footer {
                 bottom: 5px;
-                right: 10px;
+                left: 10px;
                 padding: 4px 8px;
             }
             
