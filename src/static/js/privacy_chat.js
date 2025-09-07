@@ -130,6 +130,10 @@ class PrivacyChat {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     console.log('Enter key pressed in bottom input');
+                    if (this.isTyping) {
+                        console.log('Blocked: LLM is currently responding');
+                        return;
+                    }
                     this.sendMessage();
                 }
             });
