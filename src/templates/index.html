@@ -943,4 +943,79 @@ function initializeApp() {
   // Dictionary Unmask functionality is handled by EntityDictionaryManager
 }
 </script>
+
+<!-- Powered by Footer -->
+<div class="powered-by-footer-pii">
+    <span class="powered-text">Powered by</span>
+    <img src="/static/icons/orki-logo.png" alt="Orki" class="orki-logo">
+</div>
+
+<style>
+    .powered-by-footer-pii {
+        position: fixed;
+        bottom: 25px;
+        right: 30px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 1000;
+        opacity: 0.6;
+        transition: all 0.3s ease;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        background: linear-gradient(135deg, rgba(76, 139, 202, 0.1), rgba(76, 139, 202, 0.05));
+        padding: 10px 20px;
+        border-radius: 30px;
+        border: 1px solid rgba(76, 139, 202, 0.2);
+        backdrop-filter: blur(8px);
+    }
+    
+    .powered-by-footer-pii:hover {
+        opacity: 1;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(76, 139, 202, 0.15);
+        border-color: rgba(76, 139, 202, 0.4);
+        background: linear-gradient(135deg, rgba(76, 139, 202, 0.15), rgba(76, 139, 202, 0.08));
+    }
+    
+    .powered-by-footer-pii .powered-text {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    
+    .powered-by-footer-pii .orki-logo {
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
+        border-radius: 50%;
+        opacity: 0.9;
+        transition: all 0.3s ease;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    
+    .powered-by-footer-pii:hover .orki-logo {
+        transform: rotate(10deg) scale(1.1);
+        filter: drop-shadow(0 4px 8px rgba(76, 139, 202, 0.3));
+    }
+    
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+        .powered-by-footer-pii {
+            bottom: 15px;
+            right: 15px;
+            padding: 8px 15px;
+        }
+        
+        .powered-by-footer-pii .powered-text {
+            font-size: 12px;
+        }
+        
+        .powered-by-footer-pii .orki-logo {
+            width: 30px;
+            height: 30px;
+        }
+    }
+</style>
 {% endblock %}

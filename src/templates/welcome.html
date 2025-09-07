@@ -1007,4 +1007,75 @@
             document.head.appendChild(style);
         }
     </script>
+    
+    <!-- Powered by Footer -->
+    <div class="powered-by-footer-welcome">
+        <span class="powered-text">Powered by</span>
+        <img src="/static/icons/orki-logo.png" alt="Orki" class="orki-logo">
+    </div>
+    
+    <style>
+        .powered-by-footer-welcome {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(76, 139, 202, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .powered-by-footer-welcome:hover {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 10px 30px rgba(76, 139, 202, 0.2);
+            border-color: rgba(76, 139, 202, 0.5);
+        }
+        
+        .powered-by-footer-welcome .powered-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+        
+        .powered-by-footer-welcome .orki-logo {
+            width: 35px;
+            height: 35px;
+            object-fit: contain;
+            border-radius: 50%;
+            opacity: 0.95;
+            transition: transform 0.3s ease;
+        }
+        
+        .powered-by-footer-welcome:hover .orki-logo {
+            transform: scale(1.1);
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .powered-by-footer-welcome {
+                bottom: 20px;
+                padding: 6px 15px;
+            }
+            
+            .powered-by-footer-welcome .powered-text {
+                font-size: 12px;
+            }
+            
+            .powered-by-footer-welcome .orki-logo {
+                width: 28px;
+                height: 28px;
+            }
+        }
+    </style>
 {% endblock %}
