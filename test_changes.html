@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Changes</title>
+    <script>
+        // Test if document-attachment-manager.js has our changes
+        fetch('/static/js/document-attachment-manager.js?v=12&t=' + Date.now())
+            .then(r => r.text())
+            .then(text => {
+                // Check for our inline styles
+                if (text.includes('position: absolute !important')) {
+                    console.log('✅ JavaScript has inline styles for upload button');
+                    document.getElementById('js-status').innerHTML = '✅ JavaScript updated with inline styles';
+                } else {
+                    console.log('❌ JavaScript does NOT have inline styles');
+                    document.getElementById('js-status').innerHTML = '❌ JavaScript NOT updated';
+                }
+            });
+            
+        // Check CSS
+        fetch('/static/css/document-attachment.css?v=9&t=' + Date.now())
+            .then(r => r.text())
+            .then(text => {
+                if (text.includes('z-index: 100 !important')) {
+                    console.log('✅ CSS has updated styles');
+                    document.getElementById('css-status').innerHTML = '✅ CSS updated';
+                } else {
+                    console.log('❌ CSS does NOT have updated styles');
+                    document.getElementById('css-status').innerHTML = '❌ CSS NOT updated';
+                }
+            });
+    </script>
+</head>
+<body style="background: #333; color: white; padding: 20px; font-family: monospace;">
+    <h2>Testing if changes are loaded:</h2>
+    <p id="js-status">Checking JavaScript...</p>
+    <p id="css-status">Checking CSS...</p>
+    <br>
+    <a href="http://localhost:9000/privacy-chat" style="color: cyan;">Open Privacy Chat</a>
+</body>
+</html>

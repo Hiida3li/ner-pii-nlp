@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Upload Design</title>
+    <style>
+        body {
+            background: #201f27;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+        }
+        
+        .test-container {
+            width: 90%;
+            max-width: 768px;
+        }
+        
+        .input-box {
+            background: #40414f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            min-height: 52px;
+            position: relative;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chat-upload-btn {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        .chat-upload-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .chat-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #ececf1;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+            padding: 14px 52px;
+            line-height: 1.5;
+        }
+        
+        .send-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .send-btn:not(:disabled):hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .send-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .attachment-preview {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 12px;
+            right: 12px;
+            display: none;
+            background: rgba(64, 65, 79, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #e5e7eb;
+        }
+        
+        .attachment-preview.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h2 style="color: white; margin-bottom: 20px;">Modern ChatGPT-Style Input Design</h2>
+        
+        <div class="input-box">
+            <button class="chat-upload-btn" onclick="showAttachment()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            
+            <div class="attachment-preview" id="preview">
+                📎 test_document.txt (256 KB)
+            </div>
+            
+            <textarea class="chat-input" placeholder="Message Blot" rows="1"></textarea>
+            
+            <button class="send-btn" disabled>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M7 11L12 6L17 11M12 18V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div style="color: #9ca3af; margin-top: 20px; font-size: 14px;">
+            ✅ Paperclip icon on the left<br>
+            ✅ Send button on the right<br>
+            ✅ Dark background (#40414f)<br>
+            ✅ Clean, modern design<br>
+            ✅ Attachment preview above input
+        </div>
+    </div>
+    
+    <script>
+        function showAttachment() {
+            document.getElementById('preview').classList.toggle('show');
+        }
+        
+        // Enable send button when typing
+        document.querySelector('.chat-input').addEventListener('input', function(e) {
+            document.querySelector('.send-btn').disabled = e.target.value.trim().length === 0;
+        });
+    </script>
+</body>
+</html>
