@@ -406,6 +406,14 @@ class CompactColorCustomizer {
         Object.entries(this.activeColors).forEach(([entityType, color]) => {
             const item = document.createElement('div');
             item.className = 'compact-color-item';
+            item.style.position = 'relative';
+            
+            // Create a hidden color input alongside the preview
+            const colorInput = document.createElement('input');
+            colorInput.type = 'color';
+            colorInput.value = color;
+            colorInput.style.cssText = 'position: absolute; top: 0; left: 0; width: 16px; height: 16px; opacity: 0; cursor: pointer;';
+            colorInput.id = `color-input-${entityType}`;
             
             const preview = document.createElement('div');
             preview.className = 'compact-color-preview';
@@ -417,13 +425,61 @@ class CompactColorCustomizer {
             label.className = 'compact-color-label';
             label.textContent = entityType;
             
-            // Add click handler directly to the preview
+            // Handle color input change
+            colorInput.addEventListener('change', (e) => {
+                console.log(`Color changed for ${entityType}:`, e.target.value);
+                this.activeColors[entityType] = e.target.value;
+                this.saveColors();
+                this.applyColors();
+                this.populateCompactColors();
+            });
+            
+            // Add click handler to preview that triggers the hidden input
             preview.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                this.openColorPicker(entityType);
+                console.log('Preview clicked for:', entityType);
+                
+                // Multiple approaches to trigger color picker
+                try {
+                    // Method 1: Direct click
+                    colorInput.click();
+                    
+                    // Method 2: Dispatch click event
+                    if (!colorInput.click || !colorInput.dispatchEvent) {
+                        const clickEvent = new MouseEvent('click', {
+                            view: window,
+                            bubbles: true,
+                            cancelable: true
+                        });
+                        colorInput.dispatchEvent(clickEvent);
+                    }
+                    
+                    // Method 3: Modern showPicker API
+                    if (colorInput.showPicker) {
+                        colorInput.showPicker().catch(err => {
+                            console.log('showPicker failed:', err);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error triggering color picker:', error);
+                    // Fallback: show alert with current color
+                    const newColor = prompt(`Enter color for ${entityType} (current: ${color}):`);
+                    if (newColor && /^#[0-9A-F]{6}$/i.test(newColor)) {
+                        this.activeColors[entityType] = newColor;
+                        this.saveColors();
+                        this.applyColors();
+                        this.populateCompactColors();
+                    }
+                }
             });
             
+            // Add visual feedback for debugging
+            preview.addEventListener('mouseenter', () => {
+                console.log('Hover on:', entityType);
+            });
+            
+            item.appendChild(colorInput);
             item.appendChild(preview);
             item.appendChild(label);
             container.appendChild(item);
@@ -433,48 +489,60 @@ class CompactColorCustomizer {
     openColorPicker(entityType) {
         console.log('Opening color picker for:', entityType);
         
-        // Create color input
-        const input = document.createElement('input');
-        input.type = 'color';
-        input.value = this.activeColors[entityType];
-        input.style.position = 'absolute';
-        input.style.left = '-9999px';
-        input.style.opacity = '0';
-        input.style.pointerEvents = 'none';
-        
-        // Add to document
-        document.body.appendChild(input);
-        
-        // Handle color change
-        input.addEventListener('change', (event) => {
-            console.log(`Color changed for ${entityType}:`, event.target.value);
-            this.activeColors[entityType] = event.target.value;
-            this.saveColors();
-            this.applyColors();
-            this.populateCompactColors();
+        try {
+            // Create color input with better approach
+            const input = document.createElement('input');
+            input.type = 'color';
+            input.value = this.activeColors[entityType] || '#ffffff';
+            input.style.cssText = 'position: fixed; top: -100px; left: -100px; opacity: 0; width: 1px; height: 1px;';
             
-            // Clean up
-            setTimeout(() => {
+            // Add to document first
+            document.body.appendChild(input);
+            
+            // Set up event handler before triggering
+            const handleChange = (event) => {
+                console.log(`Color changed for ${entityType}:`, event.target.value);
+                this.activeColors[entityType] = event.target.value;
+                this.saveColors();
+                this.applyColors();
+                this.populateCompactColors();
+                
+                // Clean up
+                input.removeEventListener('change', handleChange);
                 if (document.body.contains(input)) {
                     document.body.removeChild(input);
                 }
-            }, 100);
-        });
-        
-        // Handle cancel (when user closes color picker without selecting)
-        input.addEventListener('blur', () => {
-            setTimeout(() => {
-                if (document.body.contains(input)) {
-                    document.body.removeChild(input);
-                }
-            }, 100);
-        });
-        
-        // Trigger the color picker
-        setTimeout(() => {
+            };
+            
+            input.addEventListener('change', handleChange);
+            
+            // Alternative cleanup for when user cancels
+            input.addEventListener('blur', () => {
+                setTimeout(() => {
+                    if (document.body.contains(input)) {
+                        document.body.removeChild(input);
+                    }
+                }, 200);
+            });
+            
+            // Try different methods to trigger color picker
             input.focus();
-            input.click();
-        }, 10);
+            
+            // Use both programmatic click and user interaction simulation
+            if (input.showPicker) {
+                // Modern browsers
+                input.showPicker().catch(() => {
+                    // Fallback to click if showPicker fails
+                    input.click();
+                });
+            } else {
+                // Fallback for older browsers
+                input.click();
+            }
+            
+        } catch (error) {
+            console.error('Error opening color picker:', error);
+        }
     }
 
     setupCompactEventListeners() {
