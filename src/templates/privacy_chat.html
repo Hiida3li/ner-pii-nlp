@@ -366,79 +366,33 @@
         }
 
         .chat-item {
-            padding: 0.875rem 1rem;
-            border-radius: 12px;
+            padding: 0.5rem 0.875rem;
+            border-radius: 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin: 0 0.75rem 0.5rem 0.75rem;
-            font-size: 0.925rem;
+            margin: 0 0.75rem 0.4rem 0.75rem;
+            font-size: 0.9rem;
             color: #e5e7eb;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .chat-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent,
-                rgba(76, 139, 202, 0.05),
-                transparent
-            );
-            transition: left 0.5s ease;
-        }
-
-        .chat-item:hover::before {
-            left: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
         .chat-item:hover {
-            background: linear-gradient(135deg, rgba(76, 139, 202, 0.08) 0%, rgba(76, 139, 202, 0.04) 100%);
-            border-color: rgba(76, 139, 202, 0.25);
-            transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(76, 139, 202, 0.15);
+            background: rgba(76, 139, 202, 0.08);
+            border-color: rgba(76, 139, 202, 0.2);
+            transform: translateX(2px);
         }
 
         .chat-item.active {
-            background: linear-gradient(135deg, rgba(76, 139, 202, 0.12) 0%, rgba(76, 139, 202, 0.08) 100%);
+            background: rgba(76, 139, 202, 0.12);
             border-left: 3px solid #4c8bca;
-            border-color: rgba(76, 139, 202, 0.3);
-            box-shadow: 0 4px 16px rgba(76, 139, 202, 0.2),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-        }
-        
-        .chat-item.active::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            right: 1rem;
-            transform: translateY(-50%);
-            width: 4px;
-            height: 4px;
-            background: #4c8bca;
-            border-radius: 50%;
-            box-shadow: 0 0 8px rgba(76, 139, 202, 0.6);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 8px rgba(76, 139, 202, 0.6);
-            }
-            50% {
-                box-shadow: 0 0 16px rgba(76, 139, 202, 0.8);
-            }
+            border-color: rgba(76, 139, 202, 0.25);
         }
 
 
@@ -451,29 +405,22 @@
         }
 
         .chat-icon {
-            width: 28px;
-            height: 28px;
+            width: 20px;
+            height: 20px;
             flex-shrink: 0;
-            opacity: 0.7;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: linear-gradient(135deg, rgba(76, 139, 202, 0.1) 0%, rgba(76, 139, 202, 0.05) 100%);
-            padding: 5px;
-            border-radius: 8px;
+            opacity: 0.6;
+            transition: all 0.2s ease;
             color: #9ca3af;
         }
         
         .chat-item:hover .chat-icon {
-            opacity: 1;
-            transform: scale(1.1) rotate(5deg);
-            background: linear-gradient(135deg, rgba(76, 139, 202, 0.15) 0%, rgba(76, 139, 202, 0.08) 100%);
+            opacity: 0.9;
             color: #4c8bca;
         }
         
         .chat-item.active .chat-icon {
             opacity: 1;
             color: #4c8bca;
-            background: linear-gradient(135deg, rgba(76, 139, 202, 0.2) 0%, rgba(76, 139, 202, 0.1) 100%);
-            box-shadow: 0 2px 8px rgba(76, 139, 202, 0.3);
         }
 
         .chat-name {
@@ -518,47 +465,32 @@
         }
 
         .chat-action-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            background: transparent;
+            border: none;
             color: #6b7280;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
         }
 
         .chat-action-btn:hover {
-            background: linear-gradient(135deg, rgba(76, 139, 202, 0.15) 0%, rgba(76, 139, 202, 0.08) 100%);
-            border-color: rgba(76, 139, 202, 0.2);
-            color: #4c8bca;
-            transform: scale(1.1) translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            color: #9ca3af;
         }
         
         .chat-action-btn svg {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 14px;
-            height: 14px;
-        }
-        
-        .chat-action-btn:hover svg {
-            transform: rotate(-5deg);
+            width: 12px;
+            height: 12px;
         }
 
         .chat-action-btn.delete:hover {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%);
-            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.1);
             color: #ef4444;
-        }
-        
-        .chat-action-btn.delete:hover svg {
-            transform: rotate(-10deg) scale(1.15);
-            animation: shake 0.4s ease;
         }
         
         @keyframes shake {
