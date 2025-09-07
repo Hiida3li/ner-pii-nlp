@@ -640,20 +640,21 @@ class DocumentAttachmentManager {
                     }
                 }
                 
-                const result = originalAddMessage(role, content, entities, messageData, attachment);
-                
-                // For multiple attachments, add additional document cards after the message
+                // For multiple attachments, pass all documents as an array
                 if (role === 'user' && this.privacyChat.pendingAttachments && this.privacyChat.pendingAttachments.length > 1) {
-                    // Add remaining documents as separate cards
-                    for (let i = 1; i < this.privacyChat.pendingAttachments.length; i++) {
-                        const additionalDoc = this.privacyChat.pendingAttachments[i];
-                        originalAddMessage(role, '', [], messageData, additionalDoc);
-                    }
+                    // Pass all attachments as an array for single message display
+                    const result = originalAddMessage(role, content, entities, messageData, this.privacyChat.pendingAttachments);
                     // Clear pending attachments after processing
                     this.privacyChat.pendingAttachments = null;
+                    return result;
+                } else {
+                    // Single attachment or no attachments
+                    const result = originalAddMessage(role, content, entities, messageData, attachment);
+                    if (this.privacyChat.pendingAttachments) {
+                        this.privacyChat.pendingAttachments = null;
+                    }
+                    return result;
                 }
-                
-                return result;
             };
             
             // Override sendMessage to include document
