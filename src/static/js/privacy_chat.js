@@ -1496,8 +1496,8 @@ class PrivacyChat {
         console.log('Number of entities:', entities ? entities.length : 0);
         console.log('Entities:', JSON.stringify(entities, null, 2));
         
-        // First format the text to preserve structure
-        let formattedText = this.formatResponseText(text);
+        // Convert newlines to <br> tags for basic line break preservation
+        let formattedText = text.replace(/\n/g, '<br>');
         
         if (!entities || entities.length === 0) {
             console.log('No entities to highlight, returning formatted text');
