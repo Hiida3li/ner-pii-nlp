@@ -437,6 +437,18 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+        
+        .chat-name.streaming-text::after {
+            content: '|';
+            animation: blink 1s infinite;
+            color: rgba(255, 255, 255, 0.7);
+            margin-left: 1px;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
 
         .chat-actions {
             display: none;
@@ -2062,16 +2074,16 @@
     </script>
     
     <!-- Powered by Footer -->
-    <div class="powered-by-footer">
+    <a href="https://orki.ai" target="_blank" class="powered-by-footer">
         <span class="powered-text">Powered by</span>
         <img src="/static/icons/orki-logo.png" alt="Orki" class="orki-logo">
         <div class="powered-underline"></div>
-    </div>
+    </a>
     
     <style>
         .powered-by-footer {
             position: fixed;
-            bottom: 40px;
+            bottom: 60px;
             left: 35px;
             display: flex;
             align-items: center;
@@ -2081,6 +2093,8 @@
             transition: opacity 0.2s ease;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             position: relative;
+            text-decoration: none;
+            cursor: pointer;
         }
         
         .powered-by-footer:hover {

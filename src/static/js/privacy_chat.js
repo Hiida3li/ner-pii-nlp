@@ -11,6 +11,7 @@ class PrivacyChat {
         this.privacyMode = true;
         console.log('Initialized privacy mode:', this.privacyMode);
         this.isTyping = false;
+        this.animatedSessions = new Set(); // Track which sessions have been animated
         
         // Array of creative greeting messages
         this.greetings = [
@@ -243,10 +244,6 @@ class PrivacyChat {
     }
     
     updateSessionList() {
-        // Track if this is a new chat that needs animation
-        const previousChatIds = this.elements.chatList ? 
-            Array.from(this.elements.chatList.querySelectorAll('.chat-item')).map(el => el.dataset.session) : [];
-        
         const sessionHtml = Object.keys(this.sessions)
             .sort((a, b) => b - a) // Show newest first
             .map(id => {
@@ -254,10 +251,17 @@ class PrivacyChat {
                 const displayName = session.firstMessage ? 
                     this.truncateText(session.firstMessage, 25) : 
                     session.name;
-                const isNew = !previousChatIds.includes(id.toString());
+                
+                // Check if this session name should be animated
+                const sessionKey = `${id}-${displayName}`;
+                const shouldAnimate = session.firstMessage && !this.animatedSessions.has(sessionKey);
+                
+                if (shouldAnimate) {
+                    this.animatedSessions.add(sessionKey);
+                }
                 
                 return `
-                    <div class="chat-item ${id == this.currentSession ? 'active' : ''} ${isNew ? 'new-chat' : ''}" data-session="${id}">
+                    <div class="chat-item ${id == this.currentSession ? 'active' : ''}" data-session="${id}">
                         <div class="chat-item-content">
                             <svg class="chat-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <path d="M21 11.5C21 16.75 16.75 21 11.5 21C9.8 21 8.21 20.53 6.84 19.71L3 21L4.29 17.16C3.47 15.79 3 14.2 3 12.5C3 7.25 7.25 3 12.5 3C16.06 3 19.11 5.04 20.5 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
@@ -265,7 +269,7 @@ class PrivacyChat {
                                 <circle cx="12" cy="12" r="1" fill="currentColor" opacity="0.6"/>
                                 <circle cx="16" cy="12" r="1" fill="currentColor" opacity="0.6"/>
                             </svg>
-                            <span class="chat-name ${isNew ? 'streaming-text' : ''}" title="${displayName}" data-text="${displayName}">${isNew ? '' : displayName}</span>
+                            <span class="chat-name ${shouldAnimate ? 'streaming-text' : ''}" title="${displayName}" data-text="${displayName}">${shouldAnimate ? '' : displayName}</span>
                         </div>
                         <div class="chat-actions">
                             <button class="chat-action-btn rename" data-session="${id}" title="Rename">
@@ -336,7 +340,6 @@ class PrivacyChat {
             } else {
                 // Remove streaming class after animation completes
                 element.classList.remove('streaming-text');
-                element.closest('.chat-item').classList.remove('new-chat');
             }
         };
         
