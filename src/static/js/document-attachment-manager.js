@@ -6,7 +6,7 @@
 class DocumentAttachmentManager {
     constructor(privacyChat) {
         this.privacyChat = privacyChat;
-        this.attachedDocument = null; // Store the currently attached document
+        this.attachedDocuments = []; // Store multiple attached documents
         this.init();
     }
     
@@ -206,7 +206,7 @@ class DocumentAttachmentManager {
                 }
                 // console.log('Total entities calculated:', totalEntities);
                 
-                this.attachedDocument = {
+                const document = {
                     id: result.document.id,
                     filename: file.name,
                     text: docData.original_text,
@@ -216,6 +216,9 @@ class DocumentAttachmentManager {
                     wordCount: docData.word_count,
                     entityCount: totalEntities
                 };
+                
+                // Add to documents array
+                this.attachedDocuments.push(document);
                 
                 // Update progress to 100%
                 uploadButtons.forEach(btn => {
@@ -279,7 +282,7 @@ class DocumentAttachmentManager {
     }
     
     showAttachmentIndicator() {
-        if (!this.attachedDocument) return;
+        if (!this.attachedDocuments || this.attachedDocuments.length === 0) return;
         
         // Remove any existing attachment indicators
         document.querySelectorAll('.attachment-preview').forEach(el => el.remove());
@@ -291,9 +294,11 @@ class DocumentAttachmentManager {
             const preview = document.createElement('div');
             preview.className = 'attachment-preview show';
             
-            // Create the document attachment card
-            const card = this.createDocumentCard(this.attachedDocument, true);
-            preview.appendChild(card);
+            // Create document attachment cards for each document
+            this.attachedDocuments.forEach((document, index) => {
+                const card = this.createDocumentCard(document, true, index);
+                preview.appendChild(card);
+            });
             
             // Find the upload button and textarea
             const uploadBtn = inputBox.querySelector('.chat-upload-btn');
@@ -304,7 +309,7 @@ class DocumentAttachmentManager {
                 uploadBtn.classList.add('has-attachment');
                 inputBox.classList.add('has-attachment');
                 
-                // Clear placeholder when document is attached
+                // Clear placeholder when documents are attached
                 textarea.placeholder = '';
                 
                 // Insert the preview after the upload button
@@ -318,7 +323,7 @@ class DocumentAttachmentManager {
         }
     }
     
-    createDocumentCard(doc, canRemove = false) {
+    createDocumentCard(doc, canRemove = false, index = 0) {
         const card = document.createElement('div');
         card.className = 'document-attachment-card';
         
@@ -356,7 +361,7 @@ class DocumentAttachmentManager {
                 <div class="doc-size">${fileSize}</div>
             </div>
             ${canRemove ? `
-                <button class="remove-doc-btn" onclick="window.docAttachmentManager.removeAttachment()">
+                <button class="remove-doc-btn" onclick="window.docAttachmentManager.removeAttachment(${index})">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"/>
                         <line x1="6" y1="6" x2="18" y2="18"/>
@@ -481,21 +486,34 @@ class DocumentAttachmentManager {
         return false;
     }
     
-    removeAttachment() {
-        this.attachedDocument = null;
-        document.querySelectorAll('.attachment-preview').forEach(el => {
-            // Add fade out animation before removing
-            el.style.animation = 'fadeOut 0.2s ease';
-            setTimeout(() => el.remove(), 200);
-        });
+    removeAttachment(index) {
+        if (index !== undefined && index >= 0 && index < this.attachedDocuments.length) {
+            // Remove specific document by index
+            this.attachedDocuments.splice(index, 1);
+        } else {
+            // Remove all documents if no index specified (backward compatibility)
+            this.attachedDocuments = [];
+        }
         
-        // Remove has-attachment classes
-        document.querySelectorAll('.chat-upload-btn').forEach(btn => {
-            btn.classList.remove('has-attachment');
-        });
-        document.querySelectorAll('.input-box').forEach(box => {
-            box.classList.remove('has-attachment');
-        });
+        if (this.attachedDocuments.length === 0) {
+            // No documents left, remove all indicators
+            document.querySelectorAll('.attachment-preview').forEach(el => {
+                // Add fade out animation before removing
+                el.style.animation = 'fadeOut 0.2s ease';
+                setTimeout(() => el.remove(), 200);
+            });
+            
+            // Remove has-attachment classes
+            document.querySelectorAll('.chat-upload-btn').forEach(btn => {
+                btn.classList.remove('has-attachment');
+            });
+            document.querySelectorAll('.input-box').forEach(box => {
+                box.classList.remove('has-attachment');
+            });
+        } else {
+            // Still have documents, refresh the display
+            this.showAttachmentIndicator();
+        }
         
         // Restore placeholder when document is removed
         document.querySelectorAll('.chat-input').forEach(input => {
