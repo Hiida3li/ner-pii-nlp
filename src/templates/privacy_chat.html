@@ -852,17 +852,18 @@
             background: rgba(43, 43, 50, 0.6);  /* #2b2b32 with transparency */
             color: #e5e7eb;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 0.75rem 1.25rem;
-            border-radius: 20px;  /* Circular/pill-shaped design */
+            padding: 0.3rem 0.9rem;  /* Minimal padding for tight fit */
+            border-radius: 18px;  /* Circular/pill-shaped design */
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: block;
-            max-width: 100%;
-            width: fit-content;
+            display: inline-block;  /* Changed to inline-block for better sizing */
+            max-width: 70%;  /* Limit maximum width */
+            width: auto;  /* Auto width based on content */
+            min-width: fit-content;  /* Ensure minimum width fits content */
             margin-left: auto;  /* Align to right side */
             word-wrap: break-word;
             white-space: pre-wrap;
             font-size: 1rem;
-            line-height: 1.75;
+            line-height: 1;  /* Tighter line height */
         }
         
         /* RTL support for user messages with Arabic text */
