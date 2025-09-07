@@ -1960,9 +1960,12 @@ class PrivacyChat {
             // Determine content to show based on privacy mode
             const contentToShow = this.privacyMode ? maskedMessage : originalMessage;
             
-            // Update text direction class
+            // Update text direction class while preserving existing classes
             const textDirection = this.detectTextDirection(contentToShow);
-            messageText.className = `message-text ${textDirection === 'rtl' ? 'rtl' : 'ltr'}`;
+            
+            // Preserve existing classes, only update direction
+            messageText.classList.remove('ltr', 'rtl');
+            messageText.classList.add(textDirection === 'rtl' ? 'rtl' : 'ltr');
             
             // Apply highlighting based on role and mode
             if (role === 'assistant') {
