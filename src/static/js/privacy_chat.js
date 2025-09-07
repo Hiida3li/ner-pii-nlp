@@ -14,6 +14,7 @@ class PrivacyChat {
         this.animatedSessions = new Set(); // Track which sessions have been animated
         this.currentStreamController = null; // Track the current stream abort controller
         this.activeStreamSession = null; // Track which session the stream is for
+        this.sendingMessage = false; // Track when we're in the process of sending a message
         
         // Array of creative greeting messages
         this.greetings = [
@@ -614,7 +615,7 @@ class PrivacyChat {
             const hasText = input.value.trim().length > 0;
             const hasAttachment = document.querySelector('.attachment-preview') !== null;
             
-            if (hasText || hasAttachment || this.isTyping) {
+            if (hasText || hasAttachment || this.isTyping || this.sendingMessage) {
                 sendBtn.classList.add('show');
             } else {
                 sendBtn.classList.remove('show');
@@ -711,6 +712,9 @@ class PrivacyChat {
             return;
         }
         
+        // Set flag to keep button visible during message sending process
+        this.sendingMessage = true;
+        
         // Determine which input is active
         const isWelcomeVisible = document.getElementById('welcome-screen') !== null;
         let message;
@@ -724,7 +728,10 @@ class PrivacyChat {
         }
         
         console.log('Message:', message, 'IsTyping:', this.isTyping);
-        if (!message) return;
+        if (!message) {
+            this.sendingMessage = false;
+            return;
+        }
         
         // If on welcome screen, move input to bottom first
         if (isWelcomeVisible) {
@@ -874,6 +881,9 @@ class PrivacyChat {
                                 // Now show typing indicator AFTER user message
                                 this.showTypingIndicator();
                                 
+                                // Reset sending flag now that typing indicator is shown
+                                this.sendingMessage = false;
+                                
                                 // Clear the attachment display from the message box when AI starts responding
                                 if (window.docAttachmentManager) {
                                     window.docAttachmentManager.removeAttachment();
@@ -1019,6 +1029,7 @@ class PrivacyChat {
             if (error.name === 'AbortError') {
                 console.log('Stream was aborted');
                 this.hideTypingIndicator();
+                this.sendingMessage = false;
                 // Clean up any partial message that was created
                 const streamingMessages = document.querySelectorAll('[data-streaming="true"]');
                 streamingMessages.forEach(msg => msg.remove());
@@ -1027,6 +1038,7 @@ class PrivacyChat {
             
             console.error('Error:', error);
             this.hideTypingIndicator();
+            this.sendingMessage = false;
             this.addMessage('assistant', 'Sorry, I encountered an error. Please try again.');
             // Also clear pending attachment on error
             if (this.pendingAttachment) {
