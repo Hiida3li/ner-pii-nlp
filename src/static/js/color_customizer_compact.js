@@ -20,6 +20,15 @@ class CompactColorCustomizer {
         
         // Panel state
         this.isPanelOpen = false;
+        
+        // Color palette for dropdown
+        this.colorPalette = [
+            '#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e',
+            '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1',
+            '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e', '#64748b',
+            '#6b7280', '#374151', '#1f2937', '#111827', '#fbbf24', '#34d399',
+            '#60a5fa', '#a78bfa', '#fb7185', '#fca5a5', '#fed7aa', '#fde68a'
+        ];
 
         // Preset color schemes
         this.presets = {
@@ -394,6 +403,43 @@ class CompactColorCustomizer {
             .compact-color-grid::-webkit-scrollbar-thumb:hover {
                 background: rgba(167, 139, 250, 0.5);
             }
+            
+            /* Color Palette Dropdown */
+            .color-palette-dropdown {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background: #2d3748;
+                border: 1px solid rgba(167, 139, 250, 0.3);
+                border-radius: 8px;
+                padding: 8px;
+                z-index: 1000;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                display: none;
+                grid-template-columns: repeat(6, 1fr);
+                gap: 4px;
+                width: 120px;
+                backdrop-filter: blur(8px);
+            }
+            
+            .color-palette-dropdown.show {
+                display: grid;
+            }
+            
+            .palette-color {
+                width: 16px;
+                height: 16px;
+                border-radius: 2px;
+                cursor: pointer;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                transition: all 0.2s ease;
+            }
+            
+            .palette-color:hover {
+                transform: scale(1.1);
+                border-color: rgba(255, 255, 255, 0.5);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
         `;
         
         document.head.appendChild(style);
@@ -463,14 +509,8 @@ class CompactColorCustomizer {
                     }
                 } catch (error) {
                     console.error('Error triggering color picker:', error);
-                    // Fallback: show alert with current color
-                    const newColor = prompt(`Enter color for ${entityType} (current: ${color}):`);
-                    if (newColor && /^#[0-9A-F]{6}$/i.test(newColor)) {
-                        this.activeColors[entityType] = newColor;
-                        this.saveColors();
-                        this.applyColors();
-                        this.populateCompactColors();
-                    }
+                    // Fallback: show color palette dropdown
+                    this.showColorPalette(preview, entityType, color);
                 }
             });
             
@@ -616,6 +656,58 @@ class CompactColorCustomizer {
         
         panel.classList.remove('open');
         icon.classList.remove('active');
+    }
+
+    showColorPalette(targetElement, entityType, currentColor) {
+        // Remove any existing palette
+        this.hideColorPalette();
+        
+        // Create palette dropdown
+        const palette = document.createElement('div');
+        palette.className = 'color-palette-dropdown show';
+        palette.id = 'color-palette-dropdown';
+        
+        // Add colors to palette
+        this.colorPalette.forEach(color => {
+            const colorOption = document.createElement('div');
+            colorOption.className = 'palette-color';
+            colorOption.style.backgroundColor = color;
+            colorOption.title = color;
+            
+            // Highlight current color
+            if (color.toLowerCase() === currentColor.toLowerCase()) {
+                colorOption.style.borderColor = '#ffffff';
+                colorOption.style.borderWidth = '2px';
+            }
+            
+            colorOption.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Update color
+                this.activeColors[entityType] = color;
+                this.saveColors();
+                this.applyColors();
+                this.populateCompactColors();
+                this.hideColorPalette();
+            });
+            
+            palette.appendChild(colorOption);
+        });
+        
+        // Position and show palette
+        targetElement.style.position = 'relative';
+        targetElement.appendChild(palette);
+        
+        // Close palette when clicking outside
+        setTimeout(() => {
+            document.addEventListener('click', this.hideColorPalette.bind(this), { once: true });
+        }, 100);
+    }
+    
+    hideColorPalette() {
+        const existingPalette = document.getElementById('color-palette-dropdown');
+        if (existingPalette) {
+            existingPalette.remove();
+        }
     }
 
     getColors() {

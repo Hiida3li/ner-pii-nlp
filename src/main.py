@@ -246,6 +246,9 @@ class SimpleChatbot:
         self.conversation_history = []  # Store conversation history for context
         self.max_history_length = 10  # Keep last 10 messages for context
         self.document_context = None  # Store current document context
+        logger.info(f"SimpleChatbot initialized with fresh entity_counters: {self.entity_counters}")
+        logger.info(f"SimpleChatbot initialized with empty entity_mappings: {len(self.entity_mappings)} items")
+        logger.info(f"SimpleChatbot initialized with empty reverse_mappings: {len(self.reverse_mappings)} items")
 
     def detect_pii(self, text: str) -> List[Dict]:
         """Call the PII detector API internally"""
@@ -301,10 +304,13 @@ class SimpleChatbot:
         # Initialize counter for this entity type if not exists
         if base_name not in self.entity_counters:
             self.entity_counters[base_name] = 0
+            logger.info(f"Initialized counter for {base_name} to 0")
         
         # Increment counter and create placeholder
         self.entity_counters[base_name] += 1
         placeholder = f"{base_name}{self.entity_counters[base_name]}"
+        logger.info(f"Created placeholder {placeholder} for '{original_text}' (entity_type: {entity_type})")
+        logger.info(f"Current entity_counters: {self.entity_counters}")
         
         # Store bidirectional mapping
         self.entity_mappings[original_text] = placeholder
@@ -1437,9 +1443,23 @@ async def reset_session(request: dict):
     """Reset chat session and clear conversation history"""
     session_id = request.get('session_id', 1)
     
+    # Log existing chatbot state before reset
+    if session_id in chatbot_sessions:
+        existing_bot = chatbot_sessions[session_id]
+        logger.info(f"BEFORE Reset: Session {session_id} has {len(existing_bot.entity_mappings)} entity mappings")
+        logger.info(f"BEFORE Reset: Entity counters: {existing_bot.entity_counters}")
+    else:
+        logger.info(f"BEFORE Reset: Session {session_id} has no existing chatbot")
+    
     # Always create a fresh chatbot for reset
     chatbot_sessions[session_id] = SimpleChatbot()
     logger.info(f"Reset chat session {session_id} - created new chatbot instance")
+    
+    # Verify the new chatbot is clean
+    new_bot = chatbot_sessions[session_id]
+    logger.info(f"AFTER Reset: Session {session_id} has {len(new_bot.entity_mappings)} entity mappings")
+    logger.info(f"AFTER Reset: Entity counters: {new_bot.entity_counters}")
+    
     return {"status": "ok"}
 
 
