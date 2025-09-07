@@ -599,7 +599,7 @@ class DocumentAttachmentManager {
             // Override sendMessage to include document
             this.privacyChat.sendMessage = async () => {
                 // console.log('Document attachment manager sendMessage called');
-                // console.log('Current attached document:', this.attachedDocument);
+                // console.log('Current attached documents:', this.attachedDocuments);
                 
                 // Get the user's message
                 let input = document.getElementById('chat-input');
@@ -610,19 +610,19 @@ class DocumentAttachmentManager {
                 const userMessage = input ? input.value.trim() : '';
                 // console.log('User message:', userMessage);
                 
-                // Store document for display
-                const documentToDisplay = this.attachedDocument;
+                // Store documents for display
+                const documentsToDisplay = [...this.attachedDocuments];
                 
-                // Store the attachment in privacy chat for use in addMessage
-                if (documentToDisplay) {
-                    this.privacyChat.pendingAttachment = documentToDisplay;
+                // Store the attachments in privacy chat for use in addMessage
+                if (documentsToDisplay.length > 0) {
+                    this.privacyChat.pendingAttachments = documentsToDisplay;
                 }
                 
-                // If there's an attached document, combine it with the message for backend
+                // If there are attached documents, combine them with the message for backend
                 // But store original user message for display
                 let originalUserMessage = userMessage;
                 
-                if (this.attachedDocument && this.attachedDocument.text) {
+                if (this.attachedDocuments.length > 0) {
                     let combinedMessage = '';
                     
                     // Add user message first if provided
@@ -630,14 +630,16 @@ class DocumentAttachmentManager {
                         combinedMessage = userMessage + '\n\n';
                     }
                     
-                    // Add document header and content for backend processing
-                    combinedMessage += `[Document: ${this.attachedDocument.filename}]\n\n`;
-                    combinedMessage += this.attachedDocument.text;
+                    // Add all documents for backend processing
+                    this.attachedDocuments.forEach((doc, index) => {
+                        combinedMessage += `[Document ${index + 1}: ${doc.filename}]\n\n`;
+                        combinedMessage += doc.text + '\n\n';
+                    });
                     
                     // Store the original user message to display (not the document content)
-                    if (documentToDisplay) {
-                        documentToDisplay.userMessage = originalUserMessage || '';
-                    }
+                    documentsToDisplay.forEach(doc => {
+                        doc.userMessage = originalUserMessage || '';
+                    });
                     
                     // Set the combined message in the input (for backend)
                     if (input) {
