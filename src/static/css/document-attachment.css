@@ -141,31 +141,22 @@
     border-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Card styling when inside a message bubble */
+/* Card styling when inside a message bubble - same as input box */
 .message-content .document-attachment-card {
-    display: inline-flex;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 6px 10px;
-    max-width: 200px;
-    margin: 0;
-    box-shadow: none;
+    /* Inherits main card styles, no overrides needed */
 }
 
 .message-content .document-attachment-card:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: none;
-    box-shadow: none;
+    /* Inherits main hover styles */
 }
 
 /* For assistant messages */
 .assistant .message-content .document-attachment-card {
-    background: rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Same as regular cards, no special styling */
 }
 
 .assistant .message-content .document-attachment-card:hover {
-    background: rgba(0, 0, 0, 0.15);
+    /* Inherits main hover styles */
 }
 
 .doc-icon-wrapper {
@@ -181,11 +172,9 @@
     opacity: 0.7;
 }
 
-/* Smaller icon for attachments inside messages */
+/* Icon for attachments inside messages - same as input box */
 .message-content .doc-icon-wrapper {
-    width: 28px;
-    height: 28px;
-    background: rgba(255, 255, 255, 0.15);
+    /* Inherits main icon styles */
 }
 
 .doc-icon-wrapper svg {
@@ -195,9 +184,7 @@
 }
 
 .message-content .doc-icon-wrapper svg {
-    width: 16px;
-    height: 16px;
-    color: rgba(255, 255, 255, 0.9);
+    /* Inherits main svg styles */
 }
 
 .doc-info {
@@ -221,10 +208,9 @@
     max-width: 80px;
 }
 
-/* Filename styling inside messages */
+/* Filename styling inside messages - same as input box */
 .message-content .doc-filename {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.95);
+    /* Inherits main filename styles */
 }
 
 .doc-metadata {
@@ -235,10 +221,9 @@
     align-items: center;
 }
 
-/* Metadata styling inside messages */
+/* Metadata styling inside messages - same as input box */
 .message-content .doc-metadata {
-    font-size: 9px;
-    color: rgba(255, 255, 255, 0.7);
+    /* Inherits main metadata styles */
 }
 
 .doc-size, .doc-entities {
