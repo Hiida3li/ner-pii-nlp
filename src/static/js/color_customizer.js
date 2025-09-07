@@ -10,14 +10,12 @@ class ColorCustomizer {
             'person': '#a78bfa',      // Light purple
             'location': '#34d399',     // Light green  
             'organization': '#fb923c', // Light orange
-            'date': '#60a5fa',        // Light blue
             'email': '#f472b6',       // Light pink
             'phone': '#facc15',       // Light yellow
             'url': '#2dd4bf',         // Light teal
             'civilid': '#c084fc',     // Light violet
             'passport': '#f87171',    // Light red
-            'creditcard': '#818cf8',  // Light indigo
-            'bankaccount': '#a3e635'  // Light lime
+            'creditcard': '#818cf8'   // Light indigo
         };
         
         // Panel state
@@ -32,56 +30,48 @@ class ColorCustomizer {
                 'person': '#ff00ff',      // Magenta
                 'location': '#00ff00',     // Lime
                 'organization': '#ffff00', // Yellow
-                'date': '#00ffff',        // Cyan
                 'email': '#ff00aa',       // Pink
                 'phone': '#ffa500',       // Orange
                 'url': '#00aaff',         // Sky blue
                 'civilid': '#ff55ff',     // Light magenta
                 'passport': '#ff5555',    // Light red
-                'creditcard': '#5555ff',  // Light blue
-                'bankaccount': '#55ff55'  // Light green
+                'creditcard': '#5555ff'   // Light blue
             },
             
             colorblindSafe: {
                 'person': '#648FFF',      // Blue
                 'location': '#785EF0',     // Purple
                 'organization': '#DC267F', // Magenta
-                'date': '#FE6100',        // Orange
                 'email': '#FFB000',       // Gold
                 'phone': '#648FFF',       // Blue (repeated intentionally)
                 'url': '#785EF0',         // Purple (repeated)
                 'civilid': '#DC267F',     // Magenta (repeated)
-                'passport': '#FE6100',    // Orange (repeated)
-                'creditcard': '#FFB000',  // Gold (repeated)
-                'bankaccount': '#648FFF'  // Blue (repeated)
+                'passport': '#FE6100',    // Orange
+                'creditcard': '#FFB000'   // Gold (repeated)
             },
             
             darkMode: {
                 'person': '#9333ea',      // Purple
                 'location': '#059669',     // Green
                 'organization': '#ea580c', // Orange
-                'date': '#0284c7',        // Blue
                 'email': '#db2777',       // Pink
                 'phone': '#ca8a04',       // Yellow
                 'url': '#0891b2',         // Cyan
                 'civilid': '#7c3aed',     // Violet
                 'passport': '#dc2626',    // Red
-                'creditcard': '#4f46e5',  // Indigo
-                'bankaccount': '#65a30d'  // Lime
+                'creditcard': '#4f46e5'   // Indigo
             },
             
             pastel: {
                 'person': '#e9d5ff',      // Pastel purple
                 'location': '#bbf7d0',     // Pastel green
                 'organization': '#fed7aa', // Pastel orange
-                'date': '#bfdbfe',        // Pastel blue
                 'email': '#fce7f3',       // Pastel pink
                 'phone': '#fef3c7',       // Pastel yellow
                 'url': '#ccfbf1',         // Pastel teal
                 'civilid': '#ddd6fe',     // Pastel violet
                 'passport': '#fecaca',    // Pastel red
-                'creditcard': '#c7d2fe',  // Pastel indigo
-                'bankaccount': '#d9f99d'  // Pastel lime
+                'creditcard': '#c7d2fe'   // Pastel indigo
             }
         };
 
@@ -229,7 +219,7 @@ class ColorCustomizer {
                                     <span style="background: #a78bfa"></span>
                                     <span style="background: #34d399"></span>
                                     <span style="background: #fb923c"></span>
-                                    <span style="background: #60a5fa"></span>
+                                    <span style="background: #f472b6"></span>
                                 </div>
                                 <div class="preset-name">Default</div>
                             </div>
@@ -238,7 +228,7 @@ class ColorCustomizer {
                                     <span style="background: #ff00ff"></span>
                                     <span style="background: #00ff00"></span>
                                     <span style="background: #ffff00"></span>
-                                    <span style="background: #00ffff"></span>
+                                    <span style="background: #ff00aa"></span>
                                 </div>
                                 <div class="preset-name">High Contrast</div>
                             </div>
@@ -247,7 +237,7 @@ class ColorCustomizer {
                                     <span style="background: #648FFF"></span>
                                     <span style="background: #785EF0"></span>
                                     <span style="background: #DC267F"></span>
-                                    <span style="background: #FE6100"></span>
+                                    <span style="background: #FFB000"></span>
                                 </div>
                                 <div class="preset-name">Colorblind Safe</div>
                             </div>
@@ -256,7 +246,7 @@ class ColorCustomizer {
                                     <span style="background: #9333ea"></span>
                                     <span style="background: #059669"></span>
                                     <span style="background: #ea580c"></span>
-                                    <span style="background: #0284c7"></span>
+                                    <span style="background: #db2777"></span>
                                 </div>
                                 <div class="preset-name">Dark Mode</div>
                             </div>
@@ -265,7 +255,7 @@ class ColorCustomizer {
                                     <span style="background: #e9d5ff"></span>
                                     <span style="background: #bbf7d0"></span>
                                     <span style="background: #fed7aa"></span>
-                                    <span style="background: #bfdbfe"></span>
+                                    <span style="background: #fce7f3"></span>
                                 </div>
                                 <div class="preset-name">Pastel</div>
                             </div>
@@ -320,7 +310,7 @@ class ColorCustomizer {
             .color-customizer-icon {
                 position: fixed;
                 left: 1.5rem;
-                top: 14.5rem;
+                top: 18rem;
                 width: 40px;
                 height: 40px;
                 background: rgba(255, 255, 255, 0.1);
@@ -680,14 +670,12 @@ class ColorCustomizer {
             { key: 'person', label: 'Person' },
             { key: 'location', label: 'Location' },
             { key: 'organization', label: 'Org' },
-            { key: 'date', label: 'Date' },
             { key: 'email', label: 'Email' },
             { key: 'phone', label: 'Phone' },
             { key: 'url', label: 'URL' },
             { key: 'civilid', label: 'Civil ID' },
             { key: 'passport', label: 'Passport' },
-            { key: 'creditcard', label: 'Card' },
-            { key: 'bankaccount', label: 'Bank' }
+            { key: 'creditcard', label: 'Card' }
         ];
 
         entityTypes.forEach(({ key, label }) => {
