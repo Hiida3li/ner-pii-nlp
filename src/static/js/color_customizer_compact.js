@@ -207,31 +207,29 @@ class CompactColorCustomizer {
             }
             
             .compact-color-icon {
-                width: 32px;
-                height: 32px;
-                background: rgba(255, 255, 255, 0.08);
-                border: 1px solid rgba(255, 255, 255, 0.12);
+                width: 40px;
+                height: 40px;
+                background: rgba(255, 255, 255, 0.1);
+                border: none;
                 border-radius: 8px;
-                color: #9ca3af;
+                color: #e5e7eb;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 transition: all 0.2s ease;
-                backdrop-filter: blur(8px);
+                backdrop-filter: blur(10px);
             }
             
             .compact-color-icon:hover {
-                background: rgba(167, 139, 250, 0.15);
-                border-color: rgba(167, 139, 250, 0.25);
-                color: #a78bfa;
+                background: rgba(255, 255, 255, 0.15);
                 transform: scale(1.05);
             }
             
             .compact-color-icon.active {
                 background: rgba(167, 139, 250, 0.2);
-                border-color: rgba(167, 139, 250, 0.4);
                 color: #a78bfa;
+                transform: scale(0.95);
             }
             
             .compact-color-panel {
