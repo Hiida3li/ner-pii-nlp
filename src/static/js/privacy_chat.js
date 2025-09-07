@@ -1178,17 +1178,54 @@ class PrivacyChat {
         }
     }
     
+    formatResponseText(text) {
+        // Preserve formatting: convert line breaks and format lists
+        let formatted = text;
+        
+        // Convert markdown-style headers to HTML
+        formatted = formatted.replace(/^### (.+)$/gm, '<h4>$1</h4>');
+        formatted = formatted.replace(/^## (.+)$/gm, '<h3>$1</h3>');
+        formatted = formatted.replace(/^# (.+)$/gm, '<h2>$1</h2>');
+        
+        // Convert markdown bold to HTML
+        formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        
+        // Convert bullet points to proper list items
+        formatted = formatted.replace(/^- (.+)$/gm, '<li>$1</li>');
+        
+        // Wrap consecutive list items in <ul> tags
+        formatted = formatted.replace(/(<li>.*<\/li>\n?)+/g, (match) => {
+            return '<ul>' + match + '</ul>';
+        });
+        
+        // Convert double line breaks to paragraphs
+        formatted = formatted.split('\n\n').map(para => {
+            if (para.trim() && !para.startsWith('<h') && !para.startsWith('<ul>')) {
+                return '<p>' + para.replace(/\n/g, '<br>') + '</p>';
+            }
+            return para;
+        }).join('');
+        
+        // Handle single line breaks
+        formatted = formatted.replace(/([^>])\n([^<])/g, '$1<br>$2');
+        
+        return formatted;
+    }
+
     highlightPlaceholders(text) {
+        // First format the text to preserve structure
+        let formattedText = this.formatResponseText(text);
+        
         // Highlight ONLY actual placeholders (with numbers), not regular words
         // Must have a number after the entity type to be a placeholder
         const placeholderRegex = /\b(Person|Location|Organization|Email|Phone|URL|CivilID|Passport|CreditCard|BankAccount)\d+\b/gi;
         
         // Use a map to track replacements to avoid double replacement
-        let highlightedText = text;
+        let highlightedText = formattedText;
         const matches = [];
         let match;
         
-        // First, collect all matches
+        // First, collect all matches from the original text
         while ((match = placeholderRegex.exec(text)) !== null) {
             matches.push({
                 text: match[0],
@@ -1200,14 +1237,14 @@ class PrivacyChat {
         // Sort matches by index in reverse order to replace from end to start
         matches.sort((a, b) => b.index - a.index);
         
-        // Replace each match
+        // Replace each match in the formatted text
         matches.forEach(m => {
             const cssClass = this.getEntityCssClass(m.type);
             // Wrap in <bdi> to isolate bidirectional text flow
             const replacement = `<bdi><span class="pii-entity ${cssClass}">${m.text}</span></bdi>`;
-            highlightedText = highlightedText.substring(0, m.index) + 
-                            replacement + 
-                            highlightedText.substring(m.index + m.text.length);
+            // Use global replace to catch all instances in the formatted text
+            const regex = new RegExp(`\\b${m.text}\\b`, 'g');
+            highlightedText = highlightedText.replace(regex, replacement);
         });
         
         return highlightedText;
@@ -1217,13 +1254,14 @@ class PrivacyChat {
         // Provide real-time highlighting during streaming for common PII patterns
         console.log('highlightStreamingEntities called with:', text);
         
-        // Avoid processing if text already contains HTML spans to prevent double-highlighting
-        if (text.includes('<span class="pii-entity')) {
-            console.log('Text already contains highlights, skipping');
-            return text;
-        }
+        // First format the text to preserve structure
+        let highlightedText = this.formatResponseText(text);
         
-        let highlightedText = text;
+        // Avoid processing if text already contains HTML spans to prevent double-highlighting
+        if (highlightedText.includes('<span class="pii-entity')) {
+            console.log('Text already contains highlights, skipping');
+            return highlightedText;
+        }
         
         // Email pattern - most reliable
         highlightedText = highlightedText.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, (match) => {
@@ -1492,9 +1530,12 @@ class PrivacyChat {
         console.log('Number of entities:', entities ? entities.length : 0);
         console.log('Entities:', JSON.stringify(entities, null, 2));
         
+        // First format the text to preserve structure
+        let formattedText = this.formatResponseText(text);
+        
         if (!entities || entities.length === 0) {
-            console.log('No entities to highlight, returning plain text');
-            return text;
+            console.log('No entities to highlight, returning formatted text');
+            return formattedText;
         }
         
         // Sort entities by length (longest first) to prevent substring issues
@@ -1506,7 +1547,7 @@ class PrivacyChat {
         
         // Create a map to track replacements
         const replacementMap = new Map();
-        let workingText = text;
+        let workingText = formattedText;
         
         console.log('Starting entity processing...');
         console.log('Working text sample:', workingText.substring(0, 200));
