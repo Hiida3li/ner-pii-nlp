@@ -590,27 +590,27 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Chat Header for Privacy Toggle */
+        /* Chat Header for Privacy Toggle - Minimal floating style */
         .chat-header {
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            padding: 0.75rem 1.5rem;
-            background: rgba(47, 63, 87, 0.8);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
+            padding: 0;
+            background: transparent;
+            border-bottom: none;
+            position: fixed;
+            top: 15px;
+            right: 20px;
             z-index: 500;
             pointer-events: auto !important;
         }
         
-        /* Privacy Toggle - matching PII detector design */
+        /* Privacy Toggle - floating minimal design */
         .privacy-toggle {
             width: 50px;
             height: 30px;
-            background: #3a4050;
-            border: 1px solid rgba(76, 139, 202, 0.2);
+            background: rgba(58, 64, 80, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             position: relative;
             cursor: pointer !important;
@@ -622,6 +622,8 @@
             user-select: none;
             -webkit-user-select: none;
             outline: none;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
         
         .privacy-toggle-slider {
@@ -2034,56 +2036,57 @@
     <style>
         .powered-by-footer {
             position: fixed;
-            bottom: 8px;
-            right: 15px;
+            bottom: 12px;
+            left: 20px;
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 5px 8px 5px 10px;
-            background: rgba(32, 31, 39, 0.6);
-            backdrop-filter: blur(8px);
-            border-radius: 16px;
+            gap: 8px;
+            padding: 8px 12px 8px 14px;
+            background: rgba(32, 31, 39, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             z-index: 50;
-            opacity: 0.6;
+            opacity: 0.7;
             transition: all 0.2s ease;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
         }
         
         .powered-by-footer:hover {
-            opacity: 0.9;
-            background: rgba(32, 31, 39, 0.8);
+            opacity: 1;
+            background: rgba(32, 31, 39, 0.85);
+            transform: translateY(-1px);
         }
         
         .powered-text {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 11px;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 13px;
             font-weight: 500;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.4px;
         }
         
         .orki-logo {
-            width: 20px;
-            height: 20px;
+            width: 26px;
+            height: 26px;
             object-fit: contain;
             border-radius: 50%;
-            opacity: 0.9;
+            opacity: 0.95;
         }
         
         /* Mobile responsive */
         @media (max-width: 768px) {
             .powered-by-footer {
-                bottom: 60px;
-                right: 10px;
-                padding: 4px 6px 4px 8px;
+                bottom: 65px;
+                left: 15px;
+                padding: 6px 10px 6px 12px;
             }
             
             .powered-text {
-                font-size: 10px;
+                font-size: 12px;
             }
             
             .orki-logo {
-                width: 18px;
-                height: 18px;
+                width: 22px;
+                height: 22px;
             }
         }
     </style>
