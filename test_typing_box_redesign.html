@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Box Redesign Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1a1a1a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        h2 {
+            color: #4c8bca;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .design-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Current Design (for comparison) */
+        .current-input-area {
+            padding: 1.5rem;
+            background: rgba(30, 32, 37, 0.5);
+        }
+        
+        .current-input-box {
+            background: linear-gradient(135deg, #3a4050 0%, #434859 100%);
+            border: 2px solid rgba(76, 139, 202, 0.25);
+            border-radius: 20px;
+            padding: 0.4rem 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0;
+            min-height: 42px;
+            position: relative;
+        }
+        
+        /* NEW REDESIGNED TYPING BOX */
+        .new-input-area {
+            padding: 1rem;
+            background: rgba(30, 32, 37, 0.5);
+        }
+        
+        .new-input-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            min-height: 40px;
+            max-height: 120px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .new-input-box:focus-within {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(76, 139, 202, 0.3);
+            box-shadow: 0 0 0 1px rgba(76, 139, 202, 0.1);
+        }
+        
+        /* Upload Button - Compact and aligned */
+        .upload-btn {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            margin-bottom: 4px;
+        }
+        
+        .upload-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #9ca3af;
+        }
+        
+        .upload-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Textarea - Clean and minimal */
+        .chat-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #e5e7eb;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+            min-height: 24px;
+            max-height: 100px;
+            line-height: 1.4;
+            padding: 4px 4px;
+            font-family: inherit;
+            overflow-y: auto;
+            text-align: left;
+            direction: ltr;
+            margin-bottom: 4px;
+        }
+        
+        .chat-input::placeholder {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        /* Arabic support */
+        .chat-input.rtl {
+            text-align: right;
+            direction: rtl;
+            font-family: 'Tajawal', 'Dubai', 'Noto Sans Arabic', sans-serif;
+        }
+        
+        /* Send Button - Circular and clean */
+        .send-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(76, 139, 202, 0.15);
+            border: 1px solid rgba(76, 139, 202, 0.3);
+            color: #4c8bca;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            margin-bottom: 4px;
+            opacity: 0;
+            transform: scale(0.8);
+            pointer-events: none;
+        }
+        
+        .send-btn.show {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+        
+        .send-btn:hover {
+            background: rgba(76, 139, 202, 0.25);
+            border-color: rgba(76, 139, 202, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .send-btn svg {
+            width: 16px;
+            height: 16px;
+            transform: rotate(-90deg);
+        }
+        
+        /* Attachment Preview - Clean white card */
+        .attachment-preview {
+            display: none;
+            align-items: center;
+            margin-right: 8px;
+            margin-bottom: 4px;
+        }
+        
+        .attachment-preview.show {
+            display: flex;
+        }
+        
+        .attachment-card {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        
+        .attachment-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7;
+        }
+        
+        .attachment-name {
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .remove-btn {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        
+        .remove-btn:hover {
+            opacity: 1;
+        }
+        
+        /* Minimal scrollbar */
+        .chat-input::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .chat-input::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .chat-input::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+        
+        /* Examples section */
+        .example-messages {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+        }
+        
+        .example-title {
+            color: #4c8bca;
+            font-size: 12px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .example-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .example-item {
+            flex: 1;
+        }
+        
+        .example-label {
+            color: #6b7280;
+            font-size: 11px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        
+        .example-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #e5e7eb;
+            font-size: 14px;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .example-box.rtl {
+            text-align: right;
+            direction: rtl;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Typing Box Redesign</h2>
+        
+        <!-- Current Design -->
+        <div class="design-section">
+            <div class="section-title">Current Design</div>
+            <div class="current-input-area">
+                <div class="current-input-box">
+                    <button class="upload-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                        </svg>
+                    </button>
+                    <textarea class="chat-input" placeholder="Ask anything" rows="1"></textarea>
+                    <button class="send-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- New Redesigned Version -->
+        <div class="design-section">
+            <div class="section-title">New Clean Design</div>
+            <div class="new-input-area">
+                <div class="new-input-box">
+                    <button class="upload-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                        </svg>
+                    </button>
+                    <textarea class="chat-input" placeholder="Ask anything" rows="1" oninput="autoResize(this)"></textarea>
+                    <button class="send-btn" id="sendBtn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- With Attachment Example -->
+        <div class="design-section">
+            <div class="section-title">With Document Attached</div>
+            <div class="new-input-area">
+                <div class="new-input-box">
+                    <button class="upload-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                        </svg>
+                    </button>
+                    <div class="attachment-preview show">
+                        <div class="attachment-card">
+                            <svg class="attachment-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="attachment-name">document.pdf</span>
+                            <svg class="remove-btn" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <textarea class="chat-input" placeholder="Ask anything about this document" rows="1"></textarea>
+                    <button class="send-btn show">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Example States -->
+        <div class="example-messages">
+            <div class="example-title">Text Alignment Examples</div>
+            
+            <div class="example-row">
+                <div class="example-item">
+                    <div class="example-label">English Text (Left Aligned)</div>
+                    <div class="example-box">
+                        How can I improve my code?
+                    </div>
+                </div>
+                <div class="example-item">
+                    <div class="example-label">Arabic Text (Right Aligned)</div>
+                    <div class="example-box rtl">
+                        كيف يمكنني تحسين الكود الخاص بي؟
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example-row">
+                <div class="example-item">
+                    <div class="example-label">Empty State</div>
+                    <div class="example-box" style="color: #6b7280;">
+                        Ask anything
+                    </div>
+                </div>
+                <div class="example-item">
+                    <div class="example-label">Typing State</div>
+                    <div class="example-box">
+                        What is the best way to|
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Design Features -->
+        <div class="example-messages">
+            <div class="example-title">Design Features</div>
+            <ul style="color: #9ca3af; font-size: 14px; line-height: 1.8; list-style: none;">
+                <li>✓ Clean, minimal design with subtle borders</li>
+                <li>✓ Upload icon: 32x32px, bottom-aligned, left side</li>
+                <li>✓ Text input: Auto-expanding, left-aligned for English, right for Arabic</li>
+                <li>✓ Send button: Circular, appears only when text is typed</li>
+                <li>✓ Attachment preview: Clean white card design</li>
+                <li>✓ Compact height: 40px minimum, expands to 120px maximum</li>
+                <li>✓ Smooth transitions and hover effects</li>
+                <li>✓ Proper alignment: All elements bottom-aligned</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Auto-resize textarea
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+            
+            // Show/hide send button
+            const sendBtn = document.getElementById('sendBtn');
+            if (textarea.value.trim().length > 0) {
+                sendBtn.classList.add('show');
+            } else {
+                sendBtn.classList.remove('show');
+            }
+            
+            // Detect language and adjust alignment
+            const arabicRegex = /[\u0600-\u06FF]/;
+            if (arabicRegex.test(textarea.value)) {
+                textarea.classList.add('rtl');
+            } else {
+                textarea.classList.remove('rtl');
+            }
+        }
+        
+        // Initialize all textareas
+        document.querySelectorAll('.chat-input').forEach(textarea => {
+            textarea.addEventListener('input', () => autoResize(textarea));
+        });
+    </script>
+</body>
+</html>
