@@ -44,10 +44,8 @@ class DocumentAttachmentManager {
             uploadBtn.type = 'button';
             uploadBtn.title = 'Upload a document';
             uploadBtn.innerHTML = `
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 18C4.79086 18 3 16.2091 3 14C3 11.7909 4.79086 10 7 10C7.16652 10 7.33073 10.0106 7.49173 10.0311M16.4917 10.0311C16.6607 10.0106 16.8335 10 17 10C19.2091 10 21 11.7909 21 14C21 16.2091 19.2091 18 17 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M7.49173 10.0311C7.86103 7.16347 10.2019 5 13 5C15.7981 5 18.139 7.16347 18.5083 10.0311M16.4917 10.0311C16.3307 10.0106 16.1665 10 16 10C15.8335 10 15.6693 10.0106 15.5083 10.0311" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M12 13V21M12 13L15 16M12 13L9 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 <div class="upload-spinner"></div>
                 <div class="upload-progress">
