@@ -838,9 +838,6 @@ class PrivacyChat {
                                 console.log('About to add user message with attachment:', attachment ? attachment.filename : 'none');
                                 this.addMessage('user', userMessageToShow, userMessageData.userEntities, userMessageData, attachment);
                                 
-                                // Use custom scroll for user messages to show them at top of visible area
-                                this.scrollToShowNewMessage();
-                                
                                 // Now show typing indicator AFTER user message
                                 this.showTypingIndicator();
                                 
@@ -1040,12 +1037,28 @@ class PrivacyChat {
             </div>
         `;
         
-        this.elements.chatMessages.insertAdjacentHTML('beforeend', messageHtml);
+        // Add streaming message to the most recent conversation pair
+        const streamingPairs = this.elements.chatMessages.querySelectorAll('.conversation-pair');
+        if (streamingPairs.length > 0) {
+            const latestPair = streamingPairs[0]; // First one is the most recent
+            latestPair.insertAdjacentHTML('beforeend', messageHtml);
+        } else {
+            // Fallback if no conversation pair exists
+            this.elements.chatMessages.insertAdjacentHTML('beforeend', messageHtml);
+        }
         this.scrollToBottom();
         
         // Return the created element
-        const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
-        return messages[messages.length - 1];
+        const returnPairs = this.elements.chatMessages.querySelectorAll('.conversation-pair');
+        if (returnPairs.length > 0) {
+            const latestPair = returnPairs[0];
+            const messagesInPair = latestPair.querySelectorAll('.message-wrapper');
+            return messagesInPair[messagesInPair.length - 1]; // Return the last message in the pair
+        }
+        
+        // Fallback
+        const allMessages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
+        return allMessages[allMessages.length - 1];
     }
     
     addMessage(role, content, entities = null, messageData = null, attachment = null) {
@@ -1178,17 +1191,20 @@ class PrivacyChat {
             console.log('Message HTML preview:', messageHtml.substring(0, 500));
         }
         
+        // Insert messages at bottom
         this.elements.chatMessages.insertAdjacentHTML('beforeend', messageHtml);
         
-        // Only scroll to bottom for non-user messages (assistant, typing indicator, etc.)
-        // User message scrolling is handled separately with scrollToShowNewMessage()
-        if (role !== 'user') {
+        // For user messages, scroll to show ONLY the newest conversation
+        if (role === 'user') {
+            this.scrollToNewestMessage();
+        } else {
+            // For AI responses, just scroll to bottom normally
             this.scrollToBottom();
         }
         
         // Return the added message element for further manipulation if needed
-        const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
-        return messages[messages.length - 1];
+        const allMessages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
+        return allMessages[allMessages.length - 1];
     }
     
     highlightUserMessage(text, entities, messageData) {
@@ -1854,7 +1870,15 @@ class PrivacyChat {
             </div>
         `;
         
-        this.elements.chatMessages.insertAdjacentHTML('beforeend', typingHtml);
+        // Add typing indicator to the most recent conversation pair
+        const typingPairs = this.elements.chatMessages.querySelectorAll('.conversation-pair');
+        if (typingPairs.length > 0) {
+            const latestPair = typingPairs[0]; // First one is the most recent
+            latestPair.insertAdjacentHTML('beforeend', typingHtml);
+        } else {
+            // Fallback if no conversation pair exists
+            this.elements.chatMessages.insertAdjacentHTML('beforeend', typingHtml);
+        }
         this.scrollToBottom();
     }
     
@@ -2074,16 +2098,52 @@ class PrivacyChat {
         });
     }
     
-    scrollToShowNewMessage() {
-        // Scroll to show the latest message at the very top of the visible area
+    scrollToTop() {
+        // Scroll to top to show only newest conversation
+        requestAnimationFrame(() => {
+            if (this.elements.chatMessages) {
+                this.elements.chatMessages.scrollTop = 0;
+            }
+        });
+    }
+    
+    scrollToNewestMessage() {
+        // Scroll to position newest message at top of visible area
+        // This pushes ALL old content above into invisible area
         requestAnimationFrame(() => {
             if (this.elements.chatMessages) {
                 const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
                 if (messages.length > 0) {
-                    const lastMessage = messages[messages.length - 1];
-                    // Position the new message at the very top of the visible area (0px from top)
-                    const messageTop = lastMessage.offsetTop;
+                    const newestMessage = messages[messages.length - 1];
+                    const messageTop = newestMessage.offsetTop;
+                    // Position newest message at top of visible area
                     this.elements.chatMessages.scrollTop = messageTop;
+                }
+            }
+        });
+    }
+    
+    scrollToShowNewMessage() {
+        // Scroll to show the latest message at the very top of the visible area
+        console.log('scrollToShowNewMessage called');
+        requestAnimationFrame(() => {
+            if (this.elements.chatMessages) {
+                const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
+                console.log('Found', messages.length, 'messages');
+                if (messages.length > 0) {
+                    const lastMessage = messages[messages.length - 1];
+                    const messageTop = lastMessage.offsetTop;
+                    console.log('Last message offsetTop:', messageTop);
+                    console.log('Current scrollTop:', this.elements.chatMessages.scrollTop);
+                    console.log('Setting scrollTop to:', messageTop);
+                    
+                    // Position the new message at the very top of the visible area (0px from top)
+                    this.elements.chatMessages.scrollTop = messageTop;
+                    
+                    // Verify the scroll was applied
+                    setTimeout(() => {
+                        console.log('After scroll - scrollTop is now:', this.elements.chatMessages.scrollTop);
+                    }, 50);
                 }
             }
         });

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Positioning Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1a1a1a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            color: #e5e7eb;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h2 {
+            color: #4c8bca;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .test-section {
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .section-title {
+            color: #9ca3af;
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .expected-behavior {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .expected-behavior h3 {
+            color: #22c55e;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .step {
+            background: rgba(76, 139, 202, 0.1);
+            border-left: 4px solid #4c8bca;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .step-number {
+            color: #4c8bca;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .visual-demo {
+            background: rgba(75, 85, 99, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .chat-simulation {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 200px;
+            overflow: hidden;
+            border: 2px solid #374151;
+            border-radius: 8px;
+            padding: 15px;
+            background: #111827;
+        }
+        
+        .message {
+            padding: 8px 12px;
+            border-radius: 8px;
+            max-width: 70%;
+        }
+        
+        .user-msg {
+            background: #1d4ed8;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        
+        .ai-msg {
+            background: #374151;
+            color: #e5e7eb;
+            align-self: flex-start;
+        }
+        
+        .newest {
+            box-shadow: 0 0 0 2px #22c55e;
+        }
+        
+        .oldest {
+            opacity: 0.3;
+            font-style: italic;
+        }
+        
+        .arrow {
+            font-size: 20px;
+            color: #22c55e;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .test-button {
+            background: rgba(76, 139, 202, 0.2);
+            border: 1px solid rgba(76, 139, 202, 0.4);
+            color: #4c8bca;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            display: block;
+            margin: 20px auto;
+        }
+        
+        .test-button:hover {
+            background: rgba(76, 139, 202, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🎯 Message Positioning Fix - Test Case</h2>
+        
+        <div class="test-section">
+            <div class="section-title">✅ EXPECTED BEHAVIOR</div>
+            <div class="expected-behavior">
+                <h3>Perfect Message Flow - Only See Current Conversation</h3>
+                <p>When you send a message, you should ONLY see:</p>
+                <ul style="margin: 10px 0 0 20px; line-height: 1.6;">
+                    <li>Your newest message at the TOP</li>
+                    <li>The AI loading/streaming response below it</li>
+                    <li>Previous conversations are HIDDEN above (scroll up to see them)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="section-title">🔧 TECHNICAL IMPLEMENTATION</div>
+            
+            <div class="step">
+                <span class="step-number">1.</span>
+                <strong>Message Insertion:</strong> New user messages create conversation pairs at top using <code>insertAdjacentHTML('afterbegin')</code>
+            </div>
+            
+            <div class="step">
+                <span class="step-number">2.</span>
+                <strong>Auto Scroll:</strong> After each message, <code>scrollToTop()</code> is called to position page at very top
+            </div>
+            
+            <div class="step">
+                <span class="step-number">3.</span>
+                <strong>Result:</strong> Only newest conversation visible, old ones pushed up above viewport
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="section-title">📱 VISUAL SIMULATION</div>
+            
+            <div class="visual-demo">
+                <p style="text-align: center; margin-bottom: 15px; color: #9ca3af;">
+                    <strong>What you see after sending "Message 3":</strong>
+                </p>
+                
+                <div class="chat-simulation">
+                    <div class="message user-msg newest">User: Message 3 (YOU ONLY SEE THIS)</div>
+                    <div class="message ai-msg newest">AI: Response to Message 3...</div>
+                </div>
+                
+                <div class="arrow">↑ Scroll up to see older messages ↑</div>
+                
+                <div class="chat-simulation" style="opacity: 0.4;">
+                    <div class="message user-msg oldest">User: Message 2 (HIDDEN ABOVE)</div>
+                    <div class="message ai-msg oldest">AI: Response to Message 2</div>
+                    <div class="message user-msg oldest">User: Message 1 (HIDDEN ABOVE)</div>
+                    <div class="message ai-msg oldest">AI: Response to Message 1</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="section-title">🧪 TEST PROCEDURE</div>
+            
+            <div class="step">
+                <span class="step-number">1.</span>
+                Open the privacy chat and send: <code>"Test 1"</code>
+            </div>
+            
+            <div class="step">
+                <span class="step-number">2.</span>
+                Wait for AI response, then send: <code>"Test 2"</code>
+            </div>
+            
+            <div class="step">
+                <span class="step-number">3.</span>
+                Send: <code>"Test 3"</code>
+            </div>
+            
+            <div class="step">
+                <span class="step-number">4.</span>
+                <strong>VERIFY:</strong> You should ONLY see "Test 3" and its response at the top. Previous messages should be hidden above.
+            </div>
+        </div>
+        
+        <a href="http://localhost:9000/privacy-chat" target="_blank">
+            <button class="test-button">🚀 Open Privacy Chat - Test Now!</button>
+        </a>
+        
+        <div class="test-section">
+            <div class="section-title">💡 KEY FEATURES</div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4 style="color: #22c55e; margin-bottom: 10px;">✅ What SHOULD happen:</h4>
+                    <ul style="line-height: 1.6; color: #9ca3af;">
+                        <li>New messages appear at TOP</li>
+                        <li>Page automatically scrolls to top</li>
+                        <li>Only current conversation visible</li>
+                        <li>Clean, focused experience</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: #ef4444; margin-bottom: 10px;">❌ What should NOT happen:</h4>
+                    <ul style="line-height: 1.6; color: #9ca3af;">
+                        <li>Messages appearing at bottom</li>
+                        <li>Page scrolling down</li>
+                        <li>All conversations visible at once</li>
+                        <li>Cluttered message history</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
