@@ -756,19 +756,24 @@ class PrivacyChat {
                                 console.log('About to add user message with attachment:', attachment ? attachment.filename : 'none');
                                 this.addMessage('user', userMessageToShow, userMessageData.userEntities, userMessageData, attachment);
                                 
-                                // Hide typing indicator
-                                this.hideTypingIndicator();
+                                // Keep typing indicator visible for now
+                                // Don't hide it yet - wait for first chunk
                                 
                                 // Clear the attachment display from the message box when AI starts responding
                                 if (window.docAttachmentManager) {
                                     window.docAttachmentManager.removeAttachment();
                                 }
                                 
-                                // Create assistant message placeholder for streaming
-                                assistantMessageWrapper = this.createStreamingMessage();
-                                assistantMessageContent = assistantMessageWrapper.querySelector('.message-text');
+                                // Don't create assistant message yet - wait for first chunk
                                 
                             } else if (data.type === 'chunk') {
+                                // On first chunk, hide typing indicator and create message box
+                                if (!assistantMessageWrapper) {
+                                    this.hideTypingIndicator();
+                                    assistantMessageWrapper = this.createStreamingMessage();
+                                    assistantMessageContent = assistantMessageWrapper.querySelector('.message-text');
+                                }
+                                
                                 // Append chunk to response
                                 maskedResponse += data.masked_chunk;
                                 unmaskedResponse += data.unmasked_chunk;
