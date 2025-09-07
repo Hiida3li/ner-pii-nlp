@@ -570,13 +570,13 @@
 .chat-upload-btn.success {
     animation: upload-success 0.5s ease;
     background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
+    color: #4c8bca;
 }
 
 .chat-upload-btn.success svg {
     animation: checkmark 0.5s ease;
-    color: #10b981;
-    filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.3));
+    color: #4c8bca;
+    filter: drop-shadow(0 2px 4px rgba(76, 139, 202, 0.3));
 }
 
 @keyframes checkmark {
