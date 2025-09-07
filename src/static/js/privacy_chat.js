@@ -2028,7 +2028,61 @@ class PrivacyChat {
     }
 }
 
+// Modal control functions
+function closeRenameModal() {
+    const modal = document.getElementById('rename-modal');
+    modal.classList.remove('show');
+    
+    setTimeout(() => {
+        modal.style.display = 'none';
+        window.privacyChat.currentRenameSessionId = null;
+    }, 300);
+}
+
+function saveRename() {
+    const input = document.getElementById('chat-name-input');
+    const newName = input.value.trim();
+    
+    if (!newName) {
+        return;
+    }
+    
+    const sessionId = window.privacyChat.currentRenameSessionId;
+    if (sessionId) {
+        const session = window.privacyChat.sessions[sessionId];
+        session.name = newName;
+        session.firstMessage = null; // Clear first message to use custom name
+        window.privacyChat.updateSessionList();
+    }
+    
+    closeRenameModal();
+}
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     window.privacyChat = new PrivacyChat();
+    
+    // Handle Enter key in rename input
+    const input = document.getElementById('chat-name-input');
+    if (input) {
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveRename();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                closeRenameModal();
+            }
+        });
+    }
+    
+    // Close modal when clicking outside
+    const modal = document.getElementById('rename-modal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeRenameModal();
+            }
+        });
+    }
 });
