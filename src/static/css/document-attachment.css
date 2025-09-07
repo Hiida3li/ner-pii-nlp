@@ -30,8 +30,9 @@
 
 .input-box .attachment-preview {
     flex-shrink: 0;
-    align-self: center;
+    align-self: flex-end;
     margin-right: 8px;
+    margin-bottom: 4px;
     order: 2;
 }
 
@@ -274,11 +275,11 @@
     display: none;
     align-items: center;
     margin-right: 8px;
-    margin-bottom: 4px;
+    align-self: flex-end;
 }
 
 .attachment-preview.show {
-    display: flex;
+    display: inline-flex;
 }
 
 @keyframes fadeIn {
