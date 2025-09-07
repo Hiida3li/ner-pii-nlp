@@ -216,11 +216,19 @@ class PrivacyChat {
     }
     
     createNewSession() {
+        // Check if current session is empty (no messages)
+        const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
+        if (messages.length === 0) {
+            // Current session is already empty, just clear input and reset
+            this.clearChat();
+            this.resetChatEndpoint();
+            return; // Don't create a new session
+        }
+        
         // Show chat sessions container when creating new session
         this.showChatSessionsContainer();
         
         // Save current session
-        const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
         this.sessions[this.currentSession].messages = Array.from(messages).map(m => m.outerHTML);
         
         // Create new session
