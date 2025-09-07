@@ -1458,16 +1458,29 @@ async def export_entities(session_id: int = 1, format: str = "json"):
         
         # Prepare entity data for export
         entities_data = []
+        entity_order = {}  # Track the order of first occurrence
         
         # Get entity mappings (masked values to original values)
         for placeholder, original in chatbot.reverse_mappings.items():
-            # Extract entity type from placeholder (e.g., "Location1" -> "Location")
-            entity_type = re.sub(r'\d+$', '', placeholder)
+            # Extract entity type and number from placeholder (e.g., "Location1" -> "Location", 1)
+            match = re.match(r'^([A-Za-z]+)(\d+)$', placeholder)
+            if match:
+                entity_type = match.group(1)
+                entity_number = int(match.group(2))
+            else:
+                entity_type = re.sub(r'\d+$', '', placeholder)
+                entity_number = 999  # Default for any malformed placeholders
+            
+            # Track the order for sorting (lower numbers = detected earlier)
+            entity_key = f"{entity_type}_{entity_number}"
+            if entity_key not in entity_order:
+                entity_order[entity_key] = entity_number
             
             entities_data.append({
                 "original_text": original,
                 "entity_type": entity_type.upper(),
                 "placeholder": placeholder,
+                "entity_number": entity_number,
                 "detected_at": datetime.now().isoformat()
             })
         
@@ -1476,47 +1489,84 @@ async def export_entities(session_id: int = 1, format: str = "json"):
             for original, placeholder in chatbot.entity_mappings.items():
                 # Check if not already added
                 if not any(e['original_text'] == original for e in entities_data):
-                    entity_type = re.sub(r'\d+$', '', placeholder)
+                    match = re.match(r'^([A-Za-z]+)(\d+)$', placeholder)
+                    if match:
+                        entity_type = match.group(1)
+                        entity_number = int(match.group(2))
+                    else:
+                        entity_type = re.sub(r'\d+$', '', placeholder)
+                        entity_number = 999
+                    
                     entities_data.append({
                         "original_text": original,
                         "entity_type": entity_type.upper(),
                         "placeholder": placeholder,
+                        "entity_number": entity_number,
                         "detected_at": datetime.now().isoformat()
                     })
         
-        # Sort by entity type and then by original text
-        entities_data.sort(key=lambda x: (x['entity_type'], x['original_text']))
+        # Sort by entity type and then by entity number (chronological order)
+        # This ensures Person1 comes before Person2, Location1 before Location2, etc.
+        entities_data.sort(key=lambda x: (x['entity_type'], x['entity_number']))
         
         if format.lower() == "csv":
-            # Generate CSV
-            output = io.StringIO()
+            # Generate CSV with UTF-8 BOM for proper Excel support with Arabic text
+            output = io.BytesIO()
+            # Add UTF-8 BOM for Excel to recognize UTF-8 encoding
+            output.write(b'\xef\xbb\xbf')
+            
+            # Create CSV content
+            csv_content = io.StringIO()
             if entities_data:
+                # Remove entity_number from the export (internal use only)
+                export_data = [{k: v for k, v in item.items() if k != 'entity_number'} 
+                              for item in entities_data]
                 writer = csv.DictWriter(
-                    output, 
+                    csv_content, 
                     fieldnames=["original_text", "entity_type", "placeholder", "detected_at"]
                 )
                 writer.writeheader()
-                writer.writerows(entities_data)
+                writer.writerows(export_data)
             else:
                 # Write empty CSV with headers
-                writer = csv.writer(output)
+                writer = csv.writer(csv_content)
                 writer.writerow(["original_text", "entity_type", "placeholder", "detected_at"])
+            
+            # Encode to UTF-8 and write to output
+            output.write(csv_content.getvalue().encode('utf-8'))
+            output.seek(0)
             
             return Response(
                 content=output.getvalue(),
-                media_type="text/csv",
+                media_type="text/csv; charset=utf-8",
                 headers={
-                    "Content-Disposition": f"attachment; filename=pii_entities_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+                    "Content-Disposition": f"attachment; filename=pii_entities_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                    "Content-Type": "text/csv; charset=utf-8"
                 }
             )
         else:
-            # Return JSON
-            return JSONResponse(
-                content={
-                    "session_id": session_id,
-                    "total_entities": len(entities_data),
-                    "export_time": datetime.now().isoformat(),
-                    "entities": entities_data
+            # Return JSON with ensure_ascii=False for proper Arabic display
+            # Remove entity_number from the export (internal use only)
+            export_data = [{k: v for k, v in item.items() if k != 'entity_number'} 
+                          for item in entities_data]
+            
+            response_content = {
+                "session_id": session_id,
+                "total_entities": len(export_data),
+                "export_time": datetime.now().isoformat(),
+                "entities": export_data
+            }
+            
+            # Create JSON response with proper UTF-8 encoding for Arabic
+            json_str = json.dumps(response_content, ensure_ascii=False, indent=2)
+            # Encode the JSON string to UTF-8 bytes
+            json_bytes = json_str.encode('utf-8')
+            return Response(
+                content=json_bytes,
+                media_type="application/json; charset=utf-8",
+                headers={
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Content-Disposition": f"attachment; filename=pii_entities_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
                 }
             )
             

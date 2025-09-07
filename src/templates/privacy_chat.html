@@ -2409,12 +2409,13 @@
                 let filename;
                 
                 if (format === 'json') {
-                    const data = await response.json();
-                    blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    // Get the raw text to preserve Arabic encoding
+                    const text = await response.text();
+                    blob = new Blob([text], { type: 'application/json; charset=utf-8' });
                     filename = `pii_entities_${new Date().toISOString().slice(0, 10)}.json`;
                 } else if (format === 'csv') {
-                    const text = await response.text();
-                    blob = new Blob([text], { type: 'text/csv' });
+                    // Get the blob directly to preserve UTF-8 BOM
+                    blob = await response.blob();
                     filename = `pii_entities_${new Date().toISOString().slice(0, 10)}.csv`;
                 }
                 
