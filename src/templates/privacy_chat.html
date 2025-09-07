@@ -144,6 +144,101 @@
             }
         }
 
+        /* Export Entities Button */
+        .export-entities-icon {
+            position: fixed;
+            left: 1.5rem;
+            top: 14rem;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 8px;
+            color: #e5e7eb;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+            transition: all 0.2s ease;
+        }
+        
+        .export-entities-icon:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+        
+        .export-entities-icon:active {
+            transform: scale(0.95);
+        }
+        
+        .export-entities-icon svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.2s ease;
+        }
+        
+        .export-entities-icon:hover svg {
+            transform: scale(1.1);
+        }
+
+        /* Export Dropdown Menu */
+        .export-dropdown {
+            position: fixed;
+            left: 4.5rem;
+            top: 14rem;
+            background: rgba(17, 17, 17, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 150px;
+            z-index: 1003;
+            display: none;
+            animation: slideIn 0.2s ease;
+        }
+
+        .export-dropdown.show {
+            display: block;
+        }
+
+        .export-dropdown-item {
+            padding: 10px 16px;
+            color: #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .export-dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #4c8bca;
+        }
+
+        .export-dropdown-item svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         /* Enhanced Sidebar */
         .sidebar {
             width: 260px;
@@ -1996,6 +2091,37 @@
         </svg>
     </button>
     
+    <!-- Export Entities Button - Under New Chat -->
+    <button class="export-entities-icon" id="export-entities-icon" aria-label="Export Entities" title="Export Detected Entities">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M8 17l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 12v9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M20.88 18.09A5 5 0 0018 9h-1.26A8 8 0 103 16.29" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+    
+    <!-- Export Dropdown Menu -->
+    <div class="export-dropdown" id="export-dropdown">
+        <button class="export-dropdown-item" onclick="exportEntities('json')">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/>
+                <path d="M14 2v6h6" stroke="currentColor" stroke-width="2"/>
+                <path d="M10 12h4" stroke="currentColor" stroke-width="2"/>
+                <path d="M10 16h4" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Export as JSON
+        </button>
+        <button class="export-dropdown-item" onclick="exportEntities('csv')">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/>
+                <path d="M14 2v6h6" stroke="currentColor" stroke-width="2"/>
+                <path d="M10 12h4" stroke="currentColor" stroke-width="2"/>
+                <path d="M10 16h4" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Export as CSV
+        </button>
+    </div>
+    
     <div class="container" id="container">
         <!-- Enhanced Sidebar -->
         <div class="sidebar" id="sidebar">
@@ -2240,6 +2366,76 @@
                 console.error('Privacy toggle button not found!');
             }
         });
+
+        // Export Entities Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const exportBtn = document.getElementById('export-entities-icon');
+            const exportDropdown = document.getElementById('export-dropdown');
+            
+            // Toggle dropdown on button click
+            if (exportBtn) {
+                exportBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    exportDropdown.classList.toggle('show');
+                });
+            }
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!exportDropdown.contains(e.target) && e.target !== exportBtn) {
+                    exportDropdown.classList.remove('show');
+                }
+            });
+        });
+
+        // Export entities function
+        async function exportEntities(format) {
+            try {
+                // Close dropdown
+                document.getElementById('export-dropdown').classList.remove('show');
+                
+                // Get session ID
+                const sessionId = localStorage.getItem('session_id') || '1';
+                
+                // Fetch entities from the API
+                const response = await fetch(`/api/privacy-chat/export-entities?session_id=${sessionId}&format=${format}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to export entities');
+                }
+                
+                // Get the blob based on format
+                let blob;
+                let filename;
+                
+                if (format === 'json') {
+                    const data = await response.json();
+                    blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    filename = `pii_entities_${new Date().toISOString().slice(0, 10)}.json`;
+                } else if (format === 'csv') {
+                    const text = await response.text();
+                    blob = new Blob([text], { type: 'text/csv' });
+                    filename = `pii_entities_${new Date().toISOString().slice(0, 10)}.csv`;
+                }
+                
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                // Show success feedback
+                console.log(`Entities exported as ${format.toUpperCase()}`);
+                
+            } catch (error) {
+                console.error('Export failed:', error);
+                alert('Failed to export entities. Please try again.');
+            }
+        }
     </script>
     
     <!-- Powered by Footer -->

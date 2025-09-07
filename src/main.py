@@ -16,6 +16,8 @@ from dotenv import load_dotenv
 import requests
 import asyncio
 import json
+import csv
+import io
 import hashlib
 from datetime import datetime
 
@@ -1439,6 +1441,91 @@ async def reset_session(request: dict):
     chatbot_sessions[session_id] = SimpleChatbot()
     logger.info(f"Reset chat session {session_id} - created new chatbot instance")
     return {"status": "ok"}
+
+
+@app.get("/api/privacy-chat/export-entities")
+async def export_entities(session_id: int = 1, format: str = "json"):
+    """Export detected PII entities in JSON or CSV format"""
+    try:
+        # Get the chatbot session
+        if session_id not in chatbot_sessions:
+            return JSONResponse(
+                status_code=404, 
+                content={"error": "Session not found"}
+            )
+        
+        chatbot = chatbot_sessions[session_id]
+        
+        # Prepare entity data for export
+        entities_data = []
+        
+        # Get entity mappings (masked values to original values)
+        for placeholder, original in chatbot.reverse_mappings.items():
+            # Extract entity type from placeholder (e.g., "Location1" -> "Location")
+            entity_type = re.sub(r'\d+$', '', placeholder)
+            
+            entities_data.append({
+                "original_text": original,
+                "entity_type": entity_type.upper(),
+                "placeholder": placeholder,
+                "detected_at": datetime.now().isoformat()
+            })
+        
+        # Also include any entities from the current context
+        if hasattr(chatbot, 'entity_mappings'):
+            for original, placeholder in chatbot.entity_mappings.items():
+                # Check if not already added
+                if not any(e['original_text'] == original for e in entities_data):
+                    entity_type = re.sub(r'\d+$', '', placeholder)
+                    entities_data.append({
+                        "original_text": original,
+                        "entity_type": entity_type.upper(),
+                        "placeholder": placeholder,
+                        "detected_at": datetime.now().isoformat()
+                    })
+        
+        # Sort by entity type and then by original text
+        entities_data.sort(key=lambda x: (x['entity_type'], x['original_text']))
+        
+        if format.lower() == "csv":
+            # Generate CSV
+            output = io.StringIO()
+            if entities_data:
+                writer = csv.DictWriter(
+                    output, 
+                    fieldnames=["original_text", "entity_type", "placeholder", "detected_at"]
+                )
+                writer.writeheader()
+                writer.writerows(entities_data)
+            else:
+                # Write empty CSV with headers
+                writer = csv.writer(output)
+                writer.writerow(["original_text", "entity_type", "placeholder", "detected_at"])
+            
+            return Response(
+                content=output.getvalue(),
+                media_type="text/csv",
+                headers={
+                    "Content-Disposition": f"attachment; filename=pii_entities_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+                }
+            )
+        else:
+            # Return JSON
+            return JSONResponse(
+                content={
+                    "session_id": session_id,
+                    "total_entities": len(entities_data),
+                    "export_time": datetime.now().isoformat(),
+                    "entities": entities_data
+                }
+            )
+            
+    except Exception as e:
+        logger.error(f"Error exporting entities: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={"error": "Failed to export entities"}
+        )
 
 
 if __name__ == "__main__":
