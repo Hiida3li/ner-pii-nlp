@@ -404,18 +404,18 @@
 
 /* Attachment container INSIDE message bubble */
 .message-content .message-attachments {
-    display: block;
-    margin: -0.5rem -0.75rem 0.75rem -0.75rem;
-    padding: 0.75rem;
-    background: rgba(139, 92, 246, 0.08);
-    border-bottom: 1px solid rgba(139, 92, 246, 0.15);
-    border-radius: 12px 12px 0 0;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
 }
 
 /* For assistant messages */
 .assistant .message-content .message-attachments {
-    background: rgba(139, 92, 246, 0.05);
-    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    background: transparent;
+    border: none;
 }
 
 /* Upload zone styling */
