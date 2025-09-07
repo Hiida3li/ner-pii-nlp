@@ -2075,18 +2075,15 @@ class PrivacyChat {
     }
     
     scrollToShowNewMessage() {
-        // Scroll to show the latest message at the top of the visible area
+        // Scroll to show the latest message at the very top of the visible area
         requestAnimationFrame(() => {
             if (this.elements.chatMessages) {
                 const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
                 if (messages.length > 0) {
                     const lastMessage = messages[messages.length - 1];
-                    // Scroll to position the new message near the top of the view
-                    const containerHeight = this.elements.chatMessages.clientHeight;
+                    // Position the new message at the very top of the visible area (0px from top)
                     const messageTop = lastMessage.offsetTop;
-                    const targetScroll = Math.max(0, messageTop - 100); // 100px from top
-                    
-                    this.elements.chatMessages.scrollTop = targetScroll;
+                    this.elements.chatMessages.scrollTop = messageTop;
                 }
             }
         });
