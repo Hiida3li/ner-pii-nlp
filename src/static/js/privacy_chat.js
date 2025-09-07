@@ -235,6 +235,13 @@ class PrivacyChat {
         this.resetChatEndpoint();
     }
     
+    showChatSessionsContainer() {
+        const container = document.getElementById('chat-sessions-container');
+        if (container && container.style.display === 'none') {
+            container.style.display = 'block';
+        }
+    }
+    
     updateSessionList() {
         const sessionHtml = Object.keys(this.sessions)
             .sort((a, b) => b - a) // Show newest first
