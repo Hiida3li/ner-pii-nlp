@@ -28,15 +28,6 @@
             padding: 1rem;
             gap: 1rem;
             position: relative;
-            transition: padding-left 0.3s ease;
-        }
-        
-        .container.sidebar-open {
-            padding-left: 1rem;
-        }
-        
-        .container.sidebar-closed {
-            padding-left: 4rem;
         }
         
         /* Sidebar Toggle Button - Fixed Position */
@@ -1044,6 +1035,15 @@
             margin: 0;
             border: none;
             box-shadow: none !important;
+            /* Add bidirectional isolation for mixed RTL/LTR text */
+            unicode-bidi: isolate;
+        }
+        
+        /* Ensure placeholders in RTL context maintain proper alignment */
+        .rtl .pii-entity,
+        [dir="rtl"] .pii-entity {
+            unicode-bidi: embed;
+            direction: ltr;  /* Keep placeholder text LTR */
         }
         
         /* RTL-specific adjustments for PII entities */
@@ -1254,7 +1254,7 @@
             min-height: 24px;
             max-height: 100px;
             line-height: 2;
-            padding: 2px 0 0 0;
+            padding: 4px 0 0 0;  /* Moved down by 2px more (from 2px to 4px) */
             font-family: inherit;
             overflow-y: auto;
             text-align: left;
@@ -1338,9 +1338,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;  /* Changed from center to flex-start */
             padding: 2rem;
-            padding-top: 4rem;
+            padding-top: 8rem;  /* Fixed top padding to position content consistently */
             text-align: center;
             position: relative;
         }

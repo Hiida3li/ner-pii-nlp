@@ -12,6 +12,8 @@ class PrivacyChat {
         console.log('Initialized privacy mode:', this.privacyMode);
         this.isTyping = false;
         this.animatedSessions = new Set(); // Track which sessions have been animated
+        this.currentStreamController = null; // Track the current stream abort controller
+        this.activeStreamSession = null; // Track which session the stream is for
         
         // Array of creative greeting messages
         this.greetings = [
@@ -189,18 +191,7 @@ class PrivacyChat {
             this.elements.sidebarToggle.addEventListener('click', () => {
                 this.elements.sidebar.classList.toggle('collapsed');
                 this.elements.sidebarToggle.classList.toggle('active');
-                
-                // Update container padding
-                const container = document.getElementById('container');
-                if (container) {
-                    if (this.elements.sidebar.classList.contains('collapsed')) {
-                        container.classList.add('sidebar-closed');
-                        container.classList.remove('sidebar-open');
-                    } else {
-                        container.classList.add('sidebar-open');
-                        container.classList.remove('sidebar-closed');
-                    }
-                }
+                // Removed container class modifications to prevent content shifting
             });
         }
     }
@@ -216,6 +207,9 @@ class PrivacyChat {
     }
     
     createNewSession() {
+        // Abort any active stream before creating new session
+        this.abortCurrentStream();
+        
         // Check if current session is empty (no messages)
         const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
         if (messages.length === 0) {
@@ -390,6 +384,9 @@ class PrivacyChat {
     }
     
     switchSession(sessionId) {
+        // Abort any active stream before switching sessions
+        this.abortCurrentStream();
+        
         // Save current session
         const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
         this.sessions[this.currentSession].messages = Array.from(messages).map(m => m.outerHTML);
@@ -444,11 +441,11 @@ class PrivacyChat {
                                 id="chat-input" 
                                 placeholder="Ask anything"
                                 rows="1"
+                                style="text-align: left !important; direction: ltr !important;"
                             ></textarea>
                             <button class="send-btn" id="send-btn">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="send-icon">
-                                    <path class="send-arrow" d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor"/>
-                                    <path class="send-trail" d="M2 21L23 12L2 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="send-icon">
+                                    <path class="send-arrow" d="M12 5L12 19M12 5L7 10M12 5L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </button>
                         </div>
@@ -518,10 +515,10 @@ class PrivacyChat {
             }, 100);
         }
         
-        // Refresh upload buttons after DOM changes
-        if (window.docAttachmentManager && window.docAttachmentManager.refreshUploadButtons) {
+        // Re-add upload buttons after DOM changes
+        if (window.docAttachmentManager) {
             setTimeout(() => {
-                window.docAttachmentManager.refreshUploadButtons();
+                window.docAttachmentManager.addUploadButton();
             }, 150);
         }
     }
@@ -614,45 +611,28 @@ class PrivacyChat {
         // Method to send a message programmatically (used by document upload)
         if (!message || !message.trim() || this.isTyping) return;
         
-        // Hide welcome screen if visible
-        const welcome = document.getElementById('welcome-screen');
-        if (welcome) {
-            welcome.remove();
-            this.moveInputToBottom();
+        // Determine which input to use
+        const isWelcomeVisible = document.getElementById('welcome-screen') !== null;
+        
+        // Set the message in the appropriate input
+        if (isWelcomeVisible && this.elements.chatInput) {
+            this.elements.chatInput.value = message;
+        } else if (this.elements.chatInputBottom) {
+            this.elements.chatInputBottom.value = message;
+        } else {
+            console.error('No input element available');
+            return;
         }
         
-        // Show typing indicator
-        this.showTypingIndicator();
-        
-        try {
-            // Send message using streaming endpoint
-            const response = await fetch('/api/privacy-chat/stream', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: message.trim(),
-                    privacy_mode: this.privacyMode,
-                    session_id: this.currentSession
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to get response');
-            }
-            
-            // Process streaming response
-            await this.processStreamingResponse(response, message.trim());
-            
-        } catch (error) {
-            console.error('Error sending programmatic message:', error);
-            this.hideTypingIndicator();
-        }
+        // Call the main sendMessage method which handles everything
+        await this.sendMessage();
     }
     
     async sendMessage() {
         console.log('sendMessage called');
+        
+        // Abort any existing stream before starting a new one
+        this.abortCurrentStream();
         
         // Determine which input is active
         const isWelcomeVisible = document.getElementById('welcome-screen') !== null;
@@ -690,10 +670,16 @@ class PrivacyChat {
         // Don't show typing indicator yet - will show after user message
         
         try {
+            // Create a new abort controller for this stream
+            this.currentStreamController = new AbortController();
+            const targetSession = this.currentSession; // Capture the session ID at the start
+            this.activeStreamSession = targetSession;
+            
             // Use streaming endpoint
             console.log('Sending to backend (streaming):', { message, privacy_mode: this.privacyMode, session_id: this.currentSession });
             
             const response = await fetch('/api/privacy-chat/stream', {
+                signal: this.currentStreamController.signal,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -721,6 +707,13 @@ class PrivacyChat {
             let responseEntities = [];
             
             while (true) {
+                // Check if we're still in the same session
+                if (targetSession !== this.currentSession) {
+                    console.log('Session changed during stream, aborting');
+                    reader.cancel();
+                    break;
+                }
+                
                 const { done, value } = await reader.read();
                 if (done) break;
                 
@@ -821,6 +814,12 @@ class PrivacyChat {
                             } else if (data.type === 'chunk') {
                                 // On first chunk, hide typing indicator and create message box
                                 if (!assistantMessageWrapper) {
+                                    // Double-check we're still in the right session
+                                    if (targetSession !== this.currentSession) {
+                                        console.log('Session changed before creating message, aborting');
+                                        reader.cancel();
+                                        break;
+                                    }
                                     this.hideTypingIndicator();
                                     assistantMessageWrapper = this.createStreamingMessage();
                                     assistantMessageContent = assistantMessageWrapper.querySelector('.message-text');
@@ -918,6 +917,10 @@ class PrivacyChat {
                 console.log('🔒 Sent to AI (masked):', userMessageData.masked);
             }
             
+            // Clear the stream controller once done
+            this.currentStreamController = null;
+            this.activeStreamSession = null;
+            
             // Clear the pending attachment now that streaming is complete
             if (this.pendingAttachment) {
                 console.log('Clearing pending attachment after streaming complete');
@@ -925,6 +928,16 @@ class PrivacyChat {
             }
             
         } catch (error) {
+            // Check if it was an abort error
+            if (error.name === 'AbortError') {
+                console.log('Stream was aborted');
+                this.hideTypingIndicator();
+                // Clean up any partial message that was created
+                const streamingMessages = document.querySelectorAll('[data-streaming="true"]');
+                streamingMessages.forEach(msg => msg.remove());
+                return;
+            }
+            
             console.error('Error:', error);
             this.hideTypingIndicator();
             this.addMessage('assistant', 'Sorry, I encountered an error. Please try again.');
@@ -932,6 +945,15 @@ class PrivacyChat {
             if (this.pendingAttachment) {
                 delete this.pendingAttachment;
             }
+        }
+    }
+    
+    abortCurrentStream() {
+        if (this.currentStreamController) {
+            console.log('Aborting current stream');
+            this.currentStreamController.abort();
+            this.currentStreamController = null;
+            this.activeStreamSession = null;
         }
     }
     
@@ -1146,7 +1168,8 @@ class PrivacyChat {
         // Replace each match
         matches.forEach(m => {
             const cssClass = this.getEntityCssClass(m.type);
-            const replacement = `<span class="pii-entity ${cssClass}">${m.text}</span>`;
+            // Wrap in <bdi> to isolate bidirectional text flow
+            const replacement = `<bdi><span class="pii-entity ${cssClass}">${m.text}</span></bdi>`;
             highlightedText = highlightedText.substring(0, m.index) + 
                             replacement + 
                             highlightedText.substring(m.index + m.text.length);
