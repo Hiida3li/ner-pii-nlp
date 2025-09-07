@@ -29,18 +29,18 @@
     
     <!-- Custom Cursor Styles -->
     <style>
-        /* Force cursor to be none on ALL elements */
+        /* Use default cursor on ALL elements */
         *, *::before, *::after {
-            cursor: none !important;
+            cursor: auto !important;
         }
         
         html, body {
-            cursor: none !important;
+            cursor: auto !important;
         }
         
         /* Override any inline styles */
         *[style*="cursor"] {
-            cursor: none !important;
+            cursor: auto !important;
         }
         
         .custom-cursor {
@@ -204,16 +204,16 @@
         option:hover, option:focus,
         input[type="checkbox"], input[type="radio"],
         label, [role="button"], [onclick] {
-            cursor: none !important;
+            cursor: auto !important;
         }
         
         /* Specific select dropdown styling */
         select::-ms-expand {
-            cursor: none !important;
+            cursor: auto !important;
         }
         
         select option {
-            cursor: none !important;
+            cursor: auto !important;
         }
     </style>
     
@@ -312,10 +312,10 @@
                 // Override any inline styles
                 const style = document.createElement('style');
                 style.innerHTML = `
-                    * { cursor: none !important; }
-                    *:hover { cursor: none !important; }
-                    *:focus { cursor: none !important; }
-                    *:active { cursor: none !important; }
+                    * { cursor: auto !important; }
+                    *:hover { cursor: auto !important; }
+                    *:focus { cursor: auto !important; }
+                    *:active { cursor: auto !important; }
                 `;
                 document.head.appendChild(style);
             }
