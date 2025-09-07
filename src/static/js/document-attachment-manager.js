@@ -585,8 +585,43 @@ class DocumentAttachmentManager {
             // Also override the addMessage to handle attachments
             const originalAddMessage = this.privacyChat.addMessage.bind(this.privacyChat);
             this.privacyChat.addMessage = (role, content, entities, messageData, attachment) => {
-                // For user messages with attachment, ONLY show the user's message, not document content
-                if (role === 'user' && attachment && attachment.filename) {
+                // For user messages with multiple attachments, clean the content and pass attachments
+                if (role === 'user' && this.privacyChat.pendingAttachments && this.privacyChat.pendingAttachments.length > 0) {
+                    // Remove all document content from the message
+                    let cleanContent = content;
+                    
+                    // Remove document headers and content
+                    this.privacyChat.pendingAttachments.forEach((doc, index) => {
+                        const docHeader = `[Document ${index + 1}: ${doc.filename}]`;
+                        if (cleanContent.includes(docHeader)) {
+                            const docStartIndex = cleanContent.indexOf(docHeader);
+                            // Find the start of the next document or end of message
+                            const nextDocHeader = index < this.privacyChat.pendingAttachments.length - 1 
+                                ? `[Document ${index + 2}: ${this.privacyChat.pendingAttachments[index + 1].filename}]`
+                                : null;
+                            
+                            let docEndIndex = cleanContent.length;
+                            if (nextDocHeader) {
+                                const nextDocIndex = cleanContent.indexOf(nextDocHeader);
+                                if (nextDocIndex !== -1) {
+                                    docEndIndex = nextDocIndex;
+                                }
+                            }
+                            
+                            // Remove this document section
+                            cleanContent = cleanContent.substring(0, docStartIndex) + 
+                                         cleanContent.substring(docEndIndex);
+                        }
+                    });
+                    
+                    // Clean up the content - get user message from first document
+                    content = this.privacyChat.pendingAttachments[0].userMessage || cleanContent.trim();
+                    
+                    // Pass the first document as attachment for display
+                    attachment = this.privacyChat.pendingAttachments[0];
+                }
+                // For single attachment (backward compatibility)
+                else if (role === 'user' && attachment && attachment.filename) {
                     // First check if we have the stored user message
                     if (attachment.userMessage !== undefined) {
                         content = attachment.userMessage || '';
@@ -600,12 +635,25 @@ class DocumentAttachmentManager {
                     }
                     
                     // If no user message was provided, don't show any text
-                    // The attachment card will be sufficient
                     if (!content) {
                         content = '';
                     }
                 }
-                return originalAddMessage(role, content, entities, messageData, attachment);
+                
+                const result = originalAddMessage(role, content, entities, messageData, attachment);
+                
+                // For multiple attachments, add additional document cards after the message
+                if (role === 'user' && this.privacyChat.pendingAttachments && this.privacyChat.pendingAttachments.length > 1) {
+                    // Add remaining documents as separate cards
+                    for (let i = 1; i < this.privacyChat.pendingAttachments.length; i++) {
+                        const additionalDoc = this.privacyChat.pendingAttachments[i];
+                        originalAddMessage(role, '', [], messageData, additionalDoc);
+                    }
+                    // Clear pending attachments after processing
+                    this.privacyChat.pendingAttachments = null;
+                }
+                
+                return result;
             };
             
             // Override sendMessage to include document
