@@ -1887,6 +1887,7 @@ class PrivacyChat {
     
     showTypingIndicator() {
         this.isTyping = true;
+        this.updateSendButtonState();
         
         // Create typing indicator in the same position as assistant messages
         const typingHtml = `
