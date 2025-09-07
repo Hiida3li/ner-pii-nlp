@@ -1716,6 +1716,161 @@
         .message-avatar {
             display: none !important;
         }
+
+        /* Rename Chat Modal Styles */
+        .rename-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .rename-modal.show {
+            opacity: 1;
+        }
+
+        .rename-modal-content {
+            background: rgba(30, 32, 37, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 0;
+            max-width: 400px;
+            width: 90%;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: all 0.3s ease;
+        }
+
+        .rename-modal.show .rename-modal-content {
+            transform: scale(1);
+        }
+
+        .rename-modal-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rename-modal-header h3 {
+            color: #e5e7eb;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .rename-modal-close {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rename-modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
+        }
+
+        .rename-modal-body {
+            padding: 24px;
+        }
+
+        .rename-modal-body label {
+            display: block;
+            color: #9ca3af;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .chat-name-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #e5e7eb;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            margin-bottom: 20px;
+        }
+
+        .chat-name-input:focus {
+            outline: none;
+            border-color: rgba(76, 139, 202, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 1px rgba(76, 139, 202, 0.2);
+        }
+
+        .chat-name-input::placeholder {
+            color: #6b7280;
+        }
+
+        .rename-modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .rename-cancel-btn, .rename-save-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            min-width: 80px;
+        }
+
+        .rename-cancel-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #9ca3af;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .rename-cancel-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #e5e7eb;
+        }
+
+        .rename-save-btn {
+            background: rgba(76, 139, 202, 0.15);
+            color: #4c8bca;
+            border: 1px solid rgba(76, 139, 202, 0.3);
+        }
+
+        .rename-save-btn:hover {
+            background: rgba(76, 139, 202, 0.25);
+            border-color: rgba(76, 139, 202, 0.5);
+        }
+
+        .rename-save-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -1760,7 +1915,7 @@
             </div>
             
             <div class="chat-sessions-container" id="chat-sessions-container" style="display: none;">
-                <div class="sessions-label">Recent Chats</div>
+                <div class="sessions-label">Chats</div>
                 <div class="chat-list" id="chat-list">
                     <!-- Chat sessions will be dynamically added here -->
                 </div>

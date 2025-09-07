@@ -357,13 +357,26 @@ class PrivacyChat {
     }
     
     renameSession(sessionId) {
+        this.currentRenameSessionId = sessionId;
         const session = this.sessions[sessionId];
-        const newName = prompt('Enter new name for this chat:', session.name);
-        if (newName && newName.trim()) {
-            session.name = newName.trim();
-            session.firstMessage = null; // Clear first message to use custom name
-            this.updateSessionList();
-        }
+        
+        // Show custom modal
+        const modal = document.getElementById('rename-modal');
+        const input = document.getElementById('chat-name-input');
+        
+        input.value = session.name;
+        modal.style.display = 'flex';
+        
+        // Add show class after a brief delay for animation
+        setTimeout(() => {
+            modal.classList.add('show');
+        }, 10);
+        
+        // Focus input and select text
+        setTimeout(() => {
+            input.focus();
+            input.select();
+        }, 100);
     }
     
     deleteSession(sessionId) {
