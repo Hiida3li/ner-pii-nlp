@@ -398,9 +398,33 @@ class PrivacyChat {
         this.currentSession = sessionId;
         
         // Load session messages
-        this.clearChat();
         if (this.sessions[sessionId].messages.length > 0) {
+            // Has messages - restore them and show bottom input
             this.elements.chatMessages.innerHTML = this.sessions[sessionId].messages.join('');
+            
+            // Hide welcome screen/centered input
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const centeredInput = document.getElementById('centered-input');
+            if (welcomeScreen) welcomeScreen.style.display = 'none';
+            if (centeredInput) centeredInput.style.display = 'none';
+            
+            // Show bottom input
+            const bottomInput = document.getElementById('bottom-input');
+            if (bottomInput) {
+                bottomInput.style.display = 'flex';
+                // Re-cache bottom input elements
+                this.elements.chatInputBottom = document.getElementById('chat-input-bottom');
+                this.elements.sendBtnBottom = document.getElementById('send-btn-bottom');
+                // Re-attach event listeners for bottom input
+                this.setupEventListeners();
+            }
+        } else {
+            // No messages - show welcome screen with centered input
+            this.clearChat();
+            
+            // Hide bottom input
+            const bottomInput = document.getElementById('bottom-input');
+            if (bottomInput) bottomInput.style.display = 'none';
         }
         
         // Update UI
