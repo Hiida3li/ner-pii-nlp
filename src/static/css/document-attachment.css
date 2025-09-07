@@ -2,21 +2,22 @@
 
 /* Upload Button Styles - Original Design */
 .chat-upload-btn {
-    width: 60px;
-    height: 18px;
-    background: transparent;
-    border: none;
+    width: 40px;
+    height: 40px;
+    background: rgba(58, 64, 80, 0.5);
+    border: 1px solid rgba(76, 139, 202, 0.2);
     color: #9ca3af;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 12px;
     transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    position: relative;
-    margin-right: 4px;
-    margin-left: -4px;
+    position: absolute;
+    left: -50px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 /* Upload button when document is attached */
@@ -26,11 +27,13 @@
 }
 
 /* Ensure proper alignment in input box */
-.input-box .chat-upload-btn {
+.input-wrapper {
     position: relative;
-    align-self: center;
-    order: 1;
-    margin-bottom: -2px;
+}
+
+.chat-upload-btn:hover {
+    background: rgba(76, 139, 202, 0.2);
+    transform: translateY(-50%) scale(1.05);
 }
 
 .input-box .attachment-preview {
