@@ -564,9 +564,11 @@ class PrivacyChat {
     }
     
     autoResizeTextarea() {
-        // Resize whichever textarea is active
-        const activeInput = this.elements.welcomeScreen && this.elements.welcomeScreen.style.display !== 'none' ? 
+        // Determine which input is active - check if welcome screen exists and is visible
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const activeInput = (welcomeScreen && welcomeScreen.style.display !== 'none') ? 
             this.elements.chatInput : this.elements.chatInputBottom;
+            
         if (activeInput) {
             // Reset height to auto to get the correct scrollHeight
             activeInput.style.height = 'auto';
@@ -885,6 +887,12 @@ class PrivacyChat {
                                         // Apply real-time highlighting for unmasked mode during streaming
                                         assistantMessageContent.innerHTML = this.highlightStreamingEntities(displayText);
                                     }
+                                    
+                                    // Throttled auto-scroll to follow streaming content (less frequent to avoid input interference)
+                                    if (!this._lastScrollTime || Date.now() - this._lastScrollTime > 200) {
+                                        this.scrollToBottom();
+                                        this._lastScrollTime = Date.now();
+                                    }
                                 }
                             
                                 
@@ -901,6 +909,12 @@ class PrivacyChat {
                                     } else {
                                         // Keep streaming highlights active
                                         assistantMessageContent.innerHTML = this.highlightStreamingEntities(displayText);
+                                    }
+                                    
+                                    // Throttled auto-scroll to follow streaming content (less frequent to avoid input interference)
+                                    if (!this._lastScrollTime || Date.now() - this._lastScrollTime > 200) {
+                                        this.scrollToBottom();
+                                        this._lastScrollTime = Date.now();
                                     }
                                 }
                                 
@@ -2044,7 +2058,12 @@ class PrivacyChat {
     }
     
     scrollToBottom() {
-        this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
+        // Use requestAnimationFrame for smoother scrolling that doesn't interfere with input
+        requestAnimationFrame(() => {
+            if (this.elements.chatMessages) {
+                this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
+            }
+        });
     }
 }
 
