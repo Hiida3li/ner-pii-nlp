@@ -1347,14 +1347,6 @@
             text-align: left;
         }
         
-        .pii-entity:hover {
-            text-decoration: underline;
-            text-decoration-color: currentColor;
-            text-decoration-thickness: 1px;
-            text-underline-offset: 2px;
-            cursor: pointer;
-        }
-        
         /* Animation keyframe is already defined above as fadeInHighlight */
         /* Removed duplicate animation and keyframe definition */
         
@@ -2682,29 +2674,23 @@
             style.textContent = `
                 .pii-entity {
                     cursor: pointer;
-                    transition: filter 0.2s, transform 0.2s;
+                    transition: all 0.2s;
                     position: relative;
+                    text-decoration: none;
                 }
                 
                 .pii-entity:hover {
                     filter: brightness(1.2);
                     transform: scale(1.05);
+                    text-decoration: underline;
+                    text-decoration-color: currentColor;
+                    text-decoration-thickness: 1px;
+                    text-underline-offset: 2px;
                 }
                 
-                .pii-entity::after {
-                    content: '';
-                    position: absolute;
-                    bottom: -2px;
-                    left: 0;
-                    right: 0;
-                    height: 2px;
-                    background: currentColor;
-                    opacity: 0;
-                    transition: opacity 0.2s;
-                }
-                
-                .pii-entity:hover::after {
-                    opacity: 0.5;
+                .pii-entity:active {
+                    box-shadow: 0 0 0 3px rgba(128, 128, 128, 0.3);
+                    border-radius: 3px;
                 }
             `;
             document.head.appendChild(style);
