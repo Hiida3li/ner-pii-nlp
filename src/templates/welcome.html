@@ -948,72 +948,73 @@
     </script>
     
     <!-- Powered by Footer -->
-    <div class="powered-by-footer-welcome">
+    <div class="powered-by-footer">
         <span class="powered-text">Powered by</span>
         <img src="/static/icons/orki-logo.png" alt="Orki" class="orki-logo">
+        <div class="powered-underline"></div>
     </div>
     
     <style>
-        .powered-by-footer-welcome {
+        .powered-by-footer {
             position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
+            bottom: 60px;
+            left: 35px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            z-index: 1000;
-            opacity: 0.7;
-            transition: all 0.3s ease;
+            gap: 6px;
+            z-index: 100;
+            opacity: 0.75;
+            transition: opacity 0.2s ease;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 8px 20px;
-            border-radius: 25px;
-            border: 1px solid rgba(76, 139, 202, 0.3);
-            backdrop-filter: blur(10px);
         }
         
-        .powered-by-footer-welcome:hover {
-            opacity: 1;
-            transform: translateX(-50%) translateY(-2px);
-            box-shadow: 0 10px 30px rgba(76, 139, 202, 0.2);
-            border-color: rgba(76, 139, 202, 0.5);
+        .powered-by-footer:hover {
+            opacity: 0.8;
         }
         
-        .powered-by-footer-welcome .powered-text {
-            color: rgba(255, 255, 255, 0.9);
+        .powered-text {
+            color: rgba(255, 255, 255, 0.6);
             font-size: 14px;
             font-weight: 400;
-            letter-spacing: 0.5px;
+            margin-right: 2px;
+            letter-spacing: 0.3px;
+            position: relative;
+            top: -2px;
         }
         
-        .powered-by-footer-welcome .orki-logo {
-            width: 35px;
-            height: 35px;
+        .orki-logo {
+            width: 38px;
+            height: 38px;
             object-fit: contain;
             border-radius: 50%;
-            opacity: 0.95;
-            transition: transform 0.3s ease;
+            opacity: 0.85;
         }
         
-        .powered-by-footer-welcome:hover .orki-logo {
-            transform: scale(1.1);
+        .powered-underline {
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #4c8bca, #3a6da2);
+            border-radius: 1px;
+            opacity: 0.7;
         }
         
         /* Mobile responsive */
         @media (max-width: 768px) {
-            .powered-by-footer-welcome {
-                bottom: 20px;
-                padding: 6px 15px;
+            .powered-by-footer {
+                bottom: 70px;
+                left: 20px;
             }
             
-            .powered-by-footer-welcome .powered-text {
+            .powered-text {
                 font-size: 12px;
             }
             
-            .powered-by-footer-welcome .orki-logo {
-                width: 28px;
-                height: 28px;
+            .orki-logo {
+                width: 26px;
+                height: 26px;
             }
         }
     </style>
