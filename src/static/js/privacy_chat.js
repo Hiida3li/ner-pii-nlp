@@ -838,6 +838,9 @@ class PrivacyChat {
                                 console.log('About to add user message with attachment:', attachment ? attachment.filename : 'none');
                                 this.addMessage('user', userMessageToShow, userMessageData.userEntities, userMessageData, attachment);
                                 
+                                // Use custom scroll for user messages to show them at top of visible area
+                                this.scrollToShowNewMessage();
+                                
                                 // Now show typing indicator AFTER user message
                                 this.showTypingIndicator();
                                 
@@ -1176,7 +1179,12 @@ class PrivacyChat {
         }
         
         this.elements.chatMessages.insertAdjacentHTML('beforeend', messageHtml);
-        this.scrollToBottom();
+        
+        // Only scroll to bottom for non-user messages (assistant, typing indicator, etc.)
+        // User message scrolling is handled separately with scrollToShowNewMessage()
+        if (role !== 'user') {
+            this.scrollToBottom();
+        }
         
         // Return the added message element for further manipulation if needed
         const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
@@ -2062,6 +2070,24 @@ class PrivacyChat {
         requestAnimationFrame(() => {
             if (this.elements.chatMessages) {
                 this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
+            }
+        });
+    }
+    
+    scrollToShowNewMessage() {
+        // Scroll to show the latest message at the top of the visible area
+        requestAnimationFrame(() => {
+            if (this.elements.chatMessages) {
+                const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
+                if (messages.length > 0) {
+                    const lastMessage = messages[messages.length - 1];
+                    // Scroll to position the new message near the top of the view
+                    const containerHeight = this.elements.chatMessages.clientHeight;
+                    const messageTop = lastMessage.offsetTop;
+                    const targetScroll = Math.max(0, messageTop - 100); // 100px from top
+                    
+                    this.elements.chatMessages.scrollTop = targetScroll;
+                }
             }
         });
     }
