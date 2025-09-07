@@ -617,7 +617,7 @@ class PrivacyChat {
         // Show bottom input
         const bottomInput = document.getElementById('bottom-input');
         if (bottomInput) {
-            bottomInput.style.display = 'block';
+            bottomInput.style.display = 'flex';
         }
         
         // Add class to adjust padding
