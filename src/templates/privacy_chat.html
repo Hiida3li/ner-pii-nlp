@@ -2633,5 +2633,82 @@
     
     <!-- Compact Color Customizer Script -->
     <script src="/static/js/color_customizer_compact.js"></script>
+    
+    <!-- Entity Click Handler -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handler for entities to open color customizer
+            document.addEventListener('click', function(e) {
+                // Check if clicked element is an entity
+                if (e.target.classList.contains('pii-entity')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Get entity type from classes
+                    const classes = Array.from(e.target.classList);
+                    let entityType = null;
+                    
+                    // Map CSS classes to entity types
+                    const classToType = {
+                        'pii-person': 'person',
+                        'pii-location': 'location',
+                        'pii-organization': 'organization',
+                        'pii-email': 'email',
+                        'pii-phone': 'phone',
+                        'pii-url': 'url',
+                        'pii-civilid': 'civilid',
+                        'pii-passport': 'passport',
+                        'pii-creditcard': 'creditcard',
+                        'pii-bankaccount': 'bankaccount'
+                    };
+                    
+                    // Find the entity type from classes
+                    for (const cls of classes) {
+                        if (classToType[cls]) {
+                            entityType = classToType[cls];
+                            break;
+                        }
+                    }
+                    
+                    // Open the color customizer panel for this entity type
+                    if (entityType && window.compactColorCustomizer) {
+                        window.compactColorCustomizer.openPanelForEntity(entityType);
+                    }
+                }
+            });
+            
+            // Add hover effect to entities
+            const style = document.createElement('style');
+            style.textContent = `
+                .pii-entity {
+                    cursor: pointer;
+                    transition: filter 0.2s, transform 0.2s;
+                    position: relative;
+                }
+                
+                .pii-entity:hover {
+                    filter: brightness(1.2);
+                    transform: scale(1.05);
+                }
+                
+                .pii-entity::after {
+                    content: '';
+                    position: absolute;
+                    bottom: -2px;
+                    left: 0;
+                    right: 0;
+                    height: 2px;
+                    background: currentColor;
+                    opacity: 0;
+                    transition: opacity 0.2s;
+                }
+                
+                .pii-entity:hover::after {
+                    opacity: 0.5;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
 </body>
 </html>

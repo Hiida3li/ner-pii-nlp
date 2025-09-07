@@ -669,6 +669,36 @@ class CompactColorCustomizer {
         panel.classList.remove('open');
         icon.classList.remove('active');
     }
+    
+    openPanelForEntity(entityType) {
+        // Open the panel if it's closed
+        if (!this.isPanelOpen) {
+            this.isPanelOpen = true;
+            const panel = document.getElementById('compact-color-panel');
+            const icon = document.getElementById('compact-color-icon');
+            
+            if (panel) {
+                panel.classList.add('open');
+            }
+            if (icon) {
+                icon.classList.add('active');
+            }
+        }
+        
+        // Scroll to the specific entity type
+        setTimeout(() => {
+            const entityRow = document.querySelector(`.entity-row[data-entity="${entityType}"]`);
+            if (entityRow) {
+                entityRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Add a highlight effect
+                entityRow.style.transition = 'background-color 0.3s';
+                entityRow.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                setTimeout(() => {
+                    entityRow.style.backgroundColor = '';
+                }, 1000);
+            }
+        }, 100);
+    }
 
     showColorPalette(targetElement, entityType, currentColor) {
         // Remove any existing palette
