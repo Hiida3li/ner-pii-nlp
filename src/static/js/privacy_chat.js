@@ -1778,14 +1778,22 @@ class PrivacyChat {
     }
     
     initializeTextareas() {
-        // Initialize textareas with proper height
+        // Initialize textareas with proper height and alignment
         if (this.elements.chatInput) {
             this.elements.chatInput.style.height = '40px';
             this.elements.chatInput.style.overflowY = 'hidden';
+            // Set default alignment to left for English
+            this.elements.chatInput.style.textAlign = 'left';
+            this.elements.chatInput.style.direction = 'ltr';
+            this.elements.chatInput.dir = 'ltr';
         }
         if (this.elements.chatInputBottom) {
             this.elements.chatInputBottom.style.height = '40px';
             this.elements.chatInputBottom.style.overflowY = 'hidden';
+            // Set default alignment to left for English
+            this.elements.chatInputBottom.style.textAlign = 'left';
+            this.elements.chatInputBottom.style.direction = 'ltr';
+            this.elements.chatInputBottom.dir = 'ltr';
         }
     }
     

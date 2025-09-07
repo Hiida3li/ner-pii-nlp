@@ -1,36 +1,31 @@
 /* Document Attachment Styles - Simple Design */
 
-/* Upload Button Styles - Original Design */
+/* Upload Button - Compact and aligned */
 .chat-upload-btn {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     background: transparent;
     border: none;
-    color: #9ca3af;
+    color: #6b7280;
     cursor: pointer;
     border-radius: 8px;
-    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s;
     flex-shrink: 0;
-    position: relative;
-    margin-right: 12px;
-    align-self: flex-end;
-    margin-bottom: -6px;
-    margin-top: auto;
+    margin-bottom: 4px;
+}
+
+.chat-upload-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #9ca3af;
 }
 
 /* Upload button when document is attached */
 .chat-upload-btn.has-attachment {
     background: rgba(16, 185, 129, 0.1);
     color: #10b981;
-}
-
-/* Ensure proper alignment in input box */
-.chat-upload-btn:hover {
-    background: rgba(76, 139, 202, 0.1);
-    /* transform removed to prevent movement */
 }
 
 .input-box .attachment-preview {
@@ -61,20 +56,11 @@
 }
 
 .chat-upload-btn svg {
-    transition: all 0.3s ease;
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
 }
 
-.chat-upload-btn:hover {
-    background: rgba(124, 58, 237, 0.1);
-    color: #7c3aed;
-}
-
-.chat-upload-btn:hover svg {
-    /* transform removed to prevent movement */
-    filter: drop-shadow(0 2px 4px rgba(124, 58, 237, 0.3));
-}
+/* Already defined above in clean design */
 
 .chat-upload-btn:active {
     background: rgba(124, 58, 237, 0.2);
@@ -283,13 +269,16 @@
     color: white;
 }
 
-/* Attachment preview inside input box */
+/* Attachment Preview - Clean white card */
 .attachment-preview {
-    display: inline-flex;
+    display: none;
     align-items: center;
-    margin: 0 8px 0 0;
-    animation: fadeIn 0.3s ease;
-    align-self: center;
+    margin-right: 8px;
+    margin-bottom: 4px;
+}
+
+.attachment-preview.show {
+    display: flex;
 }
 
 @keyframes fadeIn {
@@ -328,32 +317,27 @@
 }
 
 .attachment-preview .document-attachment-card {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 8px;
     padding: 4px 10px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-    max-width: 200px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    font-size: 12px;
+    color: #9ca3af;
 }
 
 .attachment-preview .doc-icon-wrapper {
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
-    background: rgba(200, 200, 200, 0.3);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
 }
 
 .attachment-preview .doc-icon-wrapper svg {
-    width: 14px;
-    height: 14px;
-    color: #666;
+    width: 16px;
+    height: 16px;
+    color: #9ca3af;
 }
 
 .attachment-preview .doc-info {
@@ -366,13 +350,12 @@
 }
 
 .attachment-preview .doc-filename {
-    font-size: 12px;
-    font-weight: 600;
-    color: #333;
+    max-width: 100px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 120px;
+    font-size: 12px;
+    color: #9ca3af;
 }
 
 .attachment-preview .doc-size {
@@ -381,24 +364,24 @@
 }
 
 .attachment-preview .remove-doc-btn {
-    width: 20px;
-    height: 20px;
-    padding: 0;
-    background: rgba(239, 68, 68, 0.1);
-    border: none;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 16px;
+    height: 16px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.attachment-preview .remove-doc-btn:hover {
+    opacity: 1;
 }
 
 .attachment-preview .remove-doc-btn svg {
-    width: 12px;
-    height: 12px;
-    color: #ef4444;
+    width: 16px;
+    height: 16px;
+    color: #9ca3af;
 }
 
 /* Message with attachment */

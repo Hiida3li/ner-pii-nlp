@@ -1301,25 +1301,23 @@
         }
 
         .input-box {
-            background: linear-gradient(135deg, #3a4050 0%, #434859 100%);
-            border: 2px solid rgba(76, 139, 202, 0.25);
-            border-radius: 20px;
-            padding: 0.4rem 0.8rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 8px 12px;
             display: flex;
-            align-items: center;
-            gap: 0;
+            align-items: flex-end;
+            gap: 8px;
             transition: all 0.3s ease;
-            backdrop-filter: blur(15px);
-            min-height: 42px;
+            min-height: 40px;
+            max-height: 120px;
             position: relative;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
         .input-box:focus-within {
-            border-color: rgba(76, 139, 202, 0.4);
-            background: linear-gradient(135deg, #3e4456 0%, #474d5f 100%);
-            box-shadow: 0 6px 25px rgba(76, 139, 202, 0.2), 0 0 40px rgba(76, 139, 202, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(76, 139, 202, 0.3);
+            box-shadow: 0 0 0 1px rgba(76, 139, 202, 0.1);
         }
 
         .chat-input {
@@ -1327,128 +1325,82 @@
             background: transparent;
             border: none;
             color: #e5e7eb;
-            font-size: 0.88rem;
+            font-size: 14px;
             resize: none;
             outline: none;
-            min-height: 20px;
-            max-height: 120px;
-            line-height: 1.3;
-            unicode-bidi: plaintext;
-            text-align: left;
-            padding: 0;
-            padding-right: 1.5rem;
+            min-height: 24px;
+            max-height: 100px;
+            line-height: 1.4;
+            padding: 4px 4px;
             font-family: inherit;
             overflow-y: auto;
-            transition: height 0.1s ease;
-            display: block;
-            width: 100%;
-            box-sizing: border-box;
-            align-self: center;
+            text-align: left;
+            direction: ltr;
+            margin-bottom: 4px;
         }
         
-        /* Custom scrollbar for textarea when content overflows */
+        /* Minimal scrollbar */
         .chat-input::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
         
         .chat-input::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
+            background: transparent;
         }
         
         .chat-input::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
         }
         
-        .chat-input::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        /* Arabic text in input */
-        .chat-input:lang(ar),
-        .chat-input[dir="rtl"] {
-            font-family: 'Tajawal', 'Dubai', 'Noto Sans Arabic', 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            font-size: 0.86rem;
+        /* Arabic support */
+        .chat-input.rtl {
             text-align: right;
             direction: rtl;
-            font-weight: 400;
-            letter-spacing: 0.02em;
-            line-height: 1.6;
+            font-family: 'Tajawal', 'Dubai', 'Noto Sans Arabic', sans-serif;
         }
-
+        
         .chat-input::placeholder {
-            color: rgba(229, 231, 235, 0.5);
+            color: #6b7280;
+            font-size: 14px;
         }
 
+        /* Send Button - Circular and clean */
         .send-btn {
-            width: 36px;
-            height: 36px;
-            background: #3a4050;
-            border: none;
-            color: white;
+            width: 32px;
+            height: 32px;
+            background: rgba(76, 139, 202, 0.15);
+            border: 1px solid rgba(76, 139, 202, 0.3);
+            color: #4c8bca;
             cursor: pointer;
             border-radius: 50%;
-            transition: all 0.3s ease;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s;
             flex-shrink: 0;
-            align-self: center;
-            margin: 0 0 0 0.5rem;
+            margin-bottom: 4px;
             opacity: 0;
             transform: scale(0.8);
+            pointer-events: none;
         }
         
         .send-btn.show {
-            display: flex;
-            animation: fadeInScale 0.3s ease forwards;
-        }
-        
-        @keyframes fadeInScale {
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
         }
 
         .send-btn:hover {
+            background: rgba(76, 139, 202, 0.25);
+            border-color: rgba(76, 139, 202, 0.5);
             transform: scale(1.05);
-            background: #3a4050;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
         }
         
-        .send-btn .send-icon {
-            transition: all 0.2s ease;
-        }
-        
-        .send-btn:hover .send-icon {
-            transform: rotate(-90deg) scale(1.05);
-        }
-        
-        .send-btn:hover .send-arrow {
-            animation: fly 0.4s ease;
-        }
-        
-        @keyframes fly {
-            0% {
-                transform: translateX(0);
-            }
-            50% {
-                transform: translateX(3px) translateY(-2px);
-            }
-            100% {
-                transform: translateX(0);
-            }
-        }
-        
-        .send-btn:active .send-icon {
-            transform: rotate(-90deg) scale(0.95);
-        }
-        
-        .send-btn:active {
-            transform: scale(0.95);
+        .send-btn svg {
+            width: 16px;
+            height: 16px;
+            transform: rotate(-90deg);
         }
 
         .send-btn:disabled {
@@ -1941,6 +1893,7 @@
                                     id="chat-input" 
                                     placeholder="Ask anything"
                                     rows="1"
+                                    style="text-align: left !important; direction: ltr !important;"
                                 ></textarea>
                                 <button class="send-btn" id="send-btn">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="send-icon">
@@ -1962,6 +1915,7 @@
                             id="chat-input-bottom" 
                             placeholder="Ask anything"
                             rows="1"
+                            style="text-align: left !important; direction: ltr !important;"
                         ></textarea>
                         <button class="send-btn" id="send-btn-bottom">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="send-icon">
@@ -1988,11 +1942,11 @@
     </div>
 
     <link rel="stylesheet" href="/static/css/document-manager.css">
-    <link rel="stylesheet" href="/static/css/document-attachment.css?v=18">
+    <link rel="stylesheet" href="/static/css/document-attachment.css?v=19">
     <link rel="stylesheet" href="/static/css/attachment-text-fix.css?v=1">
     <script src="/static/js/entity-dictionary.js"></script>
-    <script src="/static/js/privacy_chat.js?v=30"></script>
-    <script src="/static/js/document-attachment-manager.js?v=10"></script>
+    <script src="/static/js/privacy_chat.js?v=31"></script>
+    <script src="/static/js/document-attachment-manager.js?v=11"></script>
     <script>
         // Global function to close document modal
         function closeDocumentModal() {

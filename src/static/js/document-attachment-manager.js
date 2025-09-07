@@ -253,7 +253,7 @@ class DocumentAttachmentManager {
                             document.getElementById('chat-input-bottom');
                 if (input) {
                     input.focus();
-                    input.placeholder = `Ask about ${file.name}...`;
+                    // Keep the original placeholder - no change when document is uploaded
                 }
             } else {
                 console.error('Upload result indicates failure:', result);
@@ -289,7 +289,7 @@ class DocumentAttachmentManager {
         inputBoxes.forEach(inputBox => {
             // Create attachment preview element
             const preview = document.createElement('div');
-            preview.className = 'attachment-preview';
+            preview.className = 'attachment-preview show';
             
             // Create the document attachment card
             const card = this.createDocumentCard(this.attachedDocument, true);
@@ -303,6 +303,9 @@ class DocumentAttachmentManager {
                 // Add visual indicators
                 uploadBtn.classList.add('has-attachment');
                 inputBox.classList.add('has-attachment');
+                
+                // Clear placeholder when document is attached
+                textarea.placeholder = '';
                 
                 // Insert the preview after the upload button
                 uploadBtn.insertAdjacentElement('afterend', preview);
@@ -494,9 +497,8 @@ class DocumentAttachmentManager {
             box.classList.remove('has-attachment');
         });
         
-        // Reset input placeholder
-        const inputs = [document.getElementById('chat-input'), document.getElementById('chat-input-bottom')];
-        inputs.forEach(input => {
+        // Restore placeholder when document is removed
+        document.querySelectorAll('.chat-input').forEach(input => {
             if (input) {
                 input.placeholder = 'Ask anything';
             }
