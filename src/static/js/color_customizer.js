@@ -299,7 +299,7 @@ class ColorCustomizer {
             icon.classList.add('active');
             // Adjust main chat to make room for panel
             if (mainChat) {
-                mainChat.style.marginRight = '400px';
+                mainChat.style.marginRight = '340px';
                 mainChat.style.transition = 'margin-right 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
             }
         } else {
@@ -368,8 +368,8 @@ class ColorCustomizer {
             .color-customizer-panel {
                 position: fixed;
                 top: 0;
-                right: -400px;
-                width: 380px;
+                right: -340px;
+                width: 320px;
                 height: 100vh;
                 z-index: 1001;
                 transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -809,18 +809,18 @@ class ColorCustomizer {
             }
 
             .footer-btn {
-                padding: 0.75rem 2rem;
+                padding: 0.5rem 1.25rem;
                 background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1));
                 border: 2px solid rgba(239, 68, 68, 0.3);
                 color: #fca5a5;
-                border-radius: 12px;
-                font-size: 0.95rem;
+                border-radius: 10px;
+                font-size: 0.85rem;
                 font-weight: 600;
                 cursor: pointer;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 display: flex;
                 align-items: center;
-                gap: 0.75rem;
+                gap: 0.5rem;
                 backdrop-filter: blur(10px);
                 position: relative;
                 overflow: hidden;
