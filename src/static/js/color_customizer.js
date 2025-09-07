@@ -310,7 +310,7 @@ class ColorCustomizer {
             .color-customizer-icon {
                 position: fixed;
                 left: 1.5rem;
-                top: 18rem;
+                top: 14.5rem;
                 width: 40px;
                 height: 40px;
                 background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
@@ -746,7 +746,7 @@ class ColorCustomizer {
                 padding: 1.5rem;
                 background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.1));
                 border-top: 1px solid rgba(167, 139, 250, 0.2);
-                border-radius: 0 0 20px 20px;
+                border-radius: 0 0 0 20px;
                 display: flex;
                 justify-content: center;
                 position: relative;
@@ -882,13 +882,7 @@ class ColorCustomizer {
             });
         }
         
-        // Backdrop click to close
-        const backdrop = document.querySelector('.color-panel-backdrop');
-        if (backdrop) {
-            backdrop.addEventListener('click', () => {
-                this.togglePanel();
-            });
-        }
+        // No backdrop click handler needed for side panel
         
         // Tab switching
         const tabBtns = document.querySelectorAll('.tab-btn');
