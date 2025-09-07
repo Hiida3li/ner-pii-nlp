@@ -900,7 +900,9 @@ class PrivacyChat {
                                         reader.cancel();
                                         break;
                                     }
-                                    this.hideTypingIndicator();
+                                    // Remove typing dots indicator but keep isTyping = true for interrupt button
+                                    const indicator = document.getElementById('typing-indicator');
+                                    if (indicator) indicator.remove();
                                     assistantMessageWrapper = this.createStreamingMessage();
                                     assistantMessageContent = assistantMessageWrapper.querySelector('.message-text');
                                 }
@@ -1023,6 +1025,10 @@ class PrivacyChat {
                 console.log('Clearing pending attachment after streaming complete');
                 delete this.pendingAttachment;
             }
+            
+            // Streaming is now complete, reset typing state
+            this.isTyping = false;
+            this.updateSendButtonState();
             
         } catch (error) {
             // Check if it was an abort error
