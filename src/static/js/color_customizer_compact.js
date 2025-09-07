@@ -153,6 +153,7 @@ class CompactColorCustomizer {
                     <path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/>
                 </svg>
             </button>
+            <span class="color-text">Custom Entity</span>
             
             <div class="compact-color-panel" id="compact-color-panel">
                 <div class="compact-panel-header">
@@ -204,6 +205,17 @@ class CompactColorCustomizer {
         style.textContent = `
             .compact-color-container {
                 position: relative;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .color-text {
+                color: white;
+                font-size: 12px;
+                font-weight: 500;
+                white-space: nowrap;
+                pointer-events: none;
             }
             
             .compact-color-icon {

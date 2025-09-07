@@ -183,6 +183,30 @@
             pointer-events: none;
         }
         
+        .toggle-text {
+            position: fixed;
+            left: 4rem;
+            top: 8.1rem;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            z-index: 1002;
+            pointer-events: none;
+        }
+        
+        .export-text {
+            position: fixed;
+            left: 4rem;
+            top: 17.4rem;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            z-index: 1002;
+            pointer-events: none;
+        }
+        
         .theme-toggle-btn {
             position: fixed;
             right: 1.5rem;
@@ -2204,6 +2228,7 @@
             <rect class="menu-bar menu-bar-3" x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
         </svg>
     </button>
+    <span class="toggle-text">Close sidebar</span>
     
     <!-- New Chat Button - Under Toggle -->
     <button class="new-chat-icon" id="new-chat-icon" aria-label="New Chat" title="New Chat">
@@ -2222,6 +2247,7 @@
             <path d="M20.88 18.09A5 5 0 0018 9h-1.26A8 8 0 103 16.29" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
     </button>
+    <span class="export-text">Export</span>
     
     <!-- Export Dropdown Menu -->
     <div class="export-dropdown" id="export-dropdown">
