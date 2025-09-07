@@ -313,27 +313,45 @@ class ColorCustomizer {
                 top: 18rem;
                 width: 40px;
                 height: 40px;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
-                border: none;
-                border-radius: 8px;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+                backdrop-filter: blur(15px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 12px;
                 color: #e5e7eb;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 z-index: 1002;
-                transition: all 0.2s ease;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             }
             
             .color-customizer-icon:hover {
-                background: rgba(255, 255, 255, 0.15);
-                transform: scale(1.05);
+                background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(147, 51, 234, 0.1));
+                border-color: rgba(167, 139, 250, 0.3);
+                color: #a78bfa;
+                transform: scale(1.08) translateY(-2px);
+                box-shadow: 0 8px 30px rgba(147, 51, 234, 0.2);
             }
             
             .color-customizer-icon.active {
-                background: rgba(147, 51, 234, 0.3);
-                color: #a78bfa;
+                background: linear-gradient(135deg, rgba(147, 51, 234, 0.4), rgba(167, 139, 250, 0.2));
+                border-color: rgba(167, 139, 250, 0.5);
+                color: #c4b5fd;
+                box-shadow: 0 8px 30px rgba(147, 51, 234, 0.3);
+            }
+            
+            .color-customizer-icon svg {
+                transition: all 0.3s ease;
+            }
+            
+            .color-customizer-icon:hover svg {
+                transform: rotate(15deg) scale(1.1);
+            }
+            
+            .color-customizer-icon.active svg {
+                transform: rotate(45deg);
             }
             
             /* Floating Panel */
@@ -368,115 +386,172 @@ class ColorCustomizer {
                 position: absolute;
                 top: 50%;
                 left: 50%;
-                transform: translate(-50%, -50%) scale(0.9);
+                transform: translate(-50%, -50%) scale(0.85);
                 width: 90%;
-                max-width: 500px;
-                max-height: 600px;
-                background: #2a2937;
-                border-radius: 16px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                max-width: 520px;
+                max-height: 650px;
+                background: linear-gradient(145deg, #2d2b3a, #252331);
+                border: 1px solid rgba(167, 139, 250, 0.1);
+                border-radius: 20px;
+                box-shadow: 
+                    0 25px 80px rgba(0, 0, 0, 0.6),
+                    0 0 0 1px rgba(255, 255, 255, 0.05),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
                 display: flex;
                 flex-direction: column;
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                opacity: 0;
             }
             
             .color-customizer-panel.open .color-panel-container {
                 transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
             }
 
             .color-panel-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 1.25rem;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 1.5rem;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+                border-bottom: 1px solid rgba(167, 139, 250, 0.2);
+                border-radius: 20px 20px 0 0;
+                position: relative;
+            }
+
+            .color-panel-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.5), transparent);
             }
 
             .color-panel-header h3 {
-                color: #f3f4f6;
-                font-size: 1.1rem;
-                font-weight: 600;
+                color: #f8fafc;
+                font-size: 1.2rem;
+                font-weight: 700;
                 margin: 0;
                 display: flex;
                 align-items: center;
-                gap: 0.5rem;
+                gap: 0.75rem;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            }
+
+            .color-panel-header svg {
+                color: #a78bfa;
+                filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.3));
             }
 
             .color-panel-close {
-                background: none;
-                border: none;
-                color: #9ca3af;
+                background: rgba(239, 68, 68, 0.1);
+                border: 1px solid rgba(239, 68, 68, 0.2);
+                color: #fca5a5;
                 cursor: pointer;
-                padding: 0.25rem;
-                border-radius: 6px;
-                transition: all 0.2s ease;
+                padding: 0.5rem;
+                border-radius: 10px;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .color-panel-close:hover {
-                background: rgba(255, 255, 255, 0.1);
-                color: #e5e7eb;
+                background: rgba(239, 68, 68, 0.2);
+                border-color: rgba(239, 68, 68, 0.4);
+                color: #f87171;
+                transform: scale(1.05);
+                box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
             }
             
             .color-panel-search {
-                padding: 0 1.25rem;
-                margin: 1rem 0;
+                padding: 0 1.5rem;
+                margin: 1.25rem 0;
                 position: relative;
             }
             
             .color-panel-search svg {
                 position: absolute;
-                left: 2rem;
+                left: 2.25rem;
                 top: 50%;
                 transform: translateY(-50%);
-                color: #6b7280;
+                color: #a78bfa;
                 pointer-events: none;
+                transition: all 0.3s ease;
             }
             
             .color-panel-search input {
                 width: 100%;
-                padding: 0.6rem 0.6rem 0.6rem 2.5rem;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 8px;
-                color: #e5e7eb;
-                font-size: 0.9rem;
-                transition: all 0.2s ease;
+                padding: 0.75rem 0.75rem 0.75rem 2.75rem;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+                border: 2px solid rgba(167, 139, 250, 0.1);
+                border-radius: 12px;
+                color: #f1f5f9;
+                font-size: 0.95rem;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                backdrop-filter: blur(10px);
             }
             
             .color-panel-search input:focus {
                 outline: none;
-                background: rgba(255, 255, 255, 0.08);
-                border-color: #a78bfa;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(167, 139, 250, 0.08));
+                border-color: rgba(167, 139, 250, 0.4);
+                box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1), 0 4px 20px rgba(167, 139, 250, 0.2);
+            }
+            
+            .color-panel-search input::placeholder {
+                color: #94a3b8;
             }
             
             .color-panel-tabs {
                 display: flex;
-                padding: 0 1.25rem;
-                gap: 0.5rem;
-                margin-bottom: 1rem;
+                padding: 0 1.5rem;
+                gap: 0.75rem;
+                margin-bottom: 1.5rem;
+                background: rgba(0, 0, 0, 0.2);
+                margin: 1rem 1.5rem;
+                border-radius: 12px;
+                padding: 0.5rem;
             }
             
             .tab-btn {
                 flex: 1;
-                padding: 0.6rem;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 0.75rem 1rem;
+                background: transparent;
+                border: none;
                 border-radius: 8px;
-                color: #9ca3af;
-                font-size: 0.9rem;
+                color: #94a3b8;
+                font-size: 0.95rem;
+                font-weight: 600;
                 cursor: pointer;
-                transition: all 0.2s ease;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                overflow: hidden;
             }
             
             .tab-btn.active {
-                background: rgba(147, 51, 234, 0.2);
-                border-color: #9333ea;
-                color: #a78bfa;
+                background: linear-gradient(135deg, rgba(147, 51, 234, 0.3), rgba(167, 139, 250, 0.2));
+                color: #c4b5fd;
+                box-shadow: 0 2px 10px rgba(147, 51, 234, 0.3);
+            }
+            
+            .tab-btn.active::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, rgba(167, 139, 250, 0.1), transparent);
+                border-radius: 8px;
             }
             
             .tab-btn:hover:not(.active) {
                 background: rgba(255, 255, 255, 0.08);
-                color: #e5e7eb;
+                color: #e2e8f0;
+                transform: translateY(-1px);
             }
             
             .color-panel-content {
@@ -496,24 +571,28 @@ class ColorCustomizer {
             .color-items {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                gap: 0.75rem;
-                padding-bottom: 1rem;
+                gap: 1rem;
+                padding: 0 1.5rem 1.5rem;
             }
 
             .color-item {
                 display: flex;
                 align-items: center;
-                gap: 0.75rem;
-                padding: 0.75rem;
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(255, 255, 255, 0.08);
-                border-radius: 10px;
-                transition: all 0.2s ease;
+                gap: 1rem;
+                padding: 1rem;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+                border: 1px solid rgba(167, 139, 250, 0.1);
+                border-radius: 16px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                backdrop-filter: blur(10px);
             }
 
             .color-item:hover {
-                background: rgba(255, 255, 255, 0.06);
-                border-color: rgba(255, 255, 255, 0.15);
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(167, 139, 250, 0.05));
+                border-color: rgba(167, 139, 250, 0.3);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             }
 
             .color-item.hidden {
@@ -521,19 +600,30 @@ class ColorCustomizer {
             }
 
             .color-preview {
-                width: 32px;
-                height: 32px;
-                border-radius: 8px;
-                border: 2px solid rgba(255, 255, 255, 0.2);
+                width: 40px;
+                height: 40px;
+                border-radius: 12px;
+                border: 3px solid rgba(255, 255, 255, 0.2);
                 cursor: pointer;
                 position: relative;
                 overflow: hidden;
-                transition: all 0.2s ease;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 
+                    0 4px 15px rgba(0, 0, 0, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
             }
 
             .color-preview:hover {
-                transform: scale(1.1);
-                border-color: rgba(255, 255, 255, 0.4);
+                transform: scale(1.15) rotate(5deg);
+                border-color: rgba(255, 255, 255, 0.5);
+                box-shadow: 
+                    0 8px 25px rgba(0, 0, 0, 0.3),
+                    0 0 20px var(--preview-color, currentColor),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            }
+
+            .color-preview:active {
+                transform: scale(1.05);
             }
 
             .color-input {
@@ -545,28 +635,41 @@ class ColorCustomizer {
             }
 
             .color-label {
-                color: #e5e7eb;
-                font-size: 0.85rem;
+                color: #f1f5f9;
+                font-size: 0.9rem;
+                font-weight: 600;
                 flex: 1;
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
             }
 
             .reset-color-btn {
-                background: none;
-                border: none;
-                color: #6b7280;
+                background: rgba(239, 68, 68, 0.1);
+                border: 1px solid rgba(239, 68, 68, 0.2);
+                color: #fca5a5;
                 cursor: pointer;
-                padding: 0.25rem;
-                border-radius: 4px;
+                padding: 0.4rem;
+                border-radius: 8px;
                 font-size: 0.7rem;
-                transition: all 0.2s ease;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0.7;
+            }
+
+            .color-item:hover .reset-color-btn {
+                opacity: 1;
             }
 
             .reset-color-btn:hover {
-                background: rgba(255, 255, 255, 0.1);
-                color: #ef4444;
+                background: rgba(239, 68, 68, 0.2);
+                border-color: rgba(239, 68, 68, 0.4);
+                color: #f87171;
+                transform: scale(1.1);
+                box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
             }
             
             /* Preset Grid */
