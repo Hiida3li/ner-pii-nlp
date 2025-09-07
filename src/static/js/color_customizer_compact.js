@@ -207,8 +207,8 @@ class CompactColorCustomizer {
             }
             
             .compact-color-icon {
-                width: 42px;
-                height: 42px;
+                width: 41px;
+                height: 41px;
                 background: rgba(255, 255, 255, 0.1);
                 border: none;
                 border-radius: 8px;
