@@ -1385,41 +1385,76 @@ class PrivacyChat {
         const replacementMap = new Map();
         let workingText = text;
         
+        console.log('Starting entity processing...');
+        console.log('Working text sample:', workingText.substring(0, 200));
+        
         // Process each entity
         sortedEntities.forEach((entity, index) => {
+            console.log(`Processing entity ${index}:`, entity);
+            
             if (entity.text && entity.text !== entity.placeholder) {
                 const entityType = (entity.entity_type || entity.type || '').toLowerCase();
                 const cssClass = this.getEntityCssClass(entityType);
                 const tempMarker = `__ENTITY_${index}_${Date.now()}__`;
                 
-                // Create regex with word boundaries for Arabic and English
-                // Arabic doesn't use \b word boundaries, so we use lookahead/lookbehind
+                console.log(`Entity text: "${entity.text}", Type: ${entityType}, CSS: ${cssClass}`);
+                
+                // For Arabic text, we need a simpler approach
+                // Just do a global replace without complex boundaries
                 const escapedText = this.escapeRegExp(entity.text);
                 
-                // Pattern that works for both Arabic and English with proper boundaries
-                const pattern = `(?<![\\u0600-\\u06FF\\u0750-\\u077F\\w])${escapedText}(?![\\u0600-\\u06FF\\u0750-\\u077F\\w])`;
-                const regex = new RegExp(pattern, 'gu');
+                // Try simple global replacement first
+                let regex = new RegExp(escapedText, 'gu');
+                let matches = workingText.match(regex);
+                
+                if (!matches) {
+                    // If no matches, log what we're searching for
+                    console.log(`No matches with simple pattern for: "${entity.text}"`);
+                    console.log('Text contains this string?', workingText.includes(entity.text));
+                    
+                    // Try with word boundaries for non-Arabic text
+                    if (!/[\u0600-\u06FF\u0750-\u077F]/.test(entity.text)) {
+                        const pattern = `\\b${escapedText}\\b`;
+                        regex = new RegExp(pattern, 'gu');
+                        matches = workingText.match(regex);
+                        console.log(`Trying with word boundaries: ${pattern}`);
+                    }
+                }
                 
                 // Store the replacement
                 replacementMap.set(tempMarker, `<span class="pii-entity ${cssClass}">${entity.text}</span>`);
                 
                 // Replace with temporary marker
-                const matches = workingText.match(regex);
                 if (matches) {
                     workingText = workingText.replace(regex, tempMarker);
-                    console.log(`Replaced ${matches.length} occurrence(s) of '${entity.text}' with marker ${tempMarker}`);
+                    console.log(`✓ Replaced ${matches.length} occurrence(s) of '${entity.text}' with marker ${tempMarker}`);
                 } else {
-                    console.log(`No matches found for '${entity.text}'`);
+                    console.log(`✗ No matches found for '${entity.text}'`);
+                    // Log the first 100 chars around where we expect to find it
+                    const searchIndex = workingText.indexOf(entity.text.substring(0, 5));
+                    if (searchIndex >= 0) {
+                        console.log('Context around expected location:', workingText.substring(Math.max(0, searchIndex - 20), searchIndex + 50));
+                    }
                 }
+            } else {
+                console.log(`Skipping entity: text="${entity.text}", placeholder="${entity.placeholder}"`);
             }
         });
         
+        console.log('All replacements prepared, applying highlights...');
+        
         // Replace all temporary markers with actual highlighted spans
         replacementMap.forEach((highlightedSpan, marker) => {
+            const beforeLength = workingText.length;
             workingText = workingText.replace(new RegExp(marker, 'g'), highlightedSpan);
+            const afterLength = workingText.length;
+            if (beforeLength !== afterLength) {
+                console.log(`Applied highlight for marker ${marker}`);
+            }
         });
         
         console.log('Highlighting complete');
+        console.log('Final text sample:', workingText.substring(0, 200));
         return workingText;
     }
     

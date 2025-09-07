@@ -1103,8 +1103,22 @@ async def privacy_chat_api(request: PrivacyChatRequest):
             detected_response_entities = sorted(detected_response_entities, key=lambda x: x['start'])
             
             for entity in detected_response_entities:
+                # Clean markdown formatting from entity text
+                clean_text = entity['text'].strip()
+                # Remove markdown bold markers
+                clean_text = clean_text.strip('*').strip()
+                
                 # Get the placeholder for this entity if it exists
-                placeholder = chatbot.entity_mappings.get(entity['text'], '')
+                placeholder = chatbot.entity_mappings.get(clean_text, '')
+                
+                # Find the actual position of the clean text in the response
+                actual_start = unmasked_response.find(clean_text, max(0, entity['start'] - 10))
+                if actual_start == -1:
+                    # If not found, use original positions
+                    actual_start = entity['start']
+                    actual_end = entity['end']
+                else:
+                    actual_end = actual_start + len(clean_text)
                 
                 if placeholder:
                     # Find all occurrences of placeholder in masked response
@@ -1125,15 +1139,15 @@ async def privacy_chat_api(request: PrivacyChatRequest):
                     masked_end = -1
                 
                 response_entities.append({
-                    'text': entity['text'],
+                    'text': clean_text,
                     'entity_type': entity['entity_type'], 
-                    'start': masked_start if masked_start >= 0 else entity['start'],  # Position in masked response
-                    'end': masked_end if masked_end >= 0 else entity['end'],  # Position in masked response
-                    'unmasked_start': entity['start'],  # Position in unmasked response
-                    'unmasked_end': entity['end'],  # Position in unmasked response
+                    'start': masked_start if masked_start >= 0 else actual_start,  # Position in masked response
+                    'end': masked_end if masked_end >= 0 else actual_end,  # Position in masked response
+                    'unmasked_start': actual_start,  # Position in unmasked response
+                    'unmasked_end': actual_end,  # Position in unmasked response
                     'placeholder': placeholder,
                     'type': entity['entity_type'].lower(),
-                    'value': entity['text']
+                    'value': clean_text
                 })
         except Exception as e:
             logger.warning(f"Failed to detect entities in AI response: {e}")
@@ -1299,60 +1313,69 @@ async def privacy_chat_stream(request: PrivacyChatRequest):
                 
                 # Convert back to dict format and add to response_entities
                 for entity_text, entity_type, start, end in split_entities:
+                    # Clean markdown formatting from entity text
+                    clean_text = entity_text.strip()
+                    # Remove markdown bold markers
+                    clean_text = clean_text.strip('*').strip()
+                    
                     # Check if this entity has a placeholder mapping
-                    placeholder = chatbot.entity_mappings.get(entity_text, '')
+                    placeholder = chatbot.entity_mappings.get(clean_text, '')
+                    
+                    # Find the actual position of the clean text in the response
+                    actual_start = unmasked_response.find(clean_text, max(0, start - 10))
+                    if actual_start == -1:
+                        # If not found, use original positions
+                        actual_start = start
+                        actual_end = end
+                    else:
+                        actual_end = actual_start + len(clean_text)
                     
                     response_entities.append({
-                        'text': entity_text,
+                        'text': clean_text,
                         'entity_type': entity_type,
-                        'start': start,  # Position in unmasked response
-                        'end': end,  # Position in unmasked response
-                        'unmasked_start': start,  # Position in unmasked response
-                        'unmasked_end': end,  # Position in unmasked response
+                        'start': actual_start,  # Position in unmasked response
+                        'end': actual_end,  # Position in unmasked response
+                        'unmasked_start': actual_start,  # Position in unmasked response
+                        'unmasked_end': actual_end,  # Position in unmasked response
                         'placeholder': placeholder,
                         'type': entity_type.lower(),
-                        'value': entity_text
+                        'value': clean_text
                     })
                 
-                # Also find occurrences of already-mapped entities that might not be detected
+                # Also find ALL occurrences of already-mapped entities that might not be detected
                 for placeholder, original_value in chatbot.reverse_mappings.items():
                     if original_value:
-                        # Check if this entity is already in response_entities
-                        entity_exists = any(ent['text'] == original_value for ent in response_entities)
+                        # Determine entity type from placeholder
+                        entity_type = re.sub(r'\d+', '', placeholder).upper()
                         
-                        if not entity_exists:
-                            # Determine entity type from placeholder
-                            entity_type = re.sub(r'\d+', '', placeholder).upper()
+                        # Find ALL occurrences of this entity in the unmasked response
+                        start = 0
+                        while True:
+                            pos = unmasked_response.find(original_value, start)
+                            if pos == -1:
+                                break
                             
-                            # Find ALL occurrences of this entity in the unmasked response
-                            start = 0
-                            while True:
-                                pos = unmasked_response.find(original_value, start)
-                                if pos == -1:
-                                    break
-                                
-                                # Check if this position overlaps with existing entities
-                                overlaps = any(
-                                    ent['start'] <= pos < ent['end'] or 
-                                    pos <= ent['start'] < pos + len(original_value)
-                                    for ent in response_entities
-                                )
-                                
-                                if not overlaps:
-                                    response_entities.append({
-                                        'text': original_value,
-                                        'entity_type': entity_type,
-                                        'start': pos,  # Position in unmasked response
-                                        'end': pos + len(original_value),  # Position in unmasked response
-                                        'unmasked_start': pos,  # Position in unmasked response
-                                        'unmasked_end': pos + len(original_value),  # Position in unmasked response
-                                        'placeholder': placeholder,
-                                        'type': entity_type.lower(),
-                                        'value': original_value
-                                    })
-                                
-                                # Move to next possible position
-                                start = pos + 1
+                            # Check if this EXACT position is already covered
+                            position_covered = any(
+                                ent['start'] == pos and ent['end'] == pos + len(original_value) and ent['text'] == original_value
+                                for ent in response_entities
+                            )
+                            
+                            if not position_covered:
+                                response_entities.append({
+                                    'text': original_value,
+                                    'entity_type': entity_type,
+                                    'start': pos,  # Position in unmasked response
+                                    'end': pos + len(original_value),  # Position in unmasked response
+                                    'unmasked_start': pos,  # Position in unmasked response
+                                    'unmasked_end': pos + len(original_value),  # Position in unmasked response
+                                    'placeholder': placeholder,
+                                    'type': entity_type.lower(),
+                                    'value': original_value
+                                })
+                            
+                            # Move to next possible position
+                            start = pos + 1
                 
                 # Sort entities by position
                 response_entities = sorted(response_entities, key=lambda x: x['start'])
