@@ -207,8 +207,11 @@ class PrivacyChat {
     }
     
     createNewSession() {
-        // Abort any active stream before creating new session
-        this.abortCurrentStream();
+        // Don't abort stream - let it continue in the background for that session
+        // Only abort if the active stream is for the current session we're leaving
+        if (this.activeStreamSession === this.currentSession) {
+            this.abortCurrentStream();
+        }
         
         // Check if current session is empty (no messages)
         const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
@@ -384,8 +387,8 @@ class PrivacyChat {
     }
     
     switchSession(sessionId) {
-        // Abort any active stream before switching sessions
-        this.abortCurrentStream();
+        // Don't abort stream - let it continue in the background
+        // Streams will write to their target session's saved messages
         
         // Save current session
         const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
@@ -631,8 +634,10 @@ class PrivacyChat {
     async sendMessage() {
         console.log('sendMessage called');
         
-        // Abort any existing stream before starting a new one
-        this.abortCurrentStream();
+        // Only abort if there's an active stream for the CURRENT session
+        if (this.activeStreamSession === this.currentSession) {
+            this.abortCurrentStream();
+        }
         
         // Determine which input is active
         const isWelcomeVisible = document.getElementById('welcome-screen') !== null;
@@ -707,13 +712,6 @@ class PrivacyChat {
             let responseEntities = [];
             
             while (true) {
-                // Check if we're still in the same session
-                if (targetSession !== this.currentSession) {
-                    console.log('Session changed during stream, aborting');
-                    reader.cancel();
-                    break;
-                }
-                
                 const { done, value } = await reader.read();
                 if (done) break;
                 
