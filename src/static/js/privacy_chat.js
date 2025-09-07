@@ -115,6 +115,10 @@ class PrivacyChat {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     console.log('Enter key pressed in centered input');
+                    if (this.isTyping) {
+                        console.log('Blocked: LLM is currently responding');
+                        return;
+                    }
                     this.sendMessage();
                 }
             });
@@ -1036,9 +1040,16 @@ class PrivacyChat {
                 console.log('Stream was aborted');
                 this.hideTypingIndicator();
                 this.sendingMessage = false;
-                // Clean up any partial message that was created
+                // Keep partial message but mark as completed (not streaming)
                 const streamingMessages = document.querySelectorAll('[data-streaming="true"]');
-                streamingMessages.forEach(msg => msg.remove());
+                streamingMessages.forEach(msg => {
+                    msg.removeAttribute('data-streaming');
+                    // Add interrupted indicator
+                    const messageText = msg.querySelector('.message-text');
+                    if (messageText && messageText.textContent.trim()) {
+                        messageText.innerHTML += ' <span style="color: #9ca3af; font-style: italic;">[Interrupted]</span>';
+                    }
+                });
                 return;
             }
             
