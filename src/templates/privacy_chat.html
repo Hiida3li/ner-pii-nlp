@@ -1666,6 +1666,32 @@
             text-align: center;
             position: relative;
             background: #201f27 !important;
+            background-image: none !important;
+        }
+        
+        .welcome-screen::before,
+        .welcome-screen::after {
+            display: none !important;
+        }
+        
+        .chat-messages {
+            background: #201f27 !important;
+            background-image: none !important;
+        }
+        
+        .chat-messages::before,
+        .chat-messages::after {
+            display: none !important;
+        }
+        
+        .main-chat {
+            background: #201f27 !important;
+            background-image: none !important;
+        }
+        
+        .main-chat::before,
+        .main-chat::after {
+            display: none !important;
         }
         
         /* Custom Robot Logo */
@@ -2309,8 +2335,8 @@
             </div>
 
             <!-- Chat Messages -->
-            <div class="chat-messages" id="chat-messages">
-                <div class="welcome-screen" id="welcome-screen">
+            <div class="chat-messages" id="chat-messages" style="background: #201f27 !important; background-image: none !important;">
+                <div class="welcome-screen" id="welcome-screen" style="background: #201f27 !important; background-image: none !important;">
                     <div class="robot-wrapper">
                             <div class="lightning"></div>
                             <div class="robot-head">
