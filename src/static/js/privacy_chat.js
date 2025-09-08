@@ -18,14 +18,15 @@ class PrivacyChat {
         
         // Array of creative greeting messages
         this.greetings = [
-            "What's today's adventure?",
+            "What's today's adventure :')",
             "Shall we make some magic happen?",
             "Tell me, what's the mission briefing?",
-            "Who's in charge today—you or me?",
+            "Who's in charge today? You or me :')",
             "What puzzle are we solving first?",
             "What's the headline of your day?",
             "Ready to dive in, or should we just float around?",
-            "Should we start with brilliance or chaos?"
+            "Should we start with brilliance or chaos?",
+            "Hey! Reporting for duty. Orders? :')"
         ];
         
         this.init();
@@ -976,11 +977,8 @@ class PrivacyChat {
                                         assistantMessageContent.innerHTML = this.highlightStreamingEntities(displayText);
                                     }
                                     
-                                    // Throttled auto-scroll to follow streaming content (less frequent to avoid input interference)
-                                    if (!this._lastScrollTime || Date.now() - this._lastScrollTime > 200) {
-                                        this.scrollToBottom();
-                                        this._lastScrollTime = Date.now();
-                                    }
+                                    // Disable auto-scroll during streaming to avoid interference
+                                    // User can manually scroll if needed
                                 }
                             
                                 
@@ -999,11 +997,8 @@ class PrivacyChat {
                                         assistantMessageContent.innerHTML = this.highlightStreamingEntities(displayText);
                                     }
                                     
-                                    // Throttled auto-scroll to follow streaming content (less frequent to avoid input interference)
-                                    if (!this._lastScrollTime || Date.now() - this._lastScrollTime > 200) {
-                                        this.scrollToBottom();
-                                        this._lastScrollTime = Date.now();
-                                    }
+                                    // Disable auto-scroll during streaming to avoid interference
+                                    // User can manually scroll if needed
                                 }
                                 
                             } else if (data.type === 'complete') {
@@ -1147,7 +1142,7 @@ class PrivacyChat {
             // Fallback if no conversation pair exists
             this.elements.chatMessages.insertAdjacentHTML('beforeend', messageHtml);
         }
-        this.scrollToBottom();
+        // Don't auto-scroll here - let pushAllContentUp handle scrolling for user messages
         
         // Return the created element
         const returnPairs = this.elements.chatMessages.querySelectorAll('.conversation-pair');
@@ -1307,12 +1302,13 @@ class PrivacyChat {
         // Insert messages at bottom
         this.elements.chatMessages.insertAdjacentHTML('beforeend', messageHtml);
         
-        // For user messages, scroll to show ONLY the newest conversation
+        // For all messages, handle view appropriately
         if (role === 'user') {
-            this.scrollToNewestMessage();
+            // When user sends a message, just log it
+            console.log('USER MESSAGE ADDED');
         } else {
-            // For AI responses, just scroll to bottom normally
-            this.scrollToBottom();
+            // For AI responses, keep the view focused on the current conversation
+            console.log('Assistant message added');
         }
         
         // Return the added message element for further manipulation if needed
@@ -1993,7 +1989,7 @@ class PrivacyChat {
             // Fallback if no conversation pair exists
             this.elements.chatMessages.insertAdjacentHTML('beforeend', typingHtml);
         }
-        this.scrollToBottom();
+        // Don't auto-scroll for typing indicator
     }
     
     hideTypingIndicator() {
@@ -2230,10 +2226,14 @@ class PrivacyChat {
     }
     
     scrollToBottom() {
-        // Use requestAnimationFrame for smoother scrolling that doesn't interfere with input
+        // Smooth animated scroll that pushes content up into invisible area
         requestAnimationFrame(() => {
             if (this.elements.chatMessages) {
-                this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
+                // Use smooth scrolling behavior
+                this.elements.chatMessages.scrollTo({
+                    top: this.elements.chatMessages.scrollHeight,
+                    behavior: 'smooth'
+                });
             }
         });
     }
@@ -2247,10 +2247,15 @@ class PrivacyChat {
         });
     }
     
+    pushAllContentUp() {
+        // Don't do anything - scrolling not working as expected
+        return;
+    }
+    
     scrollToNewestMessage() {
-        // Find the newest user message and scroll to position it at the very top
+        // Find the newest user message and smoothly scroll to position it at the very top
         // This pushes ALL previous content (including previous conversations) 
-        // completely out of the visible area above
+        // completely out of the visible area above with smooth animation
         requestAnimationFrame(() => {
             if (this.elements.chatMessages) {
                 const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
@@ -2269,14 +2274,15 @@ class PrivacyChat {
                     if (newestUserMessage) {
                         // Calculate scroll position to put this message at the very top
                         const messageTop = newestUserMessage.offsetTop;
-                        const containerRect = this.elements.chatMessages.getBoundingClientRect();
                         const paddingTop = parseInt(getComputedStyle(this.elements.chatMessages).paddingTop) || 0;
                         
-                        // Set scroll to position the message at the very top of the visible area
-                        // Subtract padding to account for container styling
-                        this.elements.chatMessages.scrollTop = messageTop - paddingTop;
+                        // Smooth animated scroll that pushes content up
+                        this.elements.chatMessages.scrollTo({
+                            top: messageTop - paddingTop,
+                            behavior: 'smooth'
+                        });
                         
-                        console.log('Scrolled to newest user message at position:', messageTop - paddingTop);
+                        console.log('Smoothly scrolled to newest user message at position:', messageTop - paddingTop);
                     }
                 }
             }

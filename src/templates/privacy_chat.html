@@ -981,14 +981,21 @@
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 0;
+            overflow-x: hidden;
+            padding: 20px 0;
             background: #201f27;
             position: relative;
-            scroll-behavior: smooth;
+            height: 100%;
+            scroll-behavior: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
         }
         
+        /* Remove previous conversation styling - keep all messages fully visible */
+        
         .chat-messages.has-messages {
-            padding-bottom: 180px;
+            padding-bottom: 20px;
         }
         
         .chat-messages::-webkit-scrollbar {
@@ -2432,7 +2439,7 @@
     <link rel="stylesheet" href="/static/css/document-attachment.css?v=20">
     <link rel="stylesheet" href="/static/css/attachment-text-fix.css?v=1">
     <script src="/static/js/entity-dictionary.js"></script>
-    <script src="/static/js/privacy_chat.js?v=102"></script>
+    <script src="/static/js/privacy_chat.js?v=111"></script>
     <script src="/static/js/document-attachment-manager.js?v=16"></script>
     <script>
         // Global function to close document modal
