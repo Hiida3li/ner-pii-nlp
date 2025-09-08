@@ -223,6 +223,62 @@ class PIIShieldModel(ModelInterface):
             result = result.replace(arabic, western)
         return result
     
+    def _is_likely_false_positive(self, entity_text: str, entity_type: str) -> bool:
+        """Check if an entity is likely a false positive
+        
+        Args:
+            entity_text: The detected entity text
+            entity_type: The detected entity type
+            
+        Returns:
+            True if the entity is likely a false positive
+        """
+        # Filter out very short entities that are likely substrings
+        if len(entity_text.strip()) <= 2:
+            return True
+            
+        # Organization names should be meaningful (not just short substrings)
+        if entity_type == 'ORG':
+            # Skip very short organization names
+            if len(entity_text.strip()) <= 3:
+                return True
+            
+            # Skip common English words that are too short to be organization names
+            short_common_words = {
+                'a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by',
+                'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did',
+                'will', 'would', 'can', 'could', 'may', 'might', 'must', 'should', 'shall',
+                'he', 'she', 'it', 'we', 'you', 'they', 'i', 'me', 'my', 'his', 'her', 'our', 'your',
+                'this', 'that', 'these', 'those', 'here', 'there', 'when', 'where', 'why', 'how',
+                'all', 'any', 'some', 'no', 'not', 'only', 'just', 'even', 'also', 'too', 'very',
+                'up', 'down', 'out', 'off', 'over', 'under', 'again', 'back', 'way', 'new', 'old'
+            }
+            if entity_text.lower().strip() in short_common_words:
+                return True
+                
+            # Skip single letters or numbers
+            if len(entity_text.strip()) == 1:
+                return True
+                
+            # Skip entities that are just numbers (unless they're supposed to be numeric)
+            if entity_text.strip().isdigit() and len(entity_text.strip()) < 4:
+                return True
+        
+        # Person names should be at least 2 characters and not be common short words
+        if entity_type == 'PERSON':
+            if len(entity_text.strip()) <= 1:
+                return True
+            # Skip single letters
+            if len(entity_text.strip()) == 1:
+                return True
+        
+        # Location names should be meaningful
+        if entity_type == 'LOCATION':
+            if len(entity_text.strip()) <= 2:
+                return True
+                
+        return False
+    
     def _is_valid_civil_id(self, id_text: str) -> bool:
         """Validate Civil ID format
         
@@ -426,13 +482,30 @@ class PIIShieldModel(ModelInterface):
         input_ids_tensor = torch.tensor([input_ids])
         attention_mask_tensor = torch.tensor([attention_mask])
 
-        # Get predictions
+        # Get predictions with confidence scoring
         with torch.no_grad():
             outputs = self.model(input_ids=input_ids_tensor, attention_mask=attention_mask_tensor)
-            predictions = torch.argmax(outputs.logits, dim=2)
+            logits = outputs.logits
+            
+            # Apply softmax to get probabilities
+            probabilities = torch.softmax(logits, dim=2)
+            
+            # Get predictions and their confidence scores
+            predictions = torch.argmax(logits, dim=2)
+            confidence_scores = torch.max(probabilities, dim=2).values
 
-        # Get labels (excluding [CLS] and [SEP])
-        pred_labels = [self.id2label[pred.item()] for pred in predictions[0][1:-1]]
+        # Get labels with confidence filtering (excluding [CLS] and [SEP])
+        pred_labels = []
+        for i, pred in enumerate(predictions[0][1:-1]):  # Skip [CLS] and [SEP]
+            confidence = confidence_scores[0][i+1].item()  # +1 to account for [CLS]
+            predicted_label = self.id2label[pred.item()]
+            
+            # Apply confidence threshold - only accept non-'O' labels with high confidence
+            if predicted_label != 'O' and confidence < Config.CONFIDENCE_THRESHOLD:
+                # If confidence is too low, treat as 'O' (Outside)
+                pred_labels.append('O')
+            else:
+                pred_labels.append(predicted_label)
 
         # Create token spans for this chunk
         token_spans = []
@@ -531,6 +604,15 @@ class PIIShieldModel(ModelInterface):
             return []
 
         try:
+            # Check if text exceeds token limit and use chunking if necessary
+            tokens = self.tokenizer.tokenize(text)
+            max_tokens = 450  # Leave some buffer for [CLS] and [SEP] tokens
+            
+            if len(tokens) > max_tokens:
+                # Use chunking for long texts
+                return self._predict_with_chunking(text, max_tokens)
+            
+            # Process normally for shorter texts
             # Tokenize text with proper truncation and padding
             encoding = self.tokenizer(
                 text,
@@ -545,13 +627,30 @@ class PIIShieldModel(ModelInterface):
             attention_mask_tensor = encoding['attention_mask']
             offset_mapping = encoding['offset_mapping'][0]  # Get the offset mapping for position tracking
 
-            # Get predictions
+            # Get predictions with confidence scoring
             with torch.no_grad():
                 outputs = self.model(input_ids=input_ids_tensor, attention_mask=attention_mask_tensor)
-                predictions = torch.argmax(outputs.logits, dim=2)
+                logits = outputs.logits
+                
+                # Apply softmax to get probabilities
+                probabilities = torch.softmax(logits, dim=2)
+                
+                # Get predictions and their confidence scores
+                predictions = torch.argmax(logits, dim=2)
+                confidence_scores = torch.max(probabilities, dim=2).values
 
-            # Get labels (excluding [CLS] and [SEP])
-            pred_labels = [self.id2label[pred.item()] for pred in predictions[0][1:-1]]
+            # Get labels with confidence filtering (excluding [CLS] and [SEP])
+            pred_labels = []
+            for i, pred in enumerate(predictions[0][1:-1]):  # Skip [CLS] and [SEP]
+                confidence = confidence_scores[0][i+1].item()  # +1 to account for [CLS]
+                predicted_label = self.id2label[pred.item()]
+                
+                # Apply confidence threshold - only accept non-'O' labels with high confidence
+                if predicted_label != 'O' and confidence < Config.CONFIDENCE_THRESHOLD:
+                    # If confidence is too low, treat as 'O' (Outside)
+                    pred_labels.append('O')
+                else:
+                    pred_labels.append(predicted_label)
             
             # Use offset mapping for accurate token positions (excluding [CLS] and [SEP])
             token_spans = [(start.item(), end.item()) for start, end in offset_mapping[1:-1]]
@@ -672,6 +771,11 @@ class PIIShieldModel(ModelInterface):
                 
                 # Clean up the entity text
                 entity_text = entity_text.replace('##', '').strip()
+                
+                # Additional validation to prevent false positives
+                if self._is_likely_false_positive(entity_text, entity_type):
+                    i = j
+                    continue
                 
                 # Validate Credit Cards
                 if entity_type == 'CREDIT-CARD' or entity_type == 'CREDITCARD':
