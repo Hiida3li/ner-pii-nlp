@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="686a542b-666d-41a5-933f-16af0916bc27" name="Changes" comment="privacy mode functionality is down in the chat page">
-      <change beforePath="$PROJECT_DIR$/src/static/js/color_customizer_compact.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/static/js/color_customizer_compact.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/templates/privacy_chat.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/templates/privacy_chat.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,23 +81,7 @@
       <workItem from="1756620586913" duration="117572000" />
       <workItem from="1756876242514" duration="203000" />
       <workItem from="1756972202452" duration="86956000" />
-      <workItem from="1757326314574" duration="2240000" />
-    </task>
-    <task id="LOCAL-00400" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756839357893</created>
-      <option name="number" value="00400" />
-      <option name="presentableId" value="LOCAL-00400" />
-      <option name="project" value="LOCAL" />
-      <updated>1756839357893</updated>
-    </task>
-    <task id="LOCAL-00401" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756840094486</created>
-      <option name="number" value="00401" />
-      <option name="presentableId" value="LOCAL-00401" />
-      <option name="project" value="LOCAL" />
-      <updated>1756840094486</updated>
+      <workItem from="1757326314574" duration="2675000" />
     </task>
     <task id="LOCAL-00402" summary="privacy mode functionality is down in the chat page">
       <option name="closed" value="true" />
@@ -475,7 +459,23 @@
       <option name="project" value="LOCAL" />
       <updated>1757328450320</updated>
     </task>
-    <option name="localTasksCounter" value="449" />
+    <task id="LOCAL-00449" summary="privacy mode functionality is down in the chat page">
+      <option name="closed" value="true" />
+      <created>1757328751972</created>
+      <option name="number" value="00449" />
+      <option name="presentableId" value="LOCAL-00449" />
+      <option name="project" value="LOCAL" />
+      <updated>1757328751972</updated>
+    </task>
+    <task id="LOCAL-00450" summary="privacy mode functionality is down in the chat page">
+      <option name="closed" value="true" />
+      <created>1757328817889</created>
+      <option name="number" value="00450" />
+      <option name="presentableId" value="LOCAL-00450" />
+      <option name="project" value="LOCAL" />
+      <updated>1757328817889</updated>
+    </task>
+    <option name="localTasksCounter" value="451" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -2633,5 +2633,62 @@
     
     <!-- Compact Color Customizer Script -->
     <script src="/static/js/color_customizer_compact.js?v=2"></script>
+    <!-- Auto-close panels to prevent overlap -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Auto-close logic for preventing panel overlap
+            const exportBtn = document.getElementById('export-entities-icon');
+            const exportDropdown = document.getElementById('export-dropdown');
+            const colorBtn = document.getElementById('compact-color-icon');
+
+            // When clicking export button, close color palette first
+            if (exportBtn) {
+                exportBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+
+                    // Close color palette if open
+                    if (window.compactColorCustomizer && window.compactColorCustomizer.isPanelOpen) {
+                        window.compactColorCustomizer.closeCompactPanel();
+                    }
+
+                    // Toggle export dropdown
+                    exportDropdown.classList.toggle('show');
+                });
+            }
+
+            // When clicking color button, close export dropdown first
+            if (colorBtn) {
+                // Wait a bit for color customizer to initialize
+                setTimeout(() => {
+                    const actualColorBtn = document.getElementById('compact-color-icon');
+                    if (actualColorBtn) {
+                        actualColorBtn.addEventListener('click', function (e) {
+                            e.stopPropagation();
+
+                            // Close export dropdown if open
+                            const dropdown = document.getElementById('export-dropdown');
+                            if (dropdown && dropdown.classList.contains('show')) {
+                                dropdown.classList.remove('show');
+                            }
+
+                            // The color palette toggle is handled by the color customizer itself
+                        });
+                    }
+                }, 500);
+            }
+
+            // Close both when clicking outside
+            document.addEventListener('click', function (e) {
+                // Close export dropdown if clicking outside
+                if (exportDropdown && !exportDropdown.contains(e.target) && e.target !== exportBtn) {
+                    exportDropdown.classList.remove('show');
+                }
+
+                // Color palette close is handled by its own script
+            });
+        });
+    </script>
 </body>
 </html>
+
+
