@@ -2297,15 +2297,13 @@ class PrivacyChat {
             element.style.cursor = 'pointer';
             element.style.transition = 'all 0.2s ease';
             
-            // Add hover effect
+            // Remove hover effects - no opacity change or transform
             element.addEventListener('mouseenter', () => {
-                element.style.opacity = '0.8';
-                element.style.transform = 'scale(1.05)';
+                // Just keep the pointer cursor, no visual changes
             });
             
             element.addEventListener('mouseleave', () => {
-                element.style.opacity = '1';
-                element.style.transform = 'scale(1)';
+                // No changes on leave either
             });
             
             // Add click handler
