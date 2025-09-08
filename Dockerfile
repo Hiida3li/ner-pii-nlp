@@ -37,9 +37,16 @@ WORKDIR /app
 # Copy application code (respects .dockerignore)
 COPY --chown=appuser:appuser . .
 
-# Create necessary directories with correct permissions
-RUN mkdir -p /app/logs /app/uploads /app/temp && \
-    chown -R appuser:appuser /app
+# Create necessary directories with correct permissions - ADD CACHE!
+RUN mkdir -p /app/logs /app/uploads /app/temp /app/cache && \
+    chown -R appuser:appuser /app && \
+    chmod -R 755 /app
+
+# ADD THESE ENVIRONMENT VARIABLES
+ENV PYTHONPATH=/app
+ENV TRANSFORMERS_CACHE=/app/cache
+ENV HF_HOME=/app/cache
+ENV HOME=/app
 
 # Security: Don't run as root
 USER appuser
