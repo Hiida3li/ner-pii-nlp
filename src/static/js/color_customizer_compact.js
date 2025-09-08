@@ -249,7 +249,8 @@ class CompactColorCustomizer {
                 backdrop-filter: blur(20px);
                 overflow: hidden;
                 z-index: 1003;
-                margin-top: 8px;
+                margin-top: 0px;
+                margin-left: 8px;
             }
             
             .compact-color-panel.open {
