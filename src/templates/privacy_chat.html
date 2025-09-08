@@ -2228,7 +2228,7 @@
             <rect class="menu-bar menu-bar-3" x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
         </svg>
     </button>
-    <span class="toggle-text">Close sidebar</span>
+    <span class="toggle-text">Close Sidebar</span>
     
     <!-- New Chat Button - Under Toggle -->
     <button class="new-chat-icon" id="new-chat-icon" aria-label="New Chat" title="New Chat">
@@ -2405,7 +2405,7 @@
     <link rel="stylesheet" href="/static/css/document-attachment.css?v=20">
     <link rel="stylesheet" href="/static/css/attachment-text-fix.css?v=1">
     <script src="/static/js/entity-dictionary.js"></script>
-    <script src="/static/js/privacy_chat.js?v=101"></script>
+    <script src="/static/js/privacy_chat.js?v=102"></script>
     <script src="/static/js/document-attachment-manager.js?v=16"></script>
     <script>
         // Global function to close document modal
@@ -2664,6 +2664,33 @@
     
     <!-- Compact Color Customizer Script -->
     <script src="/static/js/color_customizer_compact.js?v=3"></script>
+    <script>
+        // Initialize sidebar text labels visibility on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const sidebar = document.getElementById('sidebar');
+                const toggleText = document.querySelector('.toggle-text');
+                const newChatText = document.querySelector('.new-chat-text');
+                const exportText = document.querySelector('.export-text');
+                const colorText = document.querySelector('.color-text');
+                
+                // Check if sidebar is initially collapsed
+                if (sidebar && sidebar.classList.contains('collapsed')) {
+                    // Hide text labels if sidebar is collapsed
+                    if (toggleText) toggleText.style.display = 'none';
+                    if (newChatText) newChatText.style.display = 'none';
+                    if (exportText) exportText.style.display = 'none';
+                    if (colorText) colorText.style.display = 'none';
+                } else {
+                    // Show text labels if sidebar is open
+                    if (toggleText) toggleText.style.display = 'block';
+                    if (newChatText) newChatText.style.display = 'block';
+                    if (exportText) exportText.style.display = 'block';
+                    if (colorText) colorText.style.display = 'block';
+                }
+            }, 100);
+        });
+    </script>
     
     <!-- Entity Click Handler -->
     <script>

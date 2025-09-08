@@ -198,9 +198,44 @@ class PrivacyChat {
         // Sidebar toggle
         if (this.elements.sidebarToggle && this.elements.sidebar) {
             this.elements.sidebarToggle.addEventListener('click', () => {
+                console.log('Toggle clicked!');
                 this.elements.sidebar.classList.toggle('collapsed');
                 this.elements.sidebarToggle.classList.toggle('active');
-                // Removed container class modifications to prevent content shifting
+                
+                // Toggle text labels visibility
+                const toggleText = document.querySelector('.toggle-text');
+                const newChatText = document.querySelector('.new-chat-text');
+                const exportText = document.querySelector('.export-text');
+                const colorText = document.querySelector('.color-text');
+                
+                console.log('Text elements found:', {
+                    toggleText: !!toggleText,
+                    newChatText: !!newChatText,
+                    exportText: !!exportText,
+                    colorText: !!colorText
+                });
+                
+                const isCollapsed = this.elements.sidebar.classList.contains('collapsed');
+                console.log('Sidebar collapsed:', isCollapsed);
+                
+                if (isCollapsed) {
+                    // Hide text labels when sidebar is collapsed
+                    if (toggleText) toggleText.style.display = 'none';
+                    if (newChatText) newChatText.style.display = 'none';
+                    if (exportText) exportText.style.display = 'none';
+                    if (colorText) colorText.style.display = 'none';
+                    console.log('Text labels hidden');
+                } else {
+                    // Show text labels when sidebar is open
+                    if (toggleText) {
+                        toggleText.style.display = 'block';
+                        toggleText.textContent = 'Close Sidebar';
+                    }
+                    if (newChatText) newChatText.style.display = 'block';
+                    if (exportText) exportText.style.display = 'block';
+                    if (colorText) colorText.style.display = 'block';
+                    console.log('Text labels shown');
+                }
             });
         }
     }
