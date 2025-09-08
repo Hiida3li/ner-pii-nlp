@@ -266,6 +266,9 @@ class PIIShieldApp {
             const textAlign = hasArabic ? 'right' : 'left';
             
             container.innerHTML = `<div class="results-text" style="direction: ${textDirection}; text-align: ${textAlign}; unicode-bidi: plaintext;">${displayText}</div>`;
+            
+            // Add click handlers to highlighted entities
+            this.attachEntityClickHandlers(data.entities);
         } else {
             container.innerHTML = `
                 <div class="results-empty">
@@ -277,6 +280,99 @@ class PIIShieldApp {
         }
         
         this.animateElement(container, 'fadeInScale');
+    }
+    
+    attachEntityClickHandlers(entities) {
+        // Add click handlers to all highlighted entities
+        const highlightedElements = document.querySelectorAll('.entity-highlight');
+        
+        highlightedElements.forEach(element => {
+            // Make the element clickable
+            element.style.cursor = 'pointer';
+            element.style.transition = 'all 0.2s ease';
+            
+            // Add hover effect
+            element.addEventListener('mouseenter', () => {
+                element.style.opacity = '0.8';
+                element.style.transform = 'scale(1.05)';
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                element.style.opacity = '1';
+                element.style.transform = 'scale(1)';
+            });
+            
+            // Add click handler
+            element.addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                // Get the entity type from the element's text or data
+                const entityText = element.textContent;
+                let entityType = null;
+                
+                // Find the entity type from the entities data
+                if (entities) {
+                    const entity = entities.find(e => e.text === entityText);
+                    if (entity) {
+                        entityType = entity.entity_type;
+                    }
+                }
+                
+                // Open color customizer and focus on this entity type
+                this.openColorCustomizerForEntity(entityType);
+            });
+        });
+    }
+    
+    openColorCustomizerForEntity(entityType) {
+        // Check if color customizer exists
+        if (window.compactColorCustomizer) {
+            // Open the panel
+            const panel = document.getElementById('compact-color-panel');
+            const icon = document.getElementById('compact-color-icon');
+            
+            if (panel && icon) {
+                panel.classList.add('active');
+                icon.classList.add('active');
+                
+                // Scroll to the specific entity type in the panel
+                if (entityType) {
+                    const entityTypeMap = {
+                        'PER': 'person',
+                        'LOC': 'location',
+                        'ORG': 'organization',
+                        'EMAIL': 'email',
+                        'PHONE': 'phone',
+                        'URL': 'url',
+                        'CIVIL-ID': 'civilid',
+                        'PASSPORT-ID': 'passport',
+                        'CREDIT-CARD': 'creditcard'
+                    };
+                    
+                    const mappedType = entityTypeMap[entityType];
+                    if (mappedType) {
+                        // Find and highlight the specific entity color item
+                        const colorItem = document.querySelector(`[data-entity="${mappedType}"]`);
+                        if (colorItem) {
+                            // Scroll it into view
+                            colorItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            
+                            // Add highlight effect
+                            colorItem.style.animation = 'pulse 1s ease-in-out 2';
+                            setTimeout(() => {
+                                colorItem.style.animation = '';
+                            }, 2000);
+                        }
+                    }
+                }
+            }
+        } else {
+            console.log('Color customizer not initialized. Initializing now...');
+            // Initialize color customizer if not already done
+            window.compactColorCustomizer = new CompactColorCustomizer();
+            // Try again after initialization
+            setTimeout(() => this.openColorCustomizerForEntity(entityType), 100);
+        }
     }
     
     applyEntityDictionaryReplacement(highlightedText, entities) {

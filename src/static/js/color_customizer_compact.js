@@ -253,7 +253,8 @@ class CompactColorCustomizer {
                 margin-left: 8px;
             }
             
-            .compact-color-panel.open {
+            .compact-color-panel.open,
+            .compact-color-panel.active {
                 opacity: 1;
                 visibility: visible;
                 transform: translateY(0);
@@ -439,6 +440,15 @@ class CompactColorCustomizer {
                 border-color: rgba(255, 255, 255, 0.5);
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             }
+            
+            @keyframes pulse {
+                0%, 100% {
+                    background-color: rgba(167, 139, 250, 0.1);
+                }
+                50% {
+                    background-color: rgba(167, 139, 250, 0.3);
+                }
+            }
         `;
         
         document.head.appendChild(style);
@@ -452,6 +462,7 @@ class CompactColorCustomizer {
             const item = document.createElement('div');
             item.className = 'compact-color-item';
             item.style.position = 'relative';
+            item.dataset.entity = entityType;
             
             // Create a hidden color input alongside the preview
             const colorInput = document.createElement('input');
@@ -667,8 +678,13 @@ class CompactColorCustomizer {
         const panel = document.getElementById('compact-color-panel');
         const icon = document.getElementById('compact-color-icon');
         
-        panel.classList.remove('open');
-        icon.classList.remove('active');
+        if (panel) {
+            panel.classList.remove('open');
+            panel.classList.remove('active');
+        }
+        if (icon) {
+            icon.classList.remove('active');
+        }
     }
 
     showColorPalette(targetElement, entityType, currentColor) {

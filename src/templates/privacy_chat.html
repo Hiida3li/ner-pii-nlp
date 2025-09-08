@@ -2374,7 +2374,7 @@
     <link rel="stylesheet" href="/static/css/document-attachment.css?v=20">
     <link rel="stylesheet" href="/static/css/attachment-text-fix.css?v=1">
     <script src="/static/js/entity-dictionary.js"></script>
-    <script src="/static/js/privacy_chat.js?v=101"></script>
+    <script src="/static/js/privacy_chat.js?v=104"></script>
     <script src="/static/js/document-attachment-manager.js?v=16"></script>
     <script>
         // Global function to close document modal
@@ -2613,10 +2613,16 @@
     </style>
 
     <!-- Compact Color Customizer Script -->
-    <script src="/static/js/color_customizer_compact.js?v=2"></script>
+    <script src="/static/js/color_customizer_compact.js?v=4"></script>
     <!-- Auto-close panels to prevent overlap -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Initialize color customizer
+            if (!window.compactColorCustomizer) {
+                window.compactColorCustomizer = new CompactColorCustomizer();
+                console.log('Color customizer initialized for privacy chat');
+            }
+            
             const exportBtn = document.getElementById('export-entities-icon');
             const exportDropdown = document.getElementById('export-dropdown');
 

@@ -1010,6 +1010,9 @@ class PrivacyChat {
                                         console.log('Highlighted content sample:', highlightedContent ? highlightedContent.substring(0, 200) : 'empty');
                                         assistantMessageContent.innerHTML = highlightedContent;
                                     }
+                                    
+                                    // Add click handlers to entities
+                                    this.attachEntityClickHandlers(assistantMessageContent, responseEntities);
                                 }
                             }
                         } catch (e) {
@@ -1272,6 +1275,18 @@ class PrivacyChat {
         // Insert messages at bottom
         this.elements.chatMessages.insertAdjacentHTML('beforeend', messageHtml);
         
+        // Get the newly added message element
+        const allMessages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
+        const newMessage = allMessages[allMessages.length - 1];
+        
+        // Add click handlers to entities in the new message
+        if (newMessage) {
+            const messageContent = newMessage.querySelector('.message-content');
+            if (messageContent) {
+                this.attachEntityClickHandlers(messageContent, entities);
+            }
+        }
+        
         // For user messages, scroll to show ONLY the newest conversation
         if (role === 'user') {
             this.scrollToNewestMessage();
@@ -1281,8 +1296,7 @@ class PrivacyChat {
         }
         
         // Return the added message element for further manipulation if needed
-        const allMessages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
-        return allMessages[allMessages.length - 1];
+        return newMessage;
     }
     
     highlightUserMessage(text, entities, messageData) {
@@ -2272,6 +2286,131 @@ class PrivacyChat {
                 }
             }
         });
+    }
+    
+    attachEntityClickHandlers(container, entities) {
+        // Add click handlers to all entity spans in the container
+        const entityElements = container.querySelectorAll('.pii-entity');
+        
+        entityElements.forEach(element => {
+            // Make the element clickable
+            element.style.cursor = 'pointer';
+            element.style.transition = 'all 0.2s ease';
+            
+            // Add hover effect
+            element.addEventListener('mouseenter', () => {
+                element.style.opacity = '0.8';
+                element.style.transform = 'scale(1.05)';
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                element.style.opacity = '1';
+                element.style.transform = 'scale(1)';
+            });
+            
+            // Add click handler
+            element.addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                // Get the entity type from the element's class
+                const classList = element.classList;
+                let entityType = null;
+                
+                // Map CSS classes to entity types
+                const classToTypeMap = {
+                    'pii-person': 'PER',
+                    'pii-location': 'LOC',
+                    'pii-organization': 'ORG',
+                    'pii-email': 'EMAIL',
+                    'pii-phone': 'PHONE',
+                    'pii-url': 'URL',
+                    'pii-civilid': 'CIVIL-ID',
+                    'pii-passport': 'PASSPORT-ID',
+                    'pii-creditcard': 'CREDIT-CARD'
+                };
+                
+                // Find the entity type from class
+                for (const [className, type] of Object.entries(classToTypeMap)) {
+                    if (classList.contains(className)) {
+                        entityType = type;
+                        break;
+                    }
+                }
+                
+                // If we couldn't determine from class, try to find from entities data
+                if (!entityType && entities) {
+                    const entityText = element.textContent;
+                    const entity = entities.find(e => e.text === entityText);
+                    if (entity) {
+                        entityType = entity.entity_type;
+                    }
+                }
+                
+                // Open color customizer and focus on this entity type
+                this.openColorCustomizerForEntity(entityType);
+            });
+        });
+    }
+    
+    openColorCustomizerForEntity(entityType) {
+        // Check if color customizer exists
+        if (window.compactColorCustomizer) {
+            const panel = document.getElementById('compact-color-panel');
+            const icon = document.getElementById('compact-color-icon');
+            
+            if (panel && icon) {
+                // Check if panel is already open
+                const isOpen = panel.classList.contains('open') || panel.classList.contains('active');
+                
+                if (isOpen) {
+                    // Panel is open, so close it
+                    window.compactColorCustomizer.closeCompactPanel();
+                } else {
+                    // Panel is closed, so open it
+                    window.compactColorCustomizer.isPanelOpen = true;
+                    panel.classList.add('open');
+                    panel.classList.add('active');
+                    icon.classList.add('active');
+                    
+                    // Scroll to the specific entity type in the panel
+                    if (entityType) {
+                        const entityTypeMap = {
+                            'PER': 'person',
+                            'LOC': 'location',
+                            'ORG': 'organization',
+                            'EMAIL': 'email',
+                            'PHONE': 'phone',
+                            'URL': 'url',
+                            'CIVIL-ID': 'civilid',
+                            'PASSPORT-ID': 'passport',
+                            'CREDIT-CARD': 'creditcard'
+                        };
+                        
+                        const mappedType = entityTypeMap[entityType];
+                        if (mappedType) {
+                            // Find and highlight the specific entity color item
+                            const colorItem = document.querySelector(`[data-entity="${mappedType}"]`);
+                            if (colorItem) {
+                                // Scroll it into view
+                                colorItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                
+                                // Add highlight effect
+                                colorItem.style.animation = 'pulse 1s ease-in-out 2';
+                                setTimeout(() => {
+                                    colorItem.style.animation = '';
+                                }, 2000);
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            console.log('Color customizer not initialized. Initializing now...');
+            // Initialize color customizer if not already done
+            window.compactColorCustomizer = new CompactColorCustomizer();
+            // Try again after initialization
+            setTimeout(() => this.openColorCustomizerForEntity(entityType), 100);
+        }
     }
 }
 
