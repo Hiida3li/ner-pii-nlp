@@ -182,7 +182,7 @@ class CompactColorCustomizer {
         iconContainer.style.cssText = `
             position: fixed;
             left: 1.5rem;
-            top: 14rem;
+            top: 13.5rem;
             z-index: 1002;
         `;
 

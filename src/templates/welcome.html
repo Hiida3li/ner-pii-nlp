@@ -6,7 +6,7 @@
 {% block head %}
     <style>
         body {
-            background: #000000;
+            background: #201f27;
             min-height: 100vh;
             position: relative;
             cursor: auto;
@@ -29,7 +29,7 @@
         }
         
         .welcome-hero::before {
-            content: '';
+            display: none;
             position: absolute;
             width: 150%;
             height: 150%;
@@ -64,7 +64,7 @@
             align-items: center;
             justify-content: center;
             animation: logoFloat 6s ease-in-out infinite;
-            filter: drop-shadow(0 10px 30px rgba(152, 16, 250, 0.3));
+            filter: drop-shadow(0 10px 30px rgba(255, 255, 255, 0.3));
         }
         
         @keyframes logoFloat {
