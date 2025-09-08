@@ -234,8 +234,8 @@ class CompactColorCustomizer {
             
             .compact-color-panel {
                 position: absolute;
-                top: 100%;
-                left: 0;
+                top: 0;           /* Align with button top */
+                left: 100%;       /* Position to the right */
                 width: 240px;
                 max-height: 320px;
                 background: linear-gradient(145deg, #2d2b3a, #252331);
