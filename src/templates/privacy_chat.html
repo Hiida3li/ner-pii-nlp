@@ -834,6 +834,8 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+            max-height: 100%;
         }
 
         /* Chat Header for Privacy Toggle - Minimal floating style */
@@ -980,22 +982,37 @@
         /* Chat Messages Area - ChatGPT Style */
         .chat-messages {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: auto !important;
             overflow-x: hidden;
-            padding: 20px 0;
             background: #201f27;
             position: relative;
-            height: 100%;
-            scroll-behavior: auto;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            scroll-behavior: smooth;
+        }
+        
+        /* Force fixed height on the actual element */
+        #chat-messages {
+            height: 500px !important;
+            max-height: calc(100vh - 200px) !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            position: relative;
+        }
+        
+        /* Message wrapper needs proper setup */
+        .message-wrapper {
+            width: 100%;
+            padding: 0.75rem 0;
+            flex-shrink: 0; /* Prevent shrinking */
+            overflow: visible;
+            height: auto;
         }
         
         /* Remove previous conversation styling - keep all messages fully visible */
         
         .chat-messages.has-messages {
-            padding-bottom: 20px;
+            padding: 20px 0;
         }
         
         .chat-messages::-webkit-scrollbar {
@@ -1019,11 +1036,6 @@
             background-clip: padding-box;
         }
 
-        .message-wrapper {
-            width: 100%;
-            padding: 0.75rem 0;
-        }
-        
         .message-wrapper.assistant {
             background: rgba(255, 255, 255, 0.02);
         }

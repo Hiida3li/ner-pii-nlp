@@ -4,8 +4,11 @@
 
 class PrivacyChat {
     constructor() {
+        // Generate a unique numeric session ID for each page load to ensure fresh entity counters
+        // Use timestamp to make it unique per page load
+        this.baseSessionId = Date.now();
         this.sessionCounter = 1;
-        this.currentSession = 1;
+        this.currentSession = this.baseSessionId + 1;
         this.sessions = {};
         // Always start with privacy mode enabled (no localStorage)
         this.privacyMode = true;
@@ -273,9 +276,9 @@ class PrivacyChat {
         // Save current session
         this.sessions[this.currentSession].messages = Array.from(messages).map(m => m.outerHTML);
         
-        // Create new session
+        // Create new session with unique numeric ID
         this.sessionCounter++;
-        this.currentSession = this.sessionCounter;
+        this.currentSession = this.baseSessionId + this.sessionCounter;
         this.initSession();
         
         // Update UI
@@ -448,12 +451,15 @@ class PrivacyChat {
         // Don't abort stream - let it continue in the background
         // Streams will write to their target session's saved messages
         
-        // Save current session
+        // Save current session messages
         const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
         this.sessions[this.currentSession].messages = Array.from(messages).map(m => m.outerHTML);
         
         // Switch to new session
         this.currentSession = sessionId;
+        
+        // Reset backend session to clear entity mappings for the new session
+        this.resetChatEndpoint();
         
         // Load session messages
         if (this.sessions[sessionId].messages.length > 0) {
@@ -576,15 +582,15 @@ class PrivacyChat {
         }
         
         // Always ensure centered input is visible for new chat
-        const centeredInput = document.getElementById('centered-input');
-        if (centeredInput) {
-            centeredInput.style.display = 'block';
+        const centeredInputElement = document.getElementById('centered-input');
+        if (centeredInputElement) {
+            centeredInputElement.style.display = 'block';
         }
         
         // Hide bottom input for new chat
-        const bottomInput = document.getElementById('bottom-input');
-        if (bottomInput) {
-            bottomInput.style.display = 'none';
+        const bottomInputElement = document.getElementById('bottom-input');
+        if (bottomInputElement) {
+            bottomInputElement.style.display = 'none';
         }
         
         // Remove has-messages class
@@ -1142,7 +1148,10 @@ class PrivacyChat {
             // Fallback if no conversation pair exists
             this.elements.chatMessages.insertAdjacentHTML('beforeend', messageHtml);
         }
-        // Don't auto-scroll here - let pushAllContentUp handle scrolling for user messages
+        // Auto-scroll to show new message
+        setTimeout(() => {
+            this.scrollToBottomSmooth();
+        }, 50);
         
         // Return the created element
         const returnPairs = this.elements.chatMessages.querySelectorAll('.conversation-pair');
@@ -1302,14 +1311,11 @@ class PrivacyChat {
         // Insert messages at bottom
         this.elements.chatMessages.insertAdjacentHTML('beforeend', messageHtml);
         
-        // For all messages, handle view appropriately
-        if (role === 'user') {
-            // When user sends a message, just log it
-            console.log('USER MESSAGE ADDED');
-        } else {
-            // For AI responses, keep the view focused on the current conversation
-            console.log('Assistant message added');
-        }
+        // Always scroll to bottom when adding messages
+        // Use setTimeout to ensure DOM has updated
+        setTimeout(() => {
+            this.scrollToBottom();
+        }, 100);
         
         // Return the added message element for further manipulation if needed
         const allMessages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
@@ -1989,7 +1995,8 @@ class PrivacyChat {
             // Fallback if no conversation pair exists
             this.elements.chatMessages.insertAdjacentHTML('beforeend', typingHtml);
         }
-        // Don't auto-scroll for typing indicator
+        // Auto-scroll to show typing indicator
+        this.scrollToBottomSmooth();
     }
     
     hideTypingIndicator() {
@@ -2226,93 +2233,44 @@ class PrivacyChat {
     }
     
     scrollToBottom() {
-        // Smooth animated scroll that pushes content up into invisible area
-        requestAnimationFrame(() => {
-            if (this.elements.chatMessages) {
-                // Use smooth scrolling behavior
-                this.elements.chatMessages.scrollTo({
-                    top: this.elements.chatMessages.scrollHeight,
-                    behavior: 'smooth'
-                });
-            }
-        });
+        // Simple auto-scroll to bottom - Claude-like behavior
+        const container = document.getElementById('chat-messages') || this.elements.chatMessages;
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
     }
     
-    scrollToTop() {
-        // Scroll to top to show only newest conversation
-        requestAnimationFrame(() => {
-            if (this.elements.chatMessages) {
-                this.elements.chatMessages.scrollTop = 0;
-            }
-        });
+    shouldAutoScroll() {
+        // Check if user is near bottom (within 100px)
+        const container = this.elements.chatMessages;
+        if (!container) return true;
+        
+        const threshold = 100;
+        const isNearBottom = 
+            container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+        
+        return isNearBottom;
     }
     
-    pushAllContentUp() {
-        // Don't do anything - scrolling not working as expected
-        return;
+    scrollToBottomSmooth() {
+        // Smooth scroll to bottom
+        const container = this.elements.chatMessages;
+        if (container) {
+            container.scrollTo({
+                top: container.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
     }
     
     scrollToNewestMessage() {
-        // Find the newest user message and smoothly scroll to position it at the very top
-        // This pushes ALL previous content (including previous conversations) 
-        // completely out of the visible area above with smooth animation
-        requestAnimationFrame(() => {
-            if (this.elements.chatMessages) {
-                const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
-                if (messages.length > 0) {
-                    // Find the last user message (newest conversation start)
-                    let newestUserMessage = null;
-                    for (let i = messages.length - 1; i >= 0; i--) {
-                        const message = messages[i];
-                        const isUserMessage = message.querySelector('.message.user');
-                        if (isUserMessage) {
-                            newestUserMessage = message;
-                            break;
-                        }
-                    }
-                    
-                    if (newestUserMessage) {
-                        // Calculate scroll position to put this message at the very top
-                        const messageTop = newestUserMessage.offsetTop;
-                        const paddingTop = parseInt(getComputedStyle(this.elements.chatMessages).paddingTop) || 0;
-                        
-                        // Smooth animated scroll that pushes content up
-                        this.elements.chatMessages.scrollTo({
-                            top: messageTop - paddingTop,
-                            behavior: 'smooth'
-                        });
-                        
-                        console.log('Smoothly scrolled to newest user message at position:', messageTop - paddingTop);
-                    }
-                }
-            }
-        });
+        // Deprecated - just use scrollToBottom instead
+        this.scrollToBottom();
     }
     
     scrollToShowNewMessage() {
-        // Scroll to show the latest message at the very top of the visible area
-        console.log('scrollToShowNewMessage called');
-        requestAnimationFrame(() => {
-            if (this.elements.chatMessages) {
-                const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
-                console.log('Found', messages.length, 'messages');
-                if (messages.length > 0) {
-                    const lastMessage = messages[messages.length - 1];
-                    const messageTop = lastMessage.offsetTop;
-                    console.log('Last message offsetTop:', messageTop);
-                    console.log('Current scrollTop:', this.elements.chatMessages.scrollTop);
-                    console.log('Setting scrollTop to:', messageTop);
-                    
-                    // Position the new message at the very top of the visible area (0px from top)
-                    this.elements.chatMessages.scrollTop = messageTop;
-                    
-                    // Verify the scroll was applied
-                    setTimeout(() => {
-                        console.log('After scroll - scrollTop is now:', this.elements.chatMessages.scrollTop);
-                    }, 50);
-                }
-            }
-        });
+        // Deprecated - just use scrollToBottom instead
+        this.scrollToBottom();
     }
 }
 
