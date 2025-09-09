@@ -1,9 +1,9 @@
 # PII Shield - Advanced Privacy Protection Platform
 
 <div align="center">
-  <img src="/static/icons/orki-logo.png" alt="Orki" width="120">
+  <img src="static/icons/orki-logo.png" alt="PII Shield" width="120">
   
-  <h3>AI-Powered PII Detection & Privacy-Preserving Chat</h3>
+  <h3>🛡️ AI-Powered PII Detection & Privacy-Preserving Chat</h3>
   
   <p>
     <img src="https://img.shields.io/badge/Python-3.8%2B-blue" alt="Python">
@@ -14,214 +14,510 @@
   </p>
 </div>
 
-## Overview
+## 🚀 Overview
 
-**PII Shield** is an enterprise-grade platform for detecting and protecting personally identifiable information (PII) in text and documents. Built with state-of-the-art NLP models and featuring a privacy-preserving chat interface powered by GPT-4, it provides real-time entity detection, document processing, and comprehensive data masking capabilities.
+**PII Shield** is an enterprise-grade platform for detecting and protecting personally identifiable information (PII) in text and documents. Built with state-of-the-art NLP models and featuring a privacy-preserving chat interface, it provides real-time entity detection, document processing, and comprehensive data masking capabilities.
 
-## Key Features
+### ✨ Key Features
 
-### 🤖 Advanced AI Integration
-- **Custom PII-Shield BERT Model**: Specialized for entity detection with high accuracy
-- **GPT-4 Integration**: Privacy-preserving conversations with automatic PII masking
-- **Real-time Processing**: Instant detection with streaming responses
+- **🤖 AI-Powered Detection**: Custom BERT model fine-tuned for PII detection
+- **💬 Privacy Chat**: GPT-4 powered chat with automatic PII masking
+- **📄 Document Processing**: Support for PDF, DOCX, TXT, CSV, MD files
+- **🌍 Multilingual**: Full Arabic and English support with RTL handling
+- **🔒 Zero Data Storage**: No persistent storage of user data
+- **⚡ Real-time Processing**: Instant detection with streaming responses
+- **🎨 Modern UI**: Dark theme with customizable entity colors
 
-### 📄 Document Processing
-- **Multi-format Support**: PDF, DOCX, TXT, CSV, MD files
-- **Drag & Drop Interface**: Intuitive file upload with visual feedback
-- **In-chat Attachments**: Send multiple documents with messages
-- **Entity Detection**: Automatic PII identification in uploaded documents
+## 📋 Table of Contents
 
-### 🌍 Multi-Language Support
-- **Arabic & English**: Full support for both languages
-- **RTL Support**: Proper right-to-left text handling
-- **Arabic Numerals**: Detection of Arabic numerals (١٢٣٤٥٦٧٨٩٠)
+- [Quick Start](#-quick-start)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Usage](#-usage)
+- [Deployment](#-deployment)
+- [API Documentation](#-api-documentation)
+- [Project Structure](#-project-structure)
+- [Contributing](#-contributing)
 
-### 🔒 Privacy Features
-- **One-click Privacy Toggle**: Switch between masked and unmasked views
-- **Secure Masking**: Cryptographically secure placeholder generation
-- **Zero Data Storage**: No persistent storage of user data
-- **Session Isolation**: Independent chat sessions per user
+## 🏃 Quick Start
 
-### 🎨 Modern UI/UX
-- **Dark Theme**: Elegant dark interface with smooth animations
-- **Entity Color Coding**: Visual differentiation for 10+ entity types
-- **Interactive Components**: Color customizer, entity tooltips, statistics
-- **Responsive Design**: Works seamlessly across all devices
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/ner-pii-nlp.git
+cd ner-pii-nlp
 
-## Supported Entity Types
+# Install dependencies
+pip install -r requirements.txt
 
-| Entity | Description | Examples |
-|--------|-------------|----------|
-| 👤 **Person** | Personal names | John Doe, احمد الكندي |
-| 📍 **Location** | Cities, countries, addresses | New York, مسقط |
-| 🏢 **Organization** | Companies, institutions | Google, بنك ضفار |
-| 📧 **Email** | Email addresses | john@example.com |
-| 📱 **Phone** | Phone numbers | 9xxxxxxx, 7xxxxxxx |
-| 🔗 **URL** | Web addresses | https://example.com |
-| 🆔 **Civil ID** | Civil identification | 9-12 digit patterns |
-| 🛂 **Passport** | Passport numbers | AB1234567 |
-| 💳 **Credit Card** | Card numbers | 4xxx xxxx xxxx xxxx |
-| 💰 **Bank Account** | Account numbers | Banking formats |
+# Set up environment variables
+cp .env.example .env
+# Edit .env and add your OpenAI API key
 
-## Installation
+# Run the application
+python -m uvicorn src.main:app --host 0.0.0.0 --port 8000
+```
+
+Visit `http://localhost:8000` to access the application.
+
+## 💻 Installation
 
 ### Prerequisites
-- Python 3.8 or higher
-- 4GB+ RAM recommended
-- OpenAI API key (for chat functionality)
 
-### Quick Start
+- **Python**: 3.8 or higher
+- **Memory**: 4GB RAM minimum (8GB recommended)
+- **Storage**: 2GB for models and dependencies
+- **OpenAI API Key**: Required for chat functionality
 
-1. **Clone the repository**
+### Step-by-Step Installation
+
+1. **Clone the Repository**
 ```bash
 git clone https://github.com/yourusername/ner-pii-nlp.git
 cd ner-pii-nlp
 ```
 
-2. **Install dependencies**
+2. **Create Virtual Environment** (Recommended)
 ```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. **Install Dependencies**
+```bash
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-3. **Configure environment**
+4. **Download Model Checkpoint**
+```bash
+# Ensure the model file exists at:
+# checkpoints/pii_shield_002v.pt
+# Contact the repository owner if the model is not included
+```
+
+5. **Configure Environment Variables**
 ```bash
 cp .env.example .env
-# Edit .env and add your OpenAI API key
 ```
 
-4. **Verify model checkpoint**
-```
-Ensure the model file exists at:
-checkpoints/pii_shield_002v.pt
+Edit `.env` file:
+```env
+# Required for chat functionality
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Optional configuration
+DEBUG=False
+HOST=0.0.0.0
+PORT=8000
 ```
 
-5. **Run the application**
+## ⚙️ Configuration
+
+### Environment Variables
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `OPENAI_API_KEY` | OpenAI API key for GPT-4 | - | Yes (for chat) |
+| `DEBUG` | Debug mode | `True` | No |
+| `HOST` | Server host | `0.0.0.0` | No |
+| `PORT` | Server port | `8000` | No |
+| `CONFIDENCE_THRESHOLD` | Entity detection threshold | `0.75` | No |
+
+### Model Configuration
+
+The application uses multiple AI models:
+
+1. **PII Detection Model**: Custom BERT model (`pii_shield_002v.pt`)
+2. **Arabic NER Model**: CAMeL-Lab BERT for Arabic text
+3. **GPT-4**: For privacy-preserving chat responses
+
+## 🎯 Usage
+
+### Running the Application
+
+**Development Mode** (with auto-reload):
 ```bash
-python src/main.py
+python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-The application will be available at `http://localhost:9000`
-
-To use a different port:
+**Production Mode**:
 ```bash
-python src/main.py --port 8001
+python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
-## Project Structure
+### Features Overview
+
+#### 1. PII Detection Interface (`/app`)
+- Enter or paste text containing PII
+- View real-time entity detection
+- Color-coded entity highlighting
+- Export results as JSON/CSV
+
+#### 2. Privacy Chat (`/privacy-chat`)
+- Chat with GPT-4 while protecting your privacy
+- Automatic PII masking in conversations
+- Document attachment support
+- Toggle between masked/unmasked views
+- Export conversation entities
+
+#### 3. Document Processing
+- Drag & drop file upload
+- Batch processing support
+- Extract text from various formats
+- Automatic PII detection in documents
+
+### Supported Entity Types
+
+| Entity | Icon | Description | Examples |
+|--------|------|-------------|----------|
+| **Person** | 👤 | Personal names | John Doe, محمد علي |
+| **Location** | 📍 | Places, addresses | New York, مسقط |
+| **Organization** | 🏢 | Companies, institutions | Google, بنك مسقط |
+| **Email** | 📧 | Email addresses | user@example.com |
+| **Phone** | 📱 | Phone numbers | 9xxxxxxx, +968xxxxxxxx |
+| **URL** | 🔗 | Web addresses | https://example.com |
+| **Civil ID** | 🆔 | Civil identification | 123456789 |
+| **Passport** | 🛂 | Passport numbers | AB1234567 |
+| **Credit Card** | 💳 | Card numbers | 4xxx-xxxx-xxxx-xxxx |
+| **Bank Account** | 💰 | Account numbers | IBAN, account formats |
+
+## 🚢 Deployment
+
+### Local Deployment
+
+```bash
+# Using the quick deploy script
+./quick_deploy.sh
+```
+
+### Docker Deployment
+
+```bash
+# Build the Docker image
+docker build -t pii-shield .
+
+# Run with Docker
+docker run -d \
+  --name pii-shield \
+  -p 8000:8000 \
+  --env-file .env \
+  pii-shield
+
+# Or use Docker Compose
+docker-compose up -d
+```
+
+### Production Deployment with Tailscale
+
+Deploy your app publicly using Tailscale Funnel:
+
+1. **Prepare for Deployment**
+```bash
+# Create deployment package
+tar -czf deploy-package.tar.gz \
+  --exclude='*.pyc' \
+  --exclude='__pycache__' \
+  --exclude='.git' \
+  --exclude='venv' \
+  src/ requirements.txt
+
+# Transfer to server
+scp deploy-package.tar.gz user@server:~/
+```
+
+2. **On the Server**
+```bash
+# Extract and setup
+mkdir -p ~/ner-pii-nlp
+cd ~/ner-pii-nlp
+tar -xzf ~/deploy-package.tar.gz
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Configure environment
+nano .env  # Add your OpenAI API key
+```
+
+3. **Install Tailscale**
+```bash
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up
+```
+
+4. **Create Systemd Service**
+```bash
+sudo nano /etc/systemd/system/pii-shield.service
+```
+
+Add:
+```ini
+[Unit]
+Description=PII Shield Application
+After=network.target
+
+[Service]
+Type=simple
+User=your-username
+WorkingDirectory=/home/your-username/ner-pii-nlp
+Environment="PATH=/home/your-username/ner-pii-nlp/venv/bin"
+ExecStart=/home/your-username/ner-pii-nlp/venv/bin/python -m uvicorn src.main:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
+5. **Enable Public Access**
+```bash
+# Start the service
+sudo systemctl enable pii-shield
+sudo systemctl start pii-shield
+
+# Enable Tailscale Funnel
+sudo tailscale serve --bg --http 8000 / http://localhost:8000
+sudo tailscale funnel 8000
+```
+
+Your app will be accessible at: `https://[your-machine].[tailnet].ts.net`
+
+### Cloud Deployment Options
+
+- **AWS EC2**: Use the systemd service approach
+- **Google Cloud Run**: Deploy using Docker
+- **Azure App Service**: Deploy as a Python web app
+- **Heroku**: Use the included `Procfile`
+- **DigitalOcean App Platform**: Deploy from GitHub
+
+## 📡 API Documentation
+
+### Core Endpoints
+
+#### Health Check
+```http
+GET /health
+```
+Response:
+```json
+{
+  "status": "healthy",
+  "service": "PII-Shield"
+}
+```
+
+#### Extract Entities
+```http
+POST /api/extract
+Content-Type: application/json
+
+{
+  "text": "John Doe's email is john@example.com",
+  "model_version": "v2"
+}
+```
+Response:
+```json
+{
+  "highlighted_text": "<span class='entity-per'>John Doe</span>'s email is <span class='entity-email'>john@example.com</span>",
+  "entities": [
+    {
+      "text": "John Doe",
+      "entity_type": "PER",
+      "start": 0,
+      "end": 8
+    },
+    {
+      "text": "john@example.com",
+      "entity_type": "EMAIL",
+      "start": 21,
+      "end": 37
+    }
+  ],
+  "entity_counts": {
+    "PER": 1,
+    "EMAIL": 1
+  }
+}
+```
+
+#### Privacy Chat
+```http
+POST /api/privacy-chat
+Content-Type: application/json
+
+{
+  "message": "My name is John and I live in New York",
+  "privacy_mode": true,
+  "session_id": 1
+}
+```
+Response:
+```json
+{
+  "original_message": "My name is John and I live in New York",
+  "masked_message": "My name is Person1 and I live in Location1",
+  "display_response": "Hello Person1! How's the weather in Location1?",
+  "unmasked_response": "Hello John! How's the weather in New York?",
+  "user_entities": [...],
+  "response_entities": [...]
+}
+```
+
+#### Document Upload
+```http
+POST /api/document/upload
+Content-Type: multipart/form-data
+
+session_id: 1
+file: [binary]
+```
+
+### WebSocket Streaming
+
+For real-time chat responses:
+```javascript
+const response = await fetch('/api/privacy-chat/stream', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ message: text, privacy_mode: true })
+});
+
+const reader = response.body.getReader();
+// Process streaming response
+```
+
+## 📁 Project Structure
 
 ```
 ner-pii-nlp/
 ├── src/
-│   ├── main.py                          # FastAPI application
-│   ├── config.py                        # Configuration
+│   ├── main.py                    # FastAPI application entry point
+│   ├── config.py                  # Application configuration
 │   ├── models/
-│   │   ├── pii_shield_model.py         # PII detection engine
-│   │   ├── entity_processor.py         # Entity processing
-│   │   ├── document_processor.py       # Document handling
-│   │   └── model_factory.py            # Model management
+│   │   ├── pii_shield_model.py    # Core PII detection model
+│   │   ├── camel_bert_model.py    # Arabic NER model
+│   │   ├── entity_processor.py    # Entity processing utilities
+│   │   ├── entity_config.py       # Entity type definitions
+│   │   ├── document_processor.py  # Document handling
+│   │   └── model_factory.py       # Model management
 │   ├── static/
-│   │   ├── css/                        # Stylesheets
-│   │   ├── js/                         # JavaScript modules
-│   │   └── icons/                      # UI icons
-│   └── templates/                      # HTML templates
-├── checkpoints/                         # Model weights
-├── requirements.txt                     # Dependencies
-└── README.md                           # Documentation
+│   │   ├── css/                   # Stylesheets
+│   │   ├── js/                    # JavaScript modules
+│   │   │   ├── privacy_chat.js    # Chat interface logic
+│   │   │   └── document-*.js      # Document handling
+│   │   └── icons/                 # UI icons and assets
+│   └── templates/
+│       ├── welcome.html            # Landing page
+│       ├── index.html              # PII detector interface
+│       └── privacy_chat.html       # Chat interface
+├── checkpoints/
+│   └── pii_shield_002v.pt         # Model weights
+├── requirements.txt                # Python dependencies
+├── docker-compose.yml              # Docker configuration
+├── Dockerfile                      # Container definition
+├── .env.example                    # Environment template
+├── deploy.sh                       # Deployment script
+├── server_setup.sh                 # Server setup automation
+└── README.md                       # This file
 ```
 
-## API Reference
+## 🧪 Testing
 
-### Main Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Landing page |
-| GET | `/app` | PII detector interface |
-| GET | `/privacy-chat` | Privacy chat interface |
-
-### API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/extract` | Extract entities from text |
-| POST | `/api/privacy-chat` | Send chat message |
-| POST | `/api/privacy-chat/stream` | Stream chat response |
-| POST | `/api/upload-document` | Upload and process document |
-| POST | `/api/process-document` | Extract text from document |
-
-## Usage Guide
-
-### PII Detection
-1. Navigate to `/app`
-2. Enter text containing PII
-3. Click "Extract Entities"
-4. View color-coded entities and statistics
-
-### Privacy Chat
-1. Go to `/privacy-chat`
-2. Type messages - PII is automatically masked
-3. Upload documents via drag & drop or paperclip icon
-4. Toggle privacy mode with lock icon
-5. Export conversation entities as needed
-
-### Document Upload
-- **Supported formats**: PDF, DOCX, TXT, CSV, MD
-- **Max file size**: 10MB
-- **Multiple files**: Select multiple files at once
-- **Preview**: Click document cards to view content
-
-## Docker Deployment
-
+Run tests:
 ```bash
-# Build image
-docker build -t pii-shield .
+# Unit tests
+pytest tests/
 
-# Run container
-docker run -p 9000:9000 --env-file .env pii-shield
+# With coverage
+pytest --cov=src tests/
 
-# Using docker-compose
-docker-compose up -d
+# Integration tests
+pytest tests/integration/
 ```
 
-## Security Features
+## 🔧 Troubleshooting
 
-- **No Data Persistence**: Zero storage of user data
-- **Secure Masking**: Cryptographic placeholder generation
-- **Session Isolation**: Independent user sessions
-- **Input Validation**: Multi-layer validation
-- **File Type Checking**: Strict file type validation
-- **Size Limits**: Configurable file size restrictions
+### Common Issues
 
-## Recent Updates
+**1. Model Loading Error**
+```
+Error: Model file not found at checkpoints/pii_shield_002v.pt
+```
+Solution: Ensure model file exists or contact repository owner
 
-### Version 3.1
-- ✅ Multi-document upload support
-- ✅ Document attachment cards in chat
-- ✅ Enhanced privacy mode for documents
-- ✅ Improved UI with customizable colors
-- ✅ Better Arabic/English support
-- ✅ Performance optimizations
+**2. OpenAI API Error**
+```
+Error: OpenAI API key not configured
+```
+Solution: Add your API key to `.env` file
 
-## Contributing
+**3. Port Already in Use**
+```
+Error: [Errno 48] Address already in use
+```
+Solution:
+```bash
+# Find and kill process using port 8000
+lsof -i :8000
+kill -9 <PID>
+```
 
-Contributions are welcome! Please follow these steps:
+**4. Memory Error**
+```
+Error: CUDA out of memory
+```
+Solution: Run on CPU or reduce batch size
+
+### Logs and Debugging
+
+View application logs:
+```bash
+# Development
+python -m uvicorn src.main:app --log-level debug
+
+# Production (systemd)
+sudo journalctl -u pii-shield -f
+
+# Docker
+docker logs -f pii-shield
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
 
 1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## License
+### Development Guidelines
+
+- Follow PEP 8 style guide
+- Add unit tests for new features
+- Update documentation as needed
+- Ensure all tests pass before submitting PR
+
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
-- OpenAI for GPT-4 API
-- Hugging Face Transformers
-- FastAPI framework
-- PyTorch community
+- **OpenAI** for GPT-4 API
+- **Hugging Face** for Transformers library
+- **CAMeL Lab** for Arabic BERT model
+- **FastAPI** for the web framework
+- **PyTorch** community
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/yourusername/ner-pii-nlp/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/ner-pii-nlp/discussions)
+- **Email**: support@example.com
 
 ---
 

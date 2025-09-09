@@ -2293,18 +2293,8 @@ class PrivacyChat {
         const entityElements = container.querySelectorAll('.pii-entity');
         
         entityElements.forEach(element => {
-            // Make the element clickable
+            // Make the element clickable - cursor only, no effects
             element.style.cursor = 'pointer';
-            element.style.transition = 'all 0.2s ease';
-            
-            // Remove hover effects - no opacity change or transform
-            element.addEventListener('mouseenter', () => {
-                // Just keep the pointer cursor, no visual changes
-            });
-            
-            element.addEventListener('mouseleave', () => {
-                // No changes on leave either
-            });
             
             // Add click handler
             element.addEventListener('click', (e) => {

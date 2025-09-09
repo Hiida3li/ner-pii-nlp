@@ -978,7 +978,7 @@
 
         .message-wrapper {
             width: 100%;
-            padding: 0.75rem 0;
+            padding: 1rem 0;
         }
         
         .message-wrapper.assistant {
@@ -1208,19 +1208,8 @@
             display: inline-block;
             vertical-align: baseline;
             line-height: inherit;
-            animation: fadeInHighlight 0.3s ease-in-out forwards;
+            /* No animation - entities appear instantly without effects */
             opacity: 1; /* Ensure entities are visible by default */
-        }
-        
-        @keyframes fadeInHighlight {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
         }
         
         /* Suppress animations during privacy toggle */
@@ -1271,10 +1260,11 @@
         .assistant .message-text strong, .assistant .message-text b {
             color: #fafafa;
         }
-        
+
         .pii-entity {
-            user-select: all;
-            -webkit-user-select: all;
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: pointer;
         }
         
         .message-text.ltr {
@@ -1308,7 +1298,7 @@
         .pii-entity {
             font-weight: 600;
             display: inline;
-            transition: all 0.2s ease;
+            /* No transition effects */
             position: relative;
             letter-spacing: 0.3px;
             opacity: 1 !important;
@@ -1317,6 +1307,7 @@
             margin: 0;
             border: none;
             box-shadow: none !important;
+            text-decoration: none; /* No underline by default */
             /* Add bidirectional isolation for mixed RTL/LTR text */
             unicode-bidi: isolate;
         }
@@ -1348,11 +1339,10 @@
         }
         
         .pii-entity:hover {
-            text-decoration: underline;
-            text-decoration-color: currentColor;
-            text-decoration-thickness: 1px;
-            text-underline-offset: 2px;
             cursor: pointer;
+            text-decoration: underline; /* Show underline on hover */
+            text-decoration-thickness: 1.5px;
+            text-underline-offset: 2px;
         }
         
         /* Animation keyframe is already defined above as fadeInHighlight */
@@ -1360,11 +1350,11 @@
         
         /* Ensure good contrast in both light and dark contexts */
         .message.user .pii-entity {
-            filter: brightness(1.1);
+            /* No filter effects */
         }
         
         .message.assistant .pii-entity {
-            filter: brightness(0.95);
+            /* No filter effects */
         }
 
         /* Person entities - Text color only */
@@ -2374,7 +2364,7 @@
     <link rel="stylesheet" href="/static/css/document-attachment.css?v=20">
     <link rel="stylesheet" href="/static/css/attachment-text-fix.css?v=1">
     <script src="/static/js/entity-dictionary.js"></script>
-    <script src="/static/js/privacy_chat.js?v=104"></script>
+    <script src="/static/js/privacy_chat.js?v=105"></script>
     <script src="/static/js/document-attachment-manager.js?v=16"></script>
     <script>
         // Global function to close document modal

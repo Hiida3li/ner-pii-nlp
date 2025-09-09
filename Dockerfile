@@ -1,5 +1,5 @@
 # Multi-stage build for security and smaller image size
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -51,13 +51,13 @@ ENV HOME=/app
 # Security: Don't run as root
 USER appuser
 
-# Health check
+# Health check - FIXED: Changed to port 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:9000/health')" || exit 1
+    CMD python -c "import requests; requests.get('http://localhost:8000/health')" || exit 1
 
-# Expose port (informational)
-EXPOSE 9000
+# Expose port - FIXED: Changed to 8000
+EXPOSE 8000
 
-# Use exec form to properly handle signals
+# Use exec form to properly handle signals - FIXED: Changed to port 8000
 ENTRYPOINT ["python"]
-CMD ["-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "9000"]
+CMD ["-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]

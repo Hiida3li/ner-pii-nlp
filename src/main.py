@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, Stre
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, Dict, Optional, Tuple, Union
 import torch
 from transformers import AutoTokenizer, AutoModelForTokenClassification
@@ -75,6 +76,8 @@ templates = Jinja2Templates(directory="src/templates")
 
 # Pydantic models for API
 class TextRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     text: str
     model_version: str
 
@@ -88,6 +91,11 @@ class TextResponse(BaseModel):
     highlighted_text: str
     entities: List[EntityResult]
     entity_counts: Dict[str, int]
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Docker and monitoring services"""
+    return JSONResponse({"status": "healthy", "service": "PII-Shield"})
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -246,6 +254,7 @@ class SimpleChatbot:
         self.conversation_history = []  # Store conversation history for context
         self.max_history_length = 10  # Keep last 10 messages for context
         self.document_context = None  # Store current document context
+        logger.info(f"SimpleChatbot initialized with API key: {'***' + (self.api_key[-4:] if self.api_key else 'None')}")
         logger.info(f"SimpleChatbot initialized with fresh entity_counters: {self.entity_counters}")
         logger.info(f"SimpleChatbot initialized with empty entity_mappings: {len(self.entity_mappings)} items")
         logger.info(f"SimpleChatbot initialized with empty reverse_mappings: {len(self.reverse_mappings)} items")
@@ -376,7 +385,7 @@ class SimpleChatbot:
         """Get AI response using OpenAI with Omani cultural context"""
         try:
             if not self.api_key:
-                logger.error("No OpenAI API key found")
+                logger.error(f"No OpenAI API key found. API key value: '{self.api_key}' (length: {len(self.api_key or '')})")
                 return self.fallback_response(masked_message)
             
             logger.info(f"Calling OpenAI with masked message: {masked_message}")
@@ -460,6 +469,8 @@ Respond naturally as if you were having a conversation with a friend who asked f
                 return ai_response
             else:
                 logger.error(f"OpenAI API error: {response.status_code} - {response.text}")
+                logger.error(f"Request headers: {headers}")
+                logger.error(f"Request data: {data}")
                 return self.fallback_response(masked_message)
             
         except Exception as e:
@@ -1757,6 +1768,6 @@ async def export_entities(session_id: int = 1, format: str = "json"):
 
 
 if __name__ == "__main__":
-    logger.info(f"Starting application on port 9000")
-    uvicorn.run("main:app", host="0.0.0.0", port=9000, reload=True)
+    logger.info(f"Starting application on port 8000")
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
     

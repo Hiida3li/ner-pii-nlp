@@ -1,6 +1,6 @@
 import torch
 import os
-import logging
+import logging as python_logging
 import re
 from transformers import AutoTokenizer, AutoModelForTokenClassification
 from typing import List, Tuple, Dict, Optional
@@ -8,8 +8,11 @@ from src.models.model_interface import ModelInterface
 from src.models.model_config import ModelConfig
 from src.config import Config
 from src.models.label_mapping import LabelProcessor
+import warnings
+from transformers import logging as transformers_logging
+transformers_logging.set_verbosity_error()
 
-logger = logging.getLogger(__name__)
+logger = python_logging.getLogger(__name__)
 
 class PIIShieldModel(ModelInterface):
     """Model class for handling the PII Shield models
@@ -330,7 +333,7 @@ class PIIShieldModel(ModelInterface):
             
             # Load checkpoint weights
             try:
-                checkpoint = torch.load(checkpoint_path, map_location="cpu")
+                checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
                 if "model_state_dict" not in checkpoint:
                     logger.error(f"Invalid checkpoint file: 'model_state_dict' not found in {checkpoint_path}")
                     return False
