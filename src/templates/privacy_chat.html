@@ -2483,8 +2483,9 @@
                 // Close dropdown
                 document.getElementById('export-dropdown').classList.remove('show');
                 
-                // Get session ID
-                const sessionId = localStorage.getItem('session_id') || '1';
+                // Get session ID from the PrivacyChat instance
+                const sessionId = window.privacyChat ? window.privacyChat.currentSession : '1';
+                console.log('Exporting entities for session:', sessionId);
                 
                 // Fetch entities from the API
                 const response = await fetch(`/api/privacy-chat/export-entities?session_id=${sessionId}&format=${format}`);
