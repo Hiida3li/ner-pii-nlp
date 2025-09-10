@@ -890,11 +890,15 @@ async def upload_document(session_id: int, file: UploadFile = File(...)):
         entity_counts = entity_processor.get_entity_stats(entities_for_processor)
         logger.info(f"Entity highlighting time: {(time.time() - highlight_start) * 1000:.2f}ms")
         
-        # Create masked version of text using SimpleChatbot's masking logic
+        # Create masked version of text using a TEMPORARY chatbot to avoid affecting session counters
         mask_start = time.time()
-        chatbot = SimpleChatbot()
-        masked_text = chatbot.mask_entities(result['text'], entities)
+        # Create a temporary chatbot just for document masking
+        # This ensures document uploads don't affect the main chat session's entity counters
+        temp_chatbot = SimpleChatbot()
+        logger.info(f"Created temporary chatbot for document upload masking (session {session_id})")
+        masked_text = temp_chatbot.mask_entities(result['text'], entities)
         logger.info(f"Text masking time: {(time.time() - mask_start) * 1000:.2f}ms")
+        # Note: temp_chatbot goes out of scope and is garbage collected, not affecting the session
         
         # Store document in session
         storage_start = time.time()
@@ -1042,11 +1046,15 @@ async def upload_multiple_documents(session_id: int, files: List[UploadFile] = F
                 entity_counts = entity_processor.get_entity_stats(entities_for_processor)
                 logger.info(f"Document {file_index + 1} highlighting time: {(time.time() - highlight_start) * 1000:.2f}ms")
                 
-                # Create masked version of text
+                # Create masked version of text using a TEMPORARY chatbot to avoid affecting session counters
                 mask_start = time.time()
-                chatbot = SimpleChatbot()
-                masked_text = chatbot.mask_entities(result['text'], entities)
+                # Create a temporary chatbot just for document masking
+                # This ensures document uploads don't affect the main chat session's entity counters
+                temp_chatbot = SimpleChatbot()
+                logger.info(f"Created temporary chatbot for multi-document upload masking (session {session_id}, doc {file_index + 1})")
+                masked_text = temp_chatbot.mask_entities(result['text'], entities)
                 logger.info(f"Document {file_index + 1} masking time: {(time.time() - mask_start) * 1000:.2f}ms")
+                # Note: temp_chatbot goes out of scope and is garbage collected, not affecting the session
                 
                 # Store document data
                 doc_data = {
@@ -1222,6 +1230,10 @@ async def get_supported_formats():
 async def privacy_chat_page(request: Request):
     """Privacy chat interface"""
     logger.info("Privacy chat page accessed")
+    
+    # Note: Chatbot session is now managed by the frontend's reset endpoint
+    # which is called when the page loads, ensuring a clean start
+    
     response = templates.TemplateResponse("privacy_chat.html", {"request": request})
     # Add no-cache headers to prevent browser caching
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
@@ -1391,12 +1403,13 @@ async def privacy_chat_stream(request: PrivacyChatRequest):
     """Handle chat messages with streaming response"""
     session_id = request.session_id
     
-    # Get or create chatbot
+    # Get or create chatbot - always use existing session to maintain proper entity counters
     if session_id not in chatbot_sessions:
         chatbot_sessions[session_id] = SimpleChatbot()
         logger.info(f"Created new chatbot for session {session_id}")
     
     chatbot = chatbot_sessions[session_id]
+    logger.info(f"Using chatbot for session {session_id} with {len(chatbot.entity_counters)} entity types tracked")
     
     async def generate():
         try:
@@ -1623,6 +1636,12 @@ async def reset_session(request: dict):
     # Always create a fresh chatbot for reset
     chatbot_sessions[session_id] = SimpleChatbot()
     logger.info(f"Reset chat session {session_id} - created new chatbot instance")
+    
+    # IMPORTANT: Also clear document sessions to prevent entity accumulation
+    # from previously uploaded documents
+    if session_id in document_sessions:
+        logger.info(f"Clearing document session for session {session_id}")
+        del document_sessions[session_id]
     
     # Verify the new chatbot is clean
     new_bot = chatbot_sessions[session_id]
