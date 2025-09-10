@@ -513,16 +513,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **FastAPI** for the web framework
 - **PyTorch** community
 
-## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/ner-pii-nlp/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/ner-pii-nlp/discussions)
-- **Email**: support@example.com
-
----
 
 <div align="center">
-  <strong>Built with ❤️ by Orki Team</strong>
+  <strong>Built by Orki Team</strong>
   <br>
   <a href="https://orki.ai">https://orki.ai</a>
 </div>

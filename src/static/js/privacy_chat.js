@@ -2182,6 +2182,11 @@ class PrivacyChat {
                     messageText.textContent = contentToShow;
                 }
             }
+            
+            // Re-attach entity click handlers after updating the message content
+            if (entities && entities.length > 0 && messageText.innerHTML) {
+                this.attachEntityClickHandlers(messageContent, entities);
+            }
         });
         
         console.log('=== updateMessagesPrivacyView complete');
