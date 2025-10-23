@@ -2,21 +2,27 @@
 
 <div align="center">
   <img src="static/icons/orki-logo.png" alt="PII Shield" width="120">
-  
+
   <h3>🛡️ AI-Powered PII Detection & Privacy-Preserving Chat</h3>
-  
+
   <p>
     <img src="https://img.shields.io/badge/Python-3.8%2B-blue" alt="Python">
-    <img src="https://img.shields.io/badge/FastAPI-0.104%2B-green" alt="FastAPI">
-    <img src="https://img.shields.io/badge/PyTorch-2.0%2B-orange" alt="PyTorch">
+    <img src="https://img.shields.io/badge/FastAPI-0.104.1-green" alt="FastAPI">
+    <img src="https://img.shields.io/badge/PyTorch-2.1.0-orange" alt="PyTorch">
     <img src="https://img.shields.io/badge/OpenAI-GPT--4-purple" alt="OpenAI">
     <img src="https://img.shields.io/badge/License-MIT-red" alt="License">
+  </p>
+
+  <p>
+    <strong>🌐 Live Demo:</strong> <a href="https://chat.orki.ai/privacy-chat">https://chat.orki.ai/privacy-chat</a>
   </p>
 </div>
 
 ## 🚀 Overview
 
 **PII Shield** is an enterprise-grade platform for detecting and protecting personally identifiable information (PII) in text and documents. Built with state-of-the-art NLP models and featuring a privacy-preserving chat interface, it provides real-time entity detection, document processing, and comprehensive data masking capabilities.
+
+The application is currently deployed and available at **https://chat.orki.ai/privacy-chat**
 
 ### ✨ Key Features
 
@@ -43,8 +49,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ner-pii-nlp.git
-cd ner-pii-nlp
+git clone <repository-url>
+cd ner-pii-nlp-5
 
 # Install dependencies
 pip install -r requirements.txt
@@ -54,10 +60,12 @@ cp .env.example .env
 # Edit .env and add your OpenAI API key
 
 # Run the application
-python -m uvicorn src.main:app --host 0.0.0.0 --port 8000
+PYTHONPATH=. python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 Visit `http://localhost:8000` to access the application.
+
+**Or try the live demo:** [https://chat.orki.ai/privacy-chat](https://chat.orki.ai/privacy-chat)
 
 ## 💻 Installation
 
@@ -72,8 +80,8 @@ Visit `http://localhost:8000` to access the application.
 
 1. **Clone the Repository**
 ```bash
-git clone https://github.com/yourusername/ner-pii-nlp.git
-cd ner-pii-nlp
+git clone <repository-url>
+cd ner-pii-nlp-5
 ```
 
 2. **Create Virtual Environment** (Recommended)
@@ -88,11 +96,12 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-4. **Download Model Checkpoint**
+4. **Verify Model Checkpoint**
 ```bash
 # Ensure the model file exists at:
 # checkpoints/pii_shield_002v.pt
-# Contact the repository owner if the model is not included
+# This file should be included in the repository (1.3 GB)
+ls -lh checkpoints/pii_shield_002v.pt
 ```
 
 5. **Configure Environment Variables**
@@ -137,12 +146,12 @@ The application uses multiple AI models:
 
 **Development Mode** (with auto-reload):
 ```bash
-python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+PYTHONPATH=. python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 **Production Mode**:
 ```bash
-python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers 4
+PYTHONPATH=. python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
 ### Features Overview
@@ -183,10 +192,18 @@ python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers 4
 
 ## 🚢 Deployment
 
+### Production Deployment
+
+The application is currently deployed and running at:
+- **Live URL**: [https://chat.orki.ai/privacy-chat](https://chat.orki.ai/privacy-chat)
+- **Main Interface**: `/privacy-chat` - Privacy-preserving chat interface
+- **PII Detector**: `/app` - Entity detection interface
+- **Welcome Page**: `/` - Landing page
+
 ### Local Deployment
 
 ```bash
-# Using the quick deploy script
+# Using the quick deploy script (if available)
 ./quick_deploy.sh
 ```
 
@@ -391,9 +408,9 @@ const reader = response.body.getReader();
 ## 📁 Project Structure
 
 ```
-ner-pii-nlp/
+ner-pii-nlp-5/
 ├── src/
-│   ├── main.py                    # FastAPI application entry point
+│   ├── main.py                    # FastAPI application entry point (1654+ lines)
 │   ├── config.py                  # Application configuration
 │   ├── models/
 │   │   ├── pii_shield_model.py    # Core PII detection model
@@ -401,7 +418,8 @@ ner-pii-nlp/
 │   │   ├── entity_processor.py    # Entity processing utilities
 │   │   ├── entity_config.py       # Entity type definitions
 │   │   ├── document_processor.py  # Document handling
-│   │   └── model_factory.py       # Model management
+│   │   ├── model_factory.py       # Model management
+│   │   └── model_config.py        # Model configuration settings
 │   ├── static/
 │   │   ├── css/                   # Stylesheets
 │   │   ├── js/                    # JavaScript modules
@@ -409,17 +427,17 @@ ner-pii-nlp/
 │   │   │   └── document-*.js      # Document handling
 │   │   └── icons/                 # UI icons and assets
 │   └── templates/
+│       ├── base.html               # Base template
 │       ├── welcome.html            # Landing page
 │       ├── index.html              # PII detector interface
-│       └── privacy_chat.html       # Chat interface
+│       └── privacy_chat.html       # Privacy chat interface
 ├── checkpoints/
-│   └── pii_shield_002v.pt         # Model weights
+│   └── pii_shield_002v.pt         # Model weights (1.3 GB)
 ├── requirements.txt                # Python dependencies
 ├── docker-compose.yml              # Docker configuration
 ├── Dockerfile                      # Container definition
+├── DOCKER_DEPLOYMENT.md            # Docker deployment guide
 ├── .env.example                    # Environment template
-├── deploy.sh                       # Deployment script
-├── server_setup.sh                 # Server setup automation
 └── README.md                       # This file
 ```
 
