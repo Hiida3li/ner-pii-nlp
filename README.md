@@ -1,8 +1,5 @@
 # PII Shield - Advanced Privacy Protection Platform
 
-<div align="center">
-  <img src="static/icons/orki-logo.png" alt="PII Shield" width="120">
-
   <h3>🛡️ AI-Powered PII Detection & Privacy-Preserving Chat</h3>
 
   <p>
