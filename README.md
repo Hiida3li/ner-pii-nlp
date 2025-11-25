@@ -179,9 +179,9 @@ PYTHONPATH=. python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers
 
 | Entity | Icon | Description | Examples |
 |--------|------|-------------|----------|
-| **Person** | 👤 | Personal names | John Doe, محمد علي |
-| **Location** | 📍 | Places, addresses | New York, مسقط |
-| **Organization** | 🏢 | Companies, institutions | Google, بنك مسقط |
+| **Person** | 👤 | Personal names |  محمد بن سليم الحارثي |
+| **Location** | 📍 | Places, addresses | قرية السجورة ولاية نزوى, مسقط |
+| **Organization** | 🏢 | Companies, institutions | محمد بن خليل للتجارة والمقاولات, بنك مسقط |
 | **Email** | 📧 | Email addresses | user@example.com |
 | **Phone** | 📱 | Phone numbers | 9xxxxxxx, +968xxxxxxxx |
 | **URL** | 🔗 | Web addresses | https://example.com |
@@ -532,9 +532,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **PyTorch** community
 
 
-
-<div align="center">
-  <strong>Built by Orki Team</strong>
-  <br>
-  <a href="https://orki.ai">https://orki.ai</a>
-</div>
