@@ -224,9 +224,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - PyTorch community
 
 ---
-
-<div align="center">
-  <strong>Built by Orki Team</strong>
-  <br>
-  <a href="https://orki.ai">https://orki.ai</a>
-</div>
