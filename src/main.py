@@ -14,6 +14,7 @@ from contextlib import asynccontextmanager
 import re
 import openai
 from openai import OpenAI
+import google.generativeai as genai
 from dotenv import load_dotenv
 import requests
 import asyncio
@@ -248,14 +249,21 @@ class PrivacyChatResponse(BaseModel):
 
 class SimpleChatbot:
     def __init__(self):
-        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.api_key = os.getenv("GOOGLE_API_KEY")
         self.entity_mappings = {}  # Original -> Masked
         self.reverse_mappings = {}  # Masked -> Original
         self.entity_counters = {}  # Track entity numbering
         self.conversation_history = []  # Store conversation history for context
         self.max_history_length = 10  # Keep last 10 messages for context
         self.document_context = None  # Store current document context
-        logger.info(f"SimpleChatbot initialized with API key: {'***' + (self.api_key[-4:] if self.api_key else 'None')}")
+
+        # Initialize Gemini
+        if self.api_key:
+            genai.configure(api_key=self.api_key)
+            self.model = genai.GenerativeModel('gemini-2.5-flash')
+            self.chat_session = None  # Will be initialized on first message
+
+        logger.info(f"SimpleChatbot initialized with Gemini API key: {'***' + (self.api_key[-4:] if self.api_key else 'None')}")
         logger.info(f"SimpleChatbot initialized with fresh entity_counters: {self.entity_counters}")
         logger.info(f"SimpleChatbot initialized with empty entity_mappings: {len(self.entity_mappings)} items")
         logger.info(f"SimpleChatbot initialized with empty reverse_mappings: {len(self.reverse_mappings)} items")
@@ -383,24 +391,16 @@ class SimpleChatbot:
         return masked_text
 
     def chat_with_ai(self, masked_message: str) -> str:
-        """Get AI response using OpenAI with Omani cultural context"""
+        """Get AI response using Gemini 2.5 Pro with Omani cultural context"""
         try:
             if not self.api_key:
-                logger.error(f"No OpenAI API key found. API key value: '{self.api_key}' (length: {len(self.api_key or '')})")
+                logger.error(f"No Google API key found. API key value: '{self.api_key}' (length: {len(self.api_key or '')})")
                 return self.fallback_response(masked_message)
-            
-            logger.info(f"Calling OpenAI with masked message: {masked_message}")
-            
-            headers = {
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json"
-            }
-            
-            # Build messages with enhanced Omani cultural prompt
-            messages = [
-                {
-                    "role": "system", 
-                    "content": """You are Blot, or 'بلوت' an intelligent, knowledgeable, and helpful AI assistant. You can discuss any topic, provide information, help with problems, engage in casual conversation. You should be conversational, friendly, and naturally helpful.
+
+            logger.info(f"Calling Gemini with masked message: {masked_message}")
+
+            # System instruction for Gemini
+            system_instruction = """You are Blot, or 'بلوت' an intelligent, knowledgeable, and helpful AI assistant. You can discuss any topic, provide information, help with problems, engage in casual conversation. You should be conversational, friendly, and naturally helpful.
 
 PRIVACY PROTECTION MODE:
 - Some user inputs contain placeholders (Person1, Location1, Organization1, Email1, Phone1, etc.) that replace sensitive information
@@ -430,56 +430,48 @@ CAPABILITIES:
 - Provide explanations, advice, and recommendations
 - Be curious and ask clarifying questions when needed
 Respond naturally as if you were having a conversation with a friend who asked for your help."""
-                }
-            ]
 
-            # Add conversation history for context (last 5 exchanges)
-            for msg in self.conversation_history[-10:]:  # Last 10 messages (5 exchanges)
-                messages.append(msg)
-            
-            # Add current message
-            messages.append({"role": "user", "content": masked_message})
-            
-            data = {
-                "model": "gpt-4.1",
-                "messages": messages,
-                "max_tokens": 1000,
-                "temperature": 0.7
-            }
-            
-            response = requests.post(
-                "https://api.openai.com/v1/chat/completions",
-                headers=headers,
-                json=data,
-                timeout=30  # Increased timeout for better reliability
+            # Initialize or update model with system instruction
+            model = genai.GenerativeModel(
+                'gemini-2.5-flash',
+                system_instruction=system_instruction,
+                generation_config=genai.types.GenerationConfig(
+                    max_output_tokens=1000,
+                    temperature=0.7
+                )
             )
-            
-            if response.status_code == 200:
-                result = response.json()
-                ai_response = result["choices"][0]["message"]["content"]
-                logger.info(f"OpenAI response: {ai_response}")
-                
-                # Add to conversation history for context
-                self.conversation_history.append({"role": "user", "content": masked_message})
-                self.conversation_history.append({"role": "assistant", "content": ai_response})
-                
-                # Keep only last N messages to avoid token limit
-                if len(self.conversation_history) > self.max_history_length * 2:
-                    self.conversation_history = self.conversation_history[-(self.max_history_length * 2):]
-                
-                return ai_response
-            else:
-                logger.error(f"OpenAI API error: {response.status_code} - {response.text}")
-                logger.error(f"Request headers: {headers}")
-                logger.error(f"Request data: {data}")
-                return self.fallback_response(masked_message)
-            
+
+            # Build conversation history for Gemini format
+            history = []
+            for msg in self.conversation_history[-10:]:  # Last 10 messages (5 exchanges)
+                role = "user" if msg["role"] == "user" else "model"
+                history.append({"role": role, "parts": [msg["content"]]})
+
+            # Start chat with history
+            chat = model.start_chat(history=history)
+
+            # Send message and get response
+            response = chat.send_message(masked_message)
+            ai_response = response.text
+
+            logger.info(f"Gemini response: {ai_response}")
+
+            # Add to conversation history for context
+            self.conversation_history.append({"role": "user", "content": masked_message})
+            self.conversation_history.append({"role": "assistant", "content": ai_response})
+
+            # Keep only last N messages to avoid token limit
+            if len(self.conversation_history) > self.max_history_length * 2:
+                self.conversation_history = self.conversation_history[-(self.max_history_length * 2):]
+
+            return ai_response
+
         except Exception as e:
-            logger.error(f"OpenAI API error: {e}")
+            logger.error(f"Gemini API error: {e}")
             return self.fallback_response(masked_message)
     
     def fallback_response(self, masked_message: str) -> str:
-        """Fallback response when OpenAI fails - Omani style"""
+        """Fallback response when Gemini fails - Omani style"""
         if "person" in masked_message.lower():
             return f"هلا وغلا Person1! شو الأخبار؟ أنا هنا عشان أساعدك مع حماية خصوصيتك. كيف أقدر أخدمك؟"
         elif "organization" in masked_message.lower():
@@ -677,16 +669,11 @@ Respond naturally as if you were having a conversation with a friend who asked f
         return summary
     
     def chat_with_ai_document_context(self, masked_message: str) -> str:
-        """Enhanced chat method that includes document context"""
+        """Enhanced chat method that includes document context using Gemini 2.5 Pro"""
         if not self.api_key:
-            return "I'm here to help! (Note: OpenAI API key not configured)"
-        
+            return "I'm here to help! (Note: Google API key not configured)"
+
         try:
-            headers = {
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json"
-            }
-            
             # Enhanced system prompt for document context
             system_prompt = """You are Blot, an intelligent, knowledgeable, and helpful AI assistant. You can discuss any topic, provide information, help with problems, engage in casual conversation, and analyze documents.
 
@@ -729,61 +716,50 @@ CAPABILITIES:
 - Be curious and ask clarifying questions when needed
 
 Respond naturally as if you were having a conversation with a friend who asked for your help."""
-            
-            messages = [{"role": "system", "content": system_prompt}]
-            
-            # Add document context if available
+
+            # Add document context to system prompt if available
             if self.has_document_context():
                 doc_context = f"\n\nDOCUMENT CONTEXT:\n{self.get_document_summary()}\n"
-                messages.append({
-                    "role": "system", 
-                    "content": f"You now have access to a document. Use this context to answer questions about the document:{doc_context}"
-                })
-            
-            # Add conversation history for context (last 10 messages)
-            for msg in self.conversation_history[-10:]:
-                messages.append(msg)
-            
-            # Add current message
-            messages.append({"role": "user", "content": masked_message})
-            
-            data = {
-                "model": "gpt-4.1",
-                "messages": messages,
-                "max_tokens": 3000 if self.has_document_context() else 1000,  # More tokens for document analysis
-                "temperature": 0.7
-            }
-            
-            response = requests.post(
-                "https://api.openai.com/v1/chat/completions",
-                headers=headers,
-                json=data,
-                timeout=30  # Longer timeout for document processing
+                system_prompt += f"\n\nYou now have access to a document. Use this context to answer questions about the document:{doc_context}"
+
+            # Initialize model with system instruction
+            max_tokens = 3000 if self.has_document_context() else 1000
+            model = genai.GenerativeModel(
+                'gemini-2.5-flash',
+                system_instruction=system_prompt,
+                generation_config=genai.types.GenerationConfig(
+                    max_output_tokens=max_tokens,
+                    temperature=0.7
+                )
             )
-            
-            if response.status_code == 200:
-                result = response.json()
-                ai_response = result["choices"][0]["message"]["content"]
-                logger.info(f"OpenAI response (with document context): {ai_response}")
-                
-                # Store in conversation history
-                self.conversation_history.append({"role": "user", "content": masked_message})
-                self.conversation_history.append({"role": "assistant", "content": ai_response})
-                
-                # Trim history if too long
-                if len(self.conversation_history) > self.max_history_length:
-                    self.conversation_history = self.conversation_history[-self.max_history_length:]
-                
-                return ai_response
-            else:
-                logger.error(f"OpenAI API error: {response.status_code} - {response.text}")
-                return self._get_fallback_response_with_document()
-                
-        except requests.RequestException as e:
-            logger.error(f"Request error: {e}")
-            return self._get_fallback_response_with_document()
+
+            # Build conversation history for Gemini format
+            history = []
+            for msg in self.conversation_history[-10:]:
+                role = "user" if msg["role"] == "user" else "model"
+                history.append({"role": role, "parts": [msg["content"]]})
+
+            # Start chat with history
+            chat = model.start_chat(history=history)
+
+            # Send message and get response
+            response = chat.send_message(masked_message)
+            ai_response = response.text
+
+            logger.info(f"Gemini response (with document context): {ai_response}")
+
+            # Store in conversation history
+            self.conversation_history.append({"role": "user", "content": masked_message})
+            self.conversation_history.append({"role": "assistant", "content": ai_response})
+
+            # Trim history if too long
+            if len(self.conversation_history) > self.max_history_length:
+                self.conversation_history = self.conversation_history[-self.max_history_length:]
+
+            return ai_response
+
         except Exception as e:
-            logger.error(f"Unexpected error in chat_with_ai_document_context: {e}")
+            logger.error(f"Gemini API error in document context: {e}")
             return self._get_fallback_response_with_document()
     
     def _get_fallback_response_with_document(self) -> str:
