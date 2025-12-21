@@ -177,3 +177,9 @@ src/trained_models/pii_shield_002v.pt
 src/trained_models/*.pt
 src/checkpoints/
 *.pt
+
+# macOS
+.DS_Store
+
+# IDEs
+.idea/
