@@ -1469,7 +1469,7 @@
         .input-container {
             position: relative;
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
             margin: 2rem auto 0;
             padding: 0 1.5rem;
         }
@@ -1489,7 +1489,7 @@
         }
 
         .input-wrapper {
-            max-width: 56rem;
+            max-width: 54rem;
             margin: 0 auto;
             padding: 0 1.5rem;
             width: 100%;
@@ -1504,8 +1504,8 @@
             align-items: flex-end;
             gap: 8px;
             transition: all 0.3s ease;
-            min-height: 40px;
-            max-height: 120px;
+            min-height: 30px;
+            max-height: 100px;
             position: relative;
         }
 
@@ -1526,13 +1526,13 @@
             min-height: 24px;
             max-height: 100px;
             line-height: 2;
-            padding: 4px 0 0 0;
+            padding: 6px 0 0 5px;
             font-family: inherit;
             overflow-y: auto;
             text-align: left;
             direction: ltr;
             margin-bottom: 4px;
-            margin-left: -80px;
+            margin-left: -12px;
         }
         
         /* Minimal scrollbar */
@@ -1602,6 +1602,97 @@
         .send-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+
+        /* Input Actions Container */
+        .input-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        /* Voice Recording Styles */
+        .voice-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .voice-btn:hover {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .voice-btn.recording {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 76, 76, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 76, 76, 0);
+            }
+        }
+
+        /* Recording Indicator */
+        .recording-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px 30px;
+            border-radius: 12px;
+            display: none;
+            z-index: 10000;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .recording-indicator.active {
+            display: flex;
+        }
+
+        .recording-dot {
+            width: 12px;
+            height: 12px;
+            background: #ff4c4c;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .recording-text {
+            color: white;
+            font-size: 16px;
+        }
+
+        .recording-time {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin-left: 10px;
         }
         
         .send-btn.interrupt-mode {
@@ -2289,6 +2380,7 @@
                     <div class="input-container" id="centered-input">
                         <div class="input-wrapper">
                             <div class="input-box">
+                                <!-- Upload button will be dynamically inserted here by document-attachment-manager.js -->
                                 <textarea 
                                     class="chat-input" 
                                     id="chat-input" 
@@ -2296,11 +2388,21 @@
                                     rows="1"
                                     style="text-align: left !important; direction: ltr !important;"
                                 ></textarea>
-                                <button class="send-btn" id="send-btn">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="send-icon">
-                                        <path class="send-arrow" d="M12 5L12 19M12 5L7 10M12 5L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </button>
+                                <div class="input-actions">
+                                    <button class="send-btn" id="send-btn">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="send-icon">
+                                            <path class="send-arrow" d="M12 5L12 19M12 5L7 10M12 5L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                    <button class="voice-btn" id="voice-btn" title="Hold to record voice message">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="mic-icon">
+                                            <path d="M12 1C10.34 1 9 2.34 9 4V12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12V4C15 2.34 13.66 1 12 1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M19 10V12C19 15.866 15.866 19 12 19C8.13401 19 5 15.866 5 12V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M12 19V23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M8 23H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2311,6 +2413,7 @@
             <div class="input-container bottom" id="bottom-input" style="display: none;">
                 <div class="input-wrapper">
                     <div class="input-box">
+                        <!-- Upload button will be dynamically inserted here by document-attachment-manager.js -->
                         <textarea 
                             class="chat-input" 
                             id="chat-input-bottom" 
@@ -2318,11 +2421,21 @@
                             rows="1"
                             style="text-align: left !important; direction: ltr !important;"
                         ></textarea>
-                        <button class="send-btn" id="send-btn-bottom">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="send-icon">
-                                <path class="send-arrow" d="M12 5L12 19M12 5L7 10M12 5L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
+                        <div class="input-actions">
+                            <button class="send-btn" id="send-btn-bottom">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="send-icon">
+                                    <path class="send-arrow" d="M12 5L12 19M12 5L7 10M12 5L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <button class="voice-btn" id="voice-btn-bottom" title="Hold to record voice message">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="mic-icon">
+                                    <path d="M12 1C10.34 1 9 2.34 9 4V12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12V4C15 2.34 13.66 1 12 1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M19 10V12C19 15.866 15.866 19 12 19C8.13401 19 5 15.866 5 12V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 19V23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M8 23H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2360,12 +2473,14 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="/static/css/document-manager.css">
-    <link rel="stylesheet" href="/static/css/document-attachment.css?v=20">
+    <link rel="stylesheet" href="/static/css/document-manager.css?v=2">
+    <link rel="stylesheet" href="/static/css/document-attachment.css?v=21">
     <link rel="stylesheet" href="/static/css/attachment-text-fix.css?v=1">
+    <link rel="stylesheet" href="/static/css/voice-message.css?v=1">
     <script src="/static/js/entity-dictionary.js"></script>
-    <script src="/static/js/privacy_chat.js?v=106"></script>
-    <script src="/static/js/document-attachment-manager.js?v=16"></script>
+    <script src="/static/js/privacy_chat.js?v=112"></script>
+    <script src="/static/js/voice-message.js?v=9"></script>
+    <script src="/static/js/document-attachment-manager.js?v=17"></script>
     <script>
         // Global function to close document modal
         function closeDocumentModal() {
@@ -2656,6 +2771,13 @@
             });
         });
     </script>
+    
+    <!-- Recording Indicator -->
+    <div class="recording-indicator" id="recording-indicator">
+        <div class="recording-dot"></div>
+        <div class="recording-text">Recording...</div>
+        <div class="recording-time" id="recording-time">0:00</div>
+    </div>
 </body>
 </html>
 

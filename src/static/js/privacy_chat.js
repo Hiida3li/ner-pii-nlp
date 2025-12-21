@@ -40,8 +40,8 @@ class PrivacyChat {
         // Set random greeting on page load
         this.setInitialGreeting();
         
-        // Reset backend session on page load to clear entity mappings
-        this.resetChatEndpoint();
+        // Don't auto-reset on page load to preserve voice messages
+        // this.resetChatEndpoint();
         // Initialize privacy toggle state
         this.initializePrivacyToggle();
         // Initialize textarea heights
@@ -226,8 +226,8 @@ class PrivacyChat {
         const messages = this.elements.chatMessages.querySelectorAll('.message-wrapper');
         if (messages.length === 0) {
             // Current session is already empty, just clear input and reset
-            this.clearChat();
-            this.resetChatEndpoint();
+            // this.clearChat();
+            // this.resetChatEndpoint();
             return; // Don't create a new session
         }
         
@@ -243,11 +243,11 @@ class PrivacyChat {
         this.initSession();
         
         // Update UI
-        this.clearChat();
+        // this.clearChat();
         this.updateSessionList();
         
         // Reset chat endpoint
-        this.resetChatEndpoint();
+        // this.resetChatEndpoint();
     }
     
     showChatSessionsContainer() {
@@ -442,7 +442,7 @@ class PrivacyChat {
             }
         } else {
             // No messages - show welcome screen with centered input
-            this.clearChat();
+            // this.clearChat();
             
             // Hide bottom input
             const bottomInput = document.getElementById('bottom-input');
@@ -727,12 +727,18 @@ class PrivacyChat {
         const isWelcomeVisible = document.getElementById('welcome-screen') !== null;
         let message;
         
+        console.log('DEBUG: isWelcomeVisible:', isWelcomeVisible);
+        console.log('DEBUG: chatInput element:', this.elements.chatInput);
+        console.log('DEBUG: chatInputBottom element:', this.elements.chatInputBottom);
+        
         if (isWelcomeVisible) {
             // Get message from centered input
             message = this.elements.chatInput ? this.elements.chatInput.value.trim() : '';
+            console.log('DEBUG: Using centered input, value:', this.elements.chatInput ? this.elements.chatInput.value : 'null');
         } else {
             // Get message from bottom input
             message = this.elements.chatInputBottom ? this.elements.chatInputBottom.value.trim() : '';
+            console.log('DEBUG: Using bottom input, value:', this.elements.chatInputBottom ? this.elements.chatInputBottom.value : 'null');
         }
         
         console.log('Message:', message, 'IsTyping:', this.isTyping);

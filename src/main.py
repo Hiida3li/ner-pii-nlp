@@ -13,6 +13,7 @@ import logging
 from contextlib import asynccontextmanager
 import re
 import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 import requests
 import asyncio
@@ -1783,6 +1784,220 @@ async def export_entities(session_id: int = 1, format: str = "json"):
         return JSONResponse(
             status_code=500,
             content={"error": "Failed to export entities"}
+        )
+
+
+@app.post("/api/privacy-chat/voice-to-text")
+async def voice_to_text(
+    audio_file: UploadFile = File(...),
+    session_id: int = Form(1)
+):
+    """
+    Transcribe voice message using OpenAI Whisper API
+    """
+    try:
+        logger.info(f"Received voice message for session {session_id}, file: {audio_file.filename}")
+        
+        # Validate file type
+        allowed_types = ['audio/webm', 'audio/wav', 'audio/mpeg', 'audio/mp4', 'audio/ogg']
+        if audio_file.content_type and audio_file.content_type not in allowed_types:
+            logger.warning(f"Invalid audio type: {audio_file.content_type}")
+            # Try to proceed anyway if it's an audio file
+        
+        # Read audio file
+        audio_data = await audio_file.read()
+        
+        # Check file size (max 25MB for Whisper API)
+        max_size = 25 * 1024 * 1024  # 25MB
+        if len(audio_data) > max_size:
+            return JSONResponse(
+                status_code=413,
+                content={"error": "Audio file too large. Maximum size is 25MB"}
+            )
+        
+        # Initialize OpenAI client
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            logger.error("OpenAI API key not found")
+            return JSONResponse(
+                status_code=500,
+                content={"error": "OpenAI API key not configured"}
+            )
+        
+        client = OpenAI(api_key=api_key)
+        
+        # Create a temporary file for the audio
+        import tempfile
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as temp_audio:
+            temp_audio.write(audio_data)
+            temp_audio_path = temp_audio.name
+        
+        try:
+            # Transcribe with Whisper
+            logger.info(f"Sending audio to Whisper API for transcription")
+            with open(temp_audio_path, "rb") as audio_file_obj:
+                transcript = client.audio.transcriptions.create(
+                    model="whisper-1",
+                    file=audio_file_obj,
+                    language="ar",  # Arabic language hint
+                    prompt="نص عربي يحتوي على أسماء وأرقام هواتف وعناوين بريد إلكتروني"  # Arabic prompt for better accuracy
+                )
+            
+            transcribed_text = transcript.text
+            logger.info(f"Transcription successful: {len(transcribed_text)} characters")
+            
+            # Get or create chatbot session
+            if session_id not in chatbot_sessions:
+                chatbot_sessions[session_id] = SimpleChatbot()
+                logger.info(f"Created new chatbot for voice session {session_id}")
+            
+            chatbot = chatbot_sessions[session_id]
+            
+            # Detect entities in transcribed text
+            from src.models.model_factory import ModelFactory
+            model_factory = ModelFactory()
+            model = model_factory.get_model("v2")
+            entity_tuples = model.predict(transcribed_text)
+            
+            # Convert tuples to dictionary format
+            entities = []
+            for text, entity_type, start, end in entity_tuples:
+                entities.append({
+                    'text': text,
+                    'entity_type': entity_type,  # Changed from 'type' to 'entity_type'
+                    'start': start,
+                    'end': end
+                })
+            
+            # Mask the entities
+            masked_text = chatbot.mask_entities(transcribed_text, entities)
+            
+            # Prepare response
+            response = {
+                "success": True,
+                "original_text": transcribed_text,
+                "masked_text": masked_text,
+                "entities": entities,
+                "session_id": session_id,
+                "audio_duration": getattr(transcript, 'duration', None)
+            }
+            
+            return JSONResponse(content=response)
+            
+        finally:
+            # Clean up temporary file
+            import os as os_module
+            if os_module.path.exists(temp_audio_path):
+                os_module.remove(temp_audio_path)
+                logger.info("Cleaned up temporary audio file")
+                
+    except Exception as e:
+        logger.error(f"Error in voice transcription: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Failed to transcribe voice message: {str(e)}"}
+        )
+
+
+@app.post("/api/privacy-chat/send-voice")
+async def send_voice_message(
+    audio_file: UploadFile = File(...),
+    session_id: str = Form("1"),
+    duration: float = Form(...)
+):
+    """Handle voice messages as audio notes (not converting to text)"""
+    import uuid
+    import os
+    import traceback
+    
+    try:
+        logger.info(f"Received voice message for session {session_id}, duration: {duration}s")
+        
+        # Create directory for voice messages if it doesn't exist
+        voice_dir = "src/static/voice_messages"
+        os.makedirs(voice_dir, exist_ok=True)
+        
+        # Generate unique filename
+        file_id = str(uuid.uuid4())
+        file_extension = audio_file.filename.split('.')[-1] if '.' in audio_file.filename else 'webm'
+        filename = f"{file_id}.{file_extension}"
+        file_path = os.path.join(voice_dir, filename)
+        
+        # Save the audio file
+        with open(file_path, "wb") as f:
+            content = await audio_file.read()
+            f.write(content)
+        
+        # Create URL for the audio file
+        audio_url = f"/static/voice_messages/{filename}"
+        
+        logger.info(f"Voice message saved: {file_path}")
+        
+        # Get or create chatbot session
+        if session_id not in chatbot_sessions:
+            chatbot_sessions[session_id] = SimpleChatbot()
+        
+        chatbot = chatbot_sessions[session_id]
+        
+        # Store voice message in chat history
+        voice_message = {
+            "type": "voice",
+            "url": audio_url,
+            "duration": duration,
+            "timestamp": datetime.now().isoformat()
+        }
+        
+        # Add to conversation history
+        chatbot.conversation_history.append({
+            "role": "user",
+            "content": f"[Voice message: {duration}s]",
+            "voice_data": voice_message
+        })
+        
+        response_data = {
+            "success": True,
+            "audio_url": audio_url,
+            "duration": duration
+        }
+        
+        # If privacy mode is off, transcribe for AI response
+        # Check if privacy mode is enabled (default is True in SimpleChatbot)
+        privacy_mode = getattr(chatbot, 'privacy_mode', True)
+        if not privacy_mode:
+            try:
+                # Optionally transcribe for AI processing (but don't show to user)
+                api_key = os.getenv("OPENAI_API_KEY")
+                client = OpenAI(api_key=api_key)
+                
+                # Read the saved file for transcription
+                with open(file_path, "rb") as audio:
+                    transcript = client.audio.transcriptions.create(
+                        model="whisper-1",
+                        file=audio,
+                        language="ar"
+                    )
+                
+                transcribed_text = transcript.text
+                logger.info(f"Transcribed for AI: {transcribed_text}")
+                
+                # Get AI response based on transcription using process_message
+                result = chatbot.process_message(transcribed_text, privacy_mode=False)
+                response_data["response"] = result.get('display_response', '')
+                
+            except Exception as e:
+                logger.error(f"Error processing voice for AI: {e}")
+                # Still return success, just without AI response
+        
+        return JSONResponse(content=response_data)
+        
+    except Exception as e:
+        logger.error(f"Error handling voice message: {e}")
+        logger.error(traceback.format_exc())
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Failed to process voice message: {str(e)}"}
         )
 
 
