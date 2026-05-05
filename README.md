@@ -193,8 +193,8 @@ docker-compose up -d
 ## Recent Updates
 
 ### Version 3.1
-- ✅ Multi-document upload support
-- ✅ Document attachment cards in chat
+-  Multi-document upload support
+-  Document attachment cards in chat
 - ✅ Enhanced privacy mode for documents
 - ✅ Improved UI with customizable colors
 - ✅ Better Arabic/English support
