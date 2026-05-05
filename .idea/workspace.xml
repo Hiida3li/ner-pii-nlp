@@ -19,12 +19,12 @@
     &quot;assignee&quot;: &quot;Hiida3li&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Hiida3li/ner-pii-nlp.git&quot;,
-    &quot;accountId&quot;: &quot;1eeb239d-03c6-44ce-bb05-707a61bf4f67&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Hiida3li/ner-pii-nlp.git",
+    "accountId": "78a5b57b-c5e5-4747-8ab2-f1d6a19f9521"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -78,7 +78,7 @@
       <workItem from="1756620586913" duration="117572000" />
       <workItem from="1756876242514" duration="203000" />
       <workItem from="1756972202452" duration="86956000" />
-      <workItem from="1777884790711" duration="475000" />
+      <workItem from="1777884790711" duration="1069000" />
     </task>
     <task id="LOCAL-00392" summary="privacy mode functionality is down in the chat page">
       <option name="closed" value="true" />
