@@ -23,7 +23,7 @@
 - **GPT-4 Integration**: Privacy-preserving conversations with automatic PII masking
 - **Real-time Processing**: Instant detection with streaming responses
 
-### 📄 Document Processing
+###  Document Processing
 - **Multi-format Support**: PDF, DOCX, TXT, CSV, MD files
 - **Drag & Drop Interface**: Intuitive file upload with visual feedback
 - **In-chat Attachments**: Send multiple documents with messages
