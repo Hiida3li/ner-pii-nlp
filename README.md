@@ -56,8 +56,8 @@
 |  **Email** | Email addresses | john@example.com |
 |  **Phone** | Phone numbers | 9xxxxxxx, 7xxxxxxx |
 |  **URL** | Web addresses | https://example.com |
-| 🆔 **Civil ID** | Civil identification | 9-12 digit patterns |
-| 🛂 **Passport** | Passport numbers | AB1234567 |
+|  **Civil ID** | Civil identification | 9-12 digit patterns |
+|  **Passport** | Passport numbers | AB1234567 |
 | 💳 **Credit Card** | Card numbers | 4xxx xxxx xxxx xxxx |
 | 💰 **Bank Account** | Account numbers | Banking formats |
 
