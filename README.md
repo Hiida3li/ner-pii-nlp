@@ -40,7 +40,7 @@
 - **Zero Data Storage**: No persistent storage of user data
 - **Session Isolation**: Independent chat sessions per user
 
-### 🎨 Modern UI/UX
+###  Modern UI/UX
 - **Dark Theme**: Elegant dark interface with smooth animations
 - **Entity Color Coding**: Visual differentiation for 10+ entity types
 - **Interactive Components**: Color customizer, entity tooltips, statistics
