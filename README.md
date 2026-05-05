@@ -18,7 +18,7 @@
 
 ## Key Features
 
-### 🤖 Advanced AI Integration
+### Advanced AI Integration
 - **Custom PII-Shield BERT Model**: Specialized for entity detection with high accuracy
 - **GPT-4 Integration**: Privacy-preserving conversations with automatic PII masking
 - **Real-time Processing**: Instant detection with streaming responses
