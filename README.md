@@ -50,8 +50,8 @@
 
 | Entity | Description | Examples |
 |--------|-------------|----------|
-| 👤 **Person** | Personal names | John Doe, احمد الكندي |
-| 📍 **Location** | Cities, countries, addresses | New York, مسقط |
+|  **Person** | Personal names | John Doe, احمد الكندي |
+|  **Location** | Cities, countries, addresses | New York, مسقط |
 | 🏢 **Organization** | Companies, institutions | Google, بنك ضفار |
 | 📧 **Email** | Email addresses | john@example.com |
 | 📱 **Phone** | Phone numbers | 9xxxxxxx, 7xxxxxxx |
