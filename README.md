@@ -48,18 +48,18 @@
 
 ## Supported Entity Types
 
-| Entity | Description | Examples |
-|--------|-------------|----------|
+| Entity | Description | Examples              |
+|--------|-------------|-----------------------|
 |  **Person** | Personal names | John Doe, احمد الكندي |
-|  **Location** | Cities, countries, addresses | New York, مسقط |
-|  **Organization** | Companies, institutions | Google, بنك ضفار |
-|  **Email** | Email addresses | john@example.com |
-|  **Phone** | Phone numbers 
-|  **URL** | Web addresses | https://example.com |
-|  **Civil ID** | Civil identification | 9-12 digit patterns |
-|  **Passport** | Passport numbers | AB1234567 |
-|  **Credit Card** | Card numbers | 4xxx xxxx xxxx xxxx |
-|  **Bank Account** | Account numbers | Banking formats |
+|  **Location** | Cities, countries, addresses | New York, مسقط        |
+|  **Organization** | Companies, institutions | Google, بنك ضفار      |
+|  **Email** | Email addresses | john@example.com      |
+|  **Phone** | Phone numbers | Omani phone numbers   |
+|  **URL** | Web addresses | https://example.com   |
+|  **Civil ID** | Civil identification | 9-12 digit patterns   |
+|  **Passport** | Passport numbers | AB1234567             |
+|  **Credit Card** | Card numbers | 4xxx xxxx xxxx xxxx   |
+|  **Bank Account** | Account numbers | Banking formats       |
 
 ## Installation
 
