@@ -54,7 +54,7 @@
 |  **Location** | Cities, countries, addresses | New York, مسقط |
 |  **Organization** | Companies, institutions | Google, بنك ضفار |
 |  **Email** | Email addresses | john@example.com |
-|  **Phone** | Phone numbers | 9xxxxxxx, 7xxxxxxx |
+|  **Phone** | Phone numbers 
 |  **URL** | Web addresses | https://example.com |
 |  **Civil ID** | Civil identification | 9-12 digit patterns |
 |  **Passport** | Passport numbers | AB1234567 |
