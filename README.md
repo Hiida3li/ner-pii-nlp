@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/badge/OpenAI-GPT--4-purple" alt="OpenAI">
     <img src="https://img.shields.io/badge/License-MIT-red" alt="License">
   </p>
-</div>
+/div>
 
 ## Overview
 
