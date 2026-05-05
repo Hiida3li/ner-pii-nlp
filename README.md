@@ -197,8 +197,8 @@ docker-compose up -d
 -  Document attachment cards in chat
 -  Enhanced privacy mode for documents
 -  Improved UI with customizable colors
-- ✅ Better Arabic/English support
-- ✅ Performance optimizations
+-  Better Arabic/English support
+-  Performance optimizations
 
 ## Contributing
 
