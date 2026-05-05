@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="686a542b-666d-41a5-933f-16af0916bc27" name="Changes" comment="privacy mode functionality is down in the chat page" />
+    <list default="true" id="686a542b-666d-41a5-933f-16af0916bc27" name="Changes" comment="readme updated" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,12 +19,12 @@
     &quot;assignee&quot;: &quot;Hiida3li&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Hiida3li/ner-pii-nlp.git",
-    "accountId": "78a5b57b-c5e5-4747-8ab2-f1d6a19f9521"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Hiida3li/ner-pii-nlp.git&quot;,
+    &quot;accountId&quot;: &quot;78a5b57b-c5e5-4747-8ab2-f1d6a19f9521&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -33,25 +33,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "C:/Users/houii/Downloads/voice_final/ner-pii-nlp",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/houii/Downloads/voice_final/ner-pii-nlp&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.grazie&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/checkpoints" />
@@ -79,118 +79,7 @@
       <workItem from="1756876242514" duration="203000" />
       <workItem from="1756972202452" duration="86956000" />
       <workItem from="1777884790711" duration="1069000" />
-    </task>
-    <task id="LOCAL-00392" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756837143224</created>
-      <option name="number" value="00392" />
-      <option name="presentableId" value="LOCAL-00392" />
-      <option name="project" value="LOCAL" />
-      <updated>1756837143224</updated>
-    </task>
-    <task id="LOCAL-00393" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756837467655</created>
-      <option name="number" value="00393" />
-      <option name="presentableId" value="LOCAL-00393" />
-      <option name="project" value="LOCAL" />
-      <updated>1756837467655</updated>
-    </task>
-    <task id="LOCAL-00394" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756837937413</created>
-      <option name="number" value="00394" />
-      <option name="presentableId" value="LOCAL-00394" />
-      <option name="project" value="LOCAL" />
-      <updated>1756837937413</updated>
-    </task>
-    <task id="LOCAL-00395" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756838021814</created>
-      <option name="number" value="00395" />
-      <option name="presentableId" value="LOCAL-00395" />
-      <option name="project" value="LOCAL" />
-      <updated>1756838021814</updated>
-    </task>
-    <task id="LOCAL-00396" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756838416594</created>
-      <option name="number" value="00396" />
-      <option name="presentableId" value="LOCAL-00396" />
-      <option name="project" value="LOCAL" />
-      <updated>1756838416594</updated>
-    </task>
-    <task id="LOCAL-00397" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756838612505</created>
-      <option name="number" value="00397" />
-      <option name="presentableId" value="LOCAL-00397" />
-      <option name="project" value="LOCAL" />
-      <updated>1756838612505</updated>
-    </task>
-    <task id="LOCAL-00398" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756838745096</created>
-      <option name="number" value="00398" />
-      <option name="presentableId" value="LOCAL-00398" />
-      <option name="project" value="LOCAL" />
-      <updated>1756838745097</updated>
-    </task>
-    <task id="LOCAL-00399" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756839301002</created>
-      <option name="number" value="00399" />
-      <option name="presentableId" value="LOCAL-00399" />
-      <option name="project" value="LOCAL" />
-      <updated>1756839301002</updated>
-    </task>
-    <task id="LOCAL-00400" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756839357893</created>
-      <option name="number" value="00400" />
-      <option name="presentableId" value="LOCAL-00400" />
-      <option name="project" value="LOCAL" />
-      <updated>1756839357893</updated>
-    </task>
-    <task id="LOCAL-00401" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756840094486</created>
-      <option name="number" value="00401" />
-      <option name="presentableId" value="LOCAL-00401" />
-      <option name="project" value="LOCAL" />
-      <updated>1756840094486</updated>
-    </task>
-    <task id="LOCAL-00402" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756859063863</created>
-      <option name="number" value="00402" />
-      <option name="presentableId" value="LOCAL-00402" />
-      <option name="project" value="LOCAL" />
-      <updated>1756859063863</updated>
-    </task>
-    <task id="LOCAL-00403" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756859282054</created>
-      <option name="number" value="00403" />
-      <option name="presentableId" value="LOCAL-00403" />
-      <option name="project" value="LOCAL" />
-      <updated>1756859282054</updated>
-    </task>
-    <task id="LOCAL-00404" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756876269924</created>
-      <option name="number" value="00404" />
-      <option name="presentableId" value="LOCAL-00404" />
-      <option name="project" value="LOCAL" />
-      <updated>1756876269924</updated>
-    </task>
-    <task id="LOCAL-00405" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756876286111</created>
-      <option name="number" value="00405" />
-      <option name="presentableId" value="LOCAL-00405" />
-      <option name="project" value="LOCAL" />
-      <updated>1756876286111</updated>
+      <workItem from="1777972971657" duration="376000" />
     </task>
     <task id="LOCAL-00406" summary="privacy mode functionality is down in the chat page">
       <option name="closed" value="true" />
@@ -472,7 +361,119 @@
       <option name="project" value="LOCAL" />
       <updated>1757132153533</updated>
     </task>
-    <option name="localTasksCounter" value="441" />
+    <task id="LOCAL-00441" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973068420</created>
+      <option name="number" value="00441" />
+      <option name="presentableId" value="LOCAL-00441" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973068420</updated>
+    </task>
+    <task id="LOCAL-00442" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973128440</created>
+      <option name="number" value="00442" />
+      <option name="presentableId" value="LOCAL-00442" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973128440</updated>
+    </task>
+    <task id="LOCAL-00443" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973172860</created>
+      <option name="number" value="00443" />
+      <option name="presentableId" value="LOCAL-00443" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973172860</updated>
+    </task>
+    <task id="LOCAL-00444" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973188280</created>
+      <option name="number" value="00444" />
+      <option name="presentableId" value="LOCAL-00444" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973188280</updated>
+    </task>
+    <task id="LOCAL-00445" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973198986</created>
+      <option name="number" value="00445" />
+      <option name="presentableId" value="LOCAL-00445" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973198986</updated>
+    </task>
+    <task id="LOCAL-00446" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973211310</created>
+      <option name="number" value="00446" />
+      <option name="presentableId" value="LOCAL-00446" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973211310</updated>
+    </task>
+    <task id="LOCAL-00447" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973239532</created>
+      <option name="number" value="00447" />
+      <option name="presentableId" value="LOCAL-00447" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973239532</updated>
+    </task>
+    <task id="LOCAL-00448" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973252596</created>
+      <option name="number" value="00448" />
+      <option name="presentableId" value="LOCAL-00448" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973252596</updated>
+    </task>
+    <task id="LOCAL-00449" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973263940</created>
+      <option name="number" value="00449" />
+      <option name="presentableId" value="LOCAL-00449" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973263940</updated>
+    </task>
+    <task id="LOCAL-00450" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973275550</created>
+      <option name="number" value="00450" />
+      <option name="presentableId" value="LOCAL-00450" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973275550</updated>
+    </task>
+    <task id="LOCAL-00451" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973285554</created>
+      <option name="number" value="00451" />
+      <option name="presentableId" value="LOCAL-00451" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973285554</updated>
+    </task>
+    <task id="LOCAL-00452" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973304470</created>
+      <option name="number" value="00452" />
+      <option name="presentableId" value="LOCAL-00452" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973304470</updated>
+    </task>
+    <task id="LOCAL-00453" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973329502</created>
+      <option name="number" value="00453" />
+      <option name="presentableId" value="LOCAL-00453" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973329502</updated>
+    </task>
+    <task id="LOCAL-00454" summary="readme updated">
+      <option name="closed" value="true" />
+      <created>1777973348432</created>
+      <option name="number" value="00454" />
+      <option name="presentableId" value="LOCAL-00454" />
+      <option name="project" value="LOCAL" />
+      <updated>1777973348432</updated>
+    </task>
+    <option name="localTasksCounter" value="455" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -482,6 +483,7 @@
     <MESSAGE value="ui improved" />
     <MESSAGE value="pii detector main page redesign" />
     <MESSAGE value="privacy mode functionality is down in the chat page" />
-    <option name="LAST_COMMIT_MESSAGE" value="privacy mode functionality is down in the chat page" />
+    <MESSAGE value="readme updated" />
+    <option name="LAST_COMMIT_MESSAGE" value="readme updated" />
   </component>
 </project>

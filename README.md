@@ -34,7 +34,7 @@
 - **RTL Support**: Proper right-to-left text handling
 - **Arabic Numerals**: Detection of Arabic numerals (١٢٣٤٥٦٧٨٩٠)
 
-### 🔒 Privacy Features
+###  Privacy Features
 - **One-click Privacy Toggle**: Switch between masked and unmasked views
 - **Secure Masking**: Cryptographically secure placeholder generation
 - **Zero Data Storage**: No persistent storage of user data
