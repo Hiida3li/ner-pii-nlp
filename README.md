@@ -216,7 +216,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- OpenAI for GPT-4 API
+- OpenAI for GPT-4 
 - Hugging Face Transformers
 - FastAPI framework
 - PyTorch community
