@@ -29,7 +29,7 @@
 - **In-chat Attachments**: Send multiple documents with messages
 - **Entity Detection**: Automatic PII identification in uploaded documents
 
-### 🌍 Multi-Language Support
+###  Multi-Language Support
 - **Arabic & English**: Full support for both languages
 - **RTL Support**: Proper right-to-left text handling
 - **Arabic Numerals**: Detection of Arabic numerals (١٢٣٤٥٦٧٨٩٠)
