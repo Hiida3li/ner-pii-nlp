@@ -52,8 +52,8 @@
 |--------|-------------|----------|
 |  **Person** | Personal names | John Doe, احمد الكندي |
 |  **Location** | Cities, countries, addresses | New York, مسقط |
-| 🏢 **Organization** | Companies, institutions | Google, بنك ضفار |
-| 📧 **Email** | Email addresses | john@example.com |
+|  **Organization** | Companies, institutions | Google, بنك ضفار |
+|  **Email** | Email addresses | john@example.com |
 | 📱 **Phone** | Phone numbers | 9xxxxxxx, 7xxxxxxx |
 | 🔗 **URL** | Web addresses | https://example.com |
 | 🆔 **Civil ID** | Civil identification | 9-12 digit patterns |
