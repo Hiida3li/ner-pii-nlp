@@ -57,7 +57,7 @@
 |  **Phone** | Phone numbers | 96784512, 2247588896                                |
 |  **URL** | Web addresses | https://example.com                                 |
 |  **Civil ID** | Civil identification | 9-12 digit patterns                                 |
-|  **Passport** | Passport numbers | AB1234567                                           |
+|  **Passport** | Passport numbers | AA1234567                                           |
 |  **Credit Card** | Card numbers | 4xxx xxxx xxxx xxxx                                 |
 |  **Bank Account** | Account numbers | Banking formats                                     |
 
