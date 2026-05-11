@@ -68,7 +68,7 @@
 - 4GB+ RAM recommended
 - OpenAI API key (for chat functionality)
 
-### Quick Start
+### Start
 
 1. **Clone the repository**
 ```bash
