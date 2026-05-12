@@ -149,7 +149,7 @@ ner-pii-nlp/
 
 ## Usage Guide
 
-### PII Detection
+### PII Detection (what happened here? behind the scenes?)
 1. Navigate to `/app`
 2. Enter text containing PII
 3. Click "Extract Entities"
