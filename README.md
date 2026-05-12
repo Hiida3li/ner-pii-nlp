@@ -193,8 +193,12 @@ docker-compose up -d
 ## Recent Updates
 
 ### Version 3.1
--  Multi-document upload support
--  Document attachment cards in chat
+-  Multi-document upload support with drag & drop
+-  Document attachment cards in chat interface
+-  Improved entity detection accuracy
+-  Improved error handling and logging
+-  Fixed RTL text handling
+-  Fixed Arabic numerals detection
 -  Enhanced privacy mode for documents
 -  Improved UI with customizable colors
 -  Better Arabic/English support
@@ -203,7 +207,7 @@ docker-compose up -d
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
 
 ## Acknowledgments
 
