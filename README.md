@@ -208,8 +208,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - LLM models from OpenAI
-- Hugging Face Transformers
-- FastAPI framework
-- PyTorch community
+- Hugging Face Transformers library
+- FastAPI framework by Uvicorn
+- PyTorch community for their GPT-4 implementation
 
 ---
