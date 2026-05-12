@@ -202,8 +202,8 @@ docker-compose up -d
 -  Enhanced privacy mode for documents 100% private
 -  Improved UI with customizable colors and animations
 -  Improved performance and stability
--  Better Arabic/English support
--  Performance optimizations
+-  Better Arabic/English support 
+-  Performance optimizations 20% faster
 
 
 ## License
