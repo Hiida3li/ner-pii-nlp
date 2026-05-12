@@ -64,9 +64,9 @@
 ## Installation
 
 ### Prerequisites
-- Python 3.8 or higher
-- 4GB+ RAM recommended
-- OpenAI API key (for chat functionality)
+- Python 3.8 or higher with pip
+- 4GB+ RAM recommended for model loading
+- OpenAI API key (for chat functionality) or a local model checkpoint
 
 ### Start
 
