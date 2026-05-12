@@ -30,15 +30,15 @@
 - **Entity Detection**: Automatic PII identification in uploaded documents
 
 ###  Multi-Language Support
-- **Arabic & English**: Full support for both languages
-- **RTL Support**: Proper right-to-left text handling
-- **Arabic Numerals**: Detection of Arabic numerals (١٢٣٤٥٦٧٨٩٠)
+- **Arabic & English**: Full support for both languages 
+- **RTL Support**: Proper right-to-left text handling for Arabic
+- **Arabic Numerals**: Detection of Arabic numerals (١٢٣٤٥٦٧٨٩٠) 1234567890
 
 ###  Privacy Features
-- **One-click Privacy Toggle**: Switch between masked and unmasked views
-- **Secure Masking**: Cryptographically secure placeholder generation
-- **Zero Data Storage**: No persistent storage of user data
-- **Session Isolation**: Independent chat sessions per user
+- **One-click Privacy Toggle**: Switch between masked and unmasked views 
+- **Secure Masking**: Cryptographically secure placeholder generation for PII
+- **Zero Data Storage**: No persistent storage of user data 
+- **Session Isolation**: Independent chat sessions per user 
 
 ###  Modern UI/UX
 - **Dark Theme**: Elegant dark interface with smooth animations ONLY DARK MODE
