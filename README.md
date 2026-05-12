@@ -155,7 +155,7 @@ ner-pii-nlp/
 3. Click "Extract Entities"
 4. View color-coded entities and statistics
 
-### Privacy Chat
+### Privacy Chat Interface (Testing the privacy shield)
 1. Go to `/privacy-chat`
 2. Type messages - PII is automatically masked
 3. Upload documents via drag & drop or paperclip icon
