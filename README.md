@@ -183,12 +183,12 @@ docker-compose up -d
 
 ## Security Features
 
-- **No Data Persistence**: Zero storage of user data
-- **Secure Masking**: Cryptographic placeholder generation
-- **Session Isolation**: Independent user sessions
-- **Input Validation**: Multi-layer validation
+- **No Data Persistence**: Zero storage of user data 
+- **Secure Masking**: Cryptographic placeholder generation for PII
+- **Session Isolation**: Independent user sessions for privacy
+- **Input Validation**: Multi-layer validation for robustness
 - **File Type Checking**: Strict file type validation
-- **Size Limits**: Configurable file size restrictions
+- **Size Limits**: Configurable file size restrictions 10MB
 
 ## Recent Updates
 
