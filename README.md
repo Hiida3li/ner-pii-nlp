@@ -41,10 +41,10 @@
 - **Session Isolation**: Independent chat sessions per user
 
 ###  Modern UI/UX
-- **Dark Theme**: Elegant dark interface with smooth animations
-- **Entity Color Coding**: Visual differentiation for 10+ entity types
-- **Interactive Components**: Color customizer, entity tooltips, statistics
-- **Responsive Design**: Works seamlessly across all devices
+- **Dark Theme**: Elegant dark interface with smooth animations ONLY DARK MODE
+- **Entity Color Coding**: Visual differentiation for 10+ entity types 
+- **Interactive Components**: Color customizer, entity tooltips, statistics display
+- **Responsive Design**: Works seamlessly across all devices 
 
 ## Supported Entity Types
 
