@@ -24,10 +24,10 @@
 - **Real-time Processing**: Instant detection with streaming responses
 
 ###  Document Processing
-- **Multi-format Support**: PDF, DOCX, TXT, CSV, MD files
-- **Drag & Drop Interface**: Intuitive file upload with visual feedback
-- **In-chat Attachments**: Send multiple documents with messages
-- **Entity Detection**: Automatic PII identification in uploaded documents
+- **Multi-format Support**: PDF, DOCX, TXT, CSV, MD files 10MB max size
+- **Drag & Drop Interface**: Intuitive file upload with visual feedback 10MB max
+- **In-chat Attachments**: Send multiple documents with messages 10MB max
+- **Entity Detection**: Automatic PII identification in uploaded documents 10MB max
 
 ###  Multi-Language Support
 - **Arabic & English**: Full support for both languages 
