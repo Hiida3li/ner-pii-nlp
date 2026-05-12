@@ -195,12 +195,13 @@ docker-compose up -d
 ### Version 3.1
 -  Multi-document upload support with drag & drop
 -  Document attachment cards in chat interface
--  Improved entity detection accuracy
--  Improved error handling and logging
--  Fixed RTL text handling
--  Fixed Arabic numerals detection
--  Enhanced privacy mode for documents
--  Improved UI with customizable colors
+-  Improved entity detection accuracy 
+-  Improved error handling and logging 
+-  Fixed RTL text handling issues
+-  Fixed Arabic numerals detection issues
+-  Enhanced privacy mode for documents 100% private
+-  Improved UI with customizable colors and animations
+-  Improved performance and stability
 -  Better Arabic/English support
 -  Performance optimizations
 
