@@ -2,10 +2,7 @@
 
 /* Chat Upload Button - Claude Style */
 .chat-upload-btn {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+    position: relative;
     background: transparent;
     border: none;
     color: #71717a;
@@ -41,7 +38,7 @@
 }
 
 .input-box .chat-input {
-    padding-left: 120px !important; /* Make room for the upload button */
+    padding-left: 8px !important; /* Normal padding */
 }
 
 /* Active document indicator in input area */
@@ -119,9 +116,9 @@
 }
 
 .upload-btn {
-    background: var(--primary);
-    border: none;
-    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
     border-radius: 6px;
     width: 32px;
     height: 32px;
@@ -133,9 +130,9 @@
 }
 
 .upload-btn:hover {
-    background: var(--primary-dark);
+    background: rgba(255, 255, 255, 0.15);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Upload Area */
