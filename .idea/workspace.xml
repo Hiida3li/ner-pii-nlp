@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="686a542b-666d-41a5-933f-16af0916bc27" name="Changes" comment="privacy mode functionality is down in the chat page" />
+    <list default="true" id="686a542b-666d-41a5-933f-16af0916bc27" name="Changes" comment="privacy mode functionality is down in the chat page">
+      <change afterPath="$PROJECT_DIR$/test.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -43,7 +46,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "nlp5",
-    "last_opened_file_path": "/Users/mahmoud/ner-pii-nlp 5",
+    "last_opened_file_path": "/Users/mahmoud/Desktop/ner-pii-nlp-5-2",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -80,6 +83,7 @@
       <workItem from="1756876242514" duration="203000" />
       <workItem from="1756972202452" duration="86956000" />
       <workItem from="1757326314574" duration="3768000" />
+      <workItem from="1778742291921" duration="1469000" />
     </task>
     <task id="LOCAL-00405" summary="privacy mode functionality is down in the chat page">
       <option name="closed" value="true" />

@@ -102,7 +102,7 @@ async def read_root(request: Request):
     """Render the welcome page"""
     logger.info("Root path accessed, rendering welcome page")
     # Simplified to directly render the welcome page without cookie check
-    return templates.TemplateResponse("welcome.html", {"request": request})
+    return templates.TemplateResponse(request, "welcome.html")
 
 
 @app.get("/app", response_class=HTMLResponse)
@@ -110,8 +110,9 @@ async def app_page(request: Request):
     """Render the main application page"""
     logger.info("App page accessed")
     response = templates.TemplateResponse(
-        "index.html", 
-        {"request": request, "title": APP_TITLE, "description": APP_DESCRIPTION}
+        request,
+        "index.html",
+        {"title": APP_TITLE, "description": APP_DESCRIPTION}
     )
     # Set cookie to remember the user has seen the welcome page
     response.set_cookie(key="welcome_completed", value="true", max_age=2592000)  # 30 days
@@ -196,7 +197,7 @@ async def extract_entities(request: TextRequest):
 async def welcome(request: Request):
     """Display welcome screen"""
     logger.info("Welcome page accessed via /welcome path")
-    return templates.TemplateResponse("welcome.html", {"request": request})
+    return templates.TemplateResponse(request, "welcome.html")
 
 
 @app.get("/api/models")
@@ -1234,7 +1235,7 @@ async def privacy_chat_page(request: Request):
     # Note: Chatbot session is now managed by the frontend's reset endpoint
     # which is called when the page loads, ensuring a clean start
     
-    response = templates.TemplateResponse("privacy_chat.html", {"request": request})
+    response = templates.TemplateResponse(request, "privacy_chat.html")
     # Add no-cache headers to prevent browser caching
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Pragma"] = "no-cache"
