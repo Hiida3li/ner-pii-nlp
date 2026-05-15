@@ -183,7 +183,7 @@ class CompactColorCustomizer {
         iconContainer.style.cssText = `
             position: fixed;
             left: 1.5rem;
-            top: 14rem;
+            top: 13.5rem;
             z-index: 1002;
         `;
 
@@ -246,8 +246,8 @@ class CompactColorCustomizer {
             
             .compact-color-panel {
                 position: absolute;
-                top: 100%;
-                left: 0;
+                top: 0;           /* Align with button top */
+                left: 100%;       /* Position to the right */
                 width: 240px;
                 max-height: 320px;
                 background: linear-gradient(145deg, #2d2b3a, #252331);
@@ -261,10 +261,12 @@ class CompactColorCustomizer {
                 backdrop-filter: blur(20px);
                 overflow: hidden;
                 z-index: 1003;
-                margin-top: 8px;
+                margin-top: 0px;
+                margin-left: 8px;
             }
             
-            .compact-color-panel.open {
+            .compact-color-panel.open,
+            .compact-color-panel.active {
                 opacity: 1;
                 visibility: visible;
                 transform: translateY(0);
@@ -450,6 +452,15 @@ class CompactColorCustomizer {
                 border-color: rgba(255, 255, 255, 0.5);
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             }
+            
+            @keyframes pulse {
+                0%, 100% {
+                    background-color: rgba(167, 139, 250, 0.1);
+                }
+                50% {
+                    background-color: rgba(167, 139, 250, 0.3);
+                }
+            }
         `;
         
         document.head.appendChild(style);
@@ -463,6 +474,7 @@ class CompactColorCustomizer {
             const item = document.createElement('div');
             item.className = 'compact-color-item';
             item.style.position = 'relative';
+            item.dataset.entity = entityType;
             
             // Create a hidden color input alongside the preview
             const colorInput = document.createElement('input');
@@ -678,8 +690,13 @@ class CompactColorCustomizer {
         const panel = document.getElementById('compact-color-panel');
         const icon = document.getElementById('compact-color-icon');
         
-        panel.classList.remove('open');
-        icon.classList.remove('active');
+        if (panel) {
+            panel.classList.remove('open');
+            panel.classList.remove('active');
+        }
+        if (icon) {
+            icon.classList.remove('active');
+        }
     }
     
     openPanelForEntity(entityType) {

@@ -96,7 +96,7 @@
         .floating-logo {
             position: fixed;
             left: 1.5rem;
-            top: 2.5rem;
+            top: 3rem;
             z-index: 1003;
             display: flex;
             align-items: center;
@@ -108,7 +108,7 @@
         .sidebar-toggle {
             position: fixed;
             left: 1.5rem;
-            top: 8rem;
+            top: 7.5rem;
             width: 32px;
             height: 32px;
             background: rgba(255, 255, 255, 0.1);
@@ -155,7 +155,7 @@
         .new-chat-icon {
             position: fixed;
             left: 1.5rem;
-            top: 11rem;
+            top: 10.5rem;
             width: 32px;
             height: 32px;
             background: rgba(255, 255, 255, 0.1);
@@ -288,7 +288,7 @@
         .export-entities-icon {
             position: fixed;
             left: 1.5rem;
-            top: 17rem;
+            top: 16.5rem;
             width: 32px;
             height: 32px;
             background: rgba(255, 255, 255, 0.1);
@@ -326,9 +326,9 @@
         /* Export Dropdown Menu */
         .export-dropdown {
             position: fixed;
-            left: 4.5rem;
-            top: 14rem;
-            background: rgba(17, 17, 17, 0.95);
+            left: 4rem;
+            top: 16.5rem;
+            background: rgba(58, 64, 80, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
@@ -590,7 +590,7 @@
         }
 
         .chat-sessions-container {
-            padding-top: 24rem; /* Push Recent chats further down */
+            padding-top: 20rem; /* Push Recent chats further down */
         }
 
         .sessions-label {
@@ -1036,6 +1036,11 @@
             background-clip: padding-box;
         }
 
+        .message-wrapper {
+            width: 100%;
+            padding: 1rem 0;
+        }
+        
         .message-wrapper.assistant {
             background: rgba(255, 255, 255, 0.02);
         }
@@ -1263,19 +1268,8 @@
             display: inline-block;
             vertical-align: baseline;
             line-height: inherit;
-            animation: fadeInHighlight 0.3s ease-in-out forwards;
+            /* No animation - entities appear instantly without effects */
             opacity: 1; /* Ensure entities are visible by default */
-        }
-        
-        @keyframes fadeInHighlight {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
         }
         
         /* Suppress animations during privacy toggle */
@@ -1326,10 +1320,11 @@
         .assistant .message-text strong, .assistant .message-text b {
             color: #fafafa;
         }
-        
+
         .pii-entity {
-            user-select: all;
-            -webkit-user-select: all;
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: pointer;
         }
         
         .message-text.ltr {
@@ -1363,7 +1358,7 @@
         .pii-entity {
             font-weight: 600;
             display: inline;
-            transition: all 0.2s ease;
+            /* No transition effects */
             position: relative;
             letter-spacing: 0.3px;
             opacity: 1 !important;
@@ -1372,6 +1367,7 @@
             margin: 0;
             border: none;
             box-shadow: none !important;
+            text-decoration: none; /* No underline by default */
             /* Add bidirectional isolation for mixed RTL/LTR text */
             unicode-bidi: isolate;
         }
@@ -1402,16 +1398,23 @@
             text-align: left;
         }
         
+        .pii-entity:hover {
+            cursor: pointer;
+            text-decoration: underline; /* Show underline on hover */
+            text-decoration-thickness: 1.5px;
+            text-underline-offset: 2px;
+        }
+        
         /* Animation keyframe is already defined above as fadeInHighlight */
         /* Removed duplicate animation and keyframe definition */
         
         /* Ensure good contrast in both light and dark contexts */
         .message.user .pii-entity {
-            filter: brightness(1.1);
+            /* No filter effects */
         }
         
         .message.assistant .pii-entity {
-            filter: brightness(0.95);
+            /* No filter effects */
         }
 
         /* Person entities - Text color only */
@@ -1526,7 +1529,7 @@
         .input-container {
             position: relative;
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
             margin: 2rem auto 0;
             padding: 0 1.5rem;
         }
@@ -1546,7 +1549,7 @@
         }
 
         .input-wrapper {
-            max-width: 56rem;
+            max-width: 54rem;
             margin: 0 auto;
             padding: 0 1.5rem;
             width: 100%;
@@ -1561,8 +1564,8 @@
             align-items: flex-end;
             gap: 8px;
             transition: all 0.3s ease;
-            min-height: 40px;
-            max-height: 120px;
+            min-height: 30px;
+            max-height: 100px;
             position: relative;
         }
 
@@ -1583,13 +1586,13 @@
             min-height: 24px;
             max-height: 100px;
             line-height: 2;
-            padding: 4px 0 0 0;
+            padding: 6px 0 0 5px;
             font-family: inherit;
             overflow-y: auto;
             text-align: left;
             direction: ltr;
             margin-bottom: 4px;
-            margin-left: -80px;
+            margin-left: -12px;
         }
         
         /* Minimal scrollbar */
@@ -1659,6 +1662,97 @@
         .send-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+
+        /* Input Actions Container */
+        .input-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        /* Voice Recording Styles */
+        .voice-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .voice-btn:hover {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .voice-btn.recording {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 76, 76, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 76, 76, 0);
+            }
+        }
+
+        /* Recording Indicator */
+        .recording-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px 30px;
+            border-radius: 12px;
+            display: none;
+            z-index: 10000;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .recording-indicator.active {
+            display: flex;
+        }
+
+        .recording-dot {
+            width: 12px;
+            height: 12px;
+            background: #ff4c4c;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .recording-text {
+            color: white;
+            font-size: 16px;
+        }
+
+        .recording-time {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin-left: 10px;
         }
         
         .send-btn.interrupt-mode {
@@ -2319,7 +2413,7 @@
     
     <div class="container" id="container">
         <!-- Enhanced Sidebar -->
-        <div class="sidebar" id="sidebar">
+        <div class="sidebar collapsed" id="sidebar">
             <div class="sidebar-header">
                 <!-- Logo moved to floating position above toggle -->
             </div>
@@ -2376,6 +2470,7 @@
                     <div class="input-container" id="centered-input">
                         <div class="input-wrapper">
                             <div class="input-box">
+                                <!-- Upload button will be dynamically inserted here by document-attachment-manager.js -->
                                 <textarea 
                                     class="chat-input" 
                                     id="chat-input" 
@@ -2383,11 +2478,21 @@
                                     rows="1"
                                     style="text-align: left !important; direction: ltr !important;"
                                 ></textarea>
-                                <button class="send-btn" id="send-btn">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="send-icon">
-                                        <path class="send-arrow" d="M12 5L12 19M12 5L7 10M12 5L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </button>
+                                <div class="input-actions">
+                                    <button class="send-btn" id="send-btn">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="send-icon">
+                                            <path class="send-arrow" d="M12 5L12 19M12 5L7 10M12 5L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                    <button class="voice-btn" id="voice-btn" title="Hold to record voice message">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="mic-icon">
+                                            <path d="M12 1C10.34 1 9 2.34 9 4V12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12V4C15 2.34 13.66 1 12 1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M19 10V12C19 15.866 15.866 19 12 19C8.13401 19 5 15.866 5 12V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M12 19V23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M8 23H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2398,6 +2503,7 @@
             <div class="input-container bottom" id="bottom-input" style="display: none;">
                 <div class="input-wrapper">
                     <div class="input-box">
+                        <!-- Upload button will be dynamically inserted here by document-attachment-manager.js -->
                         <textarea 
                             class="chat-input" 
                             id="chat-input-bottom" 
@@ -2405,11 +2511,21 @@
                             rows="1"
                             style="text-align: left !important; direction: ltr !important;"
                         ></textarea>
-                        <button class="send-btn" id="send-btn-bottom">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="send-icon">
-                                <path class="send-arrow" d="M12 5L12 19M12 5L7 10M12 5L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
+                        <div class="input-actions">
+                            <button class="send-btn" id="send-btn-bottom">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="send-icon">
+                                    <path class="send-arrow" d="M12 5L12 19M12 5L7 10M12 5L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <button class="voice-btn" id="voice-btn-bottom" title="Hold to record voice message">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="mic-icon">
+                                    <path d="M12 1C10.34 1 9 2.34 9 4V12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12V4C15 2.34 13.66 1 12 1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M19 10V12C19 15.866 15.866 19 12 19C8.13401 19 5 15.866 5 12V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 19V23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M8 23H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2447,13 +2563,14 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="/static/css/document-manager.css">
-    <link rel="stylesheet" href="/static/css/document-attachment.css?v=20">
+    <link rel="stylesheet" href="/static/css/document-manager.css?v=2">
+    <link rel="stylesheet" href="/static/css/document-attachment.css?v=21">
     <link rel="stylesheet" href="/static/css/attachment-text-fix.css?v=1">
-    <script src="/static/js/security-utils.js"></script>
+    <link rel="stylesheet" href="/static/css/voice-message.css?v=1">
     <script src="/static/js/entity-dictionary.js"></script>
     <script src="/static/js/privacy_chat.js?v=112"></script>
-    <script src="/static/js/document-attachment-manager.js?v=16"></script>
+    <script src="/static/js/voice-message.js?v=9"></script>
+    <script src="/static/js/document-attachment-manager.js?v=17"></script>
     <script>
         // Global function to close document modal
         function closeDocumentModal() {
@@ -2563,26 +2680,7 @@
             }
         });
 
-        // Export Entities Functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const exportBtn = document.getElementById('export-entities-icon');
-            const exportDropdown = document.getElementById('export-dropdown');
-            
-            // Toggle dropdown on button click
-            if (exportBtn) {
-                exportBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    exportDropdown.classList.toggle('show');
-                });
-            }
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!exportDropdown.contains(e.target) && e.target !== exportBtn) {
-                    exportDropdown.classList.remove('show');
-                }
-            });
-        });
+
 
         // Export entities function
         async function exportEntities(format) {
@@ -2590,8 +2688,9 @@
                 // Close dropdown
                 document.getElementById('export-dropdown').classList.remove('show');
                 
-                // Get session ID
-                const sessionId = localStorage.getItem('session_id') || '1';
+                // Get session ID from the PrivacyChat instance
+                const sessionId = window.privacyChat ? window.privacyChat.currentSession : '1';
+                console.log('Exporting entities for session:', sessionId);
                 
                 // Fetch entities from the API
                 const response = await fetch(`/api/privacy-chat/export-entities?session_id=${sessionId}&format=${format}`);
@@ -2708,114 +2807,68 @@
             }
         }
     </style>
-    
+
     <!-- Compact Color Customizer Script -->
-    <script src="/static/js/color_customizer_compact.js?v=3"></script>
+    <script src="/static/js/color_customizer_compact.js?v=4"></script>
+    <!-- Auto-close panels to prevent overlap -->
     <script>
-        // Initialize sidebar text labels visibility on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                const sidebar = document.getElementById('sidebar');
-                const toggleText = document.querySelector('.toggle-text');
-                const newChatText = document.querySelector('.new-chat-text');
-                const exportText = document.querySelector('.export-text');
-                const colorText = document.querySelector('.color-text');
-                
-                // Check if sidebar is initially collapsed
-                if (sidebar && sidebar.classList.contains('collapsed')) {
-                    // Hide text labels if sidebar is collapsed
-                    if (toggleText) toggleText.style.display = 'none';
-                    if (newChatText) newChatText.style.display = 'none';
-                    if (exportText) exportText.style.display = 'none';
-                    if (colorText) colorText.style.display = 'none';
-                } else {
-                    // Show text labels if sidebar is open
-                    if (toggleText) toggleText.style.display = 'block';
-                    if (newChatText) newChatText.style.display = 'block';
-                    if (exportText) exportText.style.display = 'block';
-                    if (colorText) colorText.style.display = 'block';
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize color customizer
+            if (!window.compactColorCustomizer) {
+                window.compactColorCustomizer = new CompactColorCustomizer();
+                console.log('Color customizer initialized for privacy chat');
+            }
+            
+            const exportBtn = document.getElementById('export-entities-icon');
+            const exportDropdown = document.getElementById('export-dropdown');
+
+            // Single consolidated click handler for export button
+            if (exportBtn) {
+                exportBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+
+                    // Close color palette if open
+                    if (window.compactColorCustomizer && window.compactColorCustomizer.isPanelOpen) {
+                        window.compactColorCustomizer.closeCompactPanel();
+                    }
+
+                    // Toggle export dropdown
+                    exportDropdown.classList.toggle('show');
+                });
+            }
+
+            // Setup color button to close export dropdown
+            setTimeout(() => {
+                const colorBtn = document.getElementById('compact-color-icon');
+                if (colorBtn) {
+                    colorBtn.addEventListener('click', function (e) {
+                        // Close export dropdown if open
+                        if (exportDropdown && exportDropdown.classList.contains('show')) {
+                            exportDropdown.classList.remove('show');
+                        }
+                        // Color palette toggle is handled by color customizer itself
+                    });
                 }
-            }, 100);
+            }, 500);
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function (e) {
+                // Close export dropdown if clicking outside
+                if (exportDropdown && !exportDropdown.contains(e.target) && e.target !== exportBtn) {
+                    exportDropdown.classList.remove('show');
+                }
+                // Color palette close is handled by its own script
+            });
         });
     </script>
     
-    <!-- Entity Click Handler -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add click handler for entities to open color customizer
-            document.addEventListener('click', function(e) {
-                // Check if clicked element is an entity
-                if (e.target.classList.contains('pii-entity')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Get entity type from classes
-                    const classes = Array.from(e.target.classList);
-                    let entityType = null;
-                    
-                    // Map CSS classes to entity types
-                    const classToType = {
-                        'pii-person': 'person',
-                        'pii-location': 'location',
-                        'pii-organization': 'organization',
-                        'pii-email': 'email',
-                        'pii-phone': 'phone',
-                        'pii-url': 'url',
-                        'pii-civilid': 'civilid',
-                        'pii-passport': 'passport',
-                        'pii-creditcard': 'creditcard',
-                        'pii-bankaccount': 'bankaccount'
-                    };
-                    
-                    // Find the entity type from classes
-                    for (const cls of classes) {
-                        if (classToType[cls]) {
-                            entityType = classToType[cls];
-                            break;
-                        }
-                    }
-                    
-                    // Open the color customizer panel for this entity type
-                    if (entityType && window.compactColorCustomizer) {
-                        window.compactColorCustomizer.openPanelForEntity(entityType);
-                    }
-                }
-            });
-            
-            // Add hover effect to entities
-            const style = document.createElement('style');
-            style.textContent = `
-                .pii-entity {
-                    cursor: pointer;
-                    transition: all 0.2s;
-                    position: relative;
-                    text-decoration: none;
-                    -webkit-user-select: none;
-                    -moz-user-select: none;
-                    -ms-user-select: none;
-                    user-select: none;
-                }
-                
-                .pii-entity:hover {
-                    filter: brightness(1.2);
-                    transform: scale(1.05);
-                    text-decoration: underline;
-                    text-decoration-color: currentColor;
-                    text-decoration-thickness: 1px;
-                    text-underline-offset: 2px;
-                }
-                
-                /* Prevent selection highlight */
-                .pii-entity::selection {
-                    background: transparent;
-                }
-                
-                .pii-entity::-moz-selection {
-                    background: transparent;
-                }
-            `;
-            document.head.appendChild(style);
-        });
-    </script>
+    <!-- Recording Indicator -->
+    <div class="recording-indicator" id="recording-indicator">
+        <div class="recording-dot"></div>
+        <div class="recording-text">Recording...</div>
+        <div class="recording-time" id="recording-time">0:00</div>
+    </div>
 </body>
 </html>
+
+

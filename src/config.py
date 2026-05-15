@@ -18,6 +18,11 @@ class Config:
     # Model configuration - needed for AutoTokenizer and AutoModelForTokenClassification
     MODEL_NAME = "CAMeL-Lab/bert-base-arabic-camelbert-msa-ner"
     
+    # Server settings
+    DEBUG = True
+    HOST = "0.0.0.0"
+    PORT = 8000
+    
     # Model confidence threshold
     CONFIDENCE_THRESHOLD = 0.75
     

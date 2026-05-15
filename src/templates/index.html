@@ -467,6 +467,7 @@
 
 {% block scripts %}
 <script src="/static/js/entity-dictionary.js"></script>
+<script src="/static/js/color_customizer_compact.js"></script>
 <script src="/static/js/app.js?v=3"></script>
 <script>
 // Theme and Privacy toggle functionality
@@ -527,6 +528,12 @@ document.addEventListener('DOMContentLoaded', function() {
       initializeApp();
     } else {
       console.log('PIIShieldApp is handling the application');
+    }
+    
+    // Initialize color customizer
+    if (!window.compactColorCustomizer) {
+      window.compactColorCustomizer = new CompactColorCustomizer();
+      console.log('Color customizer initialized');
     }
   }, 100);
   

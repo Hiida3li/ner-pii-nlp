@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, Stre
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, Dict, Optional, Tuple, Union
 import torch
 from transformers import AutoTokenizer, AutoModelForTokenClassification
@@ -12,6 +13,7 @@ import logging
 from contextlib import asynccontextmanager
 import re
 import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 import requests
 import asyncio
@@ -75,6 +77,8 @@ templates = Jinja2Templates(directory="src/templates")
 
 # Pydantic models for API
 class TextRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     text: str
     model_version: str
 
@@ -89,12 +93,17 @@ class TextResponse(BaseModel):
     entities: List[EntityResult]
     entity_counts: Dict[str, int]
 
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Docker and monitoring services"""
+    return JSONResponse({"status": "healthy", "service": "PII-Shield"})
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     """Render the welcome page"""
     logger.info("Root path accessed, rendering welcome page")
     # Simplified to directly render the welcome page without cookie check
-    return templates.TemplateResponse("welcome.html", {"request": request})
+    return templates.TemplateResponse(request, "welcome.html")
 
 
 @app.get("/app", response_class=HTMLResponse)
@@ -102,8 +111,9 @@ async def app_page(request: Request):
     """Render the main application page"""
     logger.info("App page accessed")
     response = templates.TemplateResponse(
-        "index.html", 
-        {"request": request, "title": APP_TITLE, "description": APP_DESCRIPTION}
+        request,
+        "index.html",
+        {"title": APP_TITLE, "description": APP_DESCRIPTION}
     )
     # Set cookie to remember the user has seen the welcome page
     response.set_cookie(key="welcome_completed", value="true", max_age=2592000)  # 30 days
@@ -188,7 +198,7 @@ async def extract_entities(request: TextRequest):
 async def welcome(request: Request):
     """Display welcome screen"""
     logger.info("Welcome page accessed via /welcome path")
-    return templates.TemplateResponse("welcome.html", {"request": request})
+    return templates.TemplateResponse(request, "welcome.html")
 
 
 @app.get("/api/models")
@@ -246,6 +256,7 @@ class SimpleChatbot:
         self.conversation_history = []  # Store conversation history for context
         self.max_history_length = 10  # Keep last 10 messages for context
         self.document_context = None  # Store current document context
+        logger.info(f"SimpleChatbot initialized with API key: {'***' + (self.api_key[-4:] if self.api_key else 'None')}")
         logger.info(f"SimpleChatbot initialized with fresh entity_counters: {self.entity_counters}")
         logger.info(f"SimpleChatbot initialized with empty entity_mappings: {len(self.entity_mappings)} items")
         logger.info(f"SimpleChatbot initialized with empty reverse_mappings: {len(self.reverse_mappings)} items")
@@ -376,7 +387,7 @@ class SimpleChatbot:
         """Get AI response using OpenAI with Omani cultural context"""
         try:
             if not self.api_key:
-                logger.error("No OpenAI API key found")
+                logger.error(f"No OpenAI API key found. API key value: '{self.api_key}' (length: {len(self.api_key or '')})")
                 return self.fallback_response(masked_message)
             
             logger.info(f"Calling OpenAI with masked message: {masked_message}")
@@ -460,6 +471,8 @@ Respond naturally as if you were having a conversation with a friend who asked f
                 return ai_response
             else:
                 logger.error(f"OpenAI API error: {response.status_code} - {response.text}")
+                logger.error(f"Request headers: {headers}")
+                logger.error(f"Request data: {data}")
                 return self.fallback_response(masked_message)
             
         except Exception as e:
@@ -879,11 +892,15 @@ async def upload_document(session_id: int, file: UploadFile = File(...)):
         entity_counts = entity_processor.get_entity_stats(entities_for_processor)
         logger.info(f"Entity highlighting time: {(time.time() - highlight_start) * 1000:.2f}ms")
         
-        # Create masked version of text using SimpleChatbot's masking logic
+        # Create masked version of text using a TEMPORARY chatbot to avoid affecting session counters
         mask_start = time.time()
-        chatbot = SimpleChatbot()
-        masked_text = chatbot.mask_entities(result['text'], entities)
+        # Create a temporary chatbot just for document masking
+        # This ensures document uploads don't affect the main chat session's entity counters
+        temp_chatbot = SimpleChatbot()
+        logger.info(f"Created temporary chatbot for document upload masking (session {session_id})")
+        masked_text = temp_chatbot.mask_entities(result['text'], entities)
         logger.info(f"Text masking time: {(time.time() - mask_start) * 1000:.2f}ms")
+        # Note: temp_chatbot goes out of scope and is garbage collected, not affecting the session
         
         # Store document in session
         storage_start = time.time()
@@ -1031,11 +1048,15 @@ async def upload_multiple_documents(session_id: int, files: List[UploadFile] = F
                 entity_counts = entity_processor.get_entity_stats(entities_for_processor)
                 logger.info(f"Document {file_index + 1} highlighting time: {(time.time() - highlight_start) * 1000:.2f}ms")
                 
-                # Create masked version of text
+                # Create masked version of text using a TEMPORARY chatbot to avoid affecting session counters
                 mask_start = time.time()
-                chatbot = SimpleChatbot()
-                masked_text = chatbot.mask_entities(result['text'], entities)
+                # Create a temporary chatbot just for document masking
+                # This ensures document uploads don't affect the main chat session's entity counters
+                temp_chatbot = SimpleChatbot()
+                logger.info(f"Created temporary chatbot for multi-document upload masking (session {session_id}, doc {file_index + 1})")
+                masked_text = temp_chatbot.mask_entities(result['text'], entities)
                 logger.info(f"Document {file_index + 1} masking time: {(time.time() - mask_start) * 1000:.2f}ms")
+                # Note: temp_chatbot goes out of scope and is garbage collected, not affecting the session
                 
                 # Store document data
                 doc_data = {
@@ -1211,7 +1232,11 @@ async def get_supported_formats():
 async def privacy_chat_page(request: Request):
     """Privacy chat interface"""
     logger.info("Privacy chat page accessed")
-    response = templates.TemplateResponse("privacy_chat.html", {"request": request})
+    
+    # Note: Chatbot session is now managed by the frontend's reset endpoint
+    # which is called when the page loads, ensuring a clean start
+    
+    response = templates.TemplateResponse(request, "privacy_chat.html")
     # Add no-cache headers to prevent browser caching
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Pragma"] = "no-cache"
@@ -1380,12 +1405,13 @@ async def privacy_chat_stream(request: PrivacyChatRequest):
     """Handle chat messages with streaming response"""
     session_id = request.session_id
     
-    # Get or create chatbot
+    # Get or create chatbot - always use existing session to maintain proper entity counters
     if session_id not in chatbot_sessions:
         chatbot_sessions[session_id] = SimpleChatbot()
         logger.info(f"Created new chatbot for session {session_id}")
     
     chatbot = chatbot_sessions[session_id]
+    logger.info(f"Using chatbot for session {session_id} with {len(chatbot.entity_counters)} entity types tracked")
     
     async def generate():
         try:
@@ -1613,6 +1639,12 @@ async def reset_session(request: dict):
     chatbot_sessions[session_id] = SimpleChatbot()
     logger.info(f"Reset chat session {session_id} - created new chatbot instance")
     
+    # IMPORTANT: Also clear document sessions to prevent entity accumulation
+    # from previously uploaded documents
+    if session_id in document_sessions:
+        logger.info(f"Clearing document session for session {session_id}")
+        del document_sessions[session_id]
+    
     # Verify the new chatbot is clean
     new_bot = chatbot_sessions[session_id]
     logger.info(f"AFTER Reset: Session {session_id} has {len(new_bot.entity_mappings)} entity mappings")
@@ -1756,7 +1788,221 @@ async def export_entities(session_id: int = 1, format: str = "json"):
         )
 
 
+@app.post("/api/privacy-chat/voice-to-text")
+async def voice_to_text(
+    audio_file: UploadFile = File(...),
+    session_id: int = Form(1)
+):
+    """
+    Transcribe voice message using OpenAI Whisper API
+    """
+    try:
+        logger.info(f"Received voice message for session {session_id}, file: {audio_file.filename}")
+        
+        # Validate file type
+        allowed_types = ['audio/webm', 'audio/wav', 'audio/mpeg', 'audio/mp4', 'audio/ogg']
+        if audio_file.content_type and audio_file.content_type not in allowed_types:
+            logger.warning(f"Invalid audio type: {audio_file.content_type}")
+            # Try to proceed anyway if it's an audio file
+        
+        # Read audio file
+        audio_data = await audio_file.read()
+        
+        # Check file size (max 25MB for Whisper API)
+        max_size = 25 * 1024 * 1024  # 25MB
+        if len(audio_data) > max_size:
+            return JSONResponse(
+                status_code=413,
+                content={"error": "Audio file too large. Maximum size is 25MB"}
+            )
+        
+        # Initialize OpenAI client
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            logger.error("OpenAI API key not found")
+            return JSONResponse(
+                status_code=500,
+                content={"error": "OpenAI API key not configured"}
+            )
+        
+        client = OpenAI(api_key=api_key)
+        
+        # Create a temporary file for the audio
+        import tempfile
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as temp_audio:
+            temp_audio.write(audio_data)
+            temp_audio_path = temp_audio.name
+        
+        try:
+            # Transcribe with Whisper
+            logger.info(f"Sending audio to Whisper API for transcription")
+            with open(temp_audio_path, "rb") as audio_file_obj:
+                transcript = client.audio.transcriptions.create(
+                    model="whisper-1",
+                    file=audio_file_obj,
+                    language="ar",  # Arabic language hint
+                    prompt="نص عربي يحتوي على أسماء وأرقام هواتف وعناوين بريد إلكتروني"  # Arabic prompt for better accuracy
+                )
+            
+            transcribed_text = transcript.text
+            logger.info(f"Transcription successful: {len(transcribed_text)} characters")
+            
+            # Get or create chatbot session
+            if session_id not in chatbot_sessions:
+                chatbot_sessions[session_id] = SimpleChatbot()
+                logger.info(f"Created new chatbot for voice session {session_id}")
+            
+            chatbot = chatbot_sessions[session_id]
+            
+            # Detect entities in transcribed text
+            from src.models.model_factory import ModelFactory
+            model_factory = ModelFactory()
+            model = model_factory.get_model("v2")
+            entity_tuples = model.predict(transcribed_text)
+            
+            # Convert tuples to dictionary format
+            entities = []
+            for text, entity_type, start, end in entity_tuples:
+                entities.append({
+                    'text': text,
+                    'entity_type': entity_type,  # Changed from 'type' to 'entity_type'
+                    'start': start,
+                    'end': end
+                })
+            
+            # Mask the entities
+            masked_text = chatbot.mask_entities(transcribed_text, entities)
+            
+            # Prepare response
+            response = {
+                "success": True,
+                "original_text": transcribed_text,
+                "masked_text": masked_text,
+                "entities": entities,
+                "session_id": session_id,
+                "audio_duration": getattr(transcript, 'duration', None)
+            }
+            
+            return JSONResponse(content=response)
+            
+        finally:
+            # Clean up temporary file
+            import os as os_module
+            if os_module.path.exists(temp_audio_path):
+                os_module.remove(temp_audio_path)
+                logger.info("Cleaned up temporary audio file")
+                
+    except Exception as e:
+        logger.error(f"Error in voice transcription: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Failed to transcribe voice message: {str(e)}"}
+        )
+
+
+@app.post("/api/privacy-chat/send-voice")
+async def send_voice_message(
+    audio_file: UploadFile = File(...),
+    session_id: str = Form("1"),
+    duration: float = Form(...)
+):
+    """Handle voice messages as audio notes (not converting to text)"""
+    import uuid
+    import os
+    import traceback
+    
+    try:
+        logger.info(f"Received voice message for session {session_id}, duration: {duration}s")
+        
+        # Create directory for voice messages if it doesn't exist
+        voice_dir = "src/static/voice_messages"
+        os.makedirs(voice_dir, exist_ok=True)
+        
+        # Generate unique filename
+        file_id = str(uuid.uuid4())
+        file_extension = audio_file.filename.split('.')[-1] if '.' in audio_file.filename else 'webm'
+        filename = f"{file_id}.{file_extension}"
+        file_path = os.path.join(voice_dir, filename)
+        
+        # Save the audio file
+        with open(file_path, "wb") as f:
+            content = await audio_file.read()
+            f.write(content)
+        
+        # Create URL for the audio file
+        audio_url = f"/static/voice_messages/{filename}"
+        
+        logger.info(f"Voice message saved: {file_path}")
+        
+        # Get or create chatbot session
+        if session_id not in chatbot_sessions:
+            chatbot_sessions[session_id] = SimpleChatbot()
+        
+        chatbot = chatbot_sessions[session_id]
+        
+        # Store voice message in chat history
+        voice_message = {
+            "type": "voice",
+            "url": audio_url,
+            "duration": duration,
+            "timestamp": datetime.now().isoformat()
+        }
+        
+        # Add to conversation history
+        chatbot.conversation_history.append({
+            "role": "user",
+            "content": f"[Voice message: {duration}s]",
+            "voice_data": voice_message
+        })
+        
+        response_data = {
+            "success": True,
+            "audio_url": audio_url,
+            "duration": duration
+        }
+        
+        # If privacy mode is off, transcribe for AI response
+        # Check if privacy mode is enabled (default is True in SimpleChatbot)
+        privacy_mode = getattr(chatbot, 'privacy_mode', True)
+        if not privacy_mode:
+            try:
+                # Optionally transcribe for AI processing (but don't show to user)
+                api_key = os.getenv("OPENAI_API_KEY")
+                client = OpenAI(api_key=api_key)
+                
+                # Read the saved file for transcription
+                with open(file_path, "rb") as audio:
+                    transcript = client.audio.transcriptions.create(
+                        model="whisper-1",
+                        file=audio,
+                        language="ar"
+                    )
+                
+                transcribed_text = transcript.text
+                logger.info(f"Transcribed for AI: {transcribed_text}")
+                
+                # Get AI response based on transcription using process_message
+                result = chatbot.process_message(transcribed_text, privacy_mode=False)
+                response_data["response"] = result.get('display_response', '')
+                
+            except Exception as e:
+                logger.error(f"Error processing voice for AI: {e}")
+                # Still return success, just without AI response
+        
+        return JSONResponse(content=response_data)
+        
+    except Exception as e:
+        logger.error(f"Error handling voice message: {e}")
+        logger.error(traceback.format_exc())
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Failed to process voice message: {str(e)}"}
+        )
+
+
 if __name__ == "__main__":
-    logger.info(f"Starting application on port 9000")
-    uvicorn.run("main:app", host="0.0.0.0", port=9000, reload=True)
+    logger.info(f"Starting application on port 8000")
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
     

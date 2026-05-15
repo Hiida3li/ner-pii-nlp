@@ -2,31 +2,21 @@
 .git
 .gitignore
 
-# Environment files (IMPORTANT - Never copy these to Docker image)
-.env
-.env.*
-!.env.example
-
 # Python
 __pycache__
 *.py[cod]
 *$py.class
 *.so
 .Python
-env/
+.venv
 venv/
-.venv/
-pip-log.txt
-pip-delete-this-directory.txt
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
+ENV/
+env/
 *.egg-info/
 dist/
 build/
 
-# IDEs
+# IDE
 .vscode/
 .idea/
 *.swp
@@ -34,54 +24,51 @@ build/
 *~
 .DS_Store
 
+# Environment
+.env
+.env.local
+.env.*.local
+
 # Logs
 *.log
 logs/
+*.log.*
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
 
 # Documentation
-README.md
-docs/
 *.md
-
-# Tests
-tests/
-test_*.py
-*_test.py
+docs/
+README.md
+DEPLOYMENT_GUIDE.md
 
 # Development files
-*.db
-*.sqlite
-*.sqlite3
+*.ipynb
+.ipynb_checkpoints/
+notebooks/
 
 # Temporary files
 tmp/
 temp/
 *.tmp
-*.bak
-*.backup
 
 # Docker
 Dockerfile
 docker-compose.yml
 .dockerignore
 
-# CI/CD
-.github/
-.gitlab-ci.yml
-.travis.yml
+# Deployment scripts
+deploy.sh
+quick_deploy.sh
+server_setup.sh
+*.tar.gz
 
-# Model files (if they're downloaded separately)
-*.pt
-*.pth
-*.pkl
-*.h5
-*.onnx
-
-# Jupyter notebooks
-*.ipynb
-.ipynb_checkpoints/
-
-# Other
-node_modules/
-npm-debug.log
-yarn-error.log
+# But explicitly include required files
+!src/
+!checkpoints/
+!requirements.txt
