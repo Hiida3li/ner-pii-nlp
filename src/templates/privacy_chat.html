@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat with Blot - PII Protected Conversations</title>
+    <title>Chat with OGuard - PII Protected Conversations</title>
     <!-- Arabic Fonts - Cleaner Style -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -77,10 +77,14 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            background: var(--bg-primary);
+            background: #3a4050;
             height: 100vh;
             overflow: hidden;
             transition: background 0.3s ease;
+        }
+
+        body.light-theme {
+            background: #ffffff;
         }
 
         .container {
@@ -213,9 +217,9 @@
             top: 1.5rem;
             width: 40px;
             height: 40px;
-            background: var(--bg-secondary);
+            background: #2d2d3a;
             backdrop-filter: blur(10px);
-            border: 1px solid var(--border-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
             color: var(--text-secondary);
             cursor: pointer;
@@ -246,8 +250,8 @@
         }
         
         body.light-theme .theme-toggle-btn {
-            background: var(--bg-tertiary);
-            border-color: var(--border-primary);
+            background: #f3f4f6;
+            border-color: #e5e7eb;
         }
         
         .new-chat-icon:hover {
@@ -382,7 +386,7 @@
         /* Enhanced Sidebar */
         .sidebar {
             width: 260px;
-            background: var(--bg-sidebar);
+            background: #201f27;
             backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
@@ -390,7 +394,7 @@
             box-shadow: var(--shadow-lg);
             position: relative;
             overflow: visible;
-            border: 1px solid var(--border-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             transform-origin: left center;
         }
@@ -2733,80 +2737,6 @@
             }
         }
     </script>
-    
-    <!-- Powered by Footer -->
-    <a href="https://orki.ai" target="_blank" class="powered-by-footer">
-        <span class="powered-text">Powered by</span>
-        <img src="/static/icons/orki-logo.png" alt="Orki" class="orki-logo">
-        <div class="powered-underline"></div>
-    </a>
-    
-    <style>
-        .powered-by-footer {
-            position: fixed;
-            bottom: 35px;
-            left: 35px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 1;
-            opacity: 0.5;
-            transition: opacity 0.2s ease;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            text-decoration: none;
-            cursor: pointer;
-            pointer-events: auto;
-            width: auto;
-        }
-        
-        .powered-by-footer:hover {
-            opacity: 0.8;
-        }
-        
-        .powered-text {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            font-weight: 400;
-            letter-spacing: 0.3px;
-            position: relative;
-            top: -2px;
-        }
-        
-        .orki-logo {
-            width: 38px;
-            height: 38px;
-            object-fit: contain;
-            border-radius: 50%;
-            opacity: 0.85;
-        }
-        
-        .powered-underline {
-            position: absolute;
-            bottom: 3px;
-            left: 0;
-            width: 75px;
-            height: 1px;
-            background: #4c8bca;
-            opacity: 0.7;
-        }
-        
-        /* Mobile responsive */
-        @media (max-width: 768px) {
-            .powered-by-footer {
-                bottom: 62px;
-                left: 20px;
-            }
-            
-            .powered-text {
-                font-size: 12px;
-            }
-            
-            .orki-logo {
-                width: 26px;
-                height: 26px;
-            }
-        }
-    </style>
 
     <!-- Compact Color Customizer Script -->
     <script src="/static/js/color_customizer_compact.js?v=4"></script>
