@@ -2711,11 +2711,11 @@
                     // Get the raw text to preserve Arabic encoding
                     const text = await response.text();
                     blob = new Blob([text], { type: 'application/json; charset=utf-8' });
-                    filename = `pii_entities_${new Date().toISOString().slice(0, 10)}.json`;
+                    filename = 'pii_entities_' + new Date().toISOString().slice(0, 10) + '.json';
                 } else if (format === 'csv') {
                     // Get the blob directly to preserve UTF-8 BOM
                     blob = await response.blob();
-                    filename = `pii_entities_${new Date().toISOString().slice(0, 10)}.csv`;
+                    filename = 'pii_entities_' + new Date().toISOString().slice(0, 10) + '.csv';
                 }
                 
                 // Create download link
