@@ -187,7 +187,7 @@ PYTHONPATH=. python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers
 | **Credit Card** |  | Card numbers | 4xxx-xxxx-xxxx-xxxx |
 | **Bank Account** |  | Account numbers | IBAN, account formats |
 
-## 🚢 Deployment
+##  Deployment
 
 ### Production Deployment
 
@@ -305,7 +305,7 @@ Your app will be accessible at: `https://[your-machine].[tailnet].ts.net`
 - **Heroku**: Use the included `Procfile`
 - **DigitalOcean App Platform**: Deploy from GitHub
 
-## 📡 API Documentation
+##  API Documentation
 
 ### Core Endpoints
 
@@ -374,8 +374,8 @@ Response:
   "masked_message": "My name is Person1 and I live in Location1",
   "display_response": "Hello Person1! How's the weather in Location1?",
   "unmasked_response": "Hello John! How's the weather in New York?",
-  "user_entities": [...],
-  "response_entities": [...]
+  "user_entities": ["..."],
+  "response_entities": ["..."]
 }
 ```
 
