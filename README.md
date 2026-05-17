@@ -1,6 +1,6 @@
 # PII Shield - Advanced Privacy Protection Platform
 
-  <h3>🛡️ AI-Powered PII Detection & Privacy-Preserving Chat</h3>
+  <h3> AI-Powered PII Detection & Privacy-Preserving Chat</h3>
 
   <p>
     <img src="https://img.shields.io/badge/Python-3.8%2B-blue" alt="Python">
@@ -11,9 +11,9 @@
   </p>
 
   <p>
-    <strong>🌐 Live Demo:</strong> <a href="https://chat.orki.ai/privacy-chat">https://chat.orki.ai/privacy-chat</a>
+    <strong> Live Demo:</strong> <a href="https://chat.orki.ai/privacy-chat">https://chat.orki.ai/privacy-chat</a>
   </p>
-</div>
+/div>
 
 ## 🚀 Overview
 
