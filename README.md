@@ -23,15 +23,15 @@ The application is currently deployed and available at **https://chat.orki.ai/pr
 
 ### ✨ Key Features
 
-- **🤖 AI-Powered Detection**: Custom BERT model fine-tuned for PII detection
-- **💬 Privacy Chat**: GPT-4 powered chat with automatic PII masking
-- **📄 Document Processing**: Support for PDF, DOCX, TXT, CSV, MD files
-- **🌍 Multilingual**: Full Arabic and English support with RTL handling
-- **🔒 Zero Data Storage**: No persistent storage of user data
-- **⚡ Real-time Processing**: Instant detection with streaming responses
-- **🎨 Modern UI**: Dark theme with customizable entity colors
+- ** AI-Powered Detection**: Custom BERT model fine-tuned for PII detection
+- ** Privacy Chat**: GPT-4 powered chat with automatic PII masking
+- ** Document Processing**: Support for PDF, DOCX, TXT, CSV, MD files
+- ** Multilingual**: Full Arabic and English support with RTL handling
+- ** Zero Data Storage**: No persistent storage of user data
+- ** Real-time Processing**: Instant detection with streaming responses
+- ** Modern UI**: Dark theme with customizable entity colors
 
-## 📋 Table of Contents
+##  Table of Contents
 
 - [Quick Start](#-quick-start)
 - [Installation](#-installation)
