@@ -402,7 +402,7 @@ const reader = response.body.getReader();
 // Process streaming response
 ```
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 ner-pii-nlp-5/
@@ -438,7 +438,7 @@ ner-pii-nlp-5/
 └── README.md                       # This file
 ```
 
-## 🧪 Testing
+##  Testing
 
 Run tests:
 ```bash
@@ -452,7 +452,7 @@ pytest --cov=src tests/
 pytest tests/integration/
 ```
 
-## 🔧 Troubleshooting
+##  Troubleshooting
 
 ### Common Issues
 
@@ -499,7 +499,7 @@ sudo journalctl -u pii-shield -f
 docker logs -f pii-shield
 ```
 
-## 🤝 Contributing
+##  Contributing
 
 We welcome contributions! Please follow these steps:
 
@@ -516,11 +516,11 @@ We welcome contributions! Please follow these steps:
 - Update documentation as needed
 - Ensure all tests pass before submitting PR
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - **OpenAI** for GPT-4 API
 - **Hugging Face** for Transformers library
