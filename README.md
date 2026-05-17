@@ -21,7 +21,7 @@
 
 The application is currently deployed and available at **https://chat.orki.ai/privacy-chat**
 
-### ✨ Key Features
+###  Key Features
 
 - ** AI-Powered Detection**: Custom BERT model fine-tuned for PII detection
 - ** Privacy Chat**: GPT-4 powered chat with automatic PII masking
@@ -64,7 +64,7 @@ Visit `http://localhost:8000` to access the application.
 
 **Or try the live demo:** [https://chat.orki.ai/privacy-chat](https://chat.orki.ai/privacy-chat)
 
-## 💻 Installation
+##  Installation
 
 ### Prerequisites
 
@@ -137,7 +137,7 @@ The application uses multiple AI models:
 2. **Arabic NER Model**: CAMeL-Lab BERT for Arabic text
 3. **GPT-4**: For privacy-preserving chat responses
 
-## 🎯 Usage
+##  Usage
 
 ### Running the Application
 
@@ -176,16 +176,16 @@ PYTHONPATH=. python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers
 
 | Entity | Icon | Description | Examples |
 |--------|------|-------------|----------|
-| **Person** | 👤 | Personal names |  محمد بن سليم الحارثي |
-| **Location** | 📍 | Places, addresses | قرية السجورة ولاية نزوى, مسقط |
-| **Organization** | 🏢 | Companies, institutions | محمد بن خليل للتجارة والمقاولات, بنك مسقط |
-| **Email** | 📧 | Email addresses | user@example.com |
-| **Phone** | 📱 | Phone numbers | 9xxxxxxx, +968xxxxxxxx |
-| **URL** | 🔗 | Web addresses | https://example.com |
-| **Civil ID** | 🆔 | Civil identification | 123456789 |
-| **Passport** | 🛂 | Passport numbers | AB1234567 |
-| **Credit Card** | 💳 | Card numbers | 4xxx-xxxx-xxxx-xxxx |
-| **Bank Account** | 💰 | Account numbers | IBAN, account formats |
+| **Person** |  | Personal names |  محمد بن سليم الحارثي |
+| **Location** |  | Places, addresses | قرية السجورة ولاية نزوى, مسقط |
+| **Organization** |  | Companies, institutions | محمد بن خليل للتجارة والمقاولات, بنك مسقط |
+| **Email** |  | Email addresses | user@example.com |
+| **Phone** |  | Phone numbers | 9xxxxxxx, +968xxxxxxxx |
+| **URL** |  | Web addresses | https://example.com |
+| **Civil ID** |  | Civil identification | 123456789 |
+| **Passport** |  | Passport numbers | AB1234567 |
+| **Credit Card** |  | Card numbers | 4xxx-xxxx-xxxx-xxxx |
+| **Bank Account** |  | Account numbers | IBAN, account formats |
 
 ## 🚢 Deployment
 
