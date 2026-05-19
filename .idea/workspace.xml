@@ -4,17 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="686a542b-666d-41a5-933f-16af0916bc27" name="Changes" comment="privacy mode functionality is down in the chat page">
-      <change afterPath="$PROJECT_DIR$/tst.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/templates/privacy_chat.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/templates/privacy_chat.html" afterDir="false" />
-    </list>
+    <list default="true" id="686a542b-666d-41a5-933f-16af0916bc27" name="Changes" comment="fixing-bugs in welcome-page" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="ui-enhancement-welcome-page" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -57,149 +65,6 @@
       <recent name="$PROJECT_DIR$/checkpoints" />
     </key>
   </component>
-  <component name="RunManager">
-    <configuration default="true" type="DjangoTestsConfigurationType">
-      <module name="ner-pii-nlp 5" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="TARGET" value="" />
-      <option name="SETTINGS_FILE" value="" />
-      <option name="CUSTOM_SETTINGS" value="false" />
-      <option name="USE_OPTIONS" value="false" />
-      <option name="OPTIONS" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-      <module name="ner-pii-nlp 5" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="Python.FlaskServer">
-      <module name="ner-pii-nlp 5" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="launchJavascriptDebuger" value="false" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="Tox" factoryName="Tox">
-      <module name="ner-pii-nlp 5" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="docs" factoryName="Docutils task">
-      <module name="ner-pii-nlp 5" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="docutils_input_file" value="" />
-      <option name="docutils_output_file" value="" />
-      <option name="docutils_params" value="" />
-      <option name="docutils_task" value="" />
-      <option name="docutils_open_in_browser" value="false" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="docs" factoryName="Sphinx task">
-      <module name="ner-pii-nlp 5" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="docutils_input_file" value="" />
-      <option name="docutils_output_file" value="" />
-      <option name="docutils_params" value="" />
-      <option name="docutils_task" value="" />
-      <option name="docutils_open_in_browser" value="false" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Autodetect">
-      <module name="ner-pii-nlp 5" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Doctests">
-      <module name="ner-pii-nlp 5" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="CLASS_NAME" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="FOLDER_NAME" value="" />
-      <option name="TEST_TYPE" value="TEST_SCRIPT" />
-      <option name="PATTERN" value="" />
-      <option name="USE_PATTERN" value="false" />
-      <method v="2" />
-    </configuration>
-  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -222,102 +87,6 @@
       <workItem from="1756876242514" duration="203000" />
       <workItem from="1756972202452" duration="86956000" />
       <workItem from="1757326314574" duration="623000" />
-    </task>
-    <task id="LOCAL-00392" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756837143224</created>
-      <option name="number" value="00392" />
-      <option name="presentableId" value="LOCAL-00392" />
-      <option name="project" value="LOCAL" />
-      <updated>1756837143224</updated>
-    </task>
-    <task id="LOCAL-00393" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756837467655</created>
-      <option name="number" value="00393" />
-      <option name="presentableId" value="LOCAL-00393" />
-      <option name="project" value="LOCAL" />
-      <updated>1756837467655</updated>
-    </task>
-    <task id="LOCAL-00394" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756837937413</created>
-      <option name="number" value="00394" />
-      <option name="presentableId" value="LOCAL-00394" />
-      <option name="project" value="LOCAL" />
-      <updated>1756837937413</updated>
-    </task>
-    <task id="LOCAL-00395" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756838021814</created>
-      <option name="number" value="00395" />
-      <option name="presentableId" value="LOCAL-00395" />
-      <option name="project" value="LOCAL" />
-      <updated>1756838021814</updated>
-    </task>
-    <task id="LOCAL-00396" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756838416594</created>
-      <option name="number" value="00396" />
-      <option name="presentableId" value="LOCAL-00396" />
-      <option name="project" value="LOCAL" />
-      <updated>1756838416594</updated>
-    </task>
-    <task id="LOCAL-00397" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756838612505</created>
-      <option name="number" value="00397" />
-      <option name="presentableId" value="LOCAL-00397" />
-      <option name="project" value="LOCAL" />
-      <updated>1756838612505</updated>
-    </task>
-    <task id="LOCAL-00398" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756838745096</created>
-      <option name="number" value="00398" />
-      <option name="presentableId" value="LOCAL-00398" />
-      <option name="project" value="LOCAL" />
-      <updated>1756838745097</updated>
-    </task>
-    <task id="LOCAL-00399" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756839301002</created>
-      <option name="number" value="00399" />
-      <option name="presentableId" value="LOCAL-00399" />
-      <option name="project" value="LOCAL" />
-      <updated>1756839301002</updated>
-    </task>
-    <task id="LOCAL-00400" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756839357893</created>
-      <option name="number" value="00400" />
-      <option name="presentableId" value="LOCAL-00400" />
-      <option name="project" value="LOCAL" />
-      <updated>1756839357893</updated>
-    </task>
-    <task id="LOCAL-00401" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756840094486</created>
-      <option name="number" value="00401" />
-      <option name="presentableId" value="LOCAL-00401" />
-      <option name="project" value="LOCAL" />
-      <updated>1756840094486</updated>
-    </task>
-    <task id="LOCAL-00402" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756859063863</created>
-      <option name="number" value="00402" />
-      <option name="presentableId" value="LOCAL-00402" />
-      <option name="project" value="LOCAL" />
-      <updated>1756859063863</updated>
-    </task>
-    <task id="LOCAL-00403" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1756859282054</created>
-      <option name="number" value="00403" />
-      <option name="presentableId" value="LOCAL-00403" />
-      <option name="project" value="LOCAL" />
-      <updated>1756859282054</updated>
     </task>
     <task id="LOCAL-00404" summary="privacy mode functionality is down in the chat page">
       <option name="closed" value="true" />
@@ -615,7 +384,103 @@
       <option name="project" value="LOCAL" />
       <updated>1757132153533</updated>
     </task>
-    <option name="localTasksCounter" value="441" />
+    <task id="LOCAL-00441" summary="privacy mode functionality is down in the chat page">
+      <option name="closed" value="true" />
+      <created>1778984209399</created>
+      <option name="number" value="00441" />
+      <option name="presentableId" value="LOCAL-00441" />
+      <option name="project" value="LOCAL" />
+      <updated>1778984209400</updated>
+    </task>
+    <task id="LOCAL-00442" summary="privacy mode functionality is down in the chat page">
+      <option name="closed" value="true" />
+      <created>1778986132096</created>
+      <option name="number" value="00442" />
+      <option name="presentableId" value="LOCAL-00442" />
+      <option name="project" value="LOCAL" />
+      <updated>1778986132096</updated>
+    </task>
+    <task id="LOCAL-00443" summary="privacy mode functionality is down in the chat page">
+      <option name="closed" value="true" />
+      <created>1778986231278</created>
+      <option name="number" value="00443" />
+      <option name="presentableId" value="LOCAL-00443" />
+      <option name="project" value="LOCAL" />
+      <updated>1778986231278</updated>
+    </task>
+    <task id="LOCAL-00444" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1778986292542</created>
+      <option name="number" value="00444" />
+      <option name="presentableId" value="LOCAL-00444" />
+      <option name="project" value="LOCAL" />
+      <updated>1778986292542</updated>
+    </task>
+    <task id="LOCAL-00445" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1778986592859</created>
+      <option name="number" value="00445" />
+      <option name="presentableId" value="LOCAL-00445" />
+      <option name="project" value="LOCAL" />
+      <updated>1778986592859</updated>
+    </task>
+    <task id="LOCAL-00446" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1778987260752</created>
+      <option name="number" value="00446" />
+      <option name="presentableId" value="LOCAL-00446" />
+      <option name="project" value="LOCAL" />
+      <updated>1778987260752</updated>
+    </task>
+    <task id="LOCAL-00447" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1778994037107</created>
+      <option name="number" value="00447" />
+      <option name="presentableId" value="LOCAL-00447" />
+      <option name="project" value="LOCAL" />
+      <updated>1778994037107</updated>
+    </task>
+    <task id="LOCAL-00448" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1778994208993</created>
+      <option name="number" value="00448" />
+      <option name="presentableId" value="LOCAL-00448" />
+      <option name="project" value="LOCAL" />
+      <updated>1778994208993</updated>
+    </task>
+    <task id="LOCAL-00449" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1778994232373</created>
+      <option name="number" value="00449" />
+      <option name="presentableId" value="LOCAL-00449" />
+      <option name="project" value="LOCAL" />
+      <updated>1778994232373</updated>
+    </task>
+    <task id="LOCAL-00450" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1778994296763</created>
+      <option name="number" value="00450" />
+      <option name="presentableId" value="LOCAL-00450" />
+      <option name="project" value="LOCAL" />
+      <updated>1778994296763</updated>
+    </task>
+    <task id="LOCAL-00451" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1778994336604</created>
+      <option name="number" value="00451" />
+      <option name="presentableId" value="LOCAL-00451" />
+      <option name="project" value="LOCAL" />
+      <updated>1778994336604</updated>
+    </task>
+    <task id="LOCAL-00452" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1778994373102</created>
+      <option name="number" value="00452" />
+      <option name="presentableId" value="LOCAL-00452" />
+      <option name="project" value="LOCAL" />
+      <updated>1778994373102</updated>
+    </task>
+    <option name="localTasksCounter" value="453" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -625,6 +490,7 @@
     <MESSAGE value="ui improved" />
     <MESSAGE value="pii detector main page redesign" />
     <MESSAGE value="privacy mode functionality is down in the chat page" />
-    <option name="LAST_COMMIT_MESSAGE" value="privacy mode functionality is down in the chat page" />
+    <MESSAGE value="fixing-bugs in welcome-page" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixing-bugs in welcome-page" />
   </component>
 </project>
