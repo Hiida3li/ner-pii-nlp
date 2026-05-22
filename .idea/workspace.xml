@@ -92,15 +92,7 @@
       <workItem from="1779217456063" duration="480000" />
       <workItem from="1779269789591" duration="768000" />
       <workItem from="1779349547664" duration="1249000" />
-      <workItem from="1779440856243" duration="4183000" />
-    </task>
-    <task id="LOCAL-00415" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1757061544708</created>
-      <option name="number" value="00415" />
-      <option name="presentableId" value="LOCAL-00415" />
-      <option name="project" value="LOCAL" />
-      <updated>1757061544708</updated>
+      <workItem from="1779440856243" duration="8414000" />
     </task>
     <task id="LOCAL-00416" summary="privacy mode functionality is down in the chat page">
       <option name="closed" value="true" />
@@ -486,7 +478,15 @@
       <option name="project" value="LOCAL" />
       <updated>1779444921470</updated>
     </task>
-    <option name="localTasksCounter" value="464" />
+    <task id="LOCAL-00464" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1779455772653</created>
+      <option name="number" value="00464" />
+      <option name="presentableId" value="LOCAL-00464" />
+      <option name="project" value="LOCAL" />
+      <updated>1779455772653</updated>
+    </task>
+    <option name="localTasksCounter" value="465" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
