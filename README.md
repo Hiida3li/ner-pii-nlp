@@ -346,7 +346,7 @@ docker run -d \
   --env-file .env \
   pii-shield
 
-# Or use Docker Compose
+# Use Docker Compose
 docker-compose up -d
 ```
 
@@ -558,7 +558,7 @@ ner-pii-nlp-5/
 │       ├── index.html              # PII detector interface
 │       └── privacy_chat.html       # Privacy chat interface
 ├── checkpoints/
-│   └── pii_shield_002v.pt         # Model weights (1.3 GB)
+│   └── pii_shield_002v.pt         # Model weights [Fine-tuned Pipeline]
 ├── requirements.txt                # Python dependencies
 ├── docker-compose.yml              # Docker configuration
 ├── Dockerfile                      # Container definition
