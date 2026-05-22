@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="686a542b-666d-41a5-933f-16af0916bc27" name="Changes" comment="fixing-bugs in welcome-page">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="686a542b-666d-41a5-933f-16af0916bc27" name="Changes" comment="fixing-bugs in welcome-page" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -92,15 +90,7 @@
       <workItem from="1779217456063" duration="480000" />
       <workItem from="1779269789591" duration="768000" />
       <workItem from="1779349547664" duration="1249000" />
-      <workItem from="1779440856243" duration="981000" />
-    </task>
-    <task id="LOCAL-00410" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1757011992272</created>
-      <option name="number" value="00410" />
-      <option name="presentableId" value="LOCAL-00410" />
-      <option name="project" value="LOCAL" />
-      <updated>1757011992272</updated>
+      <workItem from="1779440856243" duration="1690000" />
     </task>
     <task id="LOCAL-00411" summary="privacy mode functionality is down in the chat page">
       <option name="closed" value="true" />
@@ -486,7 +476,15 @@
       <option name="project" value="LOCAL" />
       <updated>1779440988291</updated>
     </task>
-    <option name="localTasksCounter" value="459" />
+    <task id="LOCAL-00459" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1779442522368</created>
+      <option name="number" value="00459" />
+      <option name="presentableId" value="LOCAL-00459" />
+      <option name="project" value="LOCAL" />
+      <updated>1779442522368</updated>
+    </task>
+    <option name="localTasksCounter" value="460" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

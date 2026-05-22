@@ -17,7 +17,57 @@
 
 ##  Overview
 
-**PII Shield** is an enterprise-grade platform for detecting and protecting personally identifiable information (PII) in text and documents. Built with state-of-the-art NLP models and featuring a privacy-preserving chat interface, it provides real-time entity detection, document processing, and comprehensive data masking capabilities.
+**PII Shield** was created to support **employees of enterprise and government entities in the Sultanate of Oman** in protecting sensitive **Omani data** before it is sent to Large Language Models (LLMs) such as ChatGPT, Claude, Gemini, and others.
+
+Many public-sector and corporate employees rely on LLMs to draft reports, translate documents, and analyze text — but doing so risks leaking confidential national, institutional, and personal data to third-party AI providers. **PII Shield acts as a privacy gateway**: it detects, masks, and substitutes PII and Named Entities locally *before* any data leaves the user's machine, then restores the original values in the model's response. This keeps Omani data sovereign while still letting employees benefit from the productivity of modern LLMs.
+
+The platform is purpose-built with **Gulf-specific PII and NER models**, tuned for Omani names, tribal nomenclature, civil IDs, passport formats, Omani phone numbers, governorates, ministries, and Arabic government discourse.
+
+###  Mission
+
+> **Protect Omani data sovereignty. Empower government and enterprise employees to use LLMs safely — in their own language and dialect.**
+
+###  Try It in Omani Arabic Dialect
+
+To experience the full power of the system, it is **strongly recommended to test it using Arabic in the Omani dialect**, as the models are specifically tuned for Gulf-region linguistic patterns, official Omani government phrasing, honorifics (معالي، فضيلة، السيد/ة)، tribal names, and Omani administrative structures.
+
+####  Example Input (Omani Government Context)
+
+Try pasting the following text into the **Privacy Chat** at [https://chat.orki.ai/privacy-chat](https://chat.orki.ai/privacy-chat):
+
+```text
+احتفت وزارة الإعلام بإطلاق الفيلم الوثائقي من خلال عرض أُقيم على مسرح وزارة الثقافة مساء اليوم، وسط حضور ثقافي وفني من مختلف أنحاء السلطنة.
+
+وأكد معالي الدكتور عبدالله بن ناصر بن سالم بن حمد الحراصي، وزير الإعلام، في تصريح صحفي، أن الفيلم الوثائقي يأتي ضمن برنامج الوزارة الهادف إلى توثيق التاريخ العُماني وإبراز الجوانب الإنسانية والحضارية في المجتمع العُماني، من خلال إنتاج أعمال إعلامية ووثائقية تُقدَّم برؤية معاصرة ومعايير إنتاج حديثة، بهدف الإثراء الثقافي وإيصال الصورة العُمانية بصورة مميزة.
+
+كما أكدت فضيلة السيدة هادية بنت سلطان بنت محمد عبدالملك السيابية من محافظة جنوب الباطنة أن الفيلم سيصل ويُعرض هناك أيضًا، لما يحمله من قيمة ثقافية وتوثيقية للمجتمع العُماني.
+
+ولمزيد من المعلومات والتواصل، يرجى التواصل على رقم هاتف الوزارة: ٢٤٢٢٦٦٥٤٣٢، أو زيارة الموقع الإلكتروني: [وزارة الثقافة والرياضة والشباب العمانية](https://mcsy.om/?utm_source=chatgpt.com)
+
+كما تم تسجيل البيانات الرسمية التالية ضمن ملف التوثيق:
+
+* رقم البطاقة التعريفية: ١٣٧٧٦٥٩٩٨
+* رقم جواز السفر: AA656943321
+* رقم البطاقة الائتمانية التجريبية (Synthetic/Test): 5443320998765321
+```
+
+####  What PII Shield Will Detect
+
+When you submit the example above, the system will automatically identify and mask Gulf-specific entities including:
+
+| Detected Entity | Example from the Text | Type |
+|-----------------|----------------------|------|
+| معالي الدكتور عبدالله بن ناصر بن سالم بن حمد الحراصي | Omani full tribal name + honorific | **PER** |
+| فضيلة السيدة هادية بنت سلطان بنت محمد عبدالملك السيابية | Omani female tribal name + honorific | **PER** |
+| وزارة الإعلام / وزارة الثقافة | Omani government ministries | **ORG** |
+| محافظة جنوب الباطنة | Omani governorate | **LOC** |
+| ٢٤٢٢٦٦٥٤٣٢ | Arabic-numeral Omani phone | **PHONE** |
+| https://mcsy.om | Omani government domain | **URL** |
+| ١٣٧٧٦٥٩٩٨ | Omani Civil ID (Arabic numerals) | **CIVIL_ID** |
+| AA656943321 | Passport number | **PASSPORT** |
+| 5443320998765321 | Credit card number (test) | **CREDIT_CARD** |
+
+After masking, the redacted version is what gets sent to the LLM — and the original values are restored in the response **on your side only**, never leaving your environment.
 
 The application is currently deployed and available at **https://chat.orki.ai/privacy-chat**
 
