@@ -42,7 +42,7 @@ The application is currently deployed and available at **https://chat.orki.ai/pr
 - [Project Structure](#-project-structure)
 - [Contributing](#-contributing)
 
-## 🏃 Quick Start
+##  Quick Start
 
 ```bash
 # Clone the repository
@@ -117,7 +117,7 @@ HOST=0.0.0.0
 PORT=8000
 ```
 
-## ⚙️ Configuration
+##  Configuration
 
 ### Environment Variables
 
