@@ -67,7 +67,7 @@ When you submit the example above, the system will automatically identify and ma
 | AA656943321 | Passport number | **PASSPORT** |
 | 5443320998765321 | Credit card number (test) | **CREDIT_CARD** |
 
-After masking, the redacted version is what gets sent to the LLM — and the original values are restored in the response **on your side only**, never leaving your environment.
+After masking, the redacted version is what gets sent to the LLM, and the original values are restored in the response **on your side only**, never leaving your environment.
 
 The application is currently deployed and available at **https://chat.orki.ai/privacy-chat**
 
@@ -329,7 +329,7 @@ The application is currently deployed and running at:
 ### Local Deployment
 
 ```bash
-# Using the quick deploy script (if available)
+
 ./quick_deploy.sh
 ```
 
