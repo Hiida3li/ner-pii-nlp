@@ -489,7 +489,7 @@ Solution: Run on CPU or reduce batch size
 
 View application logs:
 ```bash
-# Development
+
 python -m uvicorn src.main:app --log-level debug
 
 # Production (systemd)
