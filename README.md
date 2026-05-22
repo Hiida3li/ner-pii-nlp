@@ -71,6 +71,85 @@ After masking, the redacted version is what gets sent to the LLM — and the ori
 
 The application is currently deployed and available at **https://chat.orki.ai/privacy-chat**
 
+##  Strategic Importance: Protecting Omani Data & Aligning with Oman Vision 2040
+
+###  Why This Project Matters for the Sultanate of Oman
+
+The rapid adoption of foreign Large Language Models (ChatGPT, Claude, Gemini, Copilot, DeepSeek, etc.) inside Omani ministries, public authorities, and private enterprises has created a **silent data-leakage crisis**. Every prompt typed into a foreign LLM is:
+
+- **Transmitted abroad** — usually to servers in the US, EU, or East Asia, outside Omani jurisdiction.
+- **Often retained and used for training** — depending on the provider's terms of service.
+- **Subject to foreign legal regimes** — including subpoenas, intelligence requests, and data-sharing treaties that the Sultanate is not party to.
+
+When that prompt contains an Omani civil ID, a tribal name, a ministerial decision, a tender document, a medical record, a citizen complaint, or a draft policy, it constitutes a **breach of national data sovereignty** — even if no malicious actor is involved.
+
+**PII Shield closes this gap.** It ensures that all personally identifiable and nationally sensitive information — written in Arabic, Omani dialect, or English — is **detected, masked, and substituted locally** before it ever crosses Oman's digital borders. The LLM still helps the employee draft, summarize, or translate; but the underlying Omani data stays inside the Sultanate.
+
+###  Alignment with Oman Vision 2040
+
+PII Shield directly supports several pillars of **رؤية عُمان 2040 (Oman Vision 2040)**:
+
+| Vision 2040 Pillar | How PII Shield Contributes |
+|--------------------|---------------------------|
+| **Governance of the State Administration's Apparatus, Resources & Projects** | Enables ministries to safely adopt AI tools without violating government data-classification policies or the Personal Data Protection Law (Royal Decree 6/2022). |
+| **Economic Diversification & Fiscal Sustainability** | Lets enterprises in non-oil sectors (logistics, tourism, fintech, manufacturing) use AI productively without exposing trade secrets or customer data abroad. |
+| **Development of the Digital Economy** | Provides the privacy-trust layer that makes large-scale, lawful adoption of AI within Oman possible — a prerequisite for a competitive digital economy. |
+| **A Caring Society** | Protects the personal data of Omani citizens — their identities, health records, financial details, and family information — from foreign data brokers and AI training pipelines. |
+| **National Security & Sovereignty** | Keeps sensitive government correspondence, defense-adjacent communications, and strategic documents inside the Sultanate's digital perimeter. |
+
+The project is also fully aligned with:
+
+- **Royal Decree No. 6/2022 — Personal Data Protection Law (PDPL)** — Oman's binding data-protection framework.
+- **The National Programme for Digital Economy** (under the Ministry of Transport, Communications and Information Technology).
+- **The National AI Policy & Ethical AI guidelines** issued by MTCIT.
+
+###  Target Industries & Sectors That Need PII Shield
+
+PII Shield is designed for any organization that handles Omani personal, commercial, or governmental data and wants to safely leverage LLMs. Priority sectors include:
+
+####  Government & Public Sector
+- **Ministries & Government Authorities** — drafting policy, translating documents, summarizing reports without leaking citizen or state data.
+- **Royal Oman Police (ROP)** — handling civil records, traffic data, identity documents.
+- **Ministry of Defence & Internal Security Service** — protecting strategic and classified discourse.
+- **Ministry of Foreign Affairs** — diplomatic cables, briefings, translations.
+- **Tax Authority & Ministry of Finance** — taxpayer data, financial statements, audit reports.
+- **Ministry of Justice & Legal Affairs / Public Prosecution / Courts** — case files, judicial records, citizen identities.
+
+####  Healthcare
+- **Ministry of Health, Royal Hospital, SQUH, Khoula, Royal Court Medical Services** — patient records, diagnoses, medical correspondence (especially sensitive under PDPL Article 6 – Special Categories of Data).
+- **Private hospitals, clinics, and insurers** — patient PII and medical claims.
+
+####  Banking, Finance & Fintech
+- **Central Bank of Oman (CBO)** — regulatory data, supervision reports.
+- **Bank Muscat, NBO, Sohar International, Bank Dhofar, Ahli Bank, OAB, Bank Nizwa, Alizz Islamic Bank** — customer KYC, account numbers, IBAN, transactions.
+- **Insurance companies & investment funds** — policyholder and beneficiary data.
+
+####  Energy, Oil & Gas
+- **Energy Development Oman (EDO), PDO, OQ, Oman LNG, Petrogas, Daleel** — contractor data, commercial agreements, well data, HSE incident reports.
+
+####  Telecommunications
+- **Omantel, Ooredoo, Vodafone Oman, Awasr, TRA** — subscriber data, CDRs, network operations.
+
+####  Education & Research
+- **Ministry of Education, Ministry of Higher Education, SQU, GUtech, UTAS, private universities** — student records, research data, academic correspondence.
+
+####  Legal, Audit & Consulting Firms
+- Local and international law firms operating in Oman, audit firms (Big 4 and local), and management consultancies — all of whom handle client-confidential Omani data daily.
+
+####  Logistics, Aviation & Tourism
+- **Asyad Group, Oman Air, Oman Airports, Ministry of Heritage & Tourism, OMRAN** — passenger data, cargo manifests, hospitality guest records.
+
+####  Critical Infrastructure & Utilities
+- **Nama Group, OPWP, Haya Water, Be'ah** — customer billing, infrastructure plans, SCADA-adjacent documentation.
+
+###  The Bottom Line
+
+> Foreign LLMs are powerful — but they were not built with Omani data sovereignty in mind. **PII Shield is the bridge** that lets the Sultanate's workforce harness those LLMs **without surrendering the data that belongs to Oman, its citizens, and its institutions.**
+>
+> It is a practical, deployable, and locally-tuned contribution to **Oman Vision 2040's promise of a sovereign, secure, and prosperous digital future.**
+
+
+
 ###  Key Features
 
 - ** AI-Powered Detection**: Custom BERT model fine-tuned for PII detection
