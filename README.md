@@ -581,7 +581,6 @@ pytest --cov=src tests/
 pytest tests/integration/
 ```
 
-##  Troubleshooting
 
 ### Common Issues
 
