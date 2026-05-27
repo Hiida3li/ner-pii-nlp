@@ -55,7 +55,6 @@ async def lifespan(app: FastAPI):
     app.state.model_factory = ModelFactory()
     app.state.document_processor = DocumentProcessor()
     
-    # Pre-load the v2 model to avoid delay on first upload
     logger.info("Pre-loading v2 model for faster document uploads...")
     model = app.state.model_factory.get_model("v2")
     if model:
@@ -1312,7 +1311,6 @@ async def privacy_chat_api(request: PrivacyChatRequest):
             detected_response_entities = sorted(detected_response_entities, key=lambda x: x['start'])
             
             for entity in detected_response_entities:
-                # Clean markdown formatting from entity text
                 clean_text = entity['text'].strip()
                 # Remove markdown bold markers
                 clean_text = clean_text.strip('*').strip()
@@ -1468,7 +1466,6 @@ async def privacy_chat_stream(request: PrivacyChatRequest):
             masked_words = ai_response.split()
             unmasked_words = unmasked_response.split()
             
-            # Ensure both have same number of words (they should after proper masking)
             max_words = max(len(masked_words), len(unmasked_words))
             
             masked_streamed = ""
@@ -1523,7 +1520,6 @@ async def privacy_chat_stream(request: PrivacyChatRequest):
                 
                 # Convert back to dict format and add to response_entities
                 for entity_text, entity_type, start, end in split_entities:
-                    # Clean markdown formatting from entity text
                     clean_text = entity_text.strip()
                     # Remove markdown bold markers
                     clean_text = clean_text.strip('*').strip()
