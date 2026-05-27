@@ -94,30 +94,9 @@
       <workItem from="1779349547664" duration="1249000" />
       <workItem from="1779440856243" duration="8486000" />
       <workItem from="1779561685414" duration="3000" />
-    </task>
-    <task id="LOCAL-00416" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1757065127938</created>
-      <option name="number" value="00416" />
-      <option name="presentableId" value="LOCAL-00416" />
-      <option name="project" value="LOCAL" />
-      <updated>1757065127938</updated>
-    </task>
-    <task id="LOCAL-00417" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1757068688672</created>
-      <option name="number" value="00417" />
-      <option name="presentableId" value="LOCAL-00417" />
-      <option name="project" value="LOCAL" />
-      <updated>1757068688672</updated>
-    </task>
-    <task id="LOCAL-00418" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1757069229648</created>
-      <option name="number" value="00418" />
-      <option name="presentableId" value="LOCAL-00418" />
-      <option name="project" value="LOCAL" />
-      <updated>1757069229648</updated>
+      <workItem from="1779561709278" duration="106000" />
+      <workItem from="1779610359554" duration="1868000" />
+      <workItem from="1779691429071" duration="35000" />
     </task>
     <task id="LOCAL-00419" summary="privacy mode functionality is down in the chat page">
       <option name="closed" value="true" />
@@ -487,7 +466,31 @@
       <option name="project" value="LOCAL" />
       <updated>1779455772653</updated>
     </task>
-    <option name="localTasksCounter" value="465" />
+    <task id="LOCAL-00465" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1779561721118</created>
+      <option name="number" value="00465" />
+      <option name="presentableId" value="LOCAL-00465" />
+      <option name="project" value="LOCAL" />
+      <updated>1779561721118</updated>
+    </task>
+    <task id="LOCAL-00466" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1779561731570</created>
+      <option name="number" value="00466" />
+      <option name="presentableId" value="LOCAL-00466" />
+      <option name="project" value="LOCAL" />
+      <updated>1779561731570</updated>
+    </task>
+    <task id="LOCAL-00467" summary="fixing-bugs in welcome-page">
+      <option name="closed" value="true" />
+      <created>1779561790216</created>
+      <option name="number" value="00467" />
+      <option name="presentableId" value="LOCAL-00467" />
+      <option name="project" value="LOCAL" />
+      <updated>1779561790216</updated>
+    </task>
+    <option name="localTasksCounter" value="468" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
