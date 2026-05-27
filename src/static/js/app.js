@@ -42,9 +42,9 @@ class PIIShieldApp {
             this.initTooltips();
             this.setupKeyboardShortcuts();
             
-            console.log('🚀 PII-Shield Pro initialized successfully');
+            console.log(' PII-Shield Pro initialized successfully');
         } catch (error) {
-            console.error('❌ Initialization failed:', error);
+            console.error(' Initialization failed:', error);
             this.showError('Application initialization failed. Please refresh the page.');
         }
     }
