@@ -42,13 +42,13 @@
 
 **PII Shield** was created to support **employees of enterprise and government entities in the Sultanate of Oman** in protecting sensitive **Omani data** before it is sent to Large Language Models (LLMs) such as ChatGPT, Claude, Gemini, and others.
 
-Many public-sector and corporate employees rely on LLMs to draft reports, translate documents, and analyze text — but doing so risks leaking confidential national, institutional, and personal data to third-party AI providers. **PII Shield acts as a privacy gateway**: it detects, masks, and substitutes PII and Named Entities locally *before* any data leaves the user's machine, then restores the original values in the model's response. This keeps Omani data sovereign while still letting employees benefit from the productivity of modern LLMs.
+Many public-sector and corporate employees rely on LLMs to draft reports, translate documents, and analyze text, but doing so risks leaking confidential national, institutional, and personal data to third-party AI providers. **PII Shield acts as a privacy gateway**: it detects, masks, and substitutes PII and Named Entities locally *before* any data leaves the user's machine, then restores the original values in the model's response. This keeps Omani data sovereign while still letting employees benefit from the productivity of modern LLMs.
 
 The platform is purpose-built with **Gulf-specific PII and NER models**, tuned for Omani names, tribal nomenclature, civil IDs, passport formats, Omani phone numbers, governorates, ministries, and Arabic government discourse.
 
 ### Mission
 
-> **Protect Omani data sovereignty. Empower government and enterprise employees to use LLMs safely — in their own language and dialect.**
+> **Protect Omani data sovereignty. Empower government and enterprise employees to use LLMs safely in their own language and dialect.**
 
 ---
 
@@ -60,17 +60,17 @@ The rapid adoption of foreign Large Language Models (ChatGPT, Claude, Gemini, Co
 
 When that prompt contains an Omani civil ID, a tribal name, a ministerial decision, a tender document, a medical record, a citizen complaint, or a draft policy, it constitutes a **breach of national data sovereignty** — even if no malicious actor is involved.
 
-**PII Shield closes this gap.** All personally identifiable and nationally sensitive information — written in Arabic, Omani dialect, or English — is **detected, masked, and substituted locally** before it ever crosses Oman's digital borders. The LLM still helps the employee draft, summarize, or translate; but the underlying Omani data stays inside the Sultanate.
+**PII Shield closes this gap.** All personally identifiable and nationally sensitive information, written in Arabic, Omani dialect, or English, is **detected, masked, and substituted locally** before it ever crosses Oman's digital borders. The LLM still helps the employee draft, summarize, or translate; but the underlying Omani data stays inside the Sultanate.
 
 ### Alignment with Oman Vision 2040
 
-| Vision 2040 Pillar | How PII Shield Contributes |
-|--------------------|----------------------------|
-| **Governance of the State Administration's Apparatus, Resources & Projects** | Enables ministries to safely adopt AI tools without violating government data-classification policies or the Personal Data Protection Law (Royal Decree 6/2022). |
-| **Economic Diversification & Fiscal Sustainability** | Lets enterprises in non-oil sectors (logistics, tourism, fintech, manufacturing) use AI productively without exposing trade secrets or customer data abroad. |
-| **Development of the Digital Economy** | Provides the privacy-trust layer that makes large-scale, lawful adoption of AI within Oman possible — a prerequisite for a competitive digital economy. |
-| **A Caring Society** | Protects the personal data of Omani citizens — their identities, health records, financial details, and family information — from foreign data brokers and AI training pipelines. |
-| **National Security & Sovereignty** | Keeps sensitive government correspondence, defense-adjacent communications, and strategic documents inside the Sultanate's digital perimeter. |
+| Vision 2040 Pillar | How PII Shield Contributes                                                                                                                                                     |
+|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Governance of the State Administration's Apparatus, Resources & Projects** | Enables ministries to safely adopt AI tools without violating government data-classification policies or the Personal Data Protection Law (Royal Decree 6/2022).               |
+| **Economic Diversification & Fiscal Sustainability** | Lets enterprises in non-oil sectors (logistics, tourism, fintech, manufacturing) use AI productively without exposing trade secrets or customer data abroad.                   |
+| **Development of the Digital Economy** | Provides the privacy-trust layer that makes large-scale, lawful adoption of AI within Oman possible, a prerequisite for a competitive digital economy.                         |
+| **A Caring Society** | Protects the personal data of Omani citizens their identities, health records, financial details, and family information, from foreign data brokers and AI training pipelines. |
+| **National Security & Sovereignty** | Keeps sensitive government correspondence, defense-adjacent communications, and strategic documents inside the Sultanate's digital perimeter.                                  |
 
 The project is also fully aligned with:
 
