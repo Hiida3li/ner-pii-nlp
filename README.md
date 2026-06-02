@@ -52,8 +52,6 @@ The platform is purpose-built with **Gulf-specific PII and NER models**, tuned f
 
 ---
 
-## Why This Project Matters: Protecting Omani Data & Aligning with Oman Vision 2040
-
 The rapid adoption of foreign Large Language Models (ChatGPT, Claude, Gemini, Copilot, DeepSeek, etc.) inside Omani ministries, public authorities, and private enterprises has created a **silent data-leakage crisis**. Every prompt typed into a foreign LLM is:
 
 - **Transmitted abroad** — usually to servers in the US, EU, or East Asia, outside Omani jurisdiction.
