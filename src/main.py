@@ -248,6 +248,7 @@ class PrivacyChatResponse(BaseModel):
 class SimpleChatbot:
     def __init__(self):
         self.api_key = os.getenv("OPENAI_API_KEY")
+        self.gemini_api_key = os.getenv("GOOGLE_API_KEY")  # Fallback provider (Gemini 2.5 Flash)
         self.entity_mappings = {}  # Original -> Masked
         self.reverse_mappings = {}  # Masked -> Original
         self.entity_counters = {}  # Track entity numbering
@@ -255,6 +256,7 @@ class SimpleChatbot:
         self.max_history_length = 10  # Keep last 10 messages for context
         self.document_context = None  # Store current document context
         logger.info(f"SimpleChatbot initialized with API key: {'***' + (self.api_key[-4:] if self.api_key else 'None')}")
+        logger.info(f"SimpleChatbot Gemini fallback key: {'***' + (self.gemini_api_key[-4:] if self.gemini_api_key else 'None')}")
         logger.info(f"SimpleChatbot initialized with fresh entity_counters: {self.entity_counters}")
         logger.info(f"SimpleChatbot initialized with empty entity_mappings: {len(self.entity_mappings)} items")
         logger.info(f"SimpleChatbot initialized with empty reverse_mappings: {len(self.reverse_mappings)} items")
