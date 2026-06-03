@@ -806,9 +806,16 @@ class PrivacyChat {
             this.elements.chatInputBottom.style.height = 'auto';
         }
         this.autoResizeTextarea();
-        
-        // Don't show typing indicator yet - will show after user message
-        
+
+        // Optimistically show the user's message and the typing indicator
+        // immediately, so the chat feels responsive while we wait for the
+        // server. The message is reconciled with the masked version on 'init'.
+        const optimisticMessage = this.addMessage('user', message);
+        if (optimisticMessage) {
+            optimisticMessage.id = 'optimistic-user-message';
+        }
+        this.showTypingIndicator();
+
         try {
             // Create a new abort controller for this stream
             this.currentStreamController = new AbortController();
@@ -932,9 +939,13 @@ class PrivacyChat {
                                 }
                                 
                                 console.log('About to add user message with attachment:', attachment ? attachment.filename : 'none');
+                                // Remove the optimistic (raw) user message and replace it
+                                // with the reconciled version (masked + highlighted entities).
+                                const optimistic = document.getElementById('optimistic-user-message');
+                                if (optimistic) optimistic.remove();
                                 this.addMessage('user', userMessageToShow, userMessageData.userEntities, userMessageData, attachment);
-                                
-                                // Now show typing indicator AFTER user message
+
+                                // Re-position the typing indicator below the reconciled user message
                                 this.showTypingIndicator();
                                 
                                 // Reset sending flag now that typing indicator is shown
@@ -1992,7 +2003,12 @@ class PrivacyChat {
     showTypingIndicator() {
         this.isTyping = true;
         this.updateSendButtonState();
-        
+
+        // Remove any existing indicator first so we never duplicate it and it
+        // always sits at the bottom, below the most recent user message.
+        const existingIndicator = document.getElementById('typing-indicator');
+        if (existingIndicator) existingIndicator.remove();
+
         // Create typing indicator in the same position as assistant messages
         const typingHtml = `
             <div class="message-wrapper" id="typing-indicator">
