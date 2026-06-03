@@ -807,12 +807,16 @@ class PrivacyChat {
         }
         this.autoResizeTextarea();
 
-        // Optimistically show the user's message and the typing indicator
-        // immediately, so the chat feels responsive while we wait for the
-        // server. The message is reconciled with the masked version on 'init'.
-        const optimisticMessage = this.addMessage('user', message);
-        if (optimisticMessage) {
-            optimisticMessage.id = 'optimistic-user-message';
+        // Show the typing indicator immediately so the chat feels responsive.
+        // In privacy mode we deliberately do NOT echo the raw message — we wait
+        // for the server-masked version (on 'init') so raw PII is never shown.
+        // Outside privacy mode we show the message optimistically and reconcile
+        // it with the highlighted version on 'init'.
+        if (!this.privacyMode) {
+            const optimisticMessage = this.addMessage('user', message);
+            if (optimisticMessage) {
+                optimisticMessage.id = 'optimistic-user-message';
+            }
         }
         this.showTypingIndicator();
 
