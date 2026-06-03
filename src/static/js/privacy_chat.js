@@ -1338,8 +1338,8 @@ class PrivacyChat {
         } else {
             // For AI responses, just scroll to bottom normally
             this.scrollToBottom();
-        }, 100);
-        
+        }
+
         // Return the added message element for further manipulation if needed
         return newMessage;
     }
