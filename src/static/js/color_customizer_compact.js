@@ -216,6 +216,14 @@ class CompactColorCustomizer {
                 font-weight: 500;
                 white-space: nowrap;
                 pointer-events: none;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.2s ease;
+            }
+
+            .compact-color-icon:hover + .color-text {
+                opacity: 1;
+                visibility: visible;
             }
             
             .compact-color-icon {

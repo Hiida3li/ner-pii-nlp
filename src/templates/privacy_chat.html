@@ -185,8 +185,11 @@
             white-space: nowrap;
             z-index: 1002;
             pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease;
         }
-        
+
         .toggle-text {
             position: fixed;
             left: 4rem;
@@ -197,8 +200,11 @@
             white-space: nowrap;
             z-index: 1002;
             pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease;
         }
-        
+
         .export-text {
             position: fixed;
             left: 4rem;
@@ -209,6 +215,17 @@
             white-space: nowrap;
             z-index: 1002;
             pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease;
+        }
+
+        /* Reveal the icon labels only on hover of their icon */
+        .sidebar-toggle:hover + .toggle-text,
+        .new-chat-icon:hover + .new-chat-text,
+        .export-entities-icon:hover + .export-text {
+            opacity: 1;
+            visibility: visible;
         }
         
         .theme-toggle-btn {
@@ -2721,7 +2738,7 @@
     </script>
 
     <!-- Compact Color Customizer Script -->
-    <script src="/static/js/color_customizer_compact.js?v=4"></script>
+    <script src="/static/js/color_customizer_compact.js?v=5"></script>
     <!-- Auto-close panels to prevent overlap -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
