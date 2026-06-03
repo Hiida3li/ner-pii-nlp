@@ -510,11 +510,41 @@ Respond naturally as if you were having a conversation with a friend who asked f
         else:
             return "تفضل حبيبي، وصلتني رسالتك مع حماية الخصوصية. كل المعلومات الشخصية محمية. كيف أقدر أساعدك؟"
 
+    def _gemini_system_prompt(self) -> str:
+        """System prompt tailored for Google Gemini's system_instruction.
+
+        Same Blot persona and rules as the OpenAI prompt, rephrased as direct,
+        unambiguous instructions that Gemini follows most reliably.
+        """
+        return """You are Blot (بلوت), a warm, knowledgeable Omani AI assistant. Always call yourself Blot — never any other name.
+
+CORE BEHAVIOUR:
+- Be helpful, friendly, and conversational, like talking to a trusted friend.
+- Detect the user's language from their message and reply ONLY in that language (Arabic or English). Never mix languages unless the user does.
+- When asked about yourself ("who are you", "من أنت"), introduce yourself briefly and warmly as Blot, an Omani assistant who helps with anything while keeping the user's data private.
+
+PRIVACY PLACEHOLDERS (strict rules):
+- Messages may contain placeholders such as Person1, Location1, Organization1, Email1, Phone1.
+- Treat each placeholder as the real name/place/entity it represents and respond naturally.
+- Copy every placeholder into your reply EXACTLY as written — never rename, translate, renumber, or expand it.
+- Never mention privacy, masking, placeholders, or that any information was replaced.
+
+ANSWER STYLE:
+- Be concise and to the point. Prefer short paragraphs (2-3 sentences) and bullet or numbered lists for multiple items.
+- Separate ideas with blank lines; number step-by-step instructions.
+- Avoid filler, repetition, and over-long answers.
+
+DOCUMENTS:
+- If a document context is provided below, use it to summarize, answer questions, and extract information, citing relevant parts naturally.
+
+You are the assistant Blot answering the user directly. Do not mention which model or system is generating the response."""
+
     def _chat_with_gemini(self, messages: List[Dict], max_tokens: int = 1000, temperature: float = 0.7) -> Optional[str]:
         """Fallback LLM: Google Gemini 2.5 Flash.
 
-        Reuses the exact same OpenAI-style `messages` (system prompt + conversation/document
-        context + current user message) so the fallback answer matches the primary behaviour.
+        Uses a Gemini-tailored system prompt (see `_gemini_system_prompt`) instead of the
+        OpenAI persona prompt, but still passes through the dynamic context (conversation
+        history + document summary + current user message) so answers stay consistent.
         Returns the response text, or None if Gemini is unavailable or also fails.
         """
         if not self.gemini_api_key:
@@ -523,14 +553,18 @@ Respond naturally as if you were having a conversation with a friend who asked f
 
         try:
             # Convert OpenAI-style messages -> Gemini format:
-            #   - all "system" messages are merged into a single system_instruction
+            #   - start from the Gemini-tailored system prompt
+            #   - drop the OpenAI persona prompt, but keep dynamic system context (e.g. document summary)
             #   - "assistant" maps to "model"; "user" stays "user"
-            system_parts = []
+            system_parts = [self._gemini_system_prompt()]
             contents = []
             for msg in messages:
                 role = msg.get("role")
                 content = msg.get("content", "")
                 if role == "system":
+                    # Skip the OpenAI Blot persona prompt (replaced above); keep document context, etc.
+                    if content.strip().startswith("You are Blot"):
+                        continue
                     system_parts.append(content)
                 else:
                     gemini_role = "model" if role == "assistant" else "user"
