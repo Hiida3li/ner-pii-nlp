@@ -384,11 +384,11 @@ class SimpleChatbot:
         return masked_text
 
     def chat_with_ai(self, masked_message: str) -> str:
-        """Get AI response using OpenAI with Omani cultural context"""
+        """Get AI response using OpenAI, falling back to Gemini 2.5 Flash, then static responses."""
+        messages = []  # built below; declared here so the Gemini fallback is safe even on early errors
         try:
             if not self.api_key:
                 logger.error(f"No OpenAI API key found. API key value: '{self.api_key}' (length: {len(self.api_key or '')})")
-                return self.fallback_response(masked_message)
             
             logger.info(f"Calling OpenAI with masked message: {masked_message}")
             
@@ -477,11 +477,27 @@ Respond naturally as if you were having a conversation with a friend who asked f
                 logger.error(f"OpenAI API error: {response.status_code} - {response.text}")
                 logger.error(f"Request headers: {headers}")
                 logger.error(f"Request data: {data}")
-                return self.fallback_response(masked_message)
+                # OpenAI failed -> try Gemini 2.5 Flash with the same prompt + context
+                ai_response = self._chat_with_gemini(messages, max_tokens=1000, temperature=0.7)
+                if ai_response is None:
+                    return self.fallback_response(masked_message)
+                self.conversation_history.append({"role": "user", "content": masked_message})
+                self.conversation_history.append({"role": "assistant", "content": ai_response})
+                if len(self.conversation_history) > self.max_history_length * 2:
+                    self.conversation_history = self.conversation_history[-(self.max_history_length * 2):]
+                return ai_response
             
         except Exception as e:
             logger.error(f"OpenAI API error: {e}")
-            return self.fallback_response(masked_message)
+            # OpenAI raised -> try Gemini 2.5 Flash with the same prompt + context
+            ai_response = self._chat_with_gemini(messages, max_tokens=1000, temperature=0.7)
+            if ai_response is None:
+                return self.fallback_response(masked_message)
+            self.conversation_history.append({"role": "user", "content": masked_message})
+            self.conversation_history.append({"role": "assistant", "content": ai_response})
+            if len(self.conversation_history) > self.max_history_length * 2:
+                self.conversation_history = self.conversation_history[-(self.max_history_length * 2):]
+            return ai_response
     
     def fallback_response(self, masked_message: str) -> str:
         """Fallback response when OpenAI fails - Omani style"""
@@ -493,6 +509,72 @@ Respond naturally as if you were having a conversation with a friend who asked f
             return f"حياك الله من Location1! كيف الأحوال عندكم؟ إن شاء الله كل شي زين."
         else:
             return "تفضل حبيبي، وصلتني رسالتك مع حماية الخصوصية. كل المعلومات الشخصية محمية. كيف أقدر أساعدك؟"
+
+    def _chat_with_gemini(self, messages: List[Dict], max_tokens: int = 1000, temperature: float = 0.7) -> Optional[str]:
+        """Fallback LLM: Google Gemini 2.5 Flash.
+
+        Reuses the exact same OpenAI-style `messages` (system prompt + conversation/document
+        context + current user message) so the fallback answer matches the primary behaviour.
+        Returns the response text, or None if Gemini is unavailable or also fails.
+        """
+        if not self.gemini_api_key:
+            logger.error("No Gemini API key found - cannot fall back to Gemini 2.5 Flash")
+            return None
+
+        try:
+            # Convert OpenAI-style messages -> Gemini format:
+            #   - all "system" messages are merged into a single system_instruction
+            #   - "assistant" maps to "model"; "user" stays "user"
+            system_parts = []
+            contents = []
+            for msg in messages:
+                role = msg.get("role")
+                content = msg.get("content", "")
+                if role == "system":
+                    system_parts.append(content)
+                else:
+                    gemini_role = "model" if role == "assistant" else "user"
+                    contents.append({"role": gemini_role, "parts": [{"text": content}]})
+
+            data = {
+                "contents": contents,
+                "generationConfig": {
+                    "maxOutputTokens": max_tokens,
+                    "temperature": temperature
+                }
+            }
+            if system_parts:
+                data["system_instruction"] = {"parts": [{"text": "\n\n".join(system_parts)}]}
+
+            logger.info("OpenAI unavailable - falling back to Gemini 2.5 Flash")
+            response = requests.post(
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+                headers={"Content-Type": "application/json"},
+                params={"key": self.gemini_api_key},
+                json=data,
+                timeout=30
+            )
+
+            if response.status_code == 200:
+                result = response.json()
+                candidates = result.get("candidates", [])
+                if not candidates:
+                    logger.error(f"Gemini returned no candidates: {result}")
+                    return None
+                parts = candidates[0].get("content", {}).get("parts", [])
+                ai_response = "".join(part.get("text", "") for part in parts).strip()
+                if not ai_response:
+                    logger.error(f"Gemini returned empty text: {result}")
+                    return None
+                logger.info(f"Gemini 2.5 Flash fallback response: {ai_response}")
+                return ai_response
+            else:
+                logger.error(f"Gemini API error: {response.status_code} - {response.text}")
+                return None
+
+        except Exception as e:
+            logger.error(f"Gemini fallback error: {e}")
+            return None
 
     def process_message(self, user_message: str, privacy_mode: bool = True):
         """Simple process: detect PII → mask → send to LLM → return response"""
@@ -682,10 +764,11 @@ Respond naturally as if you were having a conversation with a friend who asked f
         return summary
     
     def chat_with_ai_document_context(self, masked_message: str) -> str:
-        """Enhanced chat method that includes document context"""
+        """Enhanced chat method (OpenAI with Gemini 2.5 Flash fallback) that includes document context"""
+        messages = []  # built below; declared here so the Gemini fallback is safe even on early errors
         if not self.api_key:
-            return "I'm here to help! (Note: OpenAI API key not configured)"
-        
+            logger.error("No OpenAI API key found for document chat - will try Gemini 2.5 Flash")
+
         try:
             headers = {
                 "Authorization": f"Bearer {self.api_key}",
@@ -786,14 +869,26 @@ Respond naturally as if you were having a conversation with a friend who asked f
                 return ai_response
             else:
                 logger.error(f"OpenAI API error: {response.status_code} - {response.text}")
-                return self._get_fallback_response_with_document()
-                
+                return self._gemini_fallback_with_document(messages, masked_message)
+
         except requests.RequestException as e:
             logger.error(f"Request error: {e}")
-            return self._get_fallback_response_with_document()
+            return self._gemini_fallback_with_document(messages, masked_message)
         except Exception as e:
             logger.error(f"Unexpected error in chat_with_ai_document_context: {e}")
+            return self._gemini_fallback_with_document(messages, masked_message)
+
+    def _gemini_fallback_with_document(self, messages: List[Dict], masked_message: str) -> str:
+        """Try Gemini 2.5 Flash with the same prompt + document context; else the static document fallback."""
+        max_tokens = 3000 if self.has_document_context() else 1000
+        ai_response = self._chat_with_gemini(messages, max_tokens=max_tokens, temperature=0.7)
+        if ai_response is None:
             return self._get_fallback_response_with_document()
+        self.conversation_history.append({"role": "user", "content": masked_message})
+        self.conversation_history.append({"role": "assistant", "content": ai_response})
+        if len(self.conversation_history) > self.max_history_length:
+            self.conversation_history = self.conversation_history[-self.max_history_length:]
+        return ai_response
     
     def _get_fallback_response_with_document(self) -> str:
         """Provide fallback response when API fails, considering document context"""
