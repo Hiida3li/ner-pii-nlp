@@ -39,6 +39,9 @@
     &quot;accountId&quot;: &quot;1eeb239d-03c6-44ce-bb05-707a61bf4f67&quot;
   }
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -47,21 +50,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/mahmoud/ner-pii-nlp-5 2",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/mahmoud/ner-pii-nlp-5 2&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.grazie&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/checkpoints" />
@@ -103,15 +106,12 @@
       <workItem from="1780368990362" duration="1433000" />
       <workItem from="1780410556612" duration="7297000" />
       <workItem from="1780482591712" duration="1961000" />
-      <workItem from="1780484678492" duration="347000" />
-    </task>
-    <task id="LOCAL-00431" summary="privacy mode functionality is down in the chat page">
-      <option name="closed" value="true" />
-      <created>1757099271427</created>
-      <option name="number" value="00431" />
-      <option name="presentableId" value="LOCAL-00431" />
-      <option name="project" value="LOCAL" />
-      <updated>1757099271427</updated>
+      <workItem from="1780484678492" duration="874000" />
+      <workItem from="1780490379592" duration="897000" />
+      <workItem from="1780558539380" duration="1744000" />
+      <workItem from="1780560603770" duration="2201000" />
+      <workItem from="1780901335718" duration="612000" />
+      <workItem from="1781031766341" duration="108000" />
     </task>
     <task id="LOCAL-00432" summary="privacy mode functionality is down in the chat page">
       <option name="closed" value="true" />
@@ -497,7 +497,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780484544048</updated>
     </task>
-    <option name="localTasksCounter" value="480" />
+    <task id="LOCAL-00480" summary="fixing-bugs with chat-button functionality">
+      <option name="closed" value="true" />
+      <created>1780488691587</created>
+      <option name="number" value="00480" />
+      <option name="presentableId" value="LOCAL-00480" />
+      <option name="project" value="LOCAL" />
+      <updated>1780488691587</updated>
+    </task>
+    <option name="localTasksCounter" value="481" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

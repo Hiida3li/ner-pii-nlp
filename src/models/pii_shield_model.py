@@ -48,9 +48,8 @@ class PIIShieldModel(ModelInterface):
                 for _, _, e_start, e_end in obfuscated_entities
             )
         
-        # 1. Detect obfuscated emails FIRST (e.g., "ahmed @ gmail . com")
-        # Must check emails before URLs since emails can look like domains
-        # More flexible pattern that handles spaces around @ and dots
+
+
         obfuscated_email_pattern = r'\b([a-zA-Z0-9][a-zA-Z0-9._%-]*(?:\s*\.\s*[a-zA-Z0-9]+)*)\s*@\s*([a-zA-Z0-9][a-zA-Z0-9.-]*(?:\s*\.\s*[a-zA-Z0-9]+)*)\s*\.\s*([a-zA-Z]{2,})\b'
         for match in re.finditer(obfuscated_email_pattern, text, re.IGNORECASE):
             match_text = match.group()
@@ -63,16 +62,16 @@ class PIIShieldModel(ModelInterface):
                 if not is_already_detected(start, end):
                     obfuscated_entities.append((match_text, 'EMAIL', start, end))
         
-        # 2. Detect obfuscated URLs (e.g., "http : // orki . ai")
-        # Look for patterns with spaces/symbols between URL parts
-        # Check AFTER emails to avoid false positives
+
+
+
         obfuscated_url_pattern = r'(?:https?\s*:\s*/\s*/\s*)?(?:www\s*\.\s*)?([a-zA-Z0-9]+(?:\s*[.\-]\s*[a-zA-Z0-9]+)*\s*\.\s*(?:com|net|org|ai|co|io|dev|app|gov|edu|mil|int|uk|om))'
         for match in re.finditer(obfuscated_url_pattern, text, re.IGNORECASE):
             match_text = match.group()
-            # Skip if it contains @ (likely an email)
+
             if '@' in text[max(0, match.start()-20):match.end()+20]:
                 continue
-            # Remove spaces and rejoin
+
             clean_url = re.sub(r'\s+', '', match_text)
             
             if self._is_valid_url(clean_url):
@@ -81,13 +80,13 @@ class PIIShieldModel(ModelInterface):
                 if not is_already_detected(start, end):
                     obfuscated_entities.append((match_text, 'URL', start, end))
         
-        # 3. Detect obfuscated Omani phone numbers (e.g., "94.21.67.81" or "94 21 67 81")
-        # Pattern for numbers with dots, spaces, or dashes
+
+
         obfuscated_phone_patterns = [
-            # With country code
+
             r'(?:\+?\s*9[\s.\-]*6[\s.\-]*8[\s.\-]*)?([97](?:[\s.\-]*\d){7})',  # Mobile
             r'(?:\+?\s*9[\s.\-]*6[\s.\-]*8[\s.\-]*)?(2(?:[\s.\-]*\d){7})',      # Landline
-            # Toll-free
+
             r'(8[\s.\-]*0(?:[\s.\-]*\d){6})',
         ]
         
@@ -103,7 +102,7 @@ class PIIShieldModel(ModelInterface):
                     if not is_already_detected(start, end):
                         obfuscated_entities.append((match_text, 'PHONE', start, end))
         
-        # 4. Detect phone numbers with Arabic numerals mixed with spaces
+
         arabic_numeral_pattern = r'[\u0660-\u0669\s\.\-]+'
         for match in re.finditer(arabic_numeral_pattern, text):
             match_text = match.group()
@@ -111,7 +110,7 @@ class PIIShieldModel(ModelInterface):
             clean_phone = match_text
             for i, ar in enumerate('٠١٢٣٤٥٦٧٨٩'):
                 clean_phone = clean_phone.replace(ar, str(i))
-            # Remove spaces and symbols
+
             clean_phone = re.sub(r'[^\d]', '', clean_phone)
             
             if len(clean_phone) >= 7 and self._is_valid_omani_phone(clean_phone):
@@ -134,20 +133,20 @@ class PIIShieldModel(ModelInterface):
         - Arabic numerals
         """
         
-        # Convert Arabic numerals to English
+
         arabic_to_english = str.maketrans('٠١٢٣٤٥٦٧٨٩', '0123456789')
         phone_digits = phone_text.translate(arabic_to_english)
         
-        # Remove spaces, dashes, parentheses
+
         phone_digits = re.sub(r'[\s\-\(\)\.]', '', phone_digits)
         
-        # Omani phone patterns
+
         patterns = [
-            r'^\+?968[97]\d{7}$',  # Mobile with country code
-            r'^\+?9682\d{7}$',      # Landline with country code
-            r'^[97]\d{7}$',         # Mobile without country code
-            r'^2\d{7}$',            # Landline without country code
-            r'^80\d{6}$',           # Toll-free hotlines (80077444, etc.)
+            r'^\+?968[97]\d{7}$',
+            r'^\+?9682\d{7}$',
+            r'^[97]\d{7}$',
+            r'^2\d{7}$',
+            r'^80\d{6}$',
         ]
         
         return any(re.match(pattern, phone_digits) for pattern in patterns)
@@ -949,7 +948,7 @@ class PIIShieldModel(ModelInterface):
                             merged_entities.append((passport_text, 'PASSPORT-ID', start, end))
                             break  # Found one, stop checking patterns
             
-            # Detect obfuscated PII (with spaces, dots, symbols) - do this AFTER ID detection
+
             merged_entities.extend(self._detect_obfuscated_pii(text, merged_entities))
             
             # Remove duplicate/overlapping entities

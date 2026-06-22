@@ -72,11 +72,11 @@ class CamelBertModel(ModelInterface):
         if len(offset_mapping) == 0:
             return []
 
-        # Run inference
+
         with torch.no_grad():
             outputs = self.model(**encoding)
 
-        # Get predictions
+
         predictions = torch.argmax(outputs.logits, dim=2).squeeze().tolist()
         id2label = self.model.config.id2label
 

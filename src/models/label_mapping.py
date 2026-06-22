@@ -16,7 +16,7 @@ class LabelProcessor:
         Returns:
             A tuple of (label2id, id2label) dictionaries
         """
-        # Return fixed mappings to match the model's expectations
+
         label2id = {
             "O": 0,
             "B-EMAIL": 1,

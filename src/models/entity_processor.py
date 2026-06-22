@@ -45,10 +45,10 @@ class EntityProcessor:
                         if part:
                             cleaned_parts.append(part)
                 
-                # If we have multiple valid parts, treat each as a separate entity
+
                 if len(cleaned_parts) > 1:
                     for part in cleaned_parts:
-                        # Find the actual position of this part in the original text
+
                         part_start = text.find(part, start)
                         if part_start >= 0 and part_start < end:
                             part_end = part_start + len(part)

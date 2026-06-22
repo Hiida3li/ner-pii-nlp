@@ -12,7 +12,7 @@ import hashlib
 from datetime import datetime
 import re
 
-# Document processing libraries
+
 import PyPDF2
 from docx import Document
 import pandas as pd
@@ -88,7 +88,7 @@ class DocumentProcessor:
             # Get file info
             file_info = self.get_file_info(file_content, filename)
             
-            # Extract text based on file type
+
             file_ext = Path(filename).suffix.lower()
             
             if file_ext == '.pdf':
@@ -110,7 +110,7 @@ class DocumentProcessor:
             if len(cleaned_text) > self.MAX_TEXT_LENGTH:
                 cleaned_text = cleaned_text[:self.MAX_TEXT_LENGTH] + "\n\n[Text truncated due to length limit]"
             
-            # Prepare result
+
             result = {
                 'success': True,
                 'text': cleaned_text,
@@ -242,7 +242,7 @@ class DocumentProcessor:
             for encoding in ['utf-8', 'latin-1', 'cp1252']:
                 try:
                     csv_text = file_content.decode(encoding)
-                    # Parse CSV using pandas for better handling
+
                     df = pd.read_csv(io.StringIO(csv_text))
                     
                     # Convert to formatted text
@@ -275,7 +275,7 @@ class DocumentProcessor:
         if not text:
             return ""
         
-        # Remove excessive whitespace
+
         text = re.sub(r'\n\s*\n\s*\n+', '\n\n', text)  # Multiple empty lines
         text = re.sub(r'[ \t]+', ' ', text)  # Multiple spaces/tabs
         
