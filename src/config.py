@@ -25,31 +25,31 @@ class Config:
     # Model confidence threshold
     CONFIDENCE_THRESHOLD = 0.75
     
-    # Server settings
+
     DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
     HOST = os.getenv('HOST', '0.0.0.0')
     PORT = int(os.getenv('PORT', 9000))
 
-# Application Settings
+
 DEBUG = Config.DEBUG
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
 SECRET_KEY = os.getenv('SECRET_KEY', 'default-secret-key-change-in-production')
 
-# API Keys
+
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 if not OPENAI_API_KEY and not DEBUG:
     raise ValueError("OPENAI_API_KEY environment variable is required")
 
-# Server Configuration
+
 HOST = os.getenv('HOST', '0.0.0.0')
 PORT = int(os.getenv('PORT', 9000))
 
-# Model Configuration
+
 BASE_DIR = Path(__file__).parent.parent
 MODEL_PATH = BASE_DIR / os.getenv('MODEL_PATH', 'checkpoints')
 DEFAULT_MODEL_VERSION = os.getenv('DEFAULT_MODEL_VERSION', 'v2')
 
-# Security Configuration
+
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 CORS_ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:9000,http://127.0.0.1:9000').split(',')
 
